@@ -11,11 +11,11 @@ export default class YouTubePlayer extends HTMLElement {
     intervalId: null,
   };
 
-  initializeActions = {
+  initializeActions = ({ stateSetters }) => ({
     onYouTubeChange: (eventData) => {
       const { onUpdateTime } = this.bindings;
       const { intervalId } = this.state;
-      const { setIntervalId } = this.stateSetters;
+      const { setIntervalId } = stateSetters;
 
       if (eventData === YT.PlayerState.PLAYING && !intervalId) {
         const intervalId = setInterval(() => {
@@ -30,7 +30,7 @@ export default class YouTubePlayer extends HTMLElement {
         setIntervalId(null);
       }
     },
-  };
+  });
 
   async connectedCallback() {
     const { videoId, onReady } = this.bindings;

@@ -37,5 +37,33 @@ export default {
       time: 63.136,
       text: 'The text "Burt Toblerone is Johnny Knives" accompanies the emergence of a mullet and denim sporting and thoroughly disreputable character from the back of a truck.',
     },
+    {
+      time: 71.811,
+      text: "Spitting his gum aside, he lays out his wares, a selection of knives, and a little robot hand hovers over each one.",
+    },
+    {
+      time: 81.759,
+      text: 'The little robot chooses a savage looking blade and passes over a twenty. Text reads: "target acquired."',
+    },
+    {
+      time: 91.159,
+      text: "Johnny Knives chuckles callously as the little robot rolls away.",
+    },
+    {
+      time: 103.654,
+      text: "The dancer blows a kiss in the little robot's incessant memory replay, as he rolls into a convenience store.",
+    },
+    {
+      time: 115.117,
+      text: "Little robot hands grab a roll of duck tape. Target acquired.",
+    },
+    {
+      time: 121.813,
+      text: 'The cashier, which onscreen text identifies as "Bubbles," raises her shades as a twenty pops up from below the counter.',
+    },
+    {
+      time: 131.566,
+      text: "Todo: finish audio description.",
+    },
   ],
 };

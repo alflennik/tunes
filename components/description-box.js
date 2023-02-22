@@ -12,10 +12,10 @@ export default class DescriptionBox extends HTMLElement {
     previousTime: null,
   };
 
-  initializeActions = {
+  initializeActions = ({ stateSetters }) => ({
     fetchDescriptions: async () => {
       const { videoId, onReady } = this.bindings;
-      const { setDescriptions } = this.stateSetters;
+      const { setDescriptions } = stateSetters;
 
       const descriptionModule = await import(`../descriptions/${videoId}.js`);
       setDescriptions(descriptionModule.default.descriptions);
@@ -29,7 +29,7 @@ export default class DescriptionBox extends HTMLElement {
       const { time } = this.bindings;
       const { descriptions, currentDescriptionText } = this.state;
       const { say } = this.utilities;
-      const { setPreviousTime, setCurrentDescriptionText } = this.stateSetters;
+      const { setPreviousTime, setCurrentDescriptionText } = stateSetters;
 
       setPreviousTime(time);
 
@@ -48,7 +48,7 @@ export default class DescriptionBox extends HTMLElement {
         say(description.text);
       }
     },
-  };
+  });
 
   utilities = {
     say: (text) => {

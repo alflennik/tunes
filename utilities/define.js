@@ -14,6 +14,9 @@ function defineComponent(name, UserComponent) {
   if (/^[A-Z]/.test(name)) name = titleToTrain(name);
 
   class ShadowInnerComponent extends UserComponent {
+    #mutableState;
+    #immutableState;
+
     static get observedAttributes() {
       return ["bindings"];
     }
@@ -21,18 +24,37 @@ function defineComponent(name, UserComponent) {
     constructor() {
       super();
 
-      if (this.initialState) {
-        this.state = immer.produce(this.initialState, (state) => {});
+      const stateSetters = {};
+
+      if (this.initializeState) {
+        this.#mutableState = this.initializeState;
+
+        Object.keys(this.initializeState).forEach((name) => {
+          const setterName =
+            "set" + name.substr(0, 1).toUpperCase() + name.substr(1);
+
+          stateSetters[setterName] = (value) => {
+            this.#mutableState[name] = value;
+            this.#refresh();
+          };
+        });
+
+        this.#updateImmutableState();
       }
 
-      if (this.getActions) {
-        const produceNewState = (produceFunction) => {
-          this.state = immer.produce(this.state, produceFunction);
-          this.#refresh();
-        };
-
-        this.actions = this.getActions({ produceNewState });
+      if (this.initializeActions) {
+        this.actions = {};
+        const actions = this.initializeActions({ stateSetters });
+        Object.entries(actions).forEach(([actionName, actionFunction]) => {
+          this.actions[actionName] = (...args) => {
+            return actionFunction(...args);
+          };
+        });
       }
+    }
+
+    get state() {
+      return this.#immutableState;
     }
 
     connectedCallback() {
@@ -46,7 +68,31 @@ function defineComponent(name, UserComponent) {
       forwardProperty(this, UserComponent, "connectedCallback");
     }
 
+    #updateImmutableState() {
+      let immutableState = structuredClone(this.#mutableState);
+
+      const recursiveFreeze = (data) => {
+        if (Array.isArray(data)) {
+          Object.freeze(data);
+          return data.map((item) => recursiveFreeze(item));
+        } else if (data?.constructor === Object) {
+          Object.freeze(data);
+          return Object.fromEntries(
+            Object.entries(data).map(([key, value]) => [
+              key,
+              recursiveFreeze(value),
+            ])
+          );
+        } else {
+          return data;
+        }
+      };
+
+      this.#immutableState = recursiveFreeze(immutableState);
+    }
+
     #refresh() {
+      this.#updateImmutableState();
       if (this.reactiveTemplate) {
         build(this);
       }

@@ -15,17 +15,17 @@ export default class DescriptionPlayer extends HTMLElement {
     videoId: "nE1ZXUE_BXU",
   };
 
-  initializeActions = {
+  initializeActions = ({ stateSetters }) => ({
     playYouTube: () => {},
     onYouTubeReady: () => {
       this.youTubePlayer.play();
     },
     onDescriptionsReady: () => {},
     onUpdateTime: (time) => {
-      const { setTime } = this.stateSetters;
+      const { setTime } = stateSetters;
       setTime(time);
     },
-  };
+  });
 
   reactiveTemplate() {
     const { videoId, time } = this.state;
