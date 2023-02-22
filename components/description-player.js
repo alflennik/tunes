@@ -18,7 +18,7 @@ export default class DescriptionPlayer extends HTMLElement {
   initializeActions = ({ stateSetters }) => ({
     playYouTube: () => {},
     onYouTubeReady: () => {
-      this.youTubePlayer.play();
+      // this.youTubePlayer.play();
     },
     onDescriptionsReady: () => {},
     onUpdateTime: (time) => {
