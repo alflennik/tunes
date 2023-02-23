@@ -59,11 +59,11 @@ export default {
     },
     {
       time: 121.813,
-      text: 'The cashier, which onscreen text identifies as "Bubbles," raises her shades as a twenty pops up from below the counter.',
+      text: 'The cashier, which onscreen text identifies as "Bubbles" played by "Sharon Battingcage," raises her shades as a twenty pops up from below the counter.',
     },
     {
       time: 131.566,
       text: "Todo: finish audio description.",
     },
   ],
-};
+}

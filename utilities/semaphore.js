@@ -1,20 +1,20 @@
 export default () => {
-  const waiting = [];
+  const waiting = []
 
   return (callback) => {
-    const isBlocked = waiting.length;
+    const isBlocked = waiting.length
     if (isBlocked) {
-      waiting.push(callback);
-      return;
+      waiting.push(callback)
+      return
     }
 
-    waiting.push(callback);
-    callback();
-    waiting.shift();
+    waiting.push(callback)
+    callback()
+    waiting.shift()
 
     while (waiting.length > 0) {
-      const secondaryCallback = waiting.shift();
-      secondaryCallback();
+      const secondaryCallback = waiting.shift()
+      secondaryCallback()
     }
-  };
-};
+  }
+}
