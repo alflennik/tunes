@@ -1,5 +1,4 @@
 export default {
-  youTubeId: "nE1ZXUE_BXU",
   descriptions: [
     {
       time: 3.771,
@@ -55,11 +54,11 @@ export default {
     },
     {
       time: 115.117,
-      text: "Little robot hands grab a roll of duck tape. Target acquired.",
+      text: "Little robot hands grab a roll of duct tape. Target acquired.",
     },
     {
       time: 121.813,
-      text: 'The cashier, which onscreen text identifies as "Bubbles" played by "Sharon Battingcage," raises her shades as a twenty pops up from below the counter.',
+      text: 'The cashier, identified as "Bubbles" played by "Sharon Battingcage," raises her shades as a twenty pops up from below the counter.',
     },
     {
       time: 131.566,

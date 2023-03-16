@@ -5,6 +5,39 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Description Player</title>
+    <style>
+      body {
+        font-family: system-ui;
+        margin: 0;
+        background: rgb(20, 19, 19);
+        color: white;
+      }
+      description-player {
+        width: 100vw;
+        height: 100vh;
+        height: calc(100vw * 9 / 16);
+      }
+      iframe {
+        width: 100%;
+        height: unset;
+        aspect-ratio: 16 / 9;
+      }
+      description-box {
+        text-align: center;
+        background: black;
+        display: block;
+      }
+      description-box .wrapping-box {
+        padding: 15px 0;
+        font-size: 1.7vw;
+        max-width: 40em;
+        margin: 0 auto;
+        min-height: 2.3em;
+      }
+      description-box .wrapping-box > div {
+        text-align: center;
+      }
+    </style>
   </head>
   <body>
     <root-element></root-element>

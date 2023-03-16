@@ -1,5 +1,6 @@
+import songs from "../songs/songs.js"
 import define from "../utilities/define.js"
-import { h1, main, component, p, fragment, style } from "../utilities/fun-html.js"
+import { component, fragment, element } from "../utilities/fun-html.js"
 import DescriptionPlayer from "./description-player.js"
 
 class RootElement extends HTMLElement {
@@ -8,18 +9,8 @@ class RootElement extends HTMLElement {
   }
   reactiveTemplate() {
     return fragment(
-      style(
-        `@media (max-width: 400px) {
-          body {
-            opacity: 0.03;
-          }
-        }`
-      ),
-      main(
-        h1("Description Player"),
-        p("Hit play on the YouTube player to start the audio description."),
-        component(DescriptionPlayer)
-      )
+      element("nav")(element("ul")(...songs.map((song) => element("li")(song.title)))),
+      element("main")(component(DescriptionPlayer).setBindings({ song: songs[0] }))
     )
   }
 }

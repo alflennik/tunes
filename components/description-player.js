@@ -28,14 +28,15 @@ export default class DescriptionPlayer extends HTMLElement {
   })
 
   reactiveTemplate() {
-    const { videoId, time } = this.state
+    const { time } = this.state
     const { onUpdateTime, onDescriptionsReady, onYouTubeReady } = this.actions
+    const { song } = this.bindings
 
     return fragment(
       component(YouTubePlayer)
         .getReference(this, "youTubePlayer")
-        .setBindings({ videoId, onUpdateTime, onReady: onYouTubeReady }),
-      component(DescriptionBox).setBindings({ videoId, time, onReady: onDescriptionsReady })
+        .setBindings({ videoId: song.youTubeId, onUpdateTime, onReady: onYouTubeReady }),
+      component(DescriptionBox).setBindings({ song, time, onReady: onDescriptionsReady })
     )
   }
 }
