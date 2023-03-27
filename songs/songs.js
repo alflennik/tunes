@@ -1,5 +1,6 @@
 export default [
   {
+    id: "nsp-welcome-to-my-parents-house",
     artist: "Ninja Sex Party",
     title: "Welcome To My Parents' House",
     videoType: "musicVideo",
@@ -8,6 +9,7 @@ export default [
     fileName: "nsp-welcome-to-my-parents-house.js",
   },
   {
+    id: "fka-twigs-holy-terrain",
     artist: "FKA twigs",
     featuring: "Future",
     title: "holy terrain",
@@ -18,6 +20,7 @@ export default [
     fileName: "fka-twigs-holy-terrain.js",
   },
   {
+    id: "amtrac-nobody-else",
     artist: "Amtrac",
     title: "Nobody Else",
     videoType: "musicVideo",

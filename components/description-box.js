@@ -12,6 +12,8 @@ export default class DescriptionBox extends HTMLElement {
     previousTime: null,
     voiceName: null,
     voiceRate: null,
+    lastSongId: null,
+    isReady: false,
   }
 
   initializeActions = ({ stateSetters }) => ({
@@ -20,6 +22,12 @@ export default class DescriptionBox extends HTMLElement {
         const { setVoiceName, setVoiceRate } = stateSetters
 
         const isChrome = navigator.userAgent.indexOf("Chrome") != -1
+        const isSafari =
+          navigator.vendor &&
+          navigator.vendor.indexOf("Apple") > -1 &&
+          navigator.userAgent &&
+          navigator.userAgent.indexOf("CriOS") == -1 &&
+          navigator.userAgent.indexOf("FxiOS") == -1
 
         const bestVoicesAndRates = [
           // macOS
@@ -27,11 +35,11 @@ export default class DescriptionBox extends HTMLElement {
           // ["Eddy (English (US))", 1.2],
           // ["Evan (Enhanced)", 1], // Must be explicitly downloaded
           // ["Alex", 1], // Must be explicitly downloaded
-          ["Samantha", 0.95],
+          ["Samantha", isSafari ? 1.1 : 0.95],
 
           // Windows
-          ["Microsoft Steffan Online (Natural) - English (United States)", 1.8], // Edge only
-          ["Microsoft Mark - English (United States)", isChrome ? 2.9 : 1.8], // Chrome and Firefox
+          ["Microsoft Steffan Online (Natural) - English (United States)", 1.7], // Edge only
+          ["Microsoft Mark - English (United States)", isChrome ? 2.8 : 1.7], // Chrome and Firefox
         ]
 
         let defaultVoice
@@ -77,15 +85,15 @@ export default class DescriptionBox extends HTMLElement {
     },
 
     fetchDescriptions: async () => {
-      const { song, onReady } = this.bindings
+      const { song /* , onReady */ } = this.bindings
       const { setDescriptions } = stateSetters
 
       const descriptionModule = await import(`../songs/${song.fileName}`)
       setDescriptions(descriptionModule.default.descriptions)
 
-      const { descriptions } = this.state
-
-      onReady(descriptions)
+      // Not yet used
+      // const { descriptions } = this.state
+      // onReady(descriptions)
     },
 
     handleTimeChange: () => {
@@ -111,6 +119,12 @@ export default class DescriptionBox extends HTMLElement {
         say(description.text)
       }
     },
+
+    trackLastSongId: () => {
+      const { setLastSongId } = stateSetters
+      const { song } = this.bindings
+      setLastSongId(song.id)
+    },
   })
 
   utilities = {
@@ -131,11 +145,17 @@ export default class DescriptionBox extends HTMLElement {
   }
 
   reactiveTemplate() {
-    const { time } = this.bindings
-    const { previousTime, currentDescriptionText } = this.state
-    const { handleTimeChange } = this.actions
+    const { song, time } = this.bindings
+    const { previousTime, currentDescriptionText, lastSongId } = this.state
+    const { fetchDescriptions, handleTimeChange, trackLastSongId } = this.actions
 
     if (time && time != previousTime) handleTimeChange(time)
+
+    if (song.id !== lastSongId) {
+      fetchDescriptions().then(() => {
+        trackLastSongId(song.id)
+      })
+    }
 
     return element("div").setAttributes({ class: "wrapping-box" })(
       element("div")(currentDescriptionText)

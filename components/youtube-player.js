@@ -3,16 +3,21 @@ import define from "../utilities/define.js"
 export default class YouTubePlayer extends HTMLElement {
   #player
 
+  static get observedAttributes() {
+    return ["bindings"]
+  }
+
   constructor() {
     super()
   }
 
   initializeState = {
     intervalId: null,
+    lastVideoId: undefined,
   }
 
   initializeActions = ({ stateSetters }) => ({
-    onYouTubeChange: (eventData) => {
+    handleYouTubeChange: (eventData) => {
       const { onUpdateTime } = this.bindings
       const { intervalId } = this.state
       const { setIntervalId } = stateSetters
@@ -22,7 +27,7 @@ export default class YouTubePlayer extends HTMLElement {
           const seconds = this.#player.getCurrentTime()
           onUpdateTime(seconds)
           console.log(Math.round(seconds * 1000) / 1000)
-        }, /* 20 */ 800)
+        }, /* 20 */ 400)
 
         setIntervalId(intervalId)
       } else if (intervalId) {
@@ -30,11 +35,15 @@ export default class YouTubePlayer extends HTMLElement {
         setIntervalId(null)
       }
     },
+    trackLastVideoId: (videoId) => {
+      const { setLastVideoId } = stateSetters
+      setLastVideoId(videoId)
+    },
   })
 
   async connectedCallback() {
     const { videoId, onReady } = this.bindings
-    const { onYouTubeChange } = this.actions
+    const { handleYouTubeChange } = this.actions
 
     this.#player = await new Promise(async (resolve) => {
       this.innerHTML = `<div id="player"></div>`
@@ -59,12 +68,28 @@ export default class YouTubePlayer extends HTMLElement {
     })
 
     this.#player.addEventListener("onReady", () => {
+      const { trackLastVideoId } = this.actions
+      const { videoId } = this.bindings
+
+      this.#player.setVolume(40)
+      trackLastVideoId(videoId)
       onReady()
     })
 
     this.#player.addEventListener("onStateChange", (event) => {
-      onYouTubeChange(event.data)
+      handleYouTubeChange(event.data)
     })
+  }
+
+  bindingsChangedCallback() {
+    const { lastVideoId } = this.state
+    const { videoId } = this.bindings
+    const { trackLastVideoId } = this.actions
+
+    if (lastVideoId && videoId && lastVideoId !== videoId) {
+      trackLastVideoId(videoId)
+      this.#player.cueVideoById({ videoId })
+    }
   }
 
   play() {

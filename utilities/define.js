@@ -72,7 +72,15 @@ function defineComponent(name, UserComponent) {
     }
 
     #refreshImmutableState() {
-      let immutableState = structuredClone(this.#mutableState)
+      let immutableState
+      try {
+        immutableState = structuredClone(this.#mutableState)
+      } catch (error) {
+        throw new Error(
+          "Found state which cannot be cloned, all state must be able to be cloned with the " +
+            "structedClone API."
+        )
+      }
 
       // https://medium.com/@nikhil_gupta/how-to-deepfreeze-a-nested-object-array-800671147d53
       const deepFreeze = (obj) => {
@@ -88,6 +96,7 @@ function defineComponent(name, UserComponent) {
 
     #refresh() {
       this.#refreshImmutableState()
+      forwardProperty(this, UserComponent, "bindingsChangedCallback")
       if (this.reactiveTemplate) {
         build(this)
       }

@@ -7,10 +7,48 @@ class RootElement extends HTMLElement {
   constructor() {
     super()
   }
+
+  initializeState = {
+    time: undefined,
+    playerSong: songs[0],
+  }
+
+  initializeActions = ({ stateSetters }) => ({
+    handleSongClick: (event) => {
+      const { setPlayerSong } = stateSetters
+
+      event.preventDefault()
+      const songId = event.target.getAttribute("song-id")
+      const song = songs.find((song) => song.id === songId)
+      setPlayerSong(song)
+    },
+  })
+
   reactiveTemplate() {
+    const { handleSongClick } = this.actions
+    const { playerSong } = this.state
+
     return fragment(
-      element("nav")(element("ul")(...songs.map((song) => element("li")(song.title)))),
-      element("main")(component(DescriptionPlayer).setBindings({ song: songs[0] }))
+      element("nav")(
+        element("ul")(
+          ...songs.map((song) => {
+            const isActive = song.id === playerSong.id
+            return element("li")(
+              element("a")
+                .setAttributes({
+                  href: "#",
+                  "song-id": song.id,
+                  "aria-current": isActive ? true : undefined,
+                })
+                .on(
+                  "click",
+                  handleSongClick
+                )(song.title)
+            )
+          })
+        )
+      ),
+      element("main")(component(DescriptionPlayer).setBindings({ song: playerSong }))
     )
   }
 }

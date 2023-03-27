@@ -36,6 +36,12 @@ export const element = (tagName) => {
     return builder
   }
 
+  builder.on = (eventName, eventHandler) => {
+    elementProperties.eventName = eventName
+    elementProperties.eventHandler = eventHandler
+    return builder
+  }
+
   getElementPropertiesWeapMap.set(builder, () => elementProperties)
 
   return builder
@@ -72,19 +78,35 @@ export const fragment = (...childBuilders) => {
 }
 
 const buildElement = (elementProperties) => {
-  const { tagName, attributes, referenceHolder, referenceName, bindings, text, bindingParent } =
-    elementProperties
+  const {
+    tagName,
+    attributes,
+    referenceHolder,
+    referenceName,
+    bindings,
+    eventName,
+    eventHandler,
+    bindingParent,
+  } = elementProperties
 
   const element = document.createElement(tagName)
 
   if (attributes) {
     Object.entries(attributes).forEach(([attributeName, attributeValue]) => {
-      element.setAttribute(attributeName, attributeValue)
+      if (attributeValue === undefined) {
+        element.removeAttribute(attributeName)
+      } else {
+        element.setAttribute(attributeName, attributeValue)
+      }
     })
   }
 
   if (referenceHolder && referenceName) {
     referenceHolder[referenceName] = element
+  }
+
+  if (eventName && eventHandler) {
+    element.addEventListener(eventName, eventHandler)
   }
 
   if (bindings) {
@@ -103,7 +125,11 @@ const updateElement = (element, elementProperties) => {
 
   if (attributes) {
     Object.entries(attributes).forEach(([attributeName, attributeValue]) => {
-      element.setAttribute(attributeName, attributeValue)
+      if (attributeValue === undefined) {
+        element.removeAttribute(attributeName)
+      } else {
+        element.setAttribute(attributeName, attributeValue)
+      }
     })
   }
 
