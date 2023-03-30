@@ -32,10 +32,10 @@ export default class DescriptionBox extends HTMLElement {
         const bestVoicesAndRates = [
           // macOS
           ["Google US English", 1.1],
-          // ["Eddy (English (US))", 1.2],
+          // ["Eddy (English (US))", 1.3],
           // ["Evan (Enhanced)", 1], // Must be explicitly downloaded
           // ["Alex", 1], // Must be explicitly downloaded
-          ["Samantha", isSafari ? 1.1 : 0.95],
+          ["Samantha", isSafari ? 1.15 : 0.95],
 
           // Windows
           ["Microsoft Steffan Online (Natural) - English (United States)", 1.7], // Edge only

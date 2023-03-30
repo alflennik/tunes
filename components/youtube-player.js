@@ -71,7 +71,7 @@ export default class YouTubePlayer extends HTMLElement {
       const { trackLastVideoId } = this.actions
       const { videoId } = this.bindings
 
-      this.#player.setVolume(40)
+      this.#player.setVolume(50)
       trackLastVideoId(videoId)
       onReady()
     })
