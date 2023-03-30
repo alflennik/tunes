@@ -28,4 +28,14 @@ export default [
     youTubeId: "nE1ZXUE_BXU",
     fileName: "amtrac-nobody-else.js",
   },
+  {
+    id: "seulgi-anywhere-but-home",
+    artist: "Seulgi",
+    title: "Anywhere But Home",
+    videoType: "musicVideo",
+    thumbnailAlt:
+      "In nighttime streets the artist Seulgi stares down the camera like a wild animal.",
+    youTubeId: "2hVimOZHbOI",
+    fileName: "seulgi-anywhere-but-home.js",
+  },
 ]

@@ -42,11 +42,15 @@ export default {
     },
     {
       time: 135.652,
-      text: "The ninja wingman, who does a dance with rollerskates, is definitely there in spirit. The two boys give each other a superhero-level high five thirty-seven feet up in the air.",
+      text: "The ninja wingman, who does a rollerskate dance at a skating rink, is definitely there in spirit.",
+    },
+    {
+      time: 144.949,
+      text: "The two boys give each other a superhero-level high five thirty-seven feet up in the air.",
     },
     {
       time: 156.442,
-      text: "From two sides of the couch they inch closer and closer.",
+      text: "From two sides of the couch they inch closer and closer, leaning in for a kiss.",
     },
     {
       time: 190.204,

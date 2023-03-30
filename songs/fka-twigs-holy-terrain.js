@@ -38,7 +38,7 @@ export default {
     },
     {
       time: 123.757,
-      text: "She is beautiful in the way a siren is beautiful.",
+      text: "She asks if she is beautiful, and the answer is that she is, in the way a siren is.",
     },
     {
       time: 130.882,
@@ -74,7 +74,7 @@ export default {
     },
     {
       time: 215.532,
-      text: "The women dance with practiced rhythmic precision. This is a beast they've visited many times before.",
+      text: "The women dance with practiced rhythmic precision. This is a place they've visited many times before.",
     },
     {
       time: 228.97,
