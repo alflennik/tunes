@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Application Mode Test</title>
+    <style>
+      body {
+        background: black;
+        color: white;
+        font-family: sans-serif;
+      }
+      #app {
+        border: 2px solid rgb(57, 228, 57);
+      }
+      #hero-image {
+        width: 100%;
+        height: auto;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="welcome-page">
+      <h1>Tunes</h1>
+      <button id="click-to-start" tabindex="0">Click to start</button>
+      <img id="hero-image" alt="An empty stage in cyberspace awaits" src="https://images.unsplash.com/photo-1680000827936-e5f64dedb249?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1632&q=80"/>
+    </div>
+    <div style="display: none" aria-label="Tunes" id="app" role="application" tabindex="-1">
+      <div id="reader" aria-live="polite"></div>
+      <div aria-hidden="true">
+        <ul>
+          <li>
+            <button tabindex="-1">A</button>
+          </li>
+          <li>
+            <button tabindex="-1">B</button>
+          </li>
+          <li>
+            <button tabindex="-1">C</button>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <script>
+      const app = document.querySelector("#app")
+      const welcomePage = document.querySelector("#welcome-page")
+      const clickToStart = document.querySelector("#click-to-start")
+      const reader = document.querySelector("#reader")
+
+      let indexes = []
+      let isOvershootUp = false
+      let isOvershootDown = false
+      let isOvershootLeft = false
+      let isOvershootRight = false
+
+      const contents = [
+        [
+          "playlist with 4 songs, press the right arrow to enter",
+          [
+            ["part 1 of 2, play button"],
+            [
+              "part 2 of 2, song list",
+              [
+                [
+                  "song 1 of 4, Anywhere But Home by Seulgi",
+                  [
+                    [
+                      "part 1 of 2, thumbnail, In nighttime streets the artist Seulgi stares down the camera like a wild animal.",
+                    ],
+                    ["part 2 of 2, play button"],
+                  ],
+                ],
+                [
+                  "song 2 of 4, Nobody Else by Amtrac",
+                  [
+                    ["part 1 of 2, thumbnail, A tiny robot hides in the bushes."],
+                    ["part 2 of 2, play button"],
+                  ],
+                ],
+                [
+                  "song 3 of 4, holy terrain by FKA twigs",
+                  [
+                    [
+                      "part 1 of 2, thumbnail, The artist FKA twigs looks profoundly stoned with her right eye red and her left eye blue.",
+                    ],
+                    ["part 2 of 2, play button"],
+                  ],
+                ],
+                [
+                  "song 4 of 4, Welcome to my Parent's House by Ninja Sex Party",
+                  [
+                    ["part 1 of 2, thumbnail, A cartoon gal and guy smile sexily."],
+                    ["part 2 of 2, play button"],
+                  ],
+                ],
+              ],
+            ],
+          ],
+        ],
+      ]
+
+
+      const getPresentContents = () => {
+        let presentContents = contents
+        indexes.forEach((index, i) => {
+          if (i === indexes.length - 1) return
+          presentContents = presentContents[index][1]
+        })
+        return presentContents
+      }
+
+      const getPresentIndex = () => indexes[indexes.length - 1]
+
+      const read = (text) => {
+        reader.innerHTML = ""
+        reader.innerHTML = text
+      }
+
+      const readCurrent = () => {
+        read(getPresentContents()[getPresentIndex()][0])
+      }
+
+      clickToStart.addEventListener('click', event => {
+        welcomePage.style.display = 'none'
+        app.style.display = 'block'
+        app.focus()
+      })
+
+      clickToStart.addEventListener('keydown', event => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          welcomePage.style.display = 'none'
+          app.style.display = 'block'
+          app.focus()
+        }
+      })
+
+      app.addEventListener('blur', event => {
+        welcomePage.style.display = 'block'
+        app.style.display = 'none'
+        clickToStart.focus()
+        reader.innerHTML = ''
+      })
+
+      app.addEventListener('focus', event => {
+        if (indexes.length === 0) {
+          return read('Use arrow keys to navigate')
+        }
+        return readCurrent()
+      })
+
+      app.addEventListener("keydown", (event) => {
+        if (['Tab', 'Escape', 'ArrowDown', 'ArrowUp'].includes(event.key)) {
+          event.preventDefault()
+        }
+
+        if (event.key === "Tab" || event.key === "Escape") {
+          app.blur()
+        }
+        
+        if (event.key === "ArrowDown") {
+          if (indexes.length === 0) {
+            indexes = [0]
+            return readCurrent()
+          }
+
+          if (isOvershootUp) {
+            isOvershootUp = false
+            return readCurrent()
+          }
+
+          if (getPresentIndex() === getPresentContents().length - 1) {
+            isOvershootDown = true
+            return read("Nothing after this item")
+          }
+
+          isOvershootLeft = false
+          isOvershootRight = false
+          indexes[indexes.length - 1] += 1
+          return readCurrent()
+        }
+
+        if (event.key === "ArrowUp") {
+          if (indexes.length === 0) {
+            indexes = [0]
+          }
+
+          if (isOvershootDown) {
+            isOvershootDown = false
+            return readCurrent()
+          }
+
+          if (getPresentIndex() === 0) {
+            isOvershootUp = true
+            return read("Nothing before this item")
+          }
+
+          isOvershootLeft = false
+          isOvershootRight = false
+          indexes[indexes.length - 1] -= 1
+          return readCurrent()
+        }
+
+        if (event.key === "ArrowRight") {
+          if (indexes.length === 0) {
+            indexes = [0]
+            return readCurrent()
+          }
+
+          if (isOvershootLeft) {
+            isOvershootLeft = false
+            return readCurrent()
+          }
+
+          if (!getPresentContents()[getPresentIndex()][1]) {
+            isOvershootRight = true
+            return read("Nothing inside this item")
+          }
+
+          isOvershootUp = false
+          isOvershootDown = false
+          indexes.push(0)
+          return readCurrent()
+        }
+
+        if (event.key === "ArrowLeft") {
+          if (indexes.length === 0) {
+            indexes = [0]
+          }
+
+          if (isOvershootRight) {
+            isOvershootRight = false
+            return readCurrent()
+          }
+
+          if (indexes.length === 1) {
+            isOvershootLeft = true
+            return read("Nothing outside this item")
+          }
+
+          isOvershootUp = false
+          isOvershootDown = false
+          indexes = indexes.slice(0, -1)
+          return readCurrent()
+        }
+      })
+    </script>
+  </body>
+</html>
