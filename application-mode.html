@@ -26,26 +26,30 @@
       <button id="click-to-start" tabindex="0">Click to start</button>
       <img id="hero-image" alt="An empty stage in cyberspace awaits" src="https://images.unsplash.com/photo-1680000827936-e5f64dedb249?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1632&q=80"/>
     </div>
-    <div style="display: none" aria-label="Tunes" id="app" role="application" tabindex="-1">
-      <div id="reader" aria-live="polite"></div>
-      <div aria-hidden="true">
-        <ul>
-          <li>
-            <button tabindex="-1">A</button>
-          </li>
-          <li>
-            <button tabindex="-1">B</button>
-          </li>
-          <li>
-            <button tabindex="-1">C</button>
-          </li>
-        </ul>
+    <div id="app-page" style="display: none;">
+      <div aria-label="Tunes" id="app" role="application" tabindex="-1">
+        <div aria-hidden="true">
+          <ul>
+            <li>
+              <button tabindex="-1">A</button>
+            </li>
+            <li>
+              <button tabindex="-1">B</button>
+            </li>
+            <li>
+              <button tabindex="-1">C</button>
+            </li>
+          </ul>
+        </div>
       </div>
+      <button>Return home</button>
     </div>
+    <div id="reader" aria-live="polite"></div>
     <script>
-      const app = document.querySelector("#app")
       const welcomePage = document.querySelector("#welcome-page")
       const clickToStart = document.querySelector("#click-to-start")
+      const appPage = document.querySelector("#app-page")
+      const app = document.querySelector("#app")
       const reader = document.querySelector("#reader")
 
       let indexes = []
@@ -123,21 +127,21 @@
 
       clickToStart.addEventListener('click', event => {
         welcomePage.style.display = 'none'
-        app.style.display = 'block'
+        appPage.style.display = 'block'
         app.focus()
       })
-
+      
       clickToStart.addEventListener('keydown', event => {
         if (event.key === 'Enter' || event.key === ' ') {
           welcomePage.style.display = 'none'
-          app.style.display = 'block'
+          appPage.style.display = 'block'
           app.focus()
         }
       })
-
+      
       app.addEventListener('blur', event => {
         welcomePage.style.display = 'block'
-        app.style.display = 'none'
+        appPage.style.display = 'none'
         clickToStart.focus()
         reader.innerHTML = ''
       })
