@@ -1,5 +1,14 @@
 export default [
   {
+    id: "hybs-would-you-mind",
+    artist: "HYBS",
+    title: "Would You Mind",
+    videoType: "musicVideo",
+    thumbnailAlt: "TODO",
+    youTubeId: "WW6VE7ROcyA",
+    fileName: "hybs-would-you-mind.js",
+  },
+  {
     id: "nsp-welcome-to-my-parents-house",
     artist: "Ninja Sex Party",
     title: "Welcome To My Parents' House",
@@ -11,7 +20,7 @@ export default [
   {
     id: "fka-twigs-holy-terrain",
     artist: "FKA twigs",
-    featuring: "Future",
+    featuredArtist: "Future",
     title: "holy terrain",
     videoType: "musicVideo",
     thumbnailAlt:
