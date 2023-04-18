@@ -24,9 +24,13 @@
     <div id="welcome-page">
       <h1>Tunes</h1>
       <button id="click-to-start" tabindex="0">Click to start</button>
-      <img id="hero-image" alt="An empty stage in cyberspace awaits" src="https://images.unsplash.com/photo-1680000827936-e5f64dedb249?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1632&q=80"/>
+      <img
+        id="hero-image"
+        alt="An empty stage in cyberspace awaits"
+        src="https://images.unsplash.com/photo-1680000827936-e5f64dedb249?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1632&q=80"
+      />
     </div>
-    <div id="app-page" style="display: none;">
+    <div id="app-page" style="display: none">
       <div aria-label="Tunes" id="app" role="application" tabindex="-1">
         <div aria-hidden="true">
           <ul>
@@ -104,7 +108,6 @@
         ],
       ]
 
-
       const getPresentContents = () => {
         let presentContents = contents
         indexes.forEach((index, i) => {
@@ -125,43 +128,43 @@
         read(getPresentContents()[getPresentIndex()][0])
       }
 
-      clickToStart.addEventListener('click', event => {
-        welcomePage.style.display = 'none'
-        appPage.style.display = 'block'
+      clickToStart.addEventListener("click", (event) => {
+        welcomePage.style.display = "none"
+        appPage.style.display = "block"
         app.focus()
       })
-      
-      clickToStart.addEventListener('keydown', event => {
-        if (event.key === 'Enter' || event.key === ' ') {
-          welcomePage.style.display = 'none'
-          appPage.style.display = 'block'
+
+      clickToStart.addEventListener("keydown", (event) => {
+        if (event.key === "Enter" || event.key === " ") {
+          welcomePage.style.display = "none"
+          appPage.style.display = "block"
           app.focus()
         }
       })
-      
-      app.addEventListener('blur', event => {
-        welcomePage.style.display = 'block'
-        appPage.style.display = 'none'
+
+      app.addEventListener("blur", (event) => {
+        welcomePage.style.display = "block"
+        appPage.style.display = "none"
         clickToStart.focus()
-        reader.innerHTML = ''
+        reader.innerHTML = ""
       })
 
-      app.addEventListener('focus', event => {
+      app.addEventListener("focus", (event) => {
         if (indexes.length === 0) {
-          return read('Use arrow keys to navigate')
+          return read("Use arrow keys to navigate")
         }
         return readCurrent()
       })
 
       app.addEventListener("keydown", (event) => {
-        if (['Tab', 'Escape', 'ArrowDown', 'ArrowUp'].includes(event.key)) {
+        if (["Tab", "Escape", "ArrowDown", "ArrowUp"].includes(event.key)) {
           event.preventDefault()
         }
 
         if (event.key === "Tab" || event.key === "Escape") {
           app.blur()
         }
-        
+
         if (event.key === "ArrowDown") {
           if (indexes.length === 0) {
             indexes = [0]
