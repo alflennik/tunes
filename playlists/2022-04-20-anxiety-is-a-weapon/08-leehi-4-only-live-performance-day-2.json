@@ -1,0 +1,38 @@
+{
+  "slug": "leehi-4-only-live-performance-day-2",
+  "artist": "LeeHi",
+  "title": "[4 ONLY] Live Performance Day 2",
+  "duration": "16:40",
+  "videoType": "LIVE_PERFORMANCE",
+  "thumbnailSrc": "https://i.ytimg.com/vi/BktE3Ta8Mhg/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLCkcrjGh6bdHy4g51_yqZY4yaMmbg",
+  "youtubeId": "BktE3Ta8Mhg",
+  "chapters": [
+    {
+      "time": "0:00",
+      "chapterType": "SONG",
+      "title": "빨간 립스틱",
+      "featuredArtist": "윤미래"
+    },
+    {
+      "time": "03:27",
+      "chapterType": "SONG",
+      "title": "머리어깨무릎발",
+      "featuredArtist": "원슈타인"
+    },
+    {
+      "time": "07:01",
+      "chapterType": "SONG",
+      "title": "어려워"
+    },
+    {
+      "time": "09:42",
+      "chapterType": "SONG",
+      "title": "안전지대"
+    },
+    {
+      "time": "12:12",
+      "chapterType": "SONG",
+      "title": "Darling"
+    }
+  ]
+}
