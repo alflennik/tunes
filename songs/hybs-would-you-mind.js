@@ -2,7 +2,7 @@ export default {
   descriptions: [
     {
       time: 0,
-      text: "The Juicey logo is shown.",
+      text: "The Juicey logo shows.",
     },
     {
       time: 5.606,
@@ -70,7 +70,7 @@ export default {
     },
     {
       time: 204.773,
-      text: "The HYBS boys were there the whole time it seems, enjoying the scene, which fades away.",
+      text: "The HYBS boys were there the whole time it seems, enjoying the scene, which fades out.",
     },
   ],
 }

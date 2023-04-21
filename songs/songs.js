@@ -1,10 +1,32 @@
 export default [
   {
+    id: "rimon-i-choose-u",
+    artist: "RIMON",
+    featuredArtist: "RINI",
+    title: "I Choose U",
+    videoType: "musicVideo",
+    thumbnailSrc:
+      "https://i.ytimg.com/vi/W1yyy-CkGqY/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLD5LBvddMgEbfZVzD85sku1DtbEHw",
+    thumbnailAlt: "TODO",
+    youTubeId: "W1yyy-CkGqY",
+    fileName: "rimon-i-choose-u.js",
+  },
+  {
+    id: "kirinji-twilight",
+    artist: "KIRINJI",
+    featuredArtist: "Maika Loubté",
+    title: "Twilight",
+    videoType: "musicVideo",
+    thumbnailAlt: "A despondent young woman in a dark city gazes at a toy carousel.",
+    youTubeId: "fzGaTj0LdeM",
+    fileName: "kirinji-twilight.js",
+  },
+  {
     id: "hybs-would-you-mind",
     artist: "HYBS",
     title: "Would You Mind",
     videoType: "musicVideo",
-    thumbnailAlt: "TODO",
+    thumbnailAlt: "A girl in a cafe smiles shyly at someone.",
     youTubeId: "WW6VE7ROcyA",
     fileName: "hybs-would-you-mind.js",
   },

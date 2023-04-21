@@ -38,7 +38,7 @@ export default {
     },
     {
       time: 128.043,
-      text: "The dog looks old as death.",
+      text: 'Importantly, according to his name tag, the dog\'s name is "Marvin"',
     },
     {
       time: 135.652,
