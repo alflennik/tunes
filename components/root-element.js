@@ -40,7 +40,7 @@ class RootElement extends HTMLElement {
                   "song-id": song.id,
                   "aria-current": isActive ? true : undefined,
                 })
-                .listeners("click", handleSongClick)
+                .listeners({ click: handleSongClick })
                 .children(song.title)
             )
           })

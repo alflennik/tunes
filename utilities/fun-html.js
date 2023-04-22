@@ -38,9 +38,8 @@ export const element = (tagName) => {
     return builder
   }
 
-  builder.listeners = (eventName, eventHandler) => {
-    elementProperties.eventName = eventName
-    elementProperties.eventHandler = eventHandler
+  builder.listeners = (listeners) => {
+    elementProperties.listeners = listeners
     return builder
   }
 
@@ -86,8 +85,7 @@ const buildElement = (elementProperties) => {
     referenceHolder,
     referenceName,
     bindings,
-    eventName,
-    eventHandler,
+    listeners,
     bindingParent,
   } = elementProperties
 
@@ -107,8 +105,10 @@ const buildElement = (elementProperties) => {
     referenceHolder[referenceName] = element
   }
 
-  if (eventName && eventHandler) {
-    element.addEventListener(eventName, eventHandler)
+  if (listeners) {
+    Object.entries(listeners).forEach(([eventName, eventHandler]) => {
+      element.addEventListener(eventName, eventHandler)
+    })
   }
 
   if (bindings) {
