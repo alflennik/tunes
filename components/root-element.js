@@ -29,26 +29,24 @@ class RootElement extends HTMLElement {
     const { playerSong } = this.state
 
     return fragment(
-      element("nav")(
-        element("ul")(
+      element("nav").children(
+        element("ul").children(
           ...songs.map((song) => {
             const isActive = song.id === playerSong.id
-            return element("li")(
+            return element("li").children(
               element("a")
-                .setAttributes({
+                .attributes({
                   href: "#",
                   "song-id": song.id,
                   "aria-current": isActive ? true : undefined,
                 })
-                .on(
-                  "click",
-                  handleSongClick
-                )(song.title)
+                .listeners("click", handleSongClick)
+                .children(song.title)
             )
           })
         )
       ),
-      element("main")(component(TunesPlayer).setBindings({ song: playerSong }))
+      element("main").children(component(TunesPlayer).bindings({ song: playerSong }))
     )
   }
 }

@@ -15,7 +15,9 @@ export const element = (tagName) => {
 
   elementProperties.tagName = tagName
 
-  function builder(...childBuilders) {
+  const builder = {}
+
+  builder.children = (...childBuilders) => {
     elementProperties.childBuilders = utilities.convertAnyRawStringsToTextBuilders(childBuilders)
     return builder
   }
@@ -25,18 +27,18 @@ export const element = (tagName) => {
     return builder
   }
 
-  builder.setAttributes = (attributes) => {
+  builder.attributes = (attributes) => {
     elementProperties.attributes = attributes
     return builder
   }
 
-  builder.getReference = (referenceHolder, referenceName) => {
+  builder.reference = (referenceHolder, referenceName) => {
     elementProperties.referenceHolder = referenceHolder
     elementProperties.referenceName = referenceName
     return builder
   }
 
-  builder.on = (eventName, eventHandler) => {
+  builder.listeners = (eventName, eventHandler) => {
     elementProperties.eventName = eventName
     elementProperties.eventHandler = eventHandler
     return builder
@@ -54,7 +56,7 @@ export const component = (Component) => {
   const getElementProperties = getElementPropertiesWeapMap.get(builder)
   const elementProperties = getElementProperties()
 
-  builder.setBindings = (bindings) => {
+  builder.bindings = (bindings) => {
     elementProperties.bindings = bindings
     return builder
   }

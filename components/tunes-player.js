@@ -43,14 +43,14 @@ export default class TunesPlayer extends HTMLElement {
     const { song } = this.bindings
 
     return fragment(
-      component(YouTubePlayer).getReference(this, "youTubePlayer").setBindings({
+      component(YouTubePlayer).reference(this, "youTubePlayer").bindings({
         videoId: song.youTubeId,
         onUpdateTime,
         onReady: onYouTubeReady,
         onPlay: onYouTubePlay,
         onPause: onYouTubePause,
       }),
-      component(AudioDescription).setBindings({
+      component(AudioDescription).bindings({
         song,
         time,
         isPlaying,

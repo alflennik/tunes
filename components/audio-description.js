@@ -204,9 +204,9 @@ export default class AudioDescription extends HTMLElement {
       })
     }
 
-    return element("div").setAttributes({ class: "wrapping-box" })(
-      element("div")(currentDescriptionText)
-    )
+    return element("div")
+      .attributes({ class: "wrapping-box" })
+      .children(element("div").children(currentDescriptionText))
   }
 }
 
