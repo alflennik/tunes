@@ -1,7 +1,7 @@
 import define from "../utilities/define.js"
 import { element } from "../utilities/fun-html.js"
 
-export default class DescriptionBox extends HTMLElement {
+export default class AudioDescription extends HTMLElement {
   constructor() {
     super()
   }
@@ -10,6 +10,7 @@ export default class DescriptionBox extends HTMLElement {
     descriptions: null,
     currentDescriptionText: "",
     previousTime: null,
+    isCurrentlyPlaying: false,
     voiceName: null,
     voiceRate: null,
     lastSongId: null,
@@ -17,6 +18,14 @@ export default class DescriptionBox extends HTMLElement {
   }
 
   initializeActions = ({ stateSetters }) => ({
+    // tryInitializeSpeechApi: () => {
+
+    // },
+
+    // useClickHackToInitializeSpeechApi: () => {
+
+    // },
+
     getBestVoice: () => {
       const setBestVoice = () => {
         const { setVoiceName, setVoiceRate } = stateSetters
@@ -40,6 +49,8 @@ export default class DescriptionBox extends HTMLElement {
           // Windows
           ["Microsoft Steffan Online (Natural) - English (United States)", 1.7], // Edge only
           ["Microsoft Mark - English (United States)", isChrome ? 2.8 : 1.7], // Chrome and Firefox
+
+          ["Fred", 1.15], // iOS
         ]
 
         let defaultVoice
@@ -47,7 +58,9 @@ export default class DescriptionBox extends HTMLElement {
 
         let bestVoiceRank
 
-        for (const voice of speechSynthesis.getVoices()) {
+        const englishVoices = speechSynthesis.getVoices().filter((voice) => voice.lang === "en-US")
+
+        for (const voice of englishVoices) {
           for (let i = 0; i < bestVoicesAndRates.length; i += 1) {
             const [bestVoiceName, rate] = bestVoicesAndRates[i]
             if (
@@ -98,9 +111,12 @@ export default class DescriptionBox extends HTMLElement {
 
     handleTimeChange: () => {
       const { time } = this.bindings
-      const { descriptions, currentDescriptionText } = this.state
+      const { previousTime, descriptions, currentDescriptionText } = this.state
       const { say } = this.utilities
       const { setPreviousTime, setCurrentDescriptionText } = stateSetters
+
+      const isTimeSeek = Math.abs(time - previousTime) > 1
+      console.log("isTimeSeek?", isTimeSeek, Math.abs(time - previousTime))
 
       setPreviousTime(time)
 
@@ -116,7 +132,19 @@ export default class DescriptionBox extends HTMLElement {
 
       if (description && description.text !== currentDescriptionText) {
         setCurrentDescriptionText(description.text)
-        say(description.text)
+        if (!isTimeSeek) {
+          say(description.text)
+        }
+      }
+    },
+
+    handlePlayChange: (isPlaying) => {
+      const { setIsCurrentlyPlaying } = stateSetters
+      setIsCurrentlyPlaying(isPlaying)
+      if (isPlaying) {
+        speechSynthesis.resume()
+      } else {
+        speechSynthesis.pause()
       }
     },
 
@@ -140,16 +168,35 @@ export default class DescriptionBox extends HTMLElement {
   }
 
   async connectedCallback() {
+    const enableApiOnFirstInteraction = () => {
+      // Thanks AblePlayer!
+      // https://github.com/ableplayer/ableplayer/blob/main/scripts/description.js
+      var greeting = new SpeechSynthesisUtterance("Hi!")
+      greeting.volume = 0 // silent
+      greeting.rate = 10 // fastest speed supported by the API
+      speechSynthesis.speak(greeting)
+      greeting.onstart = function (e) {
+        document.removeEventListener("click", enableApiOnFirstInteraction)
+      }
+      greeting.onend = function (e) {
+        // should now be able to get browser voices
+        // in browsers that require a click
+        getBestVoice()
+      }
+    }
+    document.addEventListener("click", enableApiOnFirstInteraction)
     const { fetchDescriptions, getBestVoice } = this.actions
     await Promise.all([getBestVoice(), fetchDescriptions()])
   }
 
   reactiveTemplate() {
-    const { song, time } = this.bindings
-    const { previousTime, currentDescriptionText, lastSongId } = this.state
-    const { fetchDescriptions, handleTimeChange, trackLastSongId } = this.actions
+    const { song, time, isPlaying } = this.bindings
+    const { isCurrentlyPlaying, previousTime, currentDescriptionText, lastSongId } = this.state
+    const { fetchDescriptions, handleTimeChange, handlePlayChange, trackLastSongId } = this.actions
 
     if (time && time != previousTime) handleTimeChange(time)
+
+    if (isPlaying != isCurrentlyPlaying) handlePlayChange(isPlaying)
 
     if (song.id !== lastSongId) {
       fetchDescriptions().then(() => {
@@ -163,4 +210,4 @@ export default class DescriptionBox extends HTMLElement {
   }
 }
 
-define({ DescriptionBox })
+define({ AudioDescription })
