@@ -1,7 +1,7 @@
 import songs from "../songs/songs.js"
 import define from "../utilities/define.js"
 import { component, fragment, element } from "../utilities/fun-html.js"
-import DescriptionPlayer from "./description-player.js"
+import TunesPlayer from "./tunes-player.js"
 
 class RootElement extends HTMLElement {
   constructor() {
@@ -48,7 +48,7 @@ class RootElement extends HTMLElement {
           })
         )
       ),
-      element("main")(component(DescriptionPlayer).setBindings({ song: playerSong }))
+      element("main")(component(TunesPlayer).setBindings({ song: playerSong }))
     )
   }
 }

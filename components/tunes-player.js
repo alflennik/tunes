@@ -3,7 +3,7 @@ import { component, fragment } from "../utilities/fun-html.js"
 import AudioDescription from "./audio-description.js"
 import YouTubePlayer from "./youtube-player.js"
 
-export default class DescriptionPlayer extends HTMLElement {
+export default class TunesPlayer extends HTMLElement {
   constructor() {
     super()
   }
@@ -60,4 +60,4 @@ export default class DescriptionPlayer extends HTMLElement {
   }
 }
 
-define({ DescriptionPlayer })
+define({ TunesPlayer })
