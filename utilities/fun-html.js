@@ -306,15 +306,19 @@ const secondaryBuild = (component) => {
 }
 
 export const build = (component) => {
-  buildSemaphore(() => {
-    buildContext = { bindingParent: component }
+  return new Promise((resolve) => {
+    buildSemaphore(() => {
+      buildContext = { bindingParent: component }
 
-    const firstBuild = !peviousBuilderWeakMap.get(component)
-    if (firstBuild) {
-      initialBuild(component)
-    } else {
-      secondaryBuild(component)
-    }
+      const firstBuild = !peviousBuilderWeakMap.get(component)
+      if (firstBuild) {
+        initialBuild(component)
+      } else {
+        secondaryBuild(component)
+      }
+
+      resolve()
+    })
   })
 }
 

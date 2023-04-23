@@ -20,6 +20,7 @@ function defineComponent(name, UserComponent) {
   class ShadowInnerComponent extends UserComponent {
     #mutableState
     #immutableState
+    #buildQueued = false
 
     static get observedAttributes() {
       return ["bindings"]
@@ -97,8 +98,11 @@ function defineComponent(name, UserComponent) {
     #refresh() {
       this.#refreshImmutableState()
       forwardProperty(this, UserComponent, "bindingsChangedCallback")
-      if (this.reactiveTemplate) {
-        build(this)
+      if (this.reactiveTemplate && this.#buildQueued === false) {
+        this.#buildQueued = true
+        build(this).then(() => {
+          this.#buildQueued = false
+        })
       }
     }
 

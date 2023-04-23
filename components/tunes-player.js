@@ -9,7 +9,8 @@ export default class TunesPlayer extends HTMLElement {
   }
 
   initializeState = {
-    time: undefined,
+    time: null,
+    lastSong: null,
     isYouTubeReady: false,
     isPlaying: false,
     isDescriptionReady: false,
@@ -34,13 +35,28 @@ export default class TunesPlayer extends HTMLElement {
       const { setTime } = stateSetters
       setTime(time)
     },
+    handleSongChange: (song) => {
+      const { setLastSong, setTime } = stateSetters
+      setLastSong(song)
+      setTime(null)
+    },
   })
 
   reactiveTemplate() {
-    const { time, isPlaying } = this.state
-    const { onUpdateTime, onDescriptionsReady, onYouTubeReady, onYouTubePause, onYouTubePlay } =
-      this.actions
+    const {
+      onUpdateTime,
+      onDescriptionsReady,
+      onYouTubeReady,
+      onYouTubePause,
+      onYouTubePlay,
+      handleSongChange,
+    } = this.actions
     const { song } = this.bindings
+    const { lastSong } = this.state
+
+    if (song.id !== lastSong?.id) handleSongChange(song)
+
+    const { time, isPlaying } = this.state
 
     return fragment(
       component(YouTubePlayer).reference(this, "youTubePlayer").bindings({

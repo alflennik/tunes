@@ -18,14 +18,6 @@ export default class AudioDescription extends HTMLElement {
   }
 
   initializeActions = ({ stateSetters }) => ({
-    // tryInitializeSpeechApi: () => {
-
-    // },
-
-    // useClickHackToInitializeSpeechApi: () => {
-
-    // },
-
     getBestVoice: () => {
       const setBestVoice = () => {
         const { setVoiceName, setVoiceRate } = stateSetters
@@ -109,14 +101,38 @@ export default class AudioDescription extends HTMLElement {
       // onReady(descriptions)
     },
 
+    handleConnect: async () => {
+      const { fetchDescriptions, getBestVoice } = this.actions
+      const { song } = this.bindings
+      const { setLastSongId } = stateSetters
+
+      const enableApiOnFirstInteraction = () => {
+        // Thanks AblePlayer!
+        // https://github.com/ableplayer/ableplayer/blob/main/scripts/description.js
+        var greeting = new SpeechSynthesisUtterance("Hi!")
+        greeting.volume = 0 // silent
+        greeting.rate = 10 // fastest speed supported by the API
+        speechSynthesis.speak(greeting)
+        greeting.onstart = function (e) {
+          document.removeEventListener("click", enableApiOnFirstInteraction)
+        }
+        greeting.onend = function (e) {
+          // should now be able to get browser voices
+          // in browsers that require a click
+          getBestVoice()
+        }
+      }
+      document.addEventListener("click", enableApiOnFirstInteraction)
+
+      setLastSongId(song.id)
+      await Promise.all([getBestVoice(), fetchDescriptions()])
+    },
+
     handleTimeChange: () => {
       const { time } = this.bindings
-      const { previousTime, descriptions, currentDescriptionText } = this.state
+      const { descriptions, currentDescriptionText, previousTime } = this.state
       const { say } = this.utilities
       const { setPreviousTime, setCurrentDescriptionText } = stateSetters
-
-      const isTimeSeek = Math.abs(time - previousTime) > 1
-      console.log("isTimeSeek?", isTimeSeek, Math.abs(time - previousTime))
 
       setPreviousTime(time)
 
@@ -130,9 +146,18 @@ export default class AudioDescription extends HTMLElement {
         }
       }
 
+      const isTimeSeek = previousTime !== null && Math.abs(time - previousTime) > 1
+
+      if (!isTimeSeek) {
+        speechSynthesis.resume()
+      }
+
       if (description && description.text !== currentDescriptionText) {
         setCurrentDescriptionText(description.text)
-        if (!isTimeSeek) {
+
+        if (isTimeSeek) {
+          speechSynthesis.cancel()
+        } else {
           say(description.text)
         }
       }
@@ -141,17 +166,22 @@ export default class AudioDescription extends HTMLElement {
     handlePlayChange: (isPlaying) => {
       const { setIsCurrentlyPlaying } = stateSetters
       setIsCurrentlyPlaying(isPlaying)
-      if (isPlaying) {
-        speechSynthesis.resume()
-      } else {
+      if (!isPlaying) {
         speechSynthesis.pause()
       }
     },
 
-    trackLastSongId: () => {
-      const { setLastSongId } = stateSetters
+    handleSongChange: async () => {
+      const { setLastSongId, setCurrentDescriptionText, setPreviousTime } = stateSetters
       const { song } = this.bindings
+      const { fetchDescriptions } = this.actions
+
+      speechSynthesis.cancel()
+
       setLastSongId(song.id)
+      setCurrentDescriptionText("")
+      setPreviousTime(null)
+      await fetchDescriptions()
     },
   })
 
@@ -168,41 +198,24 @@ export default class AudioDescription extends HTMLElement {
   }
 
   async connectedCallback() {
-    const enableApiOnFirstInteraction = () => {
-      // Thanks AblePlayer!
-      // https://github.com/ableplayer/ableplayer/blob/main/scripts/description.js
-      var greeting = new SpeechSynthesisUtterance("Hi!")
-      greeting.volume = 0 // silent
-      greeting.rate = 10 // fastest speed supported by the API
-      speechSynthesis.speak(greeting)
-      greeting.onstart = function (e) {
-        document.removeEventListener("click", enableApiOnFirstInteraction)
-      }
-      greeting.onend = function (e) {
-        // should now be able to get browser voices
-        // in browsers that require a click
-        getBestVoice()
-      }
-    }
-    document.addEventListener("click", enableApiOnFirstInteraction)
-    const { fetchDescriptions, getBestVoice } = this.actions
-    await Promise.all([getBestVoice(), fetchDescriptions()])
+    const { handleConnect } = this.actions
+    await handleConnect()
   }
 
   reactiveTemplate() {
-    const { song, time, isPlaying } = this.bindings
-    const { isCurrentlyPlaying, previousTime, currentDescriptionText, lastSongId } = this.state
-    const { fetchDescriptions, handleTimeChange, handlePlayChange, trackLastSongId } = this.actions
+    const { handleTimeChange, handlePlayChange, handleSongChange } = this.actions
 
-    if (time && time != previousTime) handleTimeChange(time)
+    const { song } = this.bindings
+    const { lastSongId } = this.state
+    if (lastSongId !== song.id) handleSongChange()
 
-    if (isPlaying != isCurrentlyPlaying) handlePlayChange(isPlaying)
+    const { isPlaying } = this.bindings
+    const { isCurrentlyPlaying } = this.state
+    if (isPlaying !== isCurrentlyPlaying) handlePlayChange(isPlaying)
 
-    if (song.id !== lastSongId) {
-      fetchDescriptions().then(() => {
-        trackLastSongId(song.id)
-      })
-    }
+    const { time } = this.bindings
+    const { previousTime, currentDescriptionText } = this.state
+    if (time && time !== previousTime) handleTimeChange(time)
 
     return element("div")
       .attributes({ class: "wrapping-box" })

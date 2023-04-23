@@ -26,7 +26,7 @@ export default {
     },
     {
       time: 70.242,
-      text: "Through it all the man and woman who posed together at the beginning stomp from Coney Island to The Manhattan Bridge, share a drink outside, can't keep their hands off each other and catch a train to another diversion.",
+      text: "Through it all, RIMON and her man stomp from Coney Island to The Manhattan Bridge, share a drink outside, can't keep their hands off each other and catch a train to another diversion.",
     },
     {
       time: 107.642,
