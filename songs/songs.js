@@ -1,5 +1,16 @@
 export default [
   {
+    id: "pink-trustfall",
+    artist: "P!NK",
+    title: "TRUSTFALL",
+    videoType: "musicVideo",
+    thumbnailSrc:
+      "https://i.ytimg.com/vi/D2KE2a5qo0g/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLBzC3dFk_g_YF4cUX9rUT8EdzXKXw",
+    thumbnailAlt: "TODO",
+    youTubeId: "D2KE2a5qo0g",
+    fileName: "pink-trustfall.js",
+  },
+  {
     id: "rimon-i-choose-u",
     artist: "RIMON",
     featuredArtist: "RINI",
@@ -7,7 +18,8 @@ export default [
     videoType: "musicVideo",
     thumbnailSrc:
       "https://i.ytimg.com/vi/W1yyy-CkGqY/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLD5LBvddMgEbfZVzD85sku1DtbEHw",
-    thumbnailAlt: "TODO",
+    thumbnailAlt:
+      "A man holds the business end of a bow and arrow and the artist RIMON pulls the drawstring back, ready to fire it into his heart.",
     youTubeId: "W1yyy-CkGqY",
     fileName: "rimon-i-choose-u.js",
   },
