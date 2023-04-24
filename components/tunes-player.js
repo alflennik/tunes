@@ -11,10 +11,7 @@ export default class TunesPlayer extends HTMLElement {
   initializeState = {
     time: null,
     lastSong: null,
-    isYouTubeReady: false,
     isPlaying: false,
-    isDescriptionReady: false,
-    videoId: "nE1ZXUE_BXU",
   }
 
   initializeActions = ({ stateSetters }) => ({
