@@ -1,0 +1,55 @@
+RootElement {
+  imports {
+    videos {
+      id
+      title
+    }
+  }
+  
+  exports {
+    video
+  }
+
+  state {
+    video
+  }
+
+  actions {
+    handleVideoClick: event => {
+      event.preventDefault()
+      const videoId = event.target.getAttribute("video-id")
+      const video = videos.find(video => video.id === videoId)
+    }
+  }
+
+  reactiveTemplate {
+    return (
+      nav {
+        ul {
+          ...videos.map(eachVideo => {
+            const isActive = eachVideo.id === video.id
+            return (
+              li {
+                a({
+                  attributes: {
+                    href: "#",
+                    `video-id`: video.id,
+                    `aria-current`: isActive ? true : null
+                  },
+                  listeners: {
+                    click: handleVideoClick
+                  }
+                }) {
+                  video.title
+                }
+              }
+            )
+          })
+        }
+      }
+      main {
+        TunesPlayer
+      }
+    )
+  }
+}
