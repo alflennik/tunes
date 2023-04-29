@@ -38,7 +38,7 @@ export default {
     },
     {
       time: 128.043,
-      text: 'Importantly, according to his name tag, the dog\'s name is "Marvin"',
+      text: "Importantly, according to his name tag, the dog's name is \"Marvin\", and he's really old, he's seen some shit.",
     },
     {
       time: 135.652,
@@ -46,7 +46,7 @@ export default {
     },
     {
       time: 144.949,
-      text: "The two boys give each other a superhero-level high five thirty-seven feet up in the air.",
+      text: "The two boys give each other a superhero-level high five 137 feet up in the air.",
     },
     {
       time: 156.442,

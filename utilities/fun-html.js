@@ -43,6 +43,11 @@ export const element = (tagName) => {
     return builder
   }
 
+  builder.styles = (styles) => {
+    elementProperties.styles = styles
+    return builder
+  }
+
   getElementPropertiesWeapMap.set(builder, () => elementProperties)
 
   return builder
@@ -86,6 +91,7 @@ const buildElement = (elementProperties) => {
     referenceName,
     bindings,
     listeners,
+    styles,
     bindingParent,
   } = elementProperties
 
@@ -115,6 +121,16 @@ const buildElement = (elementProperties) => {
     element.setBindings(bindings)
   }
 
+  if (styles) {
+    Object.entries(styles).forEach(([styleName, styleValue]) => {
+      if (styleName.startsWith("--")) {
+        element.style.setProperty(styleName, styleValue)
+      } else {
+        element.style[styleName] = styleValue
+      }
+    })
+  }
+
   if (bindingParent) {
     element.bindingParent = bindingParent
   }
@@ -123,7 +139,7 @@ const buildElement = (elementProperties) => {
 }
 
 const updateElement = (element, elementProperties) => {
-  const { attributes, bindings } = elementProperties
+  const { attributes, bindings, styles } = elementProperties
 
   if (attributes) {
     Object.entries(attributes).forEach(([attributeName, attributeValue]) => {
@@ -131,6 +147,16 @@ const updateElement = (element, elementProperties) => {
         element.removeAttribute(attributeName)
       } else {
         element.setAttribute(attributeName, attributeValue)
+      }
+    })
+  }
+
+  if (styles) {
+    Object.entries(styles).forEach(([styleName, styleValue]) => {
+      if (styleName.startsWith("--")) {
+        element.style.setProperty(styleName, styleValue)
+      } else {
+        element.style[styleName] = styleValue
       }
     })
   }

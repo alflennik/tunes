@@ -6,21 +6,37 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Tunes</title>
     <style>
+      html,
+      body {
+        height: 100%;
+      }
       body {
         font-family: system-ui;
         margin: 0;
         background: rgb(20, 19, 19);
         color: white;
       }
+      main {
+        height: 100%;
+      }
       tunes-player {
-        width: 100vw;
-        height: 100vh;
-        height: calc(100vw * 9 / 16);
+        height: 100%;
+        --description-padding: 15px;
+        --description-font-size: 1.7vw;
+        --description-line-height: 1.1;
+        --description-lines-showing: 3;
+        --description-text-height: calc(
+          var(--description-font-size) * var(--description-line-height) *
+            var(--description-lines-showing)
+        );
+        --description-total-height: calc(
+          calc(var(--description-padding) * 2) + var(--description-text-height)
+        );
       }
       iframe {
         width: 100%;
-        height: unset;
-        aspect-ratio: 16 / 9;
+        height: calc(100% - var(--description-total-height));
+        display: block;
       }
       audio-description {
         text-align: center;
@@ -28,11 +44,12 @@
         display: block;
       }
       audio-description .wrapping-box {
-        padding: 15px 0;
-        font-size: 1.7vw;
+        padding: var(--description-padding) 0;
+        font-size: var(--description-font-size);
+        line-height: var(--description-line-height);
         max-width: 40em;
         margin: 0 auto;
-        min-height: 2.3em;
+        min-height: var(--description-text-height);
       }
       audio-description .wrapping-box > div {
         text-align: center;
