@@ -22,7 +22,7 @@ export default {
     },
     {
       time: 42.233,
-      text: 'The artist P!NK is on the top of an L.A. skyscraper underneath a neon display which reads, "Illusion Hotel"',
+      text: 'The artist P!NK is on the top of a skyscraper underneath a massive sign which reads, "Illusion Hotel"',
     },
     {
       time: 64.694,
@@ -30,7 +30,7 @@ export default {
     },
     {
       time: 95.5,
-      text: "The girl's body leans back and starts to levitate. She floats over her dirtbike as it continues at high speed down the highway. And P!NK's body does the same, floating impossibly over the edge of the skyscraper.",
+      text: "The girl's body leans back and starts to levitate. She floats over her dirtbike as it continues at high speed down the highway. And P!NK stands with palm-sweating impossibility on top of the Illusion Hotel sign.",
     },
     {
       time: 124.272,
@@ -42,11 +42,11 @@ export default {
     },
     {
       time: 146.065,
-      text: "The riders start to dance.",
+      text: "The riders blast into a dance.",
     },
     {
       time: 157.454,
-      text: "They step left and right with the beat like soldiers, P!NK at the front of their triangle formation.",
+      text: "With copious power and muscularity, they step left and right with the beat like soldiers, P!NK at the front of their triangle formation.",
     },
     {
       time: 185.09,

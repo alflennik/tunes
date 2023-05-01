@@ -6,7 +6,7 @@ export default [
     videoType: "musicVideo",
     thumbnailSrc:
       "https://i.ytimg.com/vi/D2KE2a5qo0g/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLBzC3dFk_g_YF4cUX9rUT8EdzXKXw",
-    thumbnailAlt: "TODO",
+    thumbnailAlt: "With windswept hair, the artist P!NK prepares to dance.",
     youTubeId: "D2KE2a5qo0g",
     fileName: "pink-trustfall.js",
   },

@@ -14,7 +14,7 @@ export default {
     },
     {
       time: 24.234,
-      text: "Lovers are shown kissing on stoops and laughing on the Brooklyn side of the East River. Other lovers pose under overgrown trees and cross Manhattan intersections arm in arm. A pair embraces on a high-rise balcony, another lights up a joint in bed.",
+      text: "Lovers are shown kissing on stoops and laughing on the Brooklyn side of the East River. Other lovers pose under overgrown trees and cross Manhattan intersections arm in arm. One pair lights up a joint in bed.",
     },
     {
       time: 42.24,
@@ -46,7 +46,7 @@ export default {
     },
     {
       time: 177.579,
-      text: "The man and woman cavort on the seaside, clouds of sunset above, jumping in and out of waves. They're surrounded by seagulls which take on the role of cherubs in the composition.",
+      text: "The man and woman cavort on the seaside, clouds of sunset above, jumping in and out of waves. They're surrounded by seagulls which frame the lovers like cherubs.",
     },
     {
       time: 189.2,

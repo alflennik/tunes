@@ -62,11 +62,11 @@ export default {
     },
     {
       time: 184.703,
-      text: "Eyes overflowing with tears, she responds not with a word or any sign of her hands but simply reaches out and touches her hands to his heart.",
+      text: "She responds not with a word or any sign of her hands but simply reaches out and touches her hands to his heart.",
     },
     {
       time: 196.7,
-      text: "It's such honesty and intimacy in her performance.",
+      text: "Eyes overflowing with tears, it's such honesty and intimacy in her performance.",
     },
     {
       time: 204.773,
