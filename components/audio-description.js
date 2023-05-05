@@ -11,84 +11,11 @@ export default class AudioDescription extends HTMLElement {
     currentDescriptionText: "",
     previousTime: null,
     isCurrentlyPlaying: false,
-    voiceName: null,
-    voiceRate: null,
     lastSongId: null,
     isReady: false,
   }
 
   initializeActions = ({ stateSetters }) => ({
-    getBestVoice: () => {
-      const setBestVoice = () => {
-        const { setVoiceName, setVoiceRate } = stateSetters
-
-        const isChrome = navigator.userAgent.indexOf("Chrome") != -1
-        const isSafari =
-          navigator.vendor &&
-          navigator.vendor.indexOf("Apple") > -1 &&
-          navigator.userAgent &&
-          navigator.userAgent.indexOf("CriOS") == -1 &&
-          navigator.userAgent.indexOf("FxiOS") == -1
-
-        const bestVoicesAndRates = [
-          // macOS
-          ["Google US English", 1.1],
-          // ["Eddy (English (US))", 1.3],
-          // ["Evan (Enhanced)", 1], // Must be explicitly downloaded
-          // ["Alex", 1], // Must be explicitly downloaded
-          ["Samantha", isSafari ? 1.15 : 0.95],
-
-          // Windows
-          ["Microsoft Steffan Online (Natural) - English (United States)", 1.7], // Edge only
-          ["Microsoft Mark - English (United States)", isChrome ? 2.8 : 1.7], // Chrome and Firefox
-
-          ["Fred", 1.15], // iOS
-        ]
-
-        let defaultVoice
-        let defaultRate = 1.2
-
-        let bestVoiceRank
-
-        const englishVoices = speechSynthesis.getVoices().filter((voice) => voice.lang === "en-US")
-
-        for (const voice of englishVoices) {
-          for (let i = 0; i < bestVoicesAndRates.length; i += 1) {
-            const [bestVoiceName, rate] = bestVoicesAndRates[i]
-            if (
-              voice.name === bestVoiceName &&
-              (bestVoiceRank === undefined || i < bestVoiceRank)
-            ) {
-              bestVoiceRank = i
-              setVoiceName(voice.name)
-              setVoiceRate(rate)
-            }
-            if (voice.default) {
-              defaultVoice = voice
-            }
-          }
-        }
-
-        if (bestVoiceRank === undefined) {
-          setVoiceName(defaultVoice.name)
-          setVoiceRate(defaultRate)
-        }
-      }
-
-      return new Promise((resolve) => {
-        if (speechSynthesis.getVoices().length) {
-          setBestVoice()
-          resolve()
-          return
-        }
-        speechSynthesis.onvoiceschanged = () => {
-          speechSynthesis.onvoiceschanged = undefined
-          setBestVoice()
-          resolve()
-        }
-      })
-    },
-
     fetchDescriptions: async () => {
       const { song /* , onReady */ } = this.bindings
       const { setDescriptions } = stateSetters
@@ -102,36 +29,17 @@ export default class AudioDescription extends HTMLElement {
     },
 
     handleConnect: async () => {
-      const { fetchDescriptions, getBestVoice } = this.actions
+      const { fetchDescriptions } = this.actions
       const { song } = this.bindings
       const { setLastSongId } = stateSetters
 
-      const enableApiOnFirstInteraction = () => {
-        // Thanks AblePlayer!
-        // https://github.com/ableplayer/ableplayer/blob/main/scripts/description.js
-        var greeting = new SpeechSynthesisUtterance("Hi!")
-        greeting.volume = 0 // silent
-        greeting.rate = 10 // fastest speed supported by the API
-        speechSynthesis.speak(greeting)
-        greeting.onstart = function (e) {
-          document.removeEventListener("click", enableApiOnFirstInteraction)
-        }
-        greeting.onend = function (e) {
-          // should now be able to get browser voices
-          // in browsers that require a click
-          getBestVoice()
-        }
-      }
-      document.addEventListener("click", enableApiOnFirstInteraction)
-
       setLastSongId(song.id)
-      await Promise.all([getBestVoice(), fetchDescriptions()])
+      await fetchDescriptions()
     },
 
     handleTimeChange: () => {
-      const { time } = this.bindings
+      const { time, voice } = this.bindings
       const { descriptions, currentDescriptionText, previousTime } = this.state
-      const { say } = this.utilities
       const { setPreviousTime, setCurrentDescriptionText } = stateSetters
 
       setPreviousTime(time)
@@ -149,34 +57,35 @@ export default class AudioDescription extends HTMLElement {
       const isTimeSeek = previousTime !== null && Math.abs(time - previousTime) > 1
 
       if (!isTimeSeek) {
-        speechSynthesis.resume()
+        voice.play()
       }
 
       if (description && description.text !== currentDescriptionText) {
         setCurrentDescriptionText(description.text)
 
         if (isTimeSeek) {
-          speechSynthesis.cancel()
+          voice.clear()
         } else {
-          say(description.text)
+          voice.say(description.text)
         }
       }
     },
 
     handlePlayChange: (isPlaying) => {
+      const { voice } = this.bindings
       const { setIsCurrentlyPlaying } = stateSetters
       setIsCurrentlyPlaying(isPlaying)
       if (!isPlaying) {
-        speechSynthesis.pause()
+        voice.pause()
       }
     },
 
     handleSongChange: async () => {
       const { setLastSongId, setCurrentDescriptionText, setPreviousTime } = stateSetters
-      const { song } = this.bindings
+      const { song, voice } = this.bindings
       const { fetchDescriptions } = this.actions
 
-      speechSynthesis.cancel()
+      voice.clear()
 
       setLastSongId(song.id)
       setCurrentDescriptionText("")
@@ -184,18 +93,6 @@ export default class AudioDescription extends HTMLElement {
       await fetchDescriptions()
     },
   })
-
-  utilities = {
-    say: (text) => {
-      const { voiceName, voiceRate } = this.state
-      const voice = speechSynthesis.getVoices().find((each) => each.name === voiceName)
-      const utterance = new SpeechSynthesisUtterance(text)
-      utterance.voice = voice
-      utterance.rate = voiceRate
-      utterance.lang = "en-US"
-      speechSynthesis.speak(utterance)
-    },
-  }
 
   async connectedCallback() {
     const { handleConnect } = this.actions

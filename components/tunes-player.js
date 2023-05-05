@@ -1,6 +1,7 @@
 import define from "../utilities/define.js"
-import { component, fragment } from "../utilities/fun-html.js"
+import { component, element, fragment } from "../utilities/fun-html.js"
 import AudioDescription from "./audio-description.js"
+import Voice from "./voice.js"
 import YouTubePlayer from "./youtube-player.js"
 
 export default class TunesPlayer extends HTMLElement {
@@ -12,13 +13,11 @@ export default class TunesPlayer extends HTMLElement {
     time: null,
     lastSong: null,
     isPlaying: false,
+    hasCompletedInitialClick: false,
   }
 
   initializeActions = ({ stateSetters }) => ({
-    playYouTube: () => {},
-    onYouTubeReady: () => {
-      // this.youTubePlayer.play();
-    },
+    onYouTubeReady: () => {},
     onYouTubePause: () => {
       const { setIsPlaying } = stateSetters
       setIsPlaying(false)
@@ -37,6 +36,19 @@ export default class TunesPlayer extends HTMLElement {
       setLastSong(song)
       setTime(null)
     },
+    handleFirstClick: async (event) => {
+      const { youTubePlayer, clickInterceptor, voice } = this
+      const { setHasCompletedInitialClick } = stateSetters
+
+      const isKeyDown = event.type === "keydown"
+
+      clickInterceptor.style.display = "none"
+      setHasCompletedInitialClick(true)
+
+      await voice.onFirstInteraction()
+
+      if (!isKeyDown) youTubePlayer.play()
+    },
   })
 
   reactiveTemplate() {
@@ -47,26 +59,42 @@ export default class TunesPlayer extends HTMLElement {
       onYouTubePause,
       onYouTubePlay,
       handleSongChange,
+      handleFirstClick,
     } = this.actions
     const { song } = this.bindings
-    const { lastSong } = this.state
+    const { lastSong, hasCompletedInitialClick } = this.state
+
+    if (!this.voice) {
+      this.voice = new Voice()
+    }
 
     if (song.id !== lastSong?.id) handleSongChange(song)
 
     const { time, isPlaying } = this.state
 
     return fragment(
-      component(YouTubePlayer).reference(this, "youTubePlayer").bindings({
-        videoId: song.youTubeId,
-        onUpdateTime,
-        onReady: onYouTubeReady,
-        onPlay: onYouTubePlay,
-        onPause: onYouTubePause,
-      }),
+      element("div")
+        .reference(this, "clickInterceptor")
+        .attributes({ class: "click-interceptor", "tab-index": 0 })
+        .listeners({ click: handleFirstClick, keydown: handleFirstClick })
+        .children(
+          element("button").listeners({ click: handleFirstClick }).children(`Play ${song.title}`)
+        ),
+      component(YouTubePlayer)
+        .attributes({ "aria-hidden": hasCompletedInitialClick ? undefined : true })
+        .reference(this, "youTubePlayer")
+        .bindings({
+          videoId: song.youTubeId,
+          onUpdateTime,
+          onReady: onYouTubeReady,
+          onPlay: onYouTubePlay,
+          onPause: onYouTubePause,
+        }),
       component(AudioDescription).bindings({
         song,
         time,
         isPlaying,
+        voice: this.voice,
         onReady: onDescriptionsReady,
       })
     )

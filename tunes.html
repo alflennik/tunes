@@ -33,9 +33,18 @@
           calc(var(--description-padding) * 2) + var(--description-text-height)
         );
       }
-      iframe {
+      .click-interceptor {
         width: 100%;
         height: calc(100% - var(--description-total-height));
+        position: absolute;
+        cursor: pointer;
+      }
+      .click-interceptor * {
+        opacity: 0;
+      }
+      iframe {
+        height: calc(100% - var(--description-total-height));
+        width: 100%;
         display: block;
       }
       audio-description {
