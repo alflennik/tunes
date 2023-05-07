@@ -58,7 +58,7 @@ export default {
     },
     {
       time: 196.91,
-      text: "The women frolick in the waves, before eventually driving home.",
+      text: "The women frolic in the waves, before eventually driving home.",
     },
     {
       time: 214.838,
@@ -69,7 +69,7 @@ export default {
       text: "The image is weirdly convincing. As Rahill walks back towards the house the image fades away.",
     },
     {
-      time: 245.995,
+      time: 244.995,
       text: 'Title reads, "Directed by Irie Calkins"',
     },
   ],

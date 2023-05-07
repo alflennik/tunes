@@ -14,7 +14,7 @@ export default {
     },
     {
       time: 62.214,
-      text: "Coffee finished, she tosses it aside.",
+      text: "Coffee finished, she tosses it.",
     },
     {
       time: 68.704,

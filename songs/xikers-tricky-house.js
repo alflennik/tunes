@@ -2,7 +2,7 @@ export default {
   descriptions: [
     {
       time: 0,
-      text: "The KQ Entertainment logo constructs itself.",
+      text: "The KQ Entertainment logo manifests itself.",
     },
     {
       time: 13.093,
@@ -89,4 +89,6 @@ export default {
       text: "The scene fades and the xikers logo pops in. Don't forget.",
     },
   ],
+  analysis:
+    "Analysis: What is a tricky house? Is it consciousness itself, the way your existance is constantly assaulted with sensory information and thoughts, so that you forget who you really are, the power you have to become the entire world and set yourself free?",
 }
