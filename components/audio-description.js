@@ -8,6 +8,7 @@ export default class AudioDescription extends HTMLElement {
 
   initializeState = {
     descriptions: null,
+    analysis: null,
     currentDescriptionText: "",
     previousTime: null,
     isCurrentlyPlaying: false,
@@ -18,10 +19,12 @@ export default class AudioDescription extends HTMLElement {
   initializeActions = ({ stateSetters }) => ({
     fetchDescriptions: async () => {
       const { song /* , onReady */ } = this.bindings
-      const { setDescriptions } = stateSetters
+      const { setDescriptions, setAnalysis } = stateSetters
 
       const descriptionModule = await import(`../songs/${song.fileName}`)
-      setDescriptions(descriptionModule.default.descriptions)
+      const { descriptions, analysis } = descriptionModule.default
+      setDescriptions(descriptions)
+      if (analysis) setAnalysis(analysis)
 
       // Not yet used
       // const { descriptions } = this.state
@@ -72,10 +75,14 @@ export default class AudioDescription extends HTMLElement {
     },
 
     handlePlayChange: (isPlaying) => {
-      const { voice } = this.bindings
-      const { setIsCurrentlyPlaying } = stateSetters
+      const { voice, isEnded } = this.bindings
+      const { analysis } = this.state
+      const { setIsCurrentlyPlaying, setCurrentDescriptionText } = stateSetters
       setIsCurrentlyPlaying(isPlaying)
-      if (!isPlaying) {
+      if (!isPlaying && isEnded && analysis) {
+        setCurrentDescriptionText(analysis)
+        voice.say(analysis)
+      } else if (!isPlaying) {
         voice.pause()
       }
     },

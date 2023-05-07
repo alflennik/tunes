@@ -13,18 +13,26 @@ export default class TunesPlayer extends HTMLElement {
     time: null,
     lastSong: null,
     isPlaying: false,
+    isEnded: false,
     hasCompletedInitialClick: false,
   }
 
   initializeActions = ({ stateSetters }) => ({
     onYouTubeReady: () => {},
     onYouTubePause: () => {
-      const { setIsPlaying } = stateSetters
+      const { setIsPlaying, setIsEnded } = stateSetters
       setIsPlaying(false)
+      setIsEnded(false)
     },
     onYouTubePlay: () => {
-      const { setIsPlaying } = stateSetters
+      const { setIsPlaying, setIsEnded } = stateSetters
       setIsPlaying(true)
+      setIsEnded(false)
+    },
+    onYouTubeEnd: () => {
+      const { setIsPlaying, setIsEnded } = stateSetters
+      setIsPlaying(false)
+      setIsEnded(true)
     },
     onDescriptionsReady: () => {},
     onUpdateTime: (time) => {
@@ -58,6 +66,7 @@ export default class TunesPlayer extends HTMLElement {
       onYouTubeReady,
       onYouTubePause,
       onYouTubePlay,
+      onYouTubeEnd,
       handleSongChange,
       handleFirstClick,
     } = this.actions
@@ -70,7 +79,7 @@ export default class TunesPlayer extends HTMLElement {
 
     if (song.id !== lastSong?.id) handleSongChange(song)
 
-    const { time, isPlaying } = this.state
+    const { time, isPlaying, isEnded } = this.state
 
     return fragment(
       element("div")
@@ -89,11 +98,13 @@ export default class TunesPlayer extends HTMLElement {
           onReady: onYouTubeReady,
           onPlay: onYouTubePlay,
           onPause: onYouTubePause,
+          onEnd: onYouTubeEnd,
         }),
       component(AudioDescription).bindings({
         song,
         time,
         isPlaying,
+        isEnded,
         voice: this.voice,
         onReady: onDescriptionsReady,
       })

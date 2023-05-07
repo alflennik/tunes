@@ -18,7 +18,7 @@ export default class YouTubePlayer extends HTMLElement {
 
   initializeActions = ({ stateSetters }) => ({
     handleYouTubeChange: (eventData) => {
-      const { onUpdateTime, onPause, onPlay } = this.bindings
+      const { onUpdateTime, onPause, onPlay, onEnd } = this.bindings
       const { intervalId } = this.state
       const { setIntervalId } = stateSetters
 
@@ -26,6 +26,8 @@ export default class YouTubePlayer extends HTMLElement {
         onPlay()
       } else if (eventData === YT.PlayerState.PAUSED) {
         onPause()
+      } else if (eventData === YT.PlayerState.ENDED) {
+        onEnd()
       }
 
       if (eventData === YT.PlayerState.PLAYING && !intervalId) {
