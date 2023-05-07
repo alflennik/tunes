@@ -21,6 +21,7 @@ function defineComponent(name, UserComponent) {
     #mutableState
     #immutableState
     #buildQueued = false
+    #currentlyRunningAction = false
 
     static get observedAttributes() {
       return ["bindings"]
@@ -51,7 +52,11 @@ function defineComponent(name, UserComponent) {
         const actions = this.initializeActions({ stateSetters })
         Object.entries(actions).forEach(([actionName, actionFunction]) => {
           this.actions[actionName] = (...args) => {
-            return actionFunction(...args)
+            this.#currentlyRunningAction = true
+            const result = actionFunction(...args)
+            this.#currentlyRunningAction = false
+            this.#refresh()
+            return result
           }
         })
       }
@@ -98,7 +103,11 @@ function defineComponent(name, UserComponent) {
     #refresh() {
       this.#refreshImmutableState()
       forwardProperty(this, UserComponent, "bindingsChangedCallback")
-      if (this.reactiveTemplate && this.#buildQueued === false) {
+      if (
+        this.reactiveTemplate &&
+        this.#buildQueued === false &&
+        this.#currentlyRunningAction === false
+      ) {
         this.#buildQueued = true
         build(this).then(() => {
           this.#buildQueued = false
