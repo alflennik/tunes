@@ -54,5 +54,5 @@ export default {
     },
   ],
   analysis:
-    'This is a love song, but the object of her affection is not shown. Maybe the title of the song is a hint, "Season." Maybe the object of her love is the passing flow of time.',
+    'Analysis: This is a love song, but the object of her affection is not shown. Maybe the title of the song is a hint, "Season." Maybe the object of her love is the passing flow of time.',
 }

@@ -1,5 +1,15 @@
 export default [
   {
+    id: "billlie-eunoia",
+    artist: "Billlie",
+    title: "EUNOIA",
+    videoType: "musicVideo",
+    thumbnailSrc: "TODO",
+    thumbnailAlt: "TODO",
+    youTubeId: "MVjQIQGqNFM",
+    fileName: "billlie-eunoia.js",
+  },
+  {
     id: "olivia-dean-dive",
     artist: "Olivia Dean",
     title: "Dive",
@@ -153,6 +163,26 @@ export default [
     thumbnailAlt: "TODO",
     youTubeId: "eQtvqaM1i58",
     fileName: "iri-season.js",
+  },
+  {
+    id: "juno-come-thru",
+    artist: "JUNO",
+    title: "come thru",
+    videoType: "musicVideo",
+    thumbnailSrc: "TODO",
+    thumbnailAlt: "TODO",
+    youTubeId: "5oRG_lDPYCk",
+    fileName: "juno-come-thru.js",
+  },
+  {
+    id: "lee-chae-yeon-knock",
+    artist: "LEE CHAE YEON",
+    title: "KNOCK",
+    videoType: "musicVideo",
+    thumbnailSrc: "TODO",
+    thumbnailAlt: "TODO",
+    youTubeId: "3bnjH5jXxJc",
+    fileName: "lee-chae-yeon-knock.js",
   },
   {
     id: "pink-trustfall",

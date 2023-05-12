@@ -30,11 +30,11 @@ export default {
     },
     {
       time: 72.677,
-      text: 'Graffiti reading "King Kong" and "Pink Fong" light up in time with the words, as if to emphasize the glorious dis for anyone who\'s involuntarily heard Pink Fong\'s music. Hint: one of their songs has 12 billion views.',
+      text: "Graffiti reading \"Pink Fong\" lights up in time with the words, as if to emphasize the glorious dis for anyone who's involuntarily heard Pink Fong's music. Hint: one of their songs has 12 billion views.",
     },
     {
       time: 97.856,
-      text: "Glowering or no, this girl has charisma.",
+      text: "Glowering or no, this girl has charisma, especially compared to her high school compatriots come in to surround her.",
     },
     {
       time: 133.057,
