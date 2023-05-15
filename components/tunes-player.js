@@ -1,7 +1,6 @@
 import define from "../utilities/define.js"
 import { component, element, fragment } from "../utilities/fun-html.js"
 import AudioDescription from "./audio-description.js"
-import VoicePrerecorded from "./voice-prerecorded.js"
 import VoiceSynthesized from "./voice-synthesized.js"
 import YouTubePlayer from "./youtube-player.js"
 
@@ -54,10 +53,7 @@ export default class TunesPlayer extends HTMLElement {
       clickInterceptor.style.display = "none"
       setHasCompletedInitialClick(true)
 
-      await Promise.all([
-        voiceSynthesized.onFirstInteraction(),
-        voicePrerecorded.onFirstInteraction(),
-      ])
+      await voiceSynthesized.onFirstInteraction()
 
       if (!isKeyDown) youTubePlayer.play()
     },
@@ -78,7 +74,6 @@ export default class TunesPlayer extends HTMLElement {
     const { lastSong, hasCompletedInitialClick } = this.state
 
     if (!this.voiceSynthesized) {
-      this.voicePrerecorded = new VoicePrerecorded()
       this.voiceSynthesized = new VoiceSynthesized()
     }
 
@@ -110,7 +105,7 @@ export default class TunesPlayer extends HTMLElement {
         time,
         isPlaying,
         isEnded,
-        voice: song.hasPrerecordedVoice ? this.voicePrerecorded : this.voiceSynthesized,
+        voice: this.voiceSynthesized,
         onReady: onDescriptionsReady,
       })
     )

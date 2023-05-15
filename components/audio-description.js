@@ -18,21 +18,13 @@ export default class AudioDescription extends HTMLElement {
 
   initializeActions = ({ stateSetters }) => ({
     fetchDescriptions: async () => {
-      const { song, voice /* , onReady */ } = this.bindings
+      const { song /* , onReady */ } = this.bindings
       const { setDescriptions, setAnalysis } = stateSetters
 
       const descriptionModule = await import(`../songs/${song.fileName}`)
       const { descriptions, analysis } = descriptionModule.default
       setDescriptions(descriptions)
       setAnalysis(analysis)
-
-      if (voice.preloadAudioFilePaths && descriptions[0].prerecorded) {
-        voice.preloadAudioFilePaths(
-          descriptions
-            .map((description) => description.prerecorded.filePath)
-            .concat(analysis.prerecorded.filePath)
-        )
-      }
 
       // Not yet used
       // const { descriptions } = this.state
