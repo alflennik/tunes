@@ -1,7 +1,8 @@
 import define from "../utilities/define.js"
 import { component, element, fragment } from "../utilities/fun-html.js"
 import AudioDescription from "./audio-description.js"
-import Voice from "./voice.js"
+import VoicePrerecorded from "./voice-prerecorded.js"
+import VoiceSynthesized from "./voice-synthesized.js"
 import YouTubePlayer from "./youtube-player.js"
 
 export default class TunesPlayer extends HTMLElement {
@@ -45,7 +46,7 @@ export default class TunesPlayer extends HTMLElement {
       setTime(null)
     },
     handleFirstClick: async (event) => {
-      const { youTubePlayer, clickInterceptor, voice } = this
+      const { youTubePlayer, clickInterceptor, voicePrerecorded, voiceSynthesized } = this
       const { setHasCompletedInitialClick } = stateSetters
 
       const isKeyDown = event.type === "keydown"
@@ -53,7 +54,10 @@ export default class TunesPlayer extends HTMLElement {
       clickInterceptor.style.display = "none"
       setHasCompletedInitialClick(true)
 
-      await voice.onFirstInteraction()
+      await Promise.all([
+        voiceSynthesized.onFirstInteraction(),
+        voicePrerecorded.onFirstInteraction(),
+      ])
 
       if (!isKeyDown) youTubePlayer.play()
     },
@@ -73,8 +77,9 @@ export default class TunesPlayer extends HTMLElement {
     const { song } = this.bindings
     const { lastSong, hasCompletedInitialClick } = this.state
 
-    if (!this.voice) {
-      this.voice = new Voice()
+    if (!this.voiceSynthesized) {
+      this.voicePrerecorded = new VoicePrerecorded()
+      this.voiceSynthesized = new VoiceSynthesized()
     }
 
     if (song.id !== lastSong?.id) handleSongChange(song)
@@ -105,7 +110,7 @@ export default class TunesPlayer extends HTMLElement {
         time,
         isPlaying,
         isEnded,
-        voice: this.voice,
+        voice: song.hasPrerecordedVoice ? this.voicePrerecorded : this.voiceSynthesized,
         onReady: onDescriptionsReady,
       })
     )

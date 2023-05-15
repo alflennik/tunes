@@ -1,6 +1,7 @@
 export default class Voice {
   onFirstInteraction() {
     return new Promise((resolve) => {
+      console.log("starting synth")
       // Thanks AblePlayer!
       // https://github.com/ableplayer/ableplayer/blob/main/scripts/description.js
       var greeting = new SpeechSynthesisUtterance("Hi!")
@@ -8,6 +9,7 @@ export default class Voice {
       greeting.rate = 10 // fastest speed supported by the API
       speechSynthesis.speak(greeting)
       greeting.onend = () => {
+        console.log("started synth")
         // should now be able to get browser voices
         // in browsers that require a click
         resolve(this.#getBestVoice())
@@ -81,10 +83,10 @@ export default class Voice {
     })
   }
 
-  say(text) {
+  say(description) {
     const { voiceName, voiceRate } = this
     const voice = speechSynthesis.getVoices().find((each) => each.name === voiceName)
-    const utterance = new SpeechSynthesisUtterance(text)
+    const utterance = new SpeechSynthesisUtterance(description.text)
     utterance.voice = voice
     utterance.rate = voiceRate
     utterance.lang = "en-US"
