@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tree Experiment</title>
+  </head>
+  <body>
+    <!-- <tree-element></tree-element>
+    <script type="module" src="tree-element.js"></script> -->
+
+    <pre id="tree">
+Tunes
+  Playlists
+    Playlist Freedom Falls
+      Button Play
+      Videos
+        Video Dive by Olivia Dean
+          Thumbnail The artist Olivia Dean dances down a touristic British street.
+          Button Play
+          Menu Options
+        Video OTONABLUE by ATARASHII GAKKO!
+          Thumbnail Four Japanese girls in schoolgirl outfits leap into the air.
+          Action Play
+          Menu Options
+        Video Pump Up by Akini Jing
+          Thumbnail The artist Akini Jing stands in athletic garb in a workout studio.
+        Video TRICKY HOUSE by xikers
+          Thumbnail The xikers team pose in a cavernous garage.
+        Video NeverStop by Alison Goldfrapp
+          Thumbnail The artist Alison Goldfrapp is dressed like a citizen of another world.
+        Video Begin Again by Jessie Ware
+          Thumbnail On a stage, the artist Jessie Ware is surrounded by dancers.
+        Video Monday by Leah Dou
+          Thumbnail The artist Leah Dou flashes a smile.
+        Video Fables by Rahill featuring Beck
+          The artist Rahill is much too big to be sitting in a doll house.
+    Playlist ANXIETY IS A WEAPON
+      Button Play
+      Videos
+        Video NEHAN / Fly With Me by Millenium Parade
+        Video Free by Florence + The Machine
+        Video YOLO by Stella Jang
+        Video Maneki Neko by Wednesday Campanella
+        Video last day on earth by Tai Verdes
+        Video XS by Rina Sawayama
+        Video Weapon by Itzy
+  Player
+    Video
+      Title
+    Controls
+      Button Play
+      Button Next
+      Button Previous
+      Slider Seek
+      Slider Volume
+    Audio Description
+</pre
+    >
+    <pre id="current"></pre>
+    <script>
+      const tree = document.querySelector("#tree")
+      const current = document.querySelector("#current")
+      const lines = tree.innerHTML.split("\n")
+
+      let index = 0
+      const showCurrent = () => {
+        current.innerHTML = lines[index].trimStart()
+      }
+
+      document.addEventListener("keydown", (event) => {
+        const getIndentLevel = (text) => {
+          let level = 0
+          let remainingText = text
+          while (true) {
+            if (remainingText.startsWith("  ")) {
+              level += 1
+              remainingText = remainingText.substr(2)
+            } else {
+              break
+            }
+          }
+          return level
+        }
+
+        if (event.key === "ArrowDown") {
+          event.preventDefault()
+          const line = lines[index]
+          const indentLevel = getIndentLevel(line)
+          let nextIndex
+          let loopIndex = index + 1
+          while (true) {
+            const loopLine = lines[loopIndex]
+            if (!loopLine) break
+            const loopIndentLevel = getIndentLevel(loopLine)
+            if (loopIndentLevel === indentLevel) {
+              nextIndex = loopIndex
+              break
+            }
+            if (indentLevel > loopIndentLevel) {
+              break
+            }
+            loopIndex += 1
+          }
+          if (nextIndex != null) index = nextIndex
+        }
+        if (event.key === "ArrowUp") {
+          event.preventDefault()
+          const line = lines[index]
+          const indentLevel = getIndentLevel(line)
+          let previousIndex
+          let loopIndex = index - 1
+          while (true) {
+            const loopLine = lines[loopIndex]
+            if (!loopLine) break
+            const loopIndentLevel = getIndentLevel(loopLine)
+            if (loopIndentLevel === indentLevel) {
+              previousIndex = loopIndex
+              break
+            }
+            if (indentLevel > loopIndentLevel) {
+              break
+            }
+            loopIndex -= 1
+          }
+          if (previousIndex != null) index = previousIndex
+        }
+        if (event.key === "ArrowRight") {
+          event.preventDefault()
+          const line = lines[index]
+          const nextLine = lines[index + 1]
+          if (nextLine) {
+            const indentLevel = getIndentLevel(line)
+            const nextIndentLevel = getIndentLevel(nextLine)
+            if (nextIndentLevel - indentLevel === 1) index = index + 1
+          }
+        }
+        if (event.key === "ArrowLeft") {
+          event.preventDefault()
+          const line = lines[index]
+          const indentLevel = getIndentLevel(line)
+          let previousIndex
+          let loopIndex = index - 1
+          while (true) {
+            const loopLine = lines[loopIndex]
+            if (!loopLine) break
+            const loopIndentLevel = getIndentLevel(loopLine)
+            if (loopIndentLevel === indentLevel - 1) {
+              previousIndex = loopIndex
+              break
+            }
+            loopIndex -= 1
+          }
+          if (previousIndex != null) index = previousIndex
+        }
+        showCurrent()
+      })
+      showCurrent()
+    </script>
+  </body>
+</html>
