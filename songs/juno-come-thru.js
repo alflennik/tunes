@@ -37,6 +37,7 @@ export default {
       text: "Her whole body bounces as she releases that confession.",
     },
   ],
-  analysis:
-    "Analysis: The massive groove they produce in this song is what you'll experience if you take the plunge and move to Los Angeles, like you've been dreaming.",
+  analysis: {
+    text: "Analysis: The massive groove they produce in this song is what you'll experience if you take the plunge and move to Los Angeles, like you've been dreaming.",
+  },
 }

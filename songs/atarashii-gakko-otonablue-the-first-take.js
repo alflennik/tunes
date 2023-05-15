@@ -26,7 +26,7 @@ export default {
     },
     {
       time: 43.04,
-      text: 'Caption reads, "It\'s certainly an honor to perform on The First Take."',
+      text: 'Caption reads, "It\'s certainly an honor for us to perform on The First Take."',
     },
     {
       time: 51.836,

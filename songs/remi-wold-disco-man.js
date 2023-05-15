@@ -1,44 +1,40 @@
 export default {
   descriptions: [
     {
-      time: 0,
-      text: "Bubbling shapes like psychedelic hallucinations turn into the artist Remi Wolf.",
+      time: 3.468,
+      text: "The artist Remi Wolf wiggles her body, emoting pure and playful waggishness. She's embedded in a 3D digital scene, surrounded by a crowd of at least 22 low-fidelity copies of herself.",
     },
     {
-      time: 7.124,
-      text: "There are at least 19 low-fidelity copies of her, all of them dancing.",
-    },
-    {
-      time: 19.092,
-      text: "The real Remi Wolf sings on a big yellow cylinder which looks like it came from a game of blocks.",
-    },
-    {
-      time: 28.634,
+      time: 21.007,
       text: "It's like someone imported her into a computer, and then copy-pasted maniacally for hours.",
     },
     {
-      time: 46.531,
-      text: "It's like what you would see if you stuck your head up a computer's butt.",
+      time: 47.448,
+      text: "Her stage looks like someone clicked the cylinder button on a 3D program and then just called it good.",
     },
     {
-      time: 68.262,
-      text: "A couple members of her band are also rocking out on their own big blocks. The guitarist has a wig, a caterpillar mustache, and protruding chest hair from an obnoxiously revealing shirt.",
+      time: 66.365,
+      text: "A couple members of her band are also rocking out on their own cylinders. The guitarist has a wig, caterpillar mustache, and aggressively protruding chest hair. The drummer sports what is known as a shit-eating grin.",
     },
     {
       time: 88.608,
       text: "Remi Wolf wears a golf visor and pink sunglasses and her clothes are see-through like a crappy invisibility cloak, probably caused by wearing green in front of a green screen.",
     },
     {
-      time: 117.137,
-      text: "Clouds shape like construction paper cutouts surround the scene, clip art hot air balloons and a rainbow fill the sky. The ground is a violent shade of lime green.",
+      time: 113.965,
+      text: "Honestly Remi Wolf sports a shit-eating grin too.",
     },
     {
-      time: 149.535,
-      text: "Every color known to man is on screen at once. If imagery could cause spontaneous projectile vomiting, this one might do it.",
+      time: 119.842,
+      text: "Every inch of the frame is packed with 39 or more Remi Wolves, and low-effort cutout shapes of clouds, balloons and rainbows, without regard for aesthetics, in fact the science of aesthetics seems to have been applied for evil.",
     },
     {
-      time: 185.031,
-      text: "Parts of the scene gradually despawn and then the image goes black.",
+      time: 152.26,
+      text: "It must be said, the filmmakers have made an art out of half-assing the scene. It's an accurate rendition of the internals of a computer's butt.",
+    },
+    {
+      time: 183.663,
+      text: "Parts of the scene gradually despawn and then the image unceremoniously cuts.",
     },
   ],
 }

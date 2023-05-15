@@ -65,6 +65,7 @@ export default {
       text: "Darkness having lifted with the arrival of dawn, she crosses a bridge, ferris wheel in the background. A passing car's headlines shine, the car driven by the man. The woman notices him. She smiles a secret smile and walks in the opposite direction.",
     },
   ],
-  analysis:
-    "How can someone immersed in grief set themselves free? The endless city is full of bewildering lights, but the solution is as simple as the wordless melody recalled by Maika Loubté. It is like a carousel. It is an act of turning. There is no fate, no destined direction your life must follow. But knowing that you need to change is not enough. You also have to make the change.",
+  analysis: {
+    text: "Analysis: How can someone immersed in grief set themselves free? The endless city is full of bewildering lights, but the solution is as simple as the wordless melody recalled by Maika Loubté. It is like a carousel. It is an act of turning. There is no fate, no destined direction your life must follow. But knowing that you need to change is not enough. You also have to make the change.",
+  },
 }

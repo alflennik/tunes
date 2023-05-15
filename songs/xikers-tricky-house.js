@@ -2,7 +2,7 @@ export default {
   descriptions: [
     {
       time: 0,
-      text: "The KQ Entertainment logo manifests itself.",
+      text: 'Title for "KQ Entertainment" manifests from some kind of inverted-entropy metallic schrapnel.',
     },
     {
       time: 13.093,
@@ -86,9 +86,10 @@ export default {
     },
     {
       time: 246.569,
-      text: "The scene fades and the xikers logo pops in. Don't forget.",
+      text: "The scene fades and the xikers logo pops in.",
     },
   ],
-  analysis:
-    "Analysis: What is a tricky house? Is it consciousness itself, the way your existance is constantly assaulted with sensory information and thoughts, so that you forget who you really are, the power you have to become the entire world and set yourself free?",
+  analysis: {
+    text: "Analysis: From the video it would seem that if you escape the tricky house, all your dreams of wealth and success can come true, but what is a tricky house? It seems like an important question. Is it ego?",
+  },
 }

@@ -30,7 +30,7 @@ export default {
     },
     {
       time: 242.219,
-      text: "If there's hope for additional clues as to where this transmission is coming from, they aren't there. There is a symbol on her cap which might be informative, but the artificial intelligence has glommed onto it continually transforming it into different shapes.",
+      text: "If there's hope for additional clues as to where this transmission is coming from, they aren't there. There is a symbol on her cap which might be informative, but the artificial intelligence has glommed onto it, continually transforming it into different shapes.",
     },
     {
       time: 269.515,

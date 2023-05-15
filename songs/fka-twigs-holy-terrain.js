@@ -81,6 +81,7 @@ export default {
       text: "The artist, nude except for a slathering of white paint, is perched on a bull. She exposes her heavily muscled body of a dancer. The bull is dark, primal and immense.",
     },
   ],
-  analysis:
-    "Crucial to the operation of the mind is the persistent illusion of control, an illusion that can be swept away by lustful subconscious energies, as the opportunity to mate arises.",
+  analysis: {
+    text: "Analysis: Crucial to the operation of the mind is the persistent illusion of control, an illusion that can be swept away by lustful subconscious energies, as the opportunity to mate arises.",
+  },
 }

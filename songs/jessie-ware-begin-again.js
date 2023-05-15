@@ -14,7 +14,7 @@ export default {
     },
     {
       time: 55.135,
-      text: "She walks through the opening in the stage curtain, but instead of arriving backstage, she arrives at yet another stage, and this one is brightly lit.",
+      text: "She walks through the opening in the stage curtain, but instead of arriving backstage, she arrives at yet another stage, and this one is bright as day.",
     },
     {
       time: 73.856,

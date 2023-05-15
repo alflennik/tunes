@@ -50,7 +50,7 @@ export default {
     },
     {
       time: 129.21,
-      text: "In its shadow, the two women are blindfolded and try to find each other, not able to get more than a glancing touch with the fingers.",
+      text: "The two women are blindfolded and try to find each other, not able to get more than a glancing touch with the fingers.",
     },
     {
       time: 169.061,
