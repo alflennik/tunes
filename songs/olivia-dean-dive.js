@@ -30,7 +30,7 @@ export default {
     },
     {
       time: 117.103,
-      text: "It's cloudy, of course, on a big sandy beach, Olivia sprinting through the dunes towards the water.",
+      text: "It's cloudy, of course, on a big sandy beach, Olivia sprinting through the dunes towards the distant water.",
     },
     {
       time: 129.395,

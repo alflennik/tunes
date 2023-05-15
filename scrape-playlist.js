@@ -56,4 +56,4 @@ copy(
   )
 )
 
-console.log("video data has been copied to your clipboard")
+console.info("video data has been copied to your clipboard")

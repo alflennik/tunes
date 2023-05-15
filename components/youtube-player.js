@@ -34,7 +34,7 @@ export default class YouTubePlayer extends HTMLElement {
         const intervalId = setInterval(() => {
           const seconds = this.#player.getCurrentTime()
           onUpdateTime(seconds)
-          console.log(Math.round(seconds * 1000) / 1000)
+          console.info(Math.round(seconds * 1000) / 1000)
         }, /* 20 */ 400)
 
         setIntervalId(intervalId)
