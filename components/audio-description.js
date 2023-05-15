@@ -24,7 +24,7 @@ export default class AudioDescription extends HTMLElement {
       const descriptionModule = await import(`../songs/${song.fileName}`)
       const { descriptions, analysis } = descriptionModule.default
       setDescriptions(descriptions)
-      if (analysis) setAnalysis(analysis)
+      setAnalysis(analysis)
 
       // Not yet used
       // const { descriptions } = this.state
@@ -69,7 +69,7 @@ export default class AudioDescription extends HTMLElement {
         if (isTimeSeek) {
           voice.clear()
         } else {
-          voice.say(description.text)
+          voice.say(description)
         }
       }
     },
@@ -80,7 +80,7 @@ export default class AudioDescription extends HTMLElement {
       const { setIsCurrentlyPlaying, setCurrentDescriptionText } = stateSetters
       setIsCurrentlyPlaying(isPlaying)
       if (!isPlaying && isEnded && analysis) {
-        setCurrentDescriptionText(analysis)
+        setCurrentDescriptionText(analysis.text)
         voice.say(analysis)
       } else if (!isPlaying) {
         voice.pause()
