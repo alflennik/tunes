@@ -66,15 +66,15 @@ function defineComponent(name, UserComponent) {
       return this.#immutableState
     }
 
-    connectedCallback() {
+    async connectedCallback() {
       // According to MDN connectedCallback can get triggered even when disconnected (!)
       if (!this.isConnected) return
+
+      await forwardProperty(this, UserComponent, "connectedCallback")
 
       if (this.reactiveTemplate) {
         this.#refresh()
       }
-
-      forwardProperty(this, UserComponent, "connectedCallback")
     }
 
     #refreshImmutableState() {
@@ -117,13 +117,15 @@ function defineComponent(name, UserComponent) {
 
     setBindings(bindings) {
       this.bindings = bindings
-      this.#refresh()
+      if (this.isConnected) {
+        this.#refresh()
+      }
     }
   }
 
   function forwardProperty(component, UserComponent, propertyName, args = []) {
     if (UserComponent.prototype[propertyName]) {
-      UserComponent.prototype[propertyName].call(component, ...args)
+      return UserComponent.prototype[propertyName].call(component, ...args)
     }
   }
 
