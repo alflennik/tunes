@@ -139,6 +139,24 @@ const siteBuildScript = async ({ environment }) => {
 
   await copyAssets()
 
+  const setFirebaseProject = async (firebaseId) => {
+    await new Promise((resolve, reject) => {
+      exec(`firebase use tunes-${environment}`, { cwd: __dirname }, (error, stdout, stderr) => {
+        if (!stdout.match(`Now using project ${firebaseId}`)) {
+          return reject({ error, stderr, stdout })
+        }
+        resolve()
+      })
+    }).catch((error) => {
+      console.error(error)
+      throw new Error("Failed to set Firebase project")
+    })
+  }
+
+  const firebaseId = `tunes-${environment}`
+
+  await setFirebaseProject(firebaseId)
+
   const firebaseDeploy = async () => {
     await new Promise((resolve, reject) => {
       const firebaseDeploy = spawn("firebase", ["deploy"], { cwd: __dirname })
