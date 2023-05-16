@@ -3,6 +3,7 @@ const path = require("path")
 const { exec, spawn } = require("child_process")
 
 const assetLocations = ["tunes.html", "songs", "components", "library", "utilities"]
+const renameAssets = [["tunes.html", "index.html"]]
 
 const siteBuildScript = async ({ environment }) => {
   if (environment !== "staging" && environment !== "production") {
@@ -127,8 +128,10 @@ const siteBuildScript = async ({ environment }) => {
   const copyAssets = async () => {
     await Promise.all(
       assetLocations.map(async (assetLocation) => {
+        const newName =
+          renameAssets.find(([beforeName]) => beforeName === assetLocation)?.[1] ?? assetLocation
         const assetSource = path.resolve(__dirname, "../", assetLocation)
-        const assetDestination = path.resolve(buildFolderPath, assetLocation)
+        const assetDestination = path.resolve(buildFolderPath, newName)
         fs.cp(assetSource, assetDestination, { recursive: true })
       })
     )
