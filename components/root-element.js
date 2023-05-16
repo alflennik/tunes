@@ -24,6 +24,7 @@ class RootElement extends HTMLElement {
       setPlayerSong(song)
 
       this.playerH2.focus()
+      this.playerH2.scrollIntoView({ behavior: "smooth", block: "start" })
     },
   })
 

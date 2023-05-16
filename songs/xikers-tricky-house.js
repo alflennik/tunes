@@ -2,7 +2,7 @@ export default {
   descriptions: [
     {
       time: 0,
-      text: 'Title for "KQ Entertainment" manifests from some kind of inverted-entropy metallic schrapnel.',
+      text: 'Title for "KQ Entertainment" manifests from some kind of inverted-entropy metallic shrapnel.',
     },
     {
       time: 13.093,

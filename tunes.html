@@ -46,6 +46,11 @@
           calc(var(--description-padding) * 2) + var(--description-text-height)
         );
       }
+      @media (max-width: 767px) {
+        tunes-player {
+          --description-font-size: 1em;
+        }
+      }
       .click-interceptor {
         width: 100%;
         height: calc(100% - var(--description-total-height));

@@ -1,15 +1,16 @@
 export default class Voice {
   onFirstInteraction() {
     return new Promise((resolve) => {
-      console.log("starting synth")
       // Thanks AblePlayer!
       // https://github.com/ableplayer/ableplayer/blob/main/scripts/description.js
       var greeting = new SpeechSynthesisUtterance("Hi!")
       greeting.volume = 0 // silent
       greeting.rate = 10 // fastest speed supported by the API
+      // Wow, thanks to this answer: https://stackoverflow.com/a/58775876/3888572
+      speechSynthesis.cancel()
       speechSynthesis.speak(greeting)
+
       greeting.onend = () => {
-        console.log("started synth")
         // should now be able to get browser voices
         // in browsers that require a click
         resolve(this.#getBestVoice())
@@ -38,8 +39,6 @@ export default class Voice {
         // Windows
         ["Microsoft Steffan Online (Natural) - English (United States)", 1.7], // Edge only
         ["Microsoft Mark - English (United States)", isChrome ? 2.8 : 1.7], // Chrome and Firefox
-
-        ["Fred", 1.15], // iOS
       ]
 
       let defaultVoice
@@ -87,8 +86,15 @@ export default class Voice {
     const { voiceName, voiceRate } = this
     const voice = speechSynthesis.getVoices().find((each) => each.name === voiceName)
     const utterance = new SpeechSynthesisUtterance(description.text)
-    utterance.voice = voice
-    utterance.rate = voiceRate
+
+    // On iOS the best voice is the default voice, which is not listed in the voice list
+    const isIOS = /iPhone|iPod|iPad/.test(navigator.platform)
+    if (!isIOS) {
+      utterance.voice = voice
+      utterance.rate = voiceRate
+    } else {
+      utterance.rate = 1.1
+    }
     utterance.lang = "en-US"
     speechSynthesis.speak(utterance)
   }

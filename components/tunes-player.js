@@ -44,20 +44,39 @@ export default class TunesPlayer extends HTMLElement {
       setLastSong(song)
       setTime(null)
     },
-    handleFirstClick: async (event) => {
-      const { youTubePlayer, clickInterceptor, voicePrerecorded, voiceSynthesized } = this
+    handleFirstClick: async ({ isKeyDown, isClickInterceptor }) => {
+      const { youTubePlayer, voiceSynthesized } = this
       const { setHasCompletedInitialClick } = stateSetters
-
-      const isKeyDown = event.type === "keydown"
-
-      clickInterceptor.style.display = "none"
-      setHasCompletedInitialClick(true)
 
       await voiceSynthesized.onFirstInteraction()
 
-      if (!isKeyDown) youTubePlayer.play()
+      const clickInterceptor = document.querySelector(".click-interceptor")
+      clickInterceptor.style.display = "none"
+      setHasCompletedInitialClick(true)
+
+      if (!isKeyDown && isClickInterceptor) youTubePlayer.play()
     },
   })
+
+  connectedCallback() {
+    const listenForFirstClick = async (event) => {
+      const { handleFirstClick } = this.actions
+
+      const isKeyDown = event.type === "keydown"
+
+      const clickInterceptor = document.querySelector(".click-interceptor")
+      const isClickInterceptor =
+        event.target === clickInterceptor || clickInterceptor.contains(event.target)
+
+      await handleFirstClick({ isKeyDown, isClickInterceptor })
+
+      document.removeEventListener("click", listenForFirstClick)
+      document.removeEventListener("keydown", listenForFirstClick)
+    }
+
+    document.addEventListener("click", listenForFirstClick)
+    document.addEventListener("keydown", listenForFirstClick)
+  }
 
   reactiveTemplate() {
     const {
@@ -68,7 +87,6 @@ export default class TunesPlayer extends HTMLElement {
       onYouTubePlay,
       onYouTubeEnd,
       handleSongChange,
-      handleFirstClick,
     } = this.actions
     const { song } = this.bindings
     const { lastSong, hasCompletedInitialClick } = this.state
@@ -85,10 +103,7 @@ export default class TunesPlayer extends HTMLElement {
       element("div")
         .reference(this, "clickInterceptor")
         .attributes({ class: "click-interceptor", "tab-index": 0 })
-        .listeners({ click: handleFirstClick, keydown: handleFirstClick })
-        .children(
-          element("button").listeners({ click: handleFirstClick }).children(`Play ${song.title}`)
-        ),
+        .children(element("button").children(`Play ${song.title}`)),
       component(YouTubePlayer)
         .attributes({ "aria-hidden": hasCompletedInitialClick ? undefined : true })
         .reference(this, "youTubePlayer")
