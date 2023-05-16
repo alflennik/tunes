@@ -1,3 +1,4 @@
+import formatTitle from "../library/formatTitle.js"
 import songs from "../songs/songs.js"
 import define from "../utilities/define.js"
 import { component, fragment, element } from "../utilities/fun-html.js"
@@ -21,6 +22,8 @@ class RootElement extends HTMLElement {
       const songId = event.target.getAttribute("song-id")
       const song = songs.find((song) => song.id === songId)
       setPlayerSong(song)
+
+      this.playerH2.focus()
     },
   })
 
@@ -29,24 +32,37 @@ class RootElement extends HTMLElement {
     const { playerSong } = this.state
 
     return fragment(
-      element("nav").children(
-        element("ul").children(
-          ...songs.map((song) => {
-            const isActive = song.id === playerSong.id
-            return element("li").children(
-              element("a")
-                .attributes({
-                  href: "#",
-                  "song-id": song.id,
-                  "aria-current": isActive ? true : undefined,
-                })
-                .listeners({ click: handleSongClick })
-                .children(song.title)
+      element("div")
+        .attributes({ class: "content-container" })
+        .children(
+          element("h1").children("Tunes"),
+          element("p").children(
+            "The Tunes project implements audio descriptions for music videos, which are written by some guy named Alex."
+          ),
+          element("nav").children(
+            element("h2").children("All Songs"),
+            element("ul").children(
+              ...songs.map((song) => {
+                const isActive = song.id === playerSong.id
+                return element("li").children(
+                  element("a")
+                    .attributes({
+                      href: "#",
+                      "song-id": song.id,
+                      "aria-current": isActive ? true : undefined,
+                    })
+                    .listeners({ click: handleSongClick })
+                    .children(formatTitle(song, { titleStyle: "listenable" }))
+                )
+              })
             )
-          })
-        )
-      ),
-      element("main").children(component(TunesPlayer).bindings({ song: playerSong }))
+          ),
+          element("h2")
+            .reference(this, "playerH2")
+            .attributes({ tabindex: "-1" })
+            .children("Player")
+        ),
+      component(TunesPlayer).bindings({ song: playerSong })
     )
   }
 }

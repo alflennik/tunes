@@ -25,7 +25,7 @@ export default {
       text: "The camera shakes slightly, probably because the cameraman can't help but dance along.",
     },
     {
-      time: 110.868,
+      time: 112.314,
       text: "She spells out the numbers with her fingers to make sure you receive the positional message: the 405 highway in Los Angeles.",
     },
     {

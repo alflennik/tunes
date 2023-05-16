@@ -2,67 +2,90 @@ export default {
   descriptions: [
     {
       time: 3.771,
-      text: "In a dark suburban neighborhood, grainy camcorder footage zooms into the window of an unknowing woman who is in the middle of a vigorous aerobic dance.",
-    },
-    {
-      time: 10.185,
-      text: 'Titles in the style of a 1980s trailer read, "Coming this February, Diane Tupperware is Suzanna Livalot."',
+      text: "In a suburban neighborhood at night, someone is filming into the window of an unknowing woman who is in the middle of a vigorous aerobic dance.",
     },
     {
       time: 18.185,
-      text: "Under flashing disco lights, she dances like no one is watching.",
-    },
-    {
-      time: 22.228,
       text: 'Titles read, "Amtrac presents, Nobody Else."',
     },
     {
-      time: 25.362,
-      text: "An unseen invader peers from behind a bush, a tiny robot with glowing eyes, attempting to dance along with rusty and unapologetically low-budget locomotion.",
+      time: 23.033,
+      text: "Inside the bushes there is a tiny robot in a raincoat, completely enraptured and attempting to dance along with rusty and unapologetically low-budget locomotion.",
     },
     {
       time: 36.626,
-      text: "In a dingy garage, he trundles at low speed.",
+      text: 'In a dingy garage, the robot trundles at low speed. Titles reveal his directive: "Locating target."',
     },
     {
-      time: 43.029,
-      text: 'Overlaying his grainy vision is his directive: "Locating target."',
+      time: 47.448,
+      text: 'His "memory replay" is stuck on the dance of his pretty and oblivious infatuation.',
     },
     {
-      time: 51.477,
-      text: 'A vision labeled "memory replay" shows the aerobic dancing of his pretty and oblivious infatuation.',
+      time: 62.318,
+      text: "An irascible goon emerges from the back of a van. Spitting his gum aside, he lays out his wares, a selection of knives, and a little robot hand hovers over each one.",
     },
     {
-      time: 63.136,
-      text: 'The text "Burt Toblerone is Johnny Knives" accompanies the emergence of a mullet and denim sporting and thoroughly disreputable character from the back of a truck.',
+      time: 83.865,
+      text: 'The little robot chooses a savage looking blade and passes over a twenty. Title reads: "target acquired." The goon chuckles callously as the little robot rolls away.',
     },
     {
-      time: 71.811,
-      text: "Spitting his gum aside, he lays out his wares, a selection of knives, and a little robot hand hovers over each one.",
+      time: 96.188,
+      text: "In his memory replay, she blows a smooch, and in a convenience store, little robot hands grab a roll of duct tape. Target acquired.",
     },
     {
-      time: 81.759,
-      text: 'The little robot chooses a savage looking blade and passes over a twenty. Text reads: "target acquired."',
+      time: 116.816,
+      text: "The cashier is only slightly nonplussed as a tiny robot hand passes over a twenty.",
     },
     {
-      time: 91.159,
-      text: "Johnny Knives chuckles callously as the little robot rolls away.",
+      time: 123.931,
+      text: 'He arrives at his lair, stabbing a knife into his work table and dispensing a strip of duck tape. His programming blinks: "Completing objective. Completing objective."',
     },
     {
-      time: 103.654,
-      text: "The dancer blows a kiss in the little robot's incessant memory replay, as he rolls into a convenience store.",
+      time: 142.638,
+      text: "He wields the knife like a screw driver, fashioning some unknown device. A little robot hand pats on some duck tape.",
     },
     {
-      time: 115.117,
-      text: "Little robot hands grab a roll of duct tape. Target acquired.",
+      time: 155.384,
+      text: "He slowly creeps towards her house.",
     },
     {
-      time: 121.813,
-      text: 'The cashier, identified as "Bubbles" played by "Sharon Battingcage," raises her shades as a twenty pops up from below the counter.',
+      time: 170.01,
+      text: "She is still dancing, like no one is watching.",
     },
     {
-      time: 131.566,
-      text: "Todo: finish audio description.",
+      time: 181.65,
+      text: "He stands outside her house, a boom box on his head like some outdated 80's movie. Startled, she notices him.",
+    },
+    {
+      time: 190.592,
+      text: "He lays down his boom box and launches into his own energetic sequence of wiggles, his love dance. She watches, enraptured.",
+    },
+    {
+      time: 198.962,
+      text: "He prepares to push play on his boom box, but the duck-taped monstrosity has an exposed cable, it's not safe.",
+    },
+    {
+      time: 206.455,
+      text: "She has just come outside when he touches the player and blam, the girl recoils as he explodes into bits and pieces",
+    },
+    {
+      time: 218.344,
+      text: "But she picks up what remains of the face and hugs it.",
+    },
+    {
+      time: 224.325,
+      text: 'Title reads, "The end"',
+    },
+    {
+      time: 229.957,
+      text: "The image fades out with a glint in his seemingly deactivated eye.",
+    },
+    {
+      time: 237.957,
+      text: "Credits show briefly.",
     },
   ],
+  analysis: {
+    text: "Analysis: tools of violence can never build a foundation for love.",
+  },
 }

@@ -5,7 +5,7 @@ export default {
       text: "The artist Remi Wolf wiggles her body, emoting pure and playful waggishness. She's embedded in a 3D digital scene, surrounded by a crowd of at least 22 low-fidelity copies of herself.",
     },
     {
-      time: 21.007,
+      time: 21.506,
       text: "It's like someone imported her into a computer, and then copy-pasted maniacally for hours.",
     },
     {
@@ -34,7 +34,7 @@ export default {
     },
     {
       time: 183.663,
-      text: "Parts of the scene gradually despawn and then the image unceremoniously cuts.",
+      text: "Parts of the scene gradually despawn before it all just cuts.",
     },
   ],
 }
