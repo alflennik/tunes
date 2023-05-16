@@ -138,7 +138,7 @@ const siteBuildScript = async ({ environment }) => {
 
   const firebaseDeploy = async () => {
     await new Promise((resolve, reject) => {
-      const firebaseDeploy = spawn("firebase", ["deploy"])
+      const firebaseDeploy = spawn("firebase", ["deploy"], { cwd: __dirname })
 
       firebaseDeploy.stdout.on("data", (data) => {
         console.log(data.toString())
