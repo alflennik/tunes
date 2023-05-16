@@ -1,3 +1,3 @@
-// const siteBuildScript = require("./site-build-staging")
+const siteBuildScript = require("./site-build")
 
-// siteBuildScript({ environment: "production" })
+siteBuildScript({ environment: "production" })
