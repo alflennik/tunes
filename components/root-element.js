@@ -1,7 +1,7 @@
 import formatTitle from "../library/formatTitle.js"
 import songs from "../songs/songs.js"
 import define from "../utilities/define.js"
-import { component, fragment, element } from "../utilities/fun-html.js"
+import { component, fragment, element } from "../utilities/reconciler.js"
 import TunesPlayer from "./tunes-player.js"
 
 class RootElement extends HTMLElement {
@@ -39,7 +39,6 @@ class RootElement extends HTMLElement {
       element("div")
         .attributes({ class: "content-container" })
         .children(
-          // playerSong ? element("p").reconcilerId("danger").children("Player is ready") : null,
           element("h1").children("Tunes"),
           element("p").children(
             "The Tunes project implements audio descriptions for music videos, which are written by some guy named Alex."

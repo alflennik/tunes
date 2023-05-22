@@ -1,5 +1,5 @@
 import define from "../utilities/define.js"
-import { element } from "../utilities/fun-html.js"
+import { element } from "../utilities/reconciler.js"
 
 export default class AudioDescription extends HTMLElement {
   constructor() {

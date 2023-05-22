@@ -1,5 +1,5 @@
 import { titleToTrain } from "./convertCase.js"
-import { build } from "./fun-html.js"
+import { build } from "./reconciler.js"
 
 export const tagNameWeakMap = new WeakMap()
 

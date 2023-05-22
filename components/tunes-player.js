@@ -1,5 +1,5 @@
 import define from "../utilities/define.js"
-import { component, element, fragment } from "../utilities/fun-html.js"
+import { component, element, fragment } from "../utilities/reconciler.js"
 import AudioDescription from "./audio-description.js"
 import VoiceSynthesized from "./voice-synthesized.js"
 import YouTubePlayer from "./youtube-player.js"
