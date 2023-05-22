@@ -1,9 +1,20 @@
+const toSentence = (list) => {
+  return `${list.slice(0, -1).join(", ")} and ${list.slice(-1)}`
+}
+
 const formatTitle = (song, { titleStyle = "standard" } = {}) => {
-  let featuredArtistFormatted = song.featuredArtist ? `feat. ${song.featuredArtist}` : ""
+  let featuredArtistFormatted
   if (titleStyle === "standard") {
-    featuredArtistFormatted = song.featuredArtist ? `feat. ${song.featuredArtist}` : ""
+    const featuredList = song.featuredArtists?.join(", ") ?? song.featuredArtist ?? ""
+    featuredArtistFormatted = featuredList ? `feat. ${featuredList}` : ""
   } else if (titleStyle === "listenable") {
-    featuredArtistFormatted = song.featuredArtist ? `featuring ${song.featuredArtist}` : ""
+    let featuredList
+    if (song.featuredArtists) {
+      featuredList = toSentence(song.featuredArtists)
+    } else {
+      featuredList = song.featuredArtist ?? ""
+    }
+    featuredArtistFormatted = featuredList ? `featuring ${featuredList}` : ""
   }
 
   let videoTypeFormatted
@@ -21,9 +32,9 @@ const formatTitle = (song, { titleStyle = "standard" } = {}) => {
   if (titleStyle === "standard") {
     finalTitle = [
       song.artist,
-      featuredArtistFormatted,
       "-",
       song.title,
+      inParens(featuredArtistFormatted),
       inParens(videoTypeFormatted),
     ]
       .filter((item) => !!item)

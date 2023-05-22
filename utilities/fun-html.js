@@ -2,11 +2,11 @@ import { tagNameWeakMap } from "./define.js"
 import getSemaphore from "./semaphore.js"
 
 const getElementPropertiesWeapMap = new WeakMap()
+const getElementWeapMap = new WeakMap()
+const getReconcilerIdElementPropertiesWeapMap = new WeakMap()
 const peviousBuilderWeakMap = new WeakMap()
 
 const utilities = {}
-
-let buildContext
 
 const buildSemaphore = getSemaphore()
 
@@ -22,8 +22,11 @@ export const element = (tagName) => {
     return builder
   }
 
-  builder.key = (key) => {
-    elementProperties.key = key
+  builder.reconcilerId = (reconcilerId) => {
+    if (reconcilerId === null || reconcilerId === undefined || typeof reconcilerId !== "string") {
+      throw new Error("Found invalid reconcilerId")
+    }
+    elementProperties.reconcilerId = reconcilerId
     return builder
   }
 
@@ -64,8 +67,6 @@ export const component = (Component) => {
     elementProperties.bindings = bindings
     return builder
   }
-
-  elementProperties.bindingParent = buildContext.bindingParent
 
   return builder
 }
@@ -168,7 +169,6 @@ const updateElement = (element, elementProperties) => {
   return element
 }
 
-/*
 const debugBuilder = (component, builder) => {
   let refs = {}
   const getId = () => Math.random().toString().substr(2, 5)
@@ -220,75 +220,41 @@ const debugBuilder = (component, builder) => {
 
   return refs
 }
-*/
 
-const initialBuild = (component) => {
+const reconcile = (component) => {
   const builder = component.reactiveTemplate()
+  const oldBuilder = peviousBuilderWeakMap.get(component)
+  const isSecondaryBuild = !!oldBuilder
 
-  const recursivelyAppend = (parent, builders) => {
+  const reconcilerIdElementProperties = {}
+  let oldReconcilerIdElementProperties
+  if (isSecondaryBuild) {
+    oldReconcilerIdElementProperties = getReconcilerIdElementPropertiesWeapMap.get(oldBuilder)
+  }
+
+  const recursivelyReconcile = (parent, builders, oldBuilders) => {
     if (!builders) return
 
     // Breadth-first recursion - complete siblings first
-    builders.forEach((builder) => {
-      const getElementProperties = getElementPropertiesWeapMap.get(builder)
-      const elementProperties = getElementProperties()
-
-      if (elementProperties.isFragment) return
-
-      if (elementProperties.text) {
-        parent.innerText = elementProperties.text
-        return
-      }
-
-      const element = buildElement(elementProperties)
-      elementProperties.element = element
-
-      parent.appendChild(element)
-    })
-
-    // Breadth-first recursion - now that siblings are complete do the children
-    builders.forEach((builder) => {
-      const getElementProperties = getElementPropertiesWeapMap.get(builder)
-      const elementProperties = getElementProperties()
-
-      let element
-      if (elementProperties.isFragment) {
-        element = parent
-      } else {
-        element = elementProperties.element
-      }
-
-      const childBuilders = elementProperties.childBuilders
-
-      recursivelyAppend(element, childBuilders)
-    })
-  }
-
-  recursivelyAppend(component, [builder])
-
-  peviousBuilderWeakMap.set(component, builder)
-}
-
-const secondaryBuild = (component) => {
-  const builder = component.reactiveTemplate()
-  const oldBuilder = peviousBuilderWeakMap.get(component)
-
-  const recursivelyReconcile = (parent, builders, oldBuilders) => {
-    if (!builders && !oldBuilders) return
-
-    // Breadth-first recursion - complete siblings first
     builders.forEach((builder, index) => {
-      const oldBuilder = oldBuilders[index]
-      const getElementProperties = getElementPropertiesWeapMap.get(builder)
-      const getOldElementProperties = getElementPropertiesWeapMap.get(oldBuilder)
-      const elementProperties = getElementProperties()
-      const oldElementProperties = getOldElementProperties()
+      if (builder === null) return
 
-      if (
-        oldElementProperties.tagName !== elementProperties.tagName ||
-        oldElementProperties.key !== elementProperties.key
-      ) {
-        throw new Error("Temporary error: failed to reconcile")
+      const getElementProperties = getElementPropertiesWeapMap.get(builder)
+      const elementProperties = getElementProperties()
+
+      if (elementProperties.reconcilerId) {
+        reconcilerIdElementProperties[elementProperties.reconcilerId] = elementProperties
+      }
+
+      let oldElementProperties
+      if (isSecondaryBuild) {
+        if (elementProperties.reconcilerId) {
+          oldElementProperties = oldReconcilerIdElementProperties[elementProperties.reconcilerId]
+        } else {
+          const oldBuilder = oldBuilders[index]
+          const getOldElementProperties = getElementPropertiesWeapMap.get(oldBuilder)
+          oldElementProperties = getOldElementProperties()
+        }
       }
 
       if (elementProperties.isFragment) return
@@ -298,19 +264,34 @@ const secondaryBuild = (component) => {
         return
       }
 
-      const element = oldElementProperties.element
-      elementProperties.element = element
-
-      updateElement(element, elementProperties)
+      if (oldElementProperties) {
+        const element = oldElementProperties.element
+        updateElement(element, elementProperties)
+        elementProperties.element = element
+      } else {
+        const element = buildElement(elementProperties)
+        parent.appendChild(element)
+        elementProperties.element = element
+      }
     })
 
     // Breadth-first recursion - now that siblings are complete do the children
     builders.forEach((builder, index) => {
-      const oldBuilder = oldBuilders[index]
+      if (builder === null) return
+
       const getElementProperties = getElementPropertiesWeapMap.get(builder)
-      const getOldElementProperties = getElementPropertiesWeapMap.get(oldBuilder)
       const elementProperties = getElementProperties()
-      const oldElementProperties = getOldElementProperties()
+
+      let oldElementProperties
+      if (isSecondaryBuild) {
+        if (elementProperties.reconcilerId) {
+          oldElementProperties = oldReconcilerIdElementProperties[elementProperties.reconcilerId]
+        } else {
+          const oldBuilder = oldBuilders[index]
+          const getOldElementProperties = getElementPropertiesWeapMap.get(oldBuilder)
+          oldElementProperties = getOldElementProperties()
+        }
+      }
 
       let element
       if (elementProperties.isFragment) {
@@ -320,7 +301,10 @@ const secondaryBuild = (component) => {
       }
 
       const childBuilders = elementProperties.childBuilders
-      const oldChildBuilders = oldElementProperties.childBuilders
+      let oldChildBuilders
+      if (oldElementProperties) {
+        oldChildBuilders = oldElementProperties.childBuilders
+      }
 
       recursivelyReconcile(element, childBuilders, oldChildBuilders)
     })
@@ -328,21 +312,14 @@ const secondaryBuild = (component) => {
 
   recursivelyReconcile(component, [builder], [oldBuilder])
 
+  getReconcilerIdElementPropertiesWeapMap.set(builder, reconcilerIdElementProperties)
   peviousBuilderWeakMap.set(component, builder)
 }
 
 export const build = (component) => {
   return new Promise((resolve) => {
     buildSemaphore(() => {
-      buildContext = { bindingParent: component }
-
-      const firstBuild = !peviousBuilderWeakMap.get(component)
-      if (firstBuild) {
-        initialBuild(component)
-      } else {
-        secondaryBuild(component)
-      }
-
+      reconcile(component)
       resolve()
     })
   })

@@ -11,7 +11,7 @@ class RootElement extends HTMLElement {
 
   initializeState = {
     time: undefined,
-    playerSong: songs[0],
+    playerSong: undefined,
   }
 
   initializeActions = ({ stateSetters }) => ({
@@ -23,8 +23,11 @@ class RootElement extends HTMLElement {
       const song = songs.find((song) => song.id === songId)
       setPlayerSong(song)
 
-      this.playerH2.focus()
-      this.playerH2.scrollIntoView({ behavior: "smooth", block: "start" })
+      // Wait for Player to appear, it starts out display none
+      setTimeout(() => {
+        this.playerH2.focus()
+        this.playerH2.scrollIntoView({ behavior: "smooth", block: "start" })
+      }, 1)
     },
   })
 
@@ -36,6 +39,7 @@ class RootElement extends HTMLElement {
       element("div")
         .attributes({ class: "content-container" })
         .children(
+          // playerSong ? element("p").reconcilerId("danger").children("Player is ready") : null,
           element("h1").children("Tunes"),
           element("p").children(
             "The Tunes project implements audio descriptions for music videos, which are written by some guy named Alex."
@@ -44,7 +48,7 @@ class RootElement extends HTMLElement {
             element("h2").children("All Songs"),
             element("ul").children(
               ...songs.map((song) => {
-                const isActive = song.id === playerSong.id
+                const isActive = song.id === playerSong?.id
                 return element("li").children(
                   element("a")
                     .attributes({
@@ -59,11 +63,14 @@ class RootElement extends HTMLElement {
             )
           ),
           element("h2")
+            .styles({ display: playerSong ? "initial" : "none" })
             .reference(this, "playerH2")
             .attributes({ tabindex: "-1" })
             .children("Player")
         ),
-      component(TunesPlayer).bindings({ song: playerSong })
+      playerSong
+        ? component(TunesPlayer).reconcilerId("tunesPlayer").bindings({ song: playerSong })
+        : null
     )
   }
 }
