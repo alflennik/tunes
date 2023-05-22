@@ -1,98 +1,5 @@
 export default [
   {
-    id: "generation-loss-connected",
-    artist: "Generation Loss",
-    title: "Connected.",
-    videoType: "musicVideo",
-    thumbnailSrc: "TODO",
-    thumbnailAlt: "TODO",
-    youTubeId: "9N8Y8zmvTyE",
-    fileName: "generation-loss-connected.js",
-  },
-  {
-    id: "aespa-im-unhappy",
-    artist: "aespa",
-    title: "I'm Unhappy",
-    videoType: "musicVideo",
-    videoTypeCustomLabel: "Track Video",
-    thumbnailSrc: "TODO",
-    thumbnailAlt: "TODO",
-    youTubeId: "CC7OrEx5H4U",
-    fileName: "aespa-im-unhappy.js",
-  },
-  {
-    id: "ice-nine-kills-assault-and-batteries",
-    artist: "Ice Nine Kills",
-    title: "Assault & Batteries",
-    videoType: "musicVideo",
-    thumbnailSrc: "TODO",
-    thumbnailAlt: "TODO",
-    youTubeId: "j8vKjIakHbA",
-    fileName: "ice-nine-kills-assault-and-batteries.js",
-  },
-  {
-    id: "king-gizzard-and-the-lizard-wizard-gila-monster",
-    artist: "King Gizzard & The Lizard Wizard",
-    title: "Gila Monster",
-    videoType: "musicVideo",
-    thumbnailSrc: "TODO",
-    thumbnailAlt: "TODO",
-    youTubeId: "YQX2CsMCB9M",
-    fileName: "king-gizzard-and-the-lizard-wizard-gila-monster.js",
-  },
-  {
-    id: "mette-mamas-eyes",
-    artist: "METTE",
-    title: "Mama's Eyes",
-    videoType: "musicVideo",
-    thumbnailSrc: "TODO",
-    thumbnailAlt: "TODO",
-    youTubeId: "gi9OBRzbMNI",
-    fileName: "mette-mamas-eyes.js",
-  },
-  {
-    id: "mura-masa-whenever-i-want",
-    artist: "Mura Masa",
-    title: "Whenever I Want",
-    videoType: "musicVideo",
-    thumbnailSrc: "TODO",
-    thumbnailAlt: "TODO",
-    youTubeId: "mQL-xrUy_eM",
-    fileName: "mura-masa-whenever-i-want.js",
-  },
-  {
-    id: "code-kunst-55",
-    artist: "CODE KUNST",
-    title: "55",
-    featuredArtists: ["Yerin Baek", "WENDY"],
-    videoType: "musicVideo",
-    thumbnailSrc: "TODO",
-    thumbnailAlt: "TODO",
-    youTubeId: "xHnuscnWaRk",
-    fileName: "code-kunst-55.js",
-  },
-  {
-    id: "harry-styles-satellite",
-    artist: "Harry Styles",
-    title: "Satellite",
-    videoType: "musicVideo",
-    thumbnailSrc: "TODO",
-    thumbnailAlt: "TODO",
-    youTubeId: "bGZplqeIb3w",
-    fileName: "harry-styles-satellite.js",
-  },
-  {
-    id: "aespa-welcome-to-my-world",
-    artist: "aespa",
-    featuredArtist: "nævis",
-    title: "Welcome To MY World",
-    videoType: "musicVideo",
-    thumbnailSrc: "TODO",
-    thumbnailAlt: "TODO",
-    youTubeId: "0xdB_vo4r2c",
-    fileName: "aespa-welcome-to-my-world.js",
-  },
-  {
     id: "olivia-dean-dive",
     artist: "Olivia Dean",
     title: "Dive",
@@ -100,7 +7,7 @@ export default [
     thumbnailSrc: "TODO",
     thumbnailAlt: "The artist Olivia Dean dances down a touristic British street.",
     youTubeId: "NM4e606yFJg",
-    fileName: "olivia-dean-dive.js",
+    descriptionPath: "/songs/olivia-dean-dive.js",
   },
   {
     id: "atarashii-gakko-otonablue-the-first-take",
@@ -111,7 +18,7 @@ export default [
     thumbnailSrc: "TODO",
     thumbnailAlt: "Four Japanese girls in schoolgirl outfits leap into the air.",
     youTubeId: "9MNPt-zlz-8",
-    fileName: "atarashii-gakko-otonablue-the-first-take.js",
+    descriptionPath: "/songs/atarashii-gakko-otonablue-the-first-take.js",
   },
   {
     id: "akini-jing-pump-up",
@@ -121,7 +28,7 @@ export default [
     thumbnailSrc: "TODO",
     thumbnailAlt: "The artist Akini Jing stands in athletic garb in a workout studio.",
     youTubeId: "grEYQfd7uv0",
-    fileName: "akini-jing-pump-up.js",
+    descriptionPath: "/songs/akini-jing-pump-up.js",
   },
   {
     id: "xikers-tricky-house",
@@ -131,7 +38,7 @@ export default [
     thumbnailSrc: "TODO",
     thumbnailAlt: "The xikers team pose in a cavernous garage.",
     youTubeId: "HefrSFeMyPs",
-    fileName: "xikers-tricky-house.js",
+    descriptionPath: "/songs/xikers-tricky-house.js",
   },
   {
     id: "alison-goldfrapp-neverstop",
@@ -142,7 +49,7 @@ export default [
     thumbnailSrc: "TODO",
     thumbnailAlt: "The artist Alison Goldfrapp is dressed like a citizen of another world.",
     youTubeId: "Xcsvgsedz20",
-    fileName: "alison-goldfrapp-neverstop.js",
+    descriptionPath: "/songs/alison-goldfrapp-neverstop.js",
   },
   {
     id: "jessie-ware-begin-again",
@@ -152,7 +59,7 @@ export default [
     thumbnailSrc: "TODO",
     thumbnailAlt: "On a stage, the artist Jessie Ware is surrounded by dancers.",
     youTubeId: "yd3C69lVU5w",
-    fileName: "jessie-ware-begin-again.js",
+    descriptionPath: "/songs/jessie-ware-begin-again.js",
   },
   {
     id: "leah-dou-monday",
@@ -162,7 +69,7 @@ export default [
     thumbnailSrc: "TODO",
     thumbnailAlt: "The artist Leah Dou flashes a smile.",
     youTubeId: "vos32LuLjZs",
-    fileName: "leah-dou-monday.js",
+    descriptionPath: "/songs/leah-dou-monday.js",
   },
   {
     id: "rahill-fables",
@@ -173,7 +80,7 @@ export default [
     thumbnailSrc: "TODO",
     thumbnailAlt: "The artist Rahill is much too big to be sitting in a doll house.",
     youTubeId: "Ysf6UULedRk",
-    fileName: "rahill-fables.js",
+    descriptionPath: "/songs/rahill-fables.js",
   },
   {
     id: "kaytramine-4eva",
@@ -184,7 +91,7 @@ export default [
     thumbnailSrc: "TODO",
     thumbnailAlt: "TODO",
     youTubeId: "fAPt8AxjPbI",
-    fileName: "kaytramine-4eva.js",
+    descriptionPath: "/songs/kaytramine-4eva.js",
   },
   {
     id: "remi-wold-disco-man",
@@ -194,7 +101,7 @@ export default [
     thumbnailSrc: "TODO",
     thumbnailAlt: "TODO",
     youTubeId: "V1dtRs_vN6Y",
-    fileName: "remi-wold-disco-man.js",
+    descriptionPath: "/songs/remi-wold-disco-man.js",
   },
   {
     id: "jack-black-peaches",
@@ -205,7 +112,7 @@ export default [
     thumbnailSrc: "TODO",
     thumbnailAlt: "TODO",
     youTubeId: "aW7bzd8uwyQ",
-    fileName: "jack-black-peaches.js",
+    descriptionPath: "/songs/jack-black-peaches.js",
   },
   {
     id: "ceranda-sugar-rush",
@@ -215,7 +122,7 @@ export default [
     thumbnailSrc: "TODO",
     thumbnailAlt: "TODO",
     youTubeId: "LQOib1ny6WY",
-    fileName: "ceranda-sugar-rush.js",
+    descriptionPath: "/songs/ceranda-sugar-rush.js",
   },
   {
     id: "neona-click",
@@ -225,7 +132,7 @@ export default [
     thumbnailSrc: "TODO",
     thumbnailAlt: "TODO",
     youTubeId: "aGjh-juOyc4",
-    fileName: "neona-click.js",
+    descriptionPath: "/songs/neona-click.js",
   },
   {
     id: "iri-season",
@@ -235,7 +142,7 @@ export default [
     thumbnailSrc: "TODO",
     thumbnailAlt: "TODO",
     youTubeId: "eQtvqaM1i58",
-    fileName: "iri-season.js",
+    descriptionPath: "/songs/iri-season.js",
   },
   {
     id: "juno-come-thru",
@@ -245,7 +152,7 @@ export default [
     thumbnailSrc: "TODO",
     thumbnailAlt: "TODO",
     youTubeId: "5oRG_lDPYCk",
-    fileName: "juno-come-thru.js",
+    descriptionPath: "/songs/juno-come-thru.js",
   },
   {
     id: "lee-chae-yeon-knock",
@@ -256,7 +163,7 @@ export default [
     thumbnailAlt: "TODO",
     youTubeId: "3bnjH5jXxJc",
     // hasPrerecordedVoice: true,
-    fileName: "lee-chae-yeon-knock.js",
+    descriptionPath: "/songs/lee-chae-yeon-knock.js",
   },
   {
     id: "pink-trustfall",
@@ -267,7 +174,7 @@ export default [
       "https://i.ytimg.com/vi/D2KE2a5qo0g/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLBzC3dFk_g_YF4cUX9rUT8EdzXKXw",
     thumbnailAlt: "With windswept hair, the artist P!NK prepares to dance.",
     youTubeId: "D2KE2a5qo0g",
-    fileName: "pink-trustfall.js",
+    descriptionPath: "/songs/pink-trustfall.js",
   },
   {
     id: "rimon-i-choose-u",
@@ -280,7 +187,7 @@ export default [
     thumbnailAlt:
       "A man holds the business end of a bow and arrow and the artist RIMON pulls the drawstring back, ready to fire it into his heart.",
     youTubeId: "W1yyy-CkGqY",
-    fileName: "rimon-i-choose-u.js",
+    descriptionPath: "/songs/rimon-i-choose-u.js",
   },
   {
     id: "kirinji-twilight",
@@ -290,7 +197,7 @@ export default [
     videoType: "musicVideo",
     thumbnailAlt: "A despondent young woman in a dark city gazes at a toy carousel.",
     youTubeId: "fzGaTj0LdeM",
-    fileName: "kirinji-twilight.js",
+    descriptionPath: "/songs/kirinji-twilight.js",
   },
   {
     id: "hybs-would-you-mind",
@@ -299,7 +206,7 @@ export default [
     videoType: "musicVideo",
     thumbnailAlt: "A girl in a cafe smiles shyly at someone.",
     youTubeId: "WW6VE7ROcyA",
-    fileName: "hybs-would-you-mind.js",
+    descriptionPath: "/songs/hybs-would-you-mind.js",
   },
   {
     id: "nsp-welcome-to-my-parents-house",
@@ -308,7 +215,7 @@ export default [
     videoType: "musicVideo",
     thumbnailAlt: "A cartoon gal and guy smile sexily.",
     youTubeId: "3YXUWWZJXpE",
-    fileName: "nsp-welcome-to-my-parents-house.js",
+    descriptionPath: "/songs/nsp-welcome-to-my-parents-house.js",
   },
   {
     id: "fka-twigs-holy-terrain",
@@ -319,7 +226,7 @@ export default [
     thumbnailAlt:
       "The artist FKA twigs looks profoundly stoned with her right eye red and her left eye blue.",
     youTubeId: "WEJRyBWpuvA",
-    fileName: "fka-twigs-holy-terrain.js",
+    descriptionPath: "/songs/fka-twigs-holy-terrain.js",
   },
   {
     id: "amtrac-nobody-else",
@@ -328,7 +235,7 @@ export default [
     videoType: "musicVideo",
     thumbnailAlt: "A tiny robot hides in the bushes.",
     youTubeId: "nE1ZXUE_BXU",
-    fileName: "amtrac-nobody-else.js",
+    descriptionPath: "/songs/amtrac-nobody-else.js",
   },
   {
     id: "seulgi-anywhere-but-home",
@@ -339,6 +246,6 @@ export default [
     thumbnailAlt:
       "In nighttime streets the artist Seulgi stares down the camera like a wild animal.",
     youTubeId: "2hVimOZHbOI",
-    fileName: "seulgi-anywhere-but-home.js",
+    descriptionPath: "/songs/seulgi-anywhere-but-home.js",
   },
 ]

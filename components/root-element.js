@@ -1,5 +1,5 @@
 import formatTitle from "../library/formatTitle.js"
-import songs from "../songs/songs.js"
+import videos from "../songs/songs.js"
 import define from "../utilities/define.js"
 import { component, fragment, element } from "../utilities/reconciler.js"
 import TunesPlayer from "./tunes-player.js"
@@ -11,17 +11,42 @@ class RootElement extends HTMLElement {
 
   initializeState = {
     time: undefined,
-    playerSong: undefined,
+    playerContent: undefined,
+    playlists: undefined,
   }
 
   initializeActions = ({ stateSetters }) => ({
-    handleSongClick: (event) => {
-      const { setPlayerSong } = stateSetters
+    fetchPlaylists: async () => {
+      const { setPlaylists } = stateSetters
+      const playlistListModule = await import(`../playlists/playlist-list.js`)
+      const playlistList = playlistListModule.default
+      const playlists = await Promise.all(
+        playlistList.map(async (playlistPath) => {
+          const playlistModule = await import(`../playlists/${playlistPath}/contents.js`)
+          return playlistModule.default
+        })
+      )
+      setPlaylists(playlists)
+    },
+    handleContentClick: (event) => {
+      const { playlists } = this.state
+      const { setPlayerContent } = stateSetters
 
       event.preventDefault()
-      const songId = event.target.getAttribute("song-id")
-      const song = songs.find((song) => song.id === songId)
-      setPlayerSong(song)
+      const videoId = event.target.getAttribute("video-id")
+      const playlistId = event.target.getAttribute("playlist-id")
+      let playerContent
+      if (playlistId && videoId) {
+        const playlist = playlists.find((playlist) => playlist.id === playlistId)
+        const video = playlist.videos.find((video) => video.id === videoId)
+        playerContent = { playlist, video }
+      } else if (videoId) {
+        playerContent = { video: videos.find((video) => video.id === videoId) }
+      } else {
+        const playlist = playlists.find((playlist) => playlist.id === playlistId)
+        playerContent = { playlist, video: playlist.videos[0] }
+      }
+      setPlayerContent(playerContent)
 
       // Wait for Player to appear, it starts out display none
       setTimeout(() => {
@@ -31,9 +56,14 @@ class RootElement extends HTMLElement {
     },
   })
 
+  async connectedCallback() {
+    const { fetchPlaylists } = this.actions
+    await fetchPlaylists()
+  }
+
   reactiveTemplate() {
-    const { handleSongClick } = this.actions
-    const { playerSong } = this.state
+    const { handleContentClick } = this.actions
+    const { playerContent, playlists } = this.state
 
     return fragment(
       element("div")
@@ -44,31 +74,64 @@ class RootElement extends HTMLElement {
             "The Tunes project implements audio descriptions for music videos, which are written by some guy named Alex."
           ),
           element("nav").children(
-            element("h2").children("All Songs"),
+            playlists
+              ? element("div")
+                  .reconcilerId("playlistContainer")
+                  .children(
+                    element("h2").children("Playlists"),
+                    element("ul").children(
+                      ...playlists.map((playlist) => {
+                        return element("li").children(
+                          element("h3").children(
+                            element("a")
+                              .attributes({ href: "#", "playlist-id": playlist.id })
+                              .listeners({ click: handleContentClick })
+                              .children(playlist.title)
+                          ),
+                          element("ul").children(
+                            ...playlist.videos.map((video) => {
+                              return element("li").children(
+                                element("a")
+                                  .attributes({
+                                    href: "#",
+                                    "playlist-id": playlist.id,
+                                    "video-id": video.id,
+                                  })
+                                  .listeners({ click: handleContentClick })
+                                  .children(formatTitle(video, { titleStyle: "listenable" }))
+                              )
+                            })
+                          )
+                        )
+                      })
+                    )
+                  )
+              : null,
+            element("h2").children("Other Songs"),
             element("ul").children(
-              ...songs.map((song) => {
-                const isActive = song.id === playerSong?.id
+              ...videos.map((video) => {
+                const isActive = video.id === playerContent?.video?.id
                 return element("li").children(
                   element("a")
                     .attributes({
                       href: "#",
-                      "song-id": song.id,
+                      "video-id": video.id,
                       "aria-current": isActive ? true : undefined,
                     })
-                    .listeners({ click: handleSongClick })
-                    .children(formatTitle(song, { titleStyle: "listenable" }))
+                    .listeners({ click: handleContentClick })
+                    .children(formatTitle(video, { titleStyle: "listenable" }))
                 )
               })
             )
           ),
           element("h2")
-            .styles({ display: playerSong ? "initial" : "none" })
+            .styles({ display: playerContent ? "initial" : "none" })
             .reference(this, "playerH2")
             .attributes({ tabindex: "-1" })
             .children("Player")
         ),
-      playerSong
-        ? component(TunesPlayer).reconcilerId("tunesPlayer").bindings({ song: playerSong })
+      playerContent
+        ? component(TunesPlayer).reconcilerId("tunesPlayer").bindings({ content: playerContent })
         : null
     )
   }

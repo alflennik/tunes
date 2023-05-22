@@ -11,7 +11,8 @@ export default class TunesPlayer extends HTMLElement {
 
   initializeState = {
     time: null,
-    lastSong: null,
+    currentVideo: null,
+    currentPlaylist: null,
     isPlaying: false,
     isEnded: false,
     hasCompletedInitialClick: false,
@@ -39,9 +40,11 @@ export default class TunesPlayer extends HTMLElement {
       const { setTime } = stateSetters
       setTime(time)
     },
-    handleSongChange: (song) => {
-      const { setLastSong, setTime } = stateSetters
-      setLastSong(song)
+    handleContentChange: () => {
+      const { content } = this.bindings
+      const { setCurrentVideo, setCurrentPlaylist, setTime } = stateSetters
+      setCurrentVideo(content.video)
+      setCurrentPlaylist(content.playlist)
       setTime(null)
     },
     handleFirstClick: async ({ isKeyDown, isClickInterceptor }) => {
@@ -56,12 +59,31 @@ export default class TunesPlayer extends HTMLElement {
 
       if (!isKeyDown && isClickInterceptor) youTubePlayer.play()
     },
+    onDescriptionEnd: () => {
+      const { youTubePlayer } = this
+      const { currentPlaylist, currentVideo } = this.state
+      const { setCurrentVideo } = stateSetters
+
+      if (currentPlaylist) {
+        const currentIndex = currentPlaylist.videos.findIndex(
+          (video) => video.id === currentVideo.id
+        )
+
+        const nextVideo = currentPlaylist.videos[currentIndex + 1]
+
+        if (nextVideo) {
+          console.log("setting next video", nextVideo)
+          setCurrentVideo(nextVideo)
+          // youTubePlayer.play()
+        }
+      }
+    },
   })
 
   connectedCallback() {
-    const listenForFirstClick = async (event) => {
-      const { handleFirstClick } = this.actions
+    const { handleFirstClick, handleContentChange } = this.actions
 
+    const listenForFirstClick = async (event) => {
       const isKeyDown = event.type === "keydown"
 
       const clickInterceptor = document.querySelector(".click-interceptor")
@@ -76,6 +98,8 @@ export default class TunesPlayer extends HTMLElement {
 
     document.addEventListener("click", listenForFirstClick)
     document.addEventListener("keydown", listenForFirstClick)
+
+    handleContentChange()
   }
 
   reactiveTemplate() {
@@ -86,16 +110,19 @@ export default class TunesPlayer extends HTMLElement {
       onYouTubePause,
       onYouTubePlay,
       onYouTubeEnd,
-      handleSongChange,
+      onDescriptionEnd,
+      handleContentChange,
     } = this.actions
-    const { song } = this.bindings
-    const { lastSong, hasCompletedInitialClick } = this.state
+    const { content } = this.bindings
+    const { currentVideo, currentPlaylist, hasCompletedInitialClick } = this.state
 
     if (!this.voiceSynthesized) {
       this.voiceSynthesized = new VoiceSynthesized()
     }
 
-    if (song.id !== lastSong?.id) handleSongChange(song)
+    if (content.video.id !== currentVideo?.id || content.playlist?.id !== currentPlaylist?.id) {
+      handleContentChange()
+    }
 
     const { time, isPlaying, isEnded } = this.state
 
@@ -103,12 +130,12 @@ export default class TunesPlayer extends HTMLElement {
       element("div")
         .reference(this, "clickInterceptor")
         .attributes({ class: "click-interceptor", "tab-index": 0 })
-        .children(element("button").children(`Play ${song.title}`)),
+        .children(element("button").children(`Play ${currentVideo.title}`)),
       component(YouTubePlayer)
         .attributes({ "aria-hidden": hasCompletedInitialClick ? undefined : true })
         .reference(this, "youTubePlayer")
         .bindings({
-          videoId: song.youTubeId,
+          videoId: currentVideo.youTubeId,
           onUpdateTime,
           onReady: onYouTubeReady,
           onPlay: onYouTubePlay,
@@ -116,12 +143,13 @@ export default class TunesPlayer extends HTMLElement {
           onEnd: onYouTubeEnd,
         }),
       component(AudioDescription).bindings({
-        song,
+        song: currentVideo,
         time,
         isPlaying,
         isEnded,
         voice: this.voiceSynthesized,
         onReady: onDescriptionsReady,
+        onEnd: onDescriptionEnd,
       })
     )
   }

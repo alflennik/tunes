@@ -21,7 +21,7 @@ export default class AudioDescription extends HTMLElement {
       const { song /* , onReady */ } = this.bindings
       const { setDescriptions, setAnalysis } = stateSetters
 
-      const descriptionModule = await import(`../songs/${song.fileName}`)
+      const descriptionModule = await import(song.descriptionPath)
       const { descriptions, analysis } = descriptionModule.default
       setDescriptions(descriptions)
       setAnalysis(analysis)
@@ -74,14 +74,17 @@ export default class AudioDescription extends HTMLElement {
       }
     },
 
-    handlePlayChange: (isPlaying) => {
-      const { voice, isEnded } = this.bindings
+    handlePlayChange: async (isPlaying) => {
+      const { voice, isEnded, onEnd } = this.bindings
       const { analysis } = this.state
       const { setIsCurrentlyPlaying, setCurrentDescriptionText } = stateSetters
       setIsCurrentlyPlaying(isPlaying)
       if (!isPlaying && isEnded && analysis) {
         setCurrentDescriptionText(analysis.text)
-        voice.say(analysis)
+        await voice.say(analysis)
+        onEnd()
+      } else if (!isPlaying && isEnded) {
+        onEnd()
       } else if (!isPlaying) {
         voice.pause()
       }
