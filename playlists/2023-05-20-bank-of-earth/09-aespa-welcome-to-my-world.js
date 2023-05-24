@@ -6,11 +6,11 @@ export default {
     },
     {
       time: 19.079,
-      text: "But that's just a preview. Because right now it's day, and Ningning and Winter are relaxing on the couch, and Karina and Giselle are reading in the bedroom.",
+      text: "But that's just a preview. Because right now it's day in a vacation home, and Ningning and Winter are relaxing on the couch, and Karina and Giselle are reading in the bedroom.",
     },
     {
       time: 31.08,
-      text: "A strange calling falls over them, and they make their way out of the comfort of home, towards a car parked outside.",
+      text: "With adventurous smiles they make their way out of the comfort of home, towards a car parked outside.",
     },
     {
       time: 49.076,
@@ -22,7 +22,7 @@ export default {
     },
     {
       time: 80.644,
-      text: '"The moment two different worlds make perfect contact."',
+      text: '"The moment two different worlds make perfect contact," it reads.',
     },
     {
       time: 89.881,
@@ -30,15 +30,15 @@ export default {
     },
     {
       time: 107.476,
-      text: "Visually it's nothing more than a gauzy ripple, but its signs are everywhere, like in the screams of birds as day turns to night.",
+      text: "Visually it's nothing more than a gauzy ripple, something invisible, but it's accompanied by unmistakable beauty, like in the transition from day to night, flocks of birds passing above.",
     },
     {
       time: 143.685,
-      text: "It isn't a city the filmmakers show, but plants, photographed to make them appear as big as skyscrapers.",
+      text: "It isn't a city the filmmakers show, but a utopia of plants; each ordinary plant photographed to look as intricate and huge as a skyscraper.",
     },
     {
       time: 153.264,
-      text: "The gauzy veil has followed their car like a UFO, inhabits a phone like a spectral haunting.",
+      text: "The gauzy ripple has followed their car like a UFO, inhabits a phone like a spectral haunting.",
     },
     {
       time: 160.264,
@@ -50,7 +50,7 @@ export default {
     },
     {
       time: 186.779,
-      text: "Each of them have it. It has structure. It's almost like a tree. Or a network.",
+      text: "Each of them have it. It has structure. It's almost like a network.",
     },
     {
       time: 191.88,
