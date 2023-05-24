@@ -179,9 +179,17 @@ const getVirtualTree = (component, builder) => {
       getElement: () => element,
       getParent: () => parentVirtualElement,
       getParentElement: () => parentVirtualElement.getElement(),
+      getPreviousSibling: () => {
+        const parentChildren = parentVirtualElement.getChildren()
+        return parentChildren[siblingIndex - 1] ?? null
+      },
+      getPreviousSiblingElement: () => {
+        const parentChildren = parentVirtualElement.getChildren()
+        return parentChildren[siblingIndex - 1]?.getElement() ?? null
+      },
       getNextSibling: () => {
         const parentChildren = parentVirtualElement.getChildren()
-        return parentChildren[siblingIndex + 1]
+        return parentChildren[siblingIndex + 1] ?? null
       },
       getNextSiblingElement: () => {
         const parentChildren = parentVirtualElement.getChildren()
@@ -210,6 +218,9 @@ const getVirtualTree = (component, builder) => {
         throw new Error("Unexpected")
       },
       getNextSibling: () => null,
+      getNextSiblingElement: () => null,
+      getPreviousSibling: () => null,
+      getPreviousSiblingElement: () => null,
       append: (child) => {
         children.push(child)
       },
@@ -367,18 +378,20 @@ const reconcile = (component) => {
 
       // Move element if it is in the wrong place
       const oldParentElement = oldVirtualElement.getParentElement()
-      const nextSibling = virtualElement.getNextSibling()
-      const oldNextSibling = oldVirtualElement.getNextSibling()
+      const previousElement = virtualElement.getPreviousSiblingElement()
+      const oldPreviousElement = oldVirtualElement.getPreviousSiblingElement()
       if (
         virtualElement.properties.reconcilerId &&
-        (parentElement !== oldParentElement || nextSibling?.id !== oldNextSibling?.id)
+        (parentElement !== oldParentElement || previousElement !== oldPreviousElement)
       ) {
-        const nextSiblingId = virtualElement.getNextSibling()?.id
-        let nextElement
-        if (nextSiblingId) {
-          nextElement = oldVirtualTree.getById(nextSiblingId)?.getElement()
+        const previousElement = virtualElement.getPreviousSiblingElement()
+        if (previousElement) {
+          console.log("move insertAdjacentElement")
+          previousElement.insertAdjacentElement("afterend", element)
+        } else {
+          console.log("move appendChild")
+          parentElement.insertAdjacentElement("afterbegin", element)
         }
-        parentElement.insertBefore(element, nextElement)
       }
     } else {
       const parentElement = virtualElement.getParentElement()
@@ -388,14 +401,17 @@ const reconcile = (component) => {
       } else {
         const element = createElement(virtualElement)
 
-        const nextSiblingId = virtualElement.getNextSibling()?.id
-        let nextElement
-        if (nextSiblingId) {
-          nextElement = oldVirtualTree?.getById(nextSiblingId)?.getElement()
-        }
+        const previousElement = virtualElement.getPreviousSiblingElement()
 
         virtualElement.associateElement(element)
-        parentElement.insertBefore(element, nextElement)
+
+        if (previousElement) {
+          console.log("make insertAdjacentElement")
+          previousElement.insertAdjacentElement("afterend", element)
+        } else {
+          console.log("make appendChild")
+          parentElement.insertAdjacentElement("afterbegin", element)
+        }
       }
     }
   }
