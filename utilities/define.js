@@ -110,22 +110,31 @@ function defineComponent(name, UserComponent) {
         this.#buildQueued === false &&
         this.#currentlyRunningAction === false
       ) {
-        this.#buildQueued = true
         const getBuilder = () => {
-          this.#didStateChange = false
-          let builder = this.reactiveTemplate()
-          if (this.#didStateChange) {
+          let builder
+          let iterationCount = 0
+          const maxIterationCount = 4
+          while (true) {
             this.#didStateChange = false
             builder = this.reactiveTemplate()
-            if (this.#didStateChange) {
-              throw new Error("Infinite loop detected")
+            if (!this.#didStateChange) break
+            iterationCount += 1
+
+            if (iterationCount >= maxIterationCount) {
+              console.error("Infinite loop detected in", this)
+              throw new Error("Infinite loop")
             }
           }
+
           return builder
         }
 
-        build(this, getBuilder).then(() => {
-          this.#buildQueued = false
+        this.#buildQueued = true
+
+        build(this, getBuilder, {
+          onComplete: () => {
+            this.#buildQueued = false
+          },
         })
       }
     }

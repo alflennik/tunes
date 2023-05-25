@@ -117,7 +117,6 @@ const siteBuildScript = async ({ environment }) => {
     await Promise.all(
       fileNames.map(async (fileName) => {
         const filePath = path.resolve(buildFolderPath, fileName)
-        console.log(filePath)
         await fs.rm(filePath, { recursive: true })
       })
     )

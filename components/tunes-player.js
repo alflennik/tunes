@@ -13,6 +13,8 @@ export default class TunesPlayer extends HTMLElement {
     time: null,
     currentVideo: null,
     currentPlaylist: null,
+    lastBoundVideo: null,
+    lastBoundPlaylist: null,
     isPlaying: false,
     isEnded: false,
     hasCompletedInitialClick: false,
@@ -42,7 +44,15 @@ export default class TunesPlayer extends HTMLElement {
     },
     handleContentChange: () => {
       const { content } = this.bindings
-      const { setCurrentVideo, setCurrentPlaylist, setTime } = stateSetters
+      const {
+        setLastBoundVideo,
+        setLastBoundPlaylist,
+        setCurrentVideo,
+        setCurrentPlaylist,
+        setTime,
+      } = stateSetters
+      setLastBoundVideo(content.video)
+      setLastBoundPlaylist(content.playlist)
       setCurrentVideo(content.video)
       setCurrentPlaylist(content.playlist)
       setTime(null)
@@ -71,6 +81,7 @@ export default class TunesPlayer extends HTMLElement {
         const nextVideo = currentPlaylist.videos[currentIndex + 1]
 
         if (nextVideo) {
+          console.log("setting", nextVideo.youTubeId)
           setCurrentVideo(nextVideo)
         }
       }
@@ -111,13 +122,13 @@ export default class TunesPlayer extends HTMLElement {
       handleContentChange,
     } = this.actions
     const { content } = this.bindings
-    const { currentVideo, currentPlaylist, hasCompletedInitialClick } = this.state
+    const { currentVideo, lastBoundVideo, lastBoundPlaylist, hasCompletedInitialClick } = this.state
 
     if (!this.voiceSynthesized) {
       this.voiceSynthesized = new VoiceSynthesized()
     }
 
-    if (content.video.id !== currentVideo?.id || content.playlist?.id !== currentPlaylist?.id) {
+    if (content.video.id !== lastBoundVideo?.id || content.playlist?.id !== lastBoundPlaylist?.id) {
       handleContentChange()
     }
 

@@ -415,12 +415,10 @@ const reconcile = (component, getBuilder) => {
   oldVirtualTreeWeakMap.set(component, virtualTree)
 }
 
-export const build = (component, getBuilder) => {
-  return new Promise((resolve) => {
-    buildSemaphore(() => {
-      reconcile(component, getBuilder)
-      resolve()
-    })
+export const build = (component, getBuilder, { onComplete }) => {
+  buildSemaphore(() => {
+    reconcile(component, getBuilder)
+    onComplete()
   })
 }
 

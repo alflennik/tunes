@@ -78,6 +78,7 @@ export default class AudioDescription extends HTMLElement {
       const { voice, isEnded, onEnd } = this.bindings
       const { analysis } = this.state
       const { setIsCurrentlyPlaying, setCurrentDescriptionText } = stateSetters
+
       setIsCurrentlyPlaying(isPlaying)
       if (!isPlaying && isEnded && analysis) {
         setCurrentDescriptionText(analysis.text)
