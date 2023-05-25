@@ -345,8 +345,8 @@ const getVirtualTree = (component, builder) => {
   }
 }
 
-const reconcile = (component) => {
-  const builder = component.reactiveTemplate()
+const reconcile = (component, getBuilder) => {
+  const builder = getBuilder()
 
   const virtualTree = getVirtualTree(component, builder)
   const oldVirtualTree = oldVirtualTreeWeakMap.get(component)
@@ -386,10 +386,8 @@ const reconcile = (component) => {
       ) {
         const previousElement = virtualElement.getPreviousSiblingElement()
         if (previousElement) {
-          console.log("move insertAdjacentElement")
           previousElement.insertAdjacentElement("afterend", element)
         } else {
-          console.log("move appendChild")
           parentElement.insertAdjacentElement("afterbegin", element)
         }
       }
@@ -406,10 +404,8 @@ const reconcile = (component) => {
         virtualElement.associateElement(element)
 
         if (previousElement) {
-          console.log("make insertAdjacentElement")
           previousElement.insertAdjacentElement("afterend", element)
         } else {
-          console.log("make appendChild")
           parentElement.insertAdjacentElement("afterbegin", element)
         }
       }
@@ -419,10 +415,10 @@ const reconcile = (component) => {
   oldVirtualTreeWeakMap.set(component, virtualTree)
 }
 
-export const build = (component) => {
+export const build = (component, getBuilder) => {
   return new Promise((resolve) => {
     buildSemaphore(() => {
-      reconcile(component)
+      reconcile(component, getBuilder)
       resolve()
     })
   })

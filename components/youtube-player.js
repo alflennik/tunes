@@ -95,9 +95,8 @@ export default class YouTubePlayer extends HTMLElement {
     const { trackLastVideoId } = this.actions
 
     if (lastVideoId && videoId && lastVideoId !== videoId) {
-      console.log("queuing")
       trackLastVideoId(videoId)
-      this.#player.cueVideoById({ videoId })
+      this.#player.loadVideoById({ videoId })
     }
   }
 

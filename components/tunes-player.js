@@ -60,7 +60,6 @@ export default class TunesPlayer extends HTMLElement {
       if (!isKeyDown && isClickInterceptor) youTubePlayer.play()
     },
     onDescriptionEnd: () => {
-      const { youTubePlayer } = this
       const { currentPlaylist, currentVideo } = this.state
       const { setCurrentVideo } = stateSetters
 
@@ -72,9 +71,7 @@ export default class TunesPlayer extends HTMLElement {
         const nextVideo = currentPlaylist.videos[currentIndex + 1]
 
         if (nextVideo) {
-          console.log("setting next video", nextVideo)
           setCurrentVideo(nextVideo)
-          // youTubePlayer.play()
         }
       }
     },

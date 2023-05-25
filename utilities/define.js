@@ -22,6 +22,7 @@ function defineComponent(name, UserComponent) {
     #immutableState
     #buildQueued = false
     #currentlyRunningAction = false
+    #didStateChange = false
 
     static get observedAttributes() {
       return ["bindings"]
@@ -39,6 +40,7 @@ function defineComponent(name, UserComponent) {
           const setterName = "set" + name.substr(0, 1).toUpperCase() + name.substr(1)
 
           stateSetters[setterName] = (value) => {
+            this.#didStateChange = true
             this.#mutableState[name] = value
             this.#refresh()
           }
@@ -109,7 +111,20 @@ function defineComponent(name, UserComponent) {
         this.#currentlyRunningAction === false
       ) {
         this.#buildQueued = true
-        build(this).then(() => {
+        const getBuilder = () => {
+          this.#didStateChange = false
+          let builder = this.reactiveTemplate()
+          if (this.#didStateChange) {
+            this.#didStateChange = false
+            builder = this.reactiveTemplate()
+            if (this.#didStateChange) {
+              throw new Error("Infinite loop detected")
+            }
+          }
+          return builder
+        }
+
+        build(this, getBuilder).then(() => {
           this.#buildQueued = false
         })
       }
