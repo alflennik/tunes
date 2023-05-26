@@ -17,7 +17,8 @@ class RootElement extends HTMLElement {
 
   initializeActions = ({ stateSetters }) => ({
     fetchPlaylists: async () => {
-      const { setPlaylists } = stateSetters
+      const { setPlaylists, setPlayerContent } = stateSetters
+
       const playlistListModule = await import(`../playlists/playlist-list.js`)
       const playlistList = playlistListModule.default
       const playlists = await Promise.all(
@@ -27,14 +28,17 @@ class RootElement extends HTMLElement {
         })
       )
       setPlaylists(playlists)
+      setPlayerContent({ playlist: playlists[0], video: playlists[0].videos[0] })
     },
-    handleContentClick: (event) => {
+    handleContentClick: async (event) => {
       const { playlists } = this.state
       const { setPlayerContent } = stateSetters
 
       event.preventDefault()
+
       const videoId = event.target.getAttribute("video-id")
       const playlistId = event.target.getAttribute("playlist-id")
+
       let playerContent
       if (playlistId && videoId) {
         const playlist = playlists.find((playlist) => playlist.id === playlistId)
@@ -46,13 +50,22 @@ class RootElement extends HTMLElement {
         const playlist = playlists.find((playlist) => playlist.id === playlistId)
         playerContent = { playlist, video: playlist.videos[0] }
       }
+
       setPlayerContent(playerContent)
 
-      // Wait for Player to appear, it starts out display none
-      setTimeout(() => {
-        this.playerH2.focus()
-        this.playerH2.scrollIntoView({ behavior: "smooth", block: "start" })
-      }, 1)
+      await new Promise((resolve) => {
+        const intervalId = setInterval(() => {
+          const { tunesPlayer } = this
+
+          if (!(tunesPlayer && tunesPlayer.state.isReady)) return
+
+          this.playerH2.focus()
+          this.tunesPlayer.scrollIntoView({ behavior: "smooth", block: "start" })
+          this.tunesPlayer.actions.play()
+          clearInterval(intervalId)
+          resolve()
+        }, 40)
+      })
     },
   })
 
@@ -131,7 +144,10 @@ class RootElement extends HTMLElement {
             .children("Player")
         ),
       playerContent
-        ? component(TunesPlayer).reconcilerId("tunesPlayer").bindings({ content: playerContent })
+        ? component(TunesPlayer)
+            .reconcilerId("tunesPlayer")
+            .reference(this, "tunesPlayer")
+            .bindings({ content: playerContent })
         : null
     )
   }

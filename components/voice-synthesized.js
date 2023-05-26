@@ -82,7 +82,7 @@ export default class Voice {
     })
   }
 
-  say(description) {
+  async say(description) {
     const { voiceName, voiceRate } = this
     const voice = speechSynthesis.getVoices().find((each) => each.name === voiceName)
     const utterance = new SpeechSynthesisUtterance(description.text)
@@ -96,7 +96,10 @@ export default class Voice {
       utterance.rate = 1.1
     }
     utterance.lang = "en-US"
-    speechSynthesis.speak(utterance)
+    return new Promise((resolve) => {
+      utterance.addEventListener("end", resolve)
+      speechSynthesis.speak(utterance)
+    })
   }
 
   clear() {

@@ -14,9 +14,31 @@ export default class YouTubePlayer extends HTMLElement {
   initializeState = {
     intervalId: null,
     lastVideoId: undefined,
+    isReady: false,
   }
 
   initializeActions = ({ stateSetters }) => ({
+    handleConnect: () => {
+      const { setIsReady } = stateSetters
+      const { onReady } = this.bindings
+      const { handleYouTubeChange } = this.actions
+
+      this.#player.addEventListener("onReady", () => {
+        const { trackLastVideoId } = this.actions
+        const { videoId } = this.bindings
+
+        this.#player.setVolume(50)
+        trackLastVideoId(videoId)
+
+        setIsReady(true)
+        onReady()
+      })
+
+      this.#player.addEventListener("onStateChange", (event) => {
+        handleYouTubeChange(event.data)
+      })
+    },
+
     handleYouTubeChange: (eventData) => {
       const { onUpdateTime, onPause, onPlay, onEnd } = this.bindings
       const { intervalId } = this.state
@@ -50,8 +72,8 @@ export default class YouTubePlayer extends HTMLElement {
   })
 
   async connectedCallback() {
-    const { videoId, onReady } = this.bindings
-    const { handleYouTubeChange } = this.actions
+    const { handleConnect } = this.actions
+    const { videoId } = this.bindings
 
     this.#player = await new Promise(async (resolve) => {
       this.innerHTML = `<div id="player"></div>`
@@ -75,18 +97,7 @@ export default class YouTubePlayer extends HTMLElement {
       firstScriptTag.parentNode.insertBefore(scriptElement, firstScriptTag)
     })
 
-    this.#player.addEventListener("onReady", () => {
-      const { trackLastVideoId } = this.actions
-      const { videoId } = this.bindings
-
-      this.#player.setVolume(50)
-      trackLastVideoId(videoId)
-      onReady()
-    })
-
-    this.#player.addEventListener("onStateChange", (event) => {
-      handleYouTubeChange(event.data)
-    })
+    handleConnect()
   }
 
   bindingsChangedCallback() {

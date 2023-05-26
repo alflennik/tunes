@@ -10,6 +10,7 @@ export default class TunesPlayer extends HTMLElement {
   }
 
   initializeState = {
+    isReady: false,
     time: null,
     currentVideo: null,
     currentPlaylist: null,
@@ -21,25 +22,41 @@ export default class TunesPlayer extends HTMLElement {
   }
 
   initializeActions = ({ stateSetters }) => ({
-    onYouTubeReady: () => {},
     onYouTubePause: () => {
       const { setIsPlaying, setIsEnded } = stateSetters
+
       setIsPlaying(false)
       setIsEnded(false)
     },
     onYouTubePlay: () => {
       const { setIsPlaying, setIsEnded } = stateSetters
+
       setIsPlaying(true)
       setIsEnded(false)
     },
     onYouTubeEnd: () => {
       const { setIsPlaying, setIsEnded } = stateSetters
+
       setIsPlaying(false)
       setIsEnded(true)
     },
-    onDescriptionsReady: () => {},
+    onYouTubeReady: () => {
+      const { setIsReady } = stateSetters
+
+      if (this.audioDescription.state.isReady) {
+        setIsReady(true)
+      }
+    },
+    onDescriptionsReady: () => {
+      const { setIsReady } = stateSetters
+
+      if (this.youTubePlayer.state.isReady) {
+        setIsReady(true)
+      }
+    },
     onUpdateTime: (time) => {
       const { setTime } = stateSetters
+
       setTime(time)
     },
     handleContentChange: () => {
@@ -69,6 +86,10 @@ export default class TunesPlayer extends HTMLElement {
 
       if (!isKeyDown && isClickInterceptor) youTubePlayer.play()
     },
+    onDescriptionsLoading: () => {
+      const { setIsReady } = stateSetters
+      setIsReady(false)
+    },
     onDescriptionEnd: () => {
       const { currentPlaylist, currentVideo } = this.state
       const { setCurrentVideo } = stateSetters
@@ -81,10 +102,13 @@ export default class TunesPlayer extends HTMLElement {
         const nextVideo = currentPlaylist.videos[currentIndex + 1]
 
         if (nextVideo) {
-          console.log("setting", nextVideo.youTubeId)
+          console.log("setting next video")
           setCurrentVideo(nextVideo)
         }
       }
+    },
+    play: () => {
+      this.youTubePlayer.play()
     },
   })
 
@@ -113,6 +137,7 @@ export default class TunesPlayer extends HTMLElement {
   reactiveTemplate() {
     const {
       onUpdateTime,
+      onDescriptionsLoading,
       onDescriptionsReady,
       onYouTubeReady,
       onYouTubePause,
@@ -150,12 +175,13 @@ export default class TunesPlayer extends HTMLElement {
           onPause: onYouTubePause,
           onEnd: onYouTubeEnd,
         }),
-      component(AudioDescription).bindings({
+      component(AudioDescription).reference(this, "audioDescription").bindings({
         song: currentVideo,
         time,
         isPlaying,
         isEnded,
         voice: this.voiceSynthesized,
+        onLoading: onDescriptionsLoading,
         onReady: onDescriptionsReady,
         onEnd: onDescriptionEnd,
       })

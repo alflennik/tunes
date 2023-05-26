@@ -18,17 +18,19 @@ export default class AudioDescription extends HTMLElement {
 
   initializeActions = ({ stateSetters }) => ({
     fetchDescriptions: async () => {
-      const { song /* , onReady */ } = this.bindings
-      const { setDescriptions, setAnalysis } = stateSetters
+      const { song, onLoading, onReady } = this.bindings
+      const { setDescriptions, setAnalysis, setIsReady } = stateSetters
+
+      setIsReady(false)
+      onLoading()
 
       const descriptionModule = await import(song.descriptionPath)
       const { descriptions, analysis } = descriptionModule.default
       setDescriptions(descriptions)
       setAnalysis(analysis)
 
-      // Not yet used
-      // const { descriptions } = this.state
-      // onReady(descriptions)
+      setIsReady(true)
+      onReady()
     },
 
     handleConnect: async () => {
@@ -42,12 +44,12 @@ export default class AudioDescription extends HTMLElement {
 
     handleTimeChange: () => {
       const { time, voice } = this.bindings
-      const { descriptions, currentDescriptionText, previousTime } = this.state
+      const { descriptions, currentDescriptionText, previousTime, isReady } = this.state
       const { setPreviousTime, setCurrentDescriptionText } = stateSetters
 
       setPreviousTime(time)
 
-      if (!descriptions) return
+      if (!descriptions || !isReady) return
 
       let description
       for (let i = descriptions.length - 1; i >= 0; i -= 1) {
