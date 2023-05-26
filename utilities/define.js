@@ -1,4 +1,3 @@
-import { titleToTrain } from "./convertCase.js"
 import { build } from "./reconciler.js"
 
 export const tagNameWeakMap = new WeakMap()
@@ -13,8 +12,6 @@ export default async (Components) => {
 }
 
 function defineComponent(name, UserComponent) {
-  if (/^[A-Z]/.test(name)) name = titleToTrain(name)
-
   tagNameWeakMap.set(UserComponent, name)
 
   class ShadowInnerComponent extends UserComponent {

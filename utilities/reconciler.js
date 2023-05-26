@@ -300,9 +300,11 @@ const getVirtualTree = (component, builder) => {
   })
 
   const getIterator = () => {
+    const hasNoContent = rootElement.getChildren().length === 0
+
     let backlog = []
     let current = rootElement
-    let isDone = false
+    let isDone = hasNoContent
 
     return {
       next: () => {

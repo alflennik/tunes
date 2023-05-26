@@ -188,4 +188,4 @@ export default class TunesPlayer extends HTMLElement {
   }
 }
 
-define({ TunesPlayer })
+define({ "tunes-player": TunesPlayer })

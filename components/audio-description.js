@@ -133,4 +133,4 @@ export default class AudioDescription extends HTMLElement {
   }
 }
 
-define({ AudioDescription })
+define({ "audio-description": AudioDescription })
