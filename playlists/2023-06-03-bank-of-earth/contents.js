@@ -1,6 +1,7 @@
 export default {
   id: "bank-of-earth",
   title: "BANK OF EARTH / NO WITHDRAWAL",
+  needsContentAdvisory: true,
   videos: [
     {
       id: "generation-loss-connected",

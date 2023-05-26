@@ -26,7 +26,10 @@ export default class Browser extends HTMLElement {
         })
       )
       setPlaylists(playlists)
-      onPlayerContentLoaded({ playlist: playlists[0], video: playlists[0].videos[0] })
+
+      const playlist = playlists.find((each) => !each.needsContentAdvisory)
+
+      onPlayerContentLoaded({ playlist, video: playlist.videos[0] })
     },
     handleContentClick: async (event) => {
       const { playlists } = this.state
@@ -49,7 +52,17 @@ export default class Browser extends HTMLElement {
         playerContent = { playlist, video: playlist.videos[0] }
       }
 
-      onPlayerContentClicked(playerContent)
+      if (playerContent.playlist?.needsContentAdvisory) {
+        if (
+          window.confirm(
+            "This playlist contains content some viewers might find disturbing, are you sure you want to continue?"
+          )
+        ) {
+          onPlayerContentClicked(playerContent)
+        }
+      } else {
+        onPlayerContentClicked(playerContent)
+      }
     },
   })
 
