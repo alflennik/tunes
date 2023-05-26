@@ -102,7 +102,6 @@ export default class TunesPlayer extends HTMLElement {
         const nextVideo = currentPlaylist.videos[currentIndex + 1]
 
         if (nextVideo) {
-          console.log("setting next video")
           setCurrentVideo(nextVideo)
         }
       }

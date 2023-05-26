@@ -370,7 +370,7 @@ const reconcile = (component, getBuilder) => {
 
       const parentElement = virtualElement.getParentElement()
 
-      if (virtualElement.properties.text) {
+      if (virtualElement.properties.text != null) {
         parentElement.innerText = virtualElement.properties.text
       } else {
         updateElement(virtualElement)
