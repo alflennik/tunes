@@ -10,7 +10,7 @@ export default {
       thumbnailSrc: "TODO",
       thumbnailAlt: "TODO",
       youTubeId: "9N8Y8zmvTyE",
-      descriptionPath: "/playlists/2023-05-20-bank-of-earth/01-generation-loss-connected.js",
+      descriptionPath: "/playlists/2023-06-03-bank-of-earth/01-generation-loss-connected.js",
     },
     {
       id: "aespa-im-unhappy",
@@ -21,7 +21,7 @@ export default {
       thumbnailSrc: "TODO",
       thumbnailAlt: "TODO",
       youTubeId: "CC7OrEx5H4U",
-      descriptionPath: "/playlists/2023-05-20-bank-of-earth/02-aespa-im-unhappy.js",
+      descriptionPath: "/playlists/2023-06-03-bank-of-earth/02-aespa-im-unhappy.js",
     },
     {
       id: "ice-nine-kills-assault-and-batteries",
@@ -32,7 +32,7 @@ export default {
       thumbnailAlt: "TODO",
       youTubeId: "j8vKjIakHbA",
       descriptionPath:
-        "/playlists/2023-05-20-bank-of-earth/03-ice-nine-kills-assault-and-batteries.js",
+        "/playlists/2023-06-03-bank-of-earth/03-ice-nine-kills-assault-and-batteries.js",
     },
     {
       id: "king-gizzard-and-the-lizard-wizard-gila-monster",
@@ -43,7 +43,7 @@ export default {
       thumbnailAlt: "TODO",
       youTubeId: "YQX2CsMCB9M",
       descriptionPath:
-        "/playlists/2023-05-20-bank-of-earth/04-king-gizzard-and-the-lizard-wizard-gila-monster.js",
+        "/playlists/2023-06-03-bank-of-earth/04-king-gizzard-and-the-lizard-wizard-gila-monster.js",
     },
     {
       id: "mette-mamas-eyes",
@@ -53,7 +53,7 @@ export default {
       thumbnailSrc: "TODO",
       thumbnailAlt: "TODO",
       youTubeId: "gi9OBRzbMNI",
-      descriptionPath: "/playlists/2023-05-20-bank-of-earth/05-mette-mamas-eyes.js",
+      descriptionPath: "/playlists/2023-06-03-bank-of-earth/05-mette-mamas-eyes.js",
     },
     {
       id: "mura-masa-whenever-i-want",
@@ -63,7 +63,7 @@ export default {
       thumbnailSrc: "TODO",
       thumbnailAlt: "TODO",
       youTubeId: "mQL-xrUy_eM",
-      descriptionPath: "/playlists/2023-05-20-bank-of-earth/06-mura-masa-whenever-i-want.js",
+      descriptionPath: "/playlists/2023-06-03-bank-of-earth/06-mura-masa-whenever-i-want.js",
     },
     {
       id: "code-kunst-55",
@@ -74,7 +74,7 @@ export default {
       thumbnailSrc: "TODO",
       thumbnailAlt: "TODO",
       youTubeId: "xHnuscnWaRk",
-      descriptionPath: "/playlists/2023-05-20-bank-of-earth/07-code-kunst-55.js",
+      descriptionPath: "/playlists/2023-06-03-bank-of-earth/07-code-kunst-55.js",
     },
     {
       id: "harry-styles-satellite",
@@ -84,7 +84,7 @@ export default {
       thumbnailSrc: "TODO",
       thumbnailAlt: "TODO",
       youTubeId: "bGZplqeIb3w",
-      descriptionPath: "/playlists/2023-05-20-bank-of-earth/08-harry-styles-satellite.js",
+      descriptionPath: "/playlists/2023-06-03-bank-of-earth/08-harry-styles-satellite.js",
     },
     {
       id: "aespa-welcome-to-my-world",
@@ -95,7 +95,7 @@ export default {
       thumbnailSrc: "TODO",
       thumbnailAlt: "TODO",
       youTubeId: "0xdB_vo4r2c",
-      descriptionPath: "/playlists/2023-05-20-bank-of-earth/09-aespa-welcome-to-my-world.js",
+      descriptionPath: "/playlists/2023-06-03-bank-of-earth/09-aespa-welcome-to-my-world.js",
     },
   ],
 }
