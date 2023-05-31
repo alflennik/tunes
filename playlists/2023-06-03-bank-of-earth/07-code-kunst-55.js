@@ -6,7 +6,7 @@ export default {
     },
     {
       time: 15.979,
-      text: "A crew of hoodlums drink rapaciously under a bridge.",
+      text: "A crew of hoodlums drink and scream aggressively under a bridge.",
     },
     {
       time: 22.715,
@@ -66,6 +66,6 @@ export default {
     },
   ],
   analysis: {
-    text: 'There is an expression, "Everyone dies for something." You may not think of your life in terms of a Joan of Arc-style self sacrifice, but given the inevitability of death, that is exactly the kind of situation you are in.',
+    text: 'Analysis: There is an expression, "Everyone dies for something." You may not think of your life in terms of a Joan of Arc-style self sacrifice, but given the inevitability of death, that is exactly the kind of situation you are in.',
   },
 }

@@ -38,51 +38,51 @@ export default {
     },
     {
       time: 87.717,
-      text: "He rolls around a bit onstage, surely members of the crowd wondered what he was doing there.",
+      text: "It rolls around a bit onstage, surely members of the crowd wondered what it was doing there.",
     },
     {
       time: 102.854,
-      text: "Outside the arena, he rolls alongside a skateboarder, tries to copy a trick.",
+      text: "Outside the arena, it rolls alongside a skateboarder, tries to copy a trick.",
     },
     {
       time: 114.256,
-      text: "Bravely he rolls onto a highway with low visibility in the rain.",
+      text: "Bravely it rolls onto a highway with low visibility in the rain.",
     },
     {
       time: 124.304,
-      text: "A truck rolls over, but with a duck fortunately he's short enough to survive.",
+      text: "A truck rolls over, but with a duck fortunately it's short enough to survive.",
     },
     {
       time: 133.863,
-      text: "He befriends a rat at the dumpsters behind a fast food joint.",
+      text: "It befriends a rat at the dumpsters behind a fast food joint.",
     },
     {
       time: 144.419,
-      text: "Passing a truck stop and a gas station, he makes it out of town.",
+      text: "Passing a truck stop and a gas station, it makes it out of town.",
     },
     {
       time: 151.647,
-      text: 'He examines his reflection in a puddle, like, "Who am I?"',
+      text: 'It examines its reflection in a puddle, like, "Who am I?"',
     },
     {
       time: 159.366,
-      text: "And he feels so small compared to the night sky above.",
+      text: "And it feels so small compared to the night sky above.",
     },
     {
       time: 169.695,
-      text: "He passes through the vastness of the monument valley desert, visits Las Vegas.",
+      text: "It passes through the vastness of the monument valley desert, visits Las Vegas.",
     },
     {
       time: 189.958,
-      text: "He goes so many places, old motels, mountain creeks, suburbia, drainage tunnels, icy deserts resembling the lunar surface.",
+      text: "It goes so many places, old motels, mountain creeks, suburbia, drainage tunnels, icy deserts resembling the lunar surface.",
     },
     {
       time: 203.438,
-      text: "He plays in the snow, rolls through a hole in a log. Makes a friend with a wild dog.",
+      text: "It plays in the snow, rolls through a hole in a log. Makes a friend with a wild dog.",
     },
     {
       time: 215.678,
-      text: "Finally he reclines on the grass next to an unlikely friend, Harry Styles.",
+      text: "Finally it reclines on the grass next to an unlikely friend, Harry Styles.",
     },
     {
       time: 223.365,
@@ -90,11 +90,11 @@ export default {
     },
     {
       time: 229.67,
-      text: "And his battery is dying. He is shutting down.",
+      text: "And its battery is dying. It is shutting down.",
     },
     {
       time: 241.234,
-      text: "A satellite going by above, he lays down his head to sleep.",
+      text: "A satellite going by above, it lays down its head to sleep.",
     },
     {
       time: 248.889,
@@ -102,6 +102,6 @@ export default {
     },
   ],
   analysis: {
-    text: "Analysis: This might seem like a bittersweet meditation on mortality, but I just want to point out that the robot just a charge.",
+    text: "Analysis: This might seem like a bittersweet meditation on mortality, but I want to point out that the robot just needs a charge.",
   },
 }

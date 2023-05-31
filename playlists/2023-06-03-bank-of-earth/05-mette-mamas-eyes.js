@@ -18,7 +18,7 @@ export default {
     },
     {
       time: 50.733,
-      text: "She moves like a slammed butcher knife, like police abuse in London in 1958.",
+      text: "She moves like a slammed butcher knife, like police abuse on a Spring morning in London in 1958.",
     },
     {
       time: 61.259,
@@ -38,11 +38,11 @@ export default {
     },
     {
       time: 118.96,
-      text: "She opens eyes, lizard pineal eyes, crocodile multipart eyelids.",
+      text: "She opens eyes, a crocodile eye with an outer lid and an inner lid to keep the water away.",
     },
     {
       time: 125.909,
-      text: "She covers his mouth.",
+      text: "She covers his mouth, sassy like a nuke blasting through remote Nevada.",
     },
     {
       time: 131.909,
@@ -54,11 +54,11 @@ export default {
     },
     {
       time: 162.784,
-      text: "Like jumping out the school bus, like a cheeta or giraffe, like Grandma, like young Mette walzing with her cousin.",
+      text: "Like jumping out the school bus, like a cheetah or giraffe, like Grandma, like young Mette walzing with her cousin.",
     },
     {
       time: 194.784,
-      text: "She collapses, and young Mette completes the move with a backwards somersault.",
+      text: "Mette collapses, and young Mette completes the move with a backwards somersault.",
     },
   ],
 }

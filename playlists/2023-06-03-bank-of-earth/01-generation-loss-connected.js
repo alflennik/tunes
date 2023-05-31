@@ -22,7 +22,7 @@ export default {
     },
     {
       time: 46.153,
-      text: "Another recording starts. Five posters are arranged in a cross on a blank wall. On them someone has scrawled words like \"It isn't for us. Five posters for missing people appear. Other images flash by, too quickly to read.",
+      text: "Another recording starts. Five posters are arranged in a cross on a blank wall. On them someone has scrawled words like \"It isn't for us. Five posters for missing people appear. Other images flash by, like a poster with the numbers 05 03 23.",
     },
     {
       time: 61.506,

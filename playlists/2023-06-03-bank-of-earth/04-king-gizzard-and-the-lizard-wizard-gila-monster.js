@@ -22,10 +22,10 @@ export default {
     },
     {
       time: 79.805,
-      text: "They scream with ecstatic lustration. The searcher, camped out in the forest, has befriended two wolves, and stands in wait.",
+      text: "They scream in cultish pleasure. The searcher, camped out in the forest, has befriended two wolves, and stands in wait.",
     },
     {
-      time: 111.104,
+      time: 105.614,
       text: "Through his conjured portal he shares auguries with a mustachioed acolyte.",
     },
     {
@@ -38,10 +38,10 @@ export default {
     },
     {
       time: 215.221,
-      text: "Just a stone's throw from the demon lair, the searcher climbs the canyon wall. At the edge of the cliff, he prepares to consumate the rite. He takes out his guitar.",
+      text: "Just a stone's throw from the demon lair, the searcher climbs a canyon wall. At the edge of the cliff, he prepares to consumate the rite. He takes out his guitar.",
     },
     {
-      time: 263.436,
+      time: 250.015,
       text: "Lightning strikes all around.",
     },
     {

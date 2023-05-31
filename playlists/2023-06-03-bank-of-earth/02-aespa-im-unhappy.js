@@ -26,7 +26,7 @@ export default {
     },
     {
       time: 57.863,
-      text: "Karina, in a bedroom made up like an orphanage, gulps down a strange discolored marble, and collapses.",
+      text: "Karina, in pajamas in a dormitory made up like an orphanage, gulps down a strange discolored marble, and collapses.",
     },
     {
       time: 67.282,
