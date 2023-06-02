@@ -4,23 +4,26 @@ import getSemaphore from "./semaphore.js"
 const propertiesWeakMap = new WeakMap()
 const oldVirtualTreeWeakMap = new WeakMap()
 
-const utilities = {}
-
 const buildSemaphore = getSemaphore()
 
-export const element = (tagName) => {
+export const element = tagName => {
   let elementProperties = {}
 
   elementProperties.tagName = tagName
 
   const builder = {}
 
-  builder.children = (...childBuilders) => {
-    elementProperties.childBuilders = utilities.convertAnyRawStringsToTextBuilders(childBuilders)
+  builder.items = (...childBuilders) => {
+    elementProperties.childBuilders = childBuilders
     return builder
   }
 
-  builder.reconcilerId = (reconcilerId) => {
+  builder.text = text => {
+    elementProperties.text = text
+    return builder
+  }
+
+  builder.reconcilerId = reconcilerId => {
     if (reconcilerId === null || reconcilerId === undefined || typeof reconcilerId !== "string") {
       throw new Error("Found invalid reconcilerId")
     }
@@ -28,7 +31,7 @@ export const element = (tagName) => {
     return builder
   }
 
-  builder.attributes = (attributes) => {
+  builder.attributes = attributes => {
     elementProperties.attributes = attributes
     return builder
   }
@@ -39,12 +42,12 @@ export const element = (tagName) => {
     return builder
   }
 
-  builder.listeners = (listeners) => {
+  builder.listeners = listeners => {
     elementProperties.listeners = listeners
     return builder
   }
 
-  builder.styles = (styles) => {
+  builder.styles = styles => {
     elementProperties.styles = styles
     return builder
   }
@@ -54,13 +57,13 @@ export const element = (tagName) => {
   return builder
 }
 
-export const component = (Component) => {
+export const component = Component => {
   const tagName = tagNameWeakMap.get(Component)
   const builder = element(tagName)
 
   const elementProperties = propertiesWeakMap.get(builder)
 
-  builder.bindings = (bindings) => {
+  builder.bindings = bindings => {
     elementProperties.bindings = bindings
     return builder
   }
@@ -73,7 +76,7 @@ export const fragment = (...childBuilders) => {
 
   const elementProperties = {
     isFragment: true,
-    childBuilders: utilities.convertAnyRawStringsToTextBuilders(childBuilders),
+    childBuilders
   }
 
   propertiesWeakMap.set(builder, elementProperties)
@@ -81,17 +84,9 @@ export const fragment = (...childBuilders) => {
   return builder
 }
 
-const createElement = (virtualElement) => {
-  const {
-    tagName,
-    attributes,
-    referenceHolder,
-    referenceName,
-    bindings,
-    listeners,
-    styles,
-    bindingParent,
-  } = virtualElement.properties
+const createElement = virtualElement => {
+  const { tagName, attributes, referenceHolder, referenceName, bindings, listeners, styles, text } =
+    virtualElement.properties
 
   const element = document.createElement(tagName)
 
@@ -129,16 +124,16 @@ const createElement = (virtualElement) => {
     })
   }
 
-  if (bindingParent) {
-    element.bindingParent = bindingParent
+  if (text) {
+    element.innerText = text
   }
 
   return element
 }
 
-const updateElement = (virtualElement) => {
+const updateElement = virtualElement => {
   const element = virtualElement.getElement()
-  const { attributes, bindings, styles } = virtualElement.properties
+  const { attributes, bindings, styles, text } = virtualElement.properties
 
   if (attributes) {
     Object.entries(attributes).forEach(([attributeName, attributeValue]) => {
@@ -162,6 +157,10 @@ const updateElement = (virtualElement) => {
 
   if (bindings) {
     element.setBindings(bindings)
+  }
+
+  if (text && element.innerText !== text) {
+    element.innerText = text
   }
 
   return element
@@ -195,12 +194,12 @@ const getVirtualTree = (component, builder) => {
         const parentChildren = parentVirtualElement.getChildren()
         return parentChildren[siblingIndex + 1]?.getElement() ?? null
       },
-      associateElement: (newElement) => {
+      associateElement: newElement => {
         element = newElement
       },
-      append: (child) => {
+      append: child => {
         children.push(child)
-      },
+      }
     }
   }
   const getRootElement = () => {
@@ -221,9 +220,9 @@ const getVirtualTree = (component, builder) => {
       getNextSiblingElement: () => null,
       getPreviousSibling: () => null,
       getPreviousSiblingElement: () => null,
-      append: (child) => {
+      append: child => {
         children.push(child)
-      },
+      }
     }
   }
 
@@ -245,12 +244,16 @@ const getVirtualTree = (component, builder) => {
     parentId,
     siblingIndex = 0,
     positionIdIndex = 0,
-    builders,
+    builders
   }) => {
-    builders.forEach((builder) => {
+    builders.forEach(builder => {
       if (builder === null) return
 
       const properties = propertiesWeakMap.get(builder)
+
+      if (!properties) {
+        throw new Error("Invalid return from reactiveTemplate")
+      }
 
       if (properties.isFragment) {
         recurseBuilders({
@@ -258,7 +261,7 @@ const getVirtualTree = (component, builder) => {
           parentId,
           siblingIndex,
           positionIdIndex,
-          builders: properties.childBuilders,
+          builders: properties.childBuilders
         })
         return
       }
@@ -269,7 +272,7 @@ const getVirtualTree = (component, builder) => {
         id,
         siblingIndex,
         properties,
-        parentVirtualElement,
+        parentVirtualElement
       })
 
       virtualElementsById[id] = virtualElement
@@ -285,7 +288,7 @@ const getVirtualTree = (component, builder) => {
         recurseBuilders({
           parentVirtualElement: virtualElement,
           parentId: id,
-          builders: properties.childBuilders,
+          builders: properties.childBuilders
         })
       }
     })
@@ -296,7 +299,7 @@ const getVirtualTree = (component, builder) => {
   recurseBuilders({
     parentVirtualElement: rootElement,
     parentId: null,
-    builders: [builder],
+    builders: [builder]
   })
 
   const getIterator = () => {
@@ -308,34 +311,33 @@ const getVirtualTree = (component, builder) => {
 
     return {
       next: () => {
+        let next
         if (current.getFirstChild()) {
           backlog.push(current.getFirstChild)
         }
         if (current.getNextSibling()) {
-          current = current.getNextSibling()
-          return current
+          next = current.getNextSibling()
+        } else if (backlog[0]) {
+          next = backlog.shift()()
+        } else {
+          throw new Error("Unexpected")
         }
-        if (backlog[0]) {
-          current = backlog.shift()()
-          if (!current.getNextSibling() && !current.getFirstChild() && !backlog[0]) {
-            isDone = true
-          }
-          return current
+        if (!next.getNextSibling() && !next.getFirstChild() && !backlog[0]) {
+          isDone = true
         }
+        current = next
+        return next
       },
-      isDone: () => isDone,
+      isDone: () => isDone
     }
   }
 
-  const iterator = getIterator()
-
   return {
-    isDone: iterator.isDone,
-    next: iterator.next,
-    getById: (id) => {
+    getIterator,
+    getById: id => {
       return virtualElementsById[id]
     },
-    getDiscardedElements: (compareVirtualTree) => {
+    getDiscardedElements: compareVirtualTree => {
       const discardedElements = []
       Object.entries(virtualElementsById).forEach(([id, virtualElement]) => {
         if (!compareVirtualTree.getById(id) && virtualElement.properties.reconcilerId) {
@@ -343,7 +345,7 @@ const getVirtualTree = (component, builder) => {
         }
       })
       return discardedElements
-    },
+    }
   }
 }
 
@@ -354,14 +356,16 @@ const reconcile = (component, getBuilder) => {
   const oldVirtualTree = oldVirtualTreeWeakMap.get(component)
 
   const discardedElements = oldVirtualTree?.getDiscardedElements(virtualTree) ?? []
-  discardedElements.forEach((discardedElement) => {
+  discardedElements.forEach(discardedElement => {
     discardedElement.remove()
   })
 
-  while (true) {
-    if (virtualTree.isDone()) break
+  const virtualTreeIterator = virtualTree.getIterator()
 
-    const virtualElement = virtualTree.next()
+  while (true) {
+    if (virtualTreeIterator.isDone()) break
+
+    const virtualElement = virtualTreeIterator.next()
 
     const oldVirtualElement = oldVirtualTree?.getById(virtualElement.id)
 
@@ -372,11 +376,7 @@ const reconcile = (component, getBuilder) => {
 
       const parentElement = virtualElement.getParentElement()
 
-      if (virtualElement.properties.text != null) {
-        parentElement.innerText = virtualElement.properties.text
-      } else {
-        updateElement(virtualElement)
-      }
+      updateElement(virtualElement)
 
       // Move element if it is in the wrong place
       const oldParentElement = oldVirtualElement.getParentElement()
@@ -396,20 +396,16 @@ const reconcile = (component, getBuilder) => {
     } else {
       const parentElement = virtualElement.getParentElement()
 
-      if (virtualElement.properties.text) {
-        parentElement.innerText = virtualElement.properties.text
+      const element = createElement(virtualElement)
+
+      const previousElement = virtualElement.getPreviousSiblingElement()
+
+      virtualElement.associateElement(element)
+
+      if (previousElement) {
+        previousElement.insertAdjacentElement("afterend", element)
       } else {
-        const element = createElement(virtualElement)
-
-        const previousElement = virtualElement.getPreviousSiblingElement()
-
-        virtualElement.associateElement(element)
-
-        if (previousElement) {
-          previousElement.insertAdjacentElement("afterend", element)
-        } else {
-          parentElement.insertAdjacentElement("afterbegin", element)
-        }
+        parentElement.insertAdjacentElement("afterbegin", element)
       }
     }
   }
@@ -421,19 +417,5 @@ export const build = (component, getBuilder, { onComplete }) => {
   buildSemaphore(() => {
     reconcile(component, getBuilder)
     onComplete()
-  })
-}
-
-utilities.convertAnyRawStringsToTextBuilders = (childBuilders) => {
-  return childBuilders.map((builderOrString) => {
-    if (typeof builderOrString !== "string") return builderOrString
-
-    const builder = {}
-
-    let elementProperties = { text: builderOrString }
-
-    propertiesWeakMap.set(builder, elementProperties)
-
-    return builder
   })
 }
