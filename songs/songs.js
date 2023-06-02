@@ -1,5 +1,15 @@
 export default [
   {
+    id: "annatoria-the-divide",
+    artist: "Annatoria",
+    title: "The Divide",
+    videoType: "musicVideo",
+    thumbnailSrc: "TODO",
+    thumbnailAlt: "TODO",
+    youTubeId: "3tixhS3ilNw",
+    descriptionPath: "/songs/annatoria-the-divide.js",
+  },
+  {
     id: "rimon-i-choose-u",
     artist: "RIMON",
     featuredArtist: "RINI",
