@@ -14,7 +14,7 @@ export default class YouTubePlayer extends HTMLElement {
   initializeState = {
     intervalId: null,
     lastVideoId: undefined,
-    isReady: false,
+    isReady: false
   }
 
   initializeActions = ({ stateSetters }) => ({
@@ -34,12 +34,12 @@ export default class YouTubePlayer extends HTMLElement {
         onReady()
       })
 
-      this.#player.addEventListener("onStateChange", (event) => {
+      this.#player.addEventListener("onStateChange", event => {
         handleYouTubeChange(event.data)
       })
     },
 
-    handleYouTubeChange: (eventData) => {
+    handleYouTubeChange: eventData => {
       const { onUpdateTime, onPause, onPlay, onEnd } = this.bindings
       const { intervalId } = this.state
       const { setIntervalId } = stateSetters
@@ -65,17 +65,17 @@ export default class YouTubePlayer extends HTMLElement {
         setIntervalId(null)
       }
     },
-    trackLastVideoId: (videoId) => {
+    trackLastVideoId: videoId => {
       const { setLastVideoId } = stateSetters
       setLastVideoId(videoId)
-    },
+    }
   })
 
   async connectedCallback() {
     const { handleConnect } = this.actions
     const { videoId } = this.bindings
 
-    this.#player = await new Promise(async (resolve) => {
+    this.#player = await new Promise(async resolve => {
       this.innerHTML = `<div id="player"></div>`
 
       window.onYouTubeIframeAPIReady = function () {
@@ -85,8 +85,8 @@ export default class YouTubePlayer extends HTMLElement {
             width: "560",
             videoId,
             playerVars: {
-              playsinline: 1,
-            },
+              playsinline: 1
+            }
           })
         )
       }

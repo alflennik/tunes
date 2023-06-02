@@ -9,16 +9,16 @@ class Root extends HTMLElement {
   }
 
   initializeState = {
-    playerContent: undefined,
+    playerContent: undefined
   }
 
   initializeActions = ({ stateSetters }) => ({
-    onPlayerContentClicked: async (playerContent) => {
+    onPlayerContentClicked: async playerContent => {
       const { setPlayerContent } = stateSetters
 
       setPlayerContent(playerContent)
 
-      await new Promise((resolve) => {
+      await new Promise(resolve => {
         const intervalId = setInterval(() => {
           const { tunesPlayer } = this
 
@@ -32,11 +32,11 @@ class Root extends HTMLElement {
         }, 40)
       })
     },
-    onPlayerContentLoaded: (playerContent) => {
+    onPlayerContentLoaded: playerContent => {
       const { setPlayerContent } = stateSetters
 
       setPlayerContent(playerContent)
-    },
+    }
   })
 
   reactiveTemplate() {
@@ -46,21 +46,21 @@ class Root extends HTMLElement {
     return fragment(
       element("div")
         .attributes({ class: "content-container" })
-        .children(
-          element("h1").children("Tunes"),
-          element("p").children(
+        .items(
+          element("h1").text("Tunes"),
+          element("p").text(
             "The Tunes project implements audio descriptions for music videos, which are written by some guy named Alex."
           ),
           component(Browser).bindings({
             playerContent,
             onPlayerContentLoaded,
-            onPlayerContentClicked,
+            onPlayerContentClicked
           }),
           element("h2")
             .styles({ display: playerContent ? "initial" : "none" })
             .reference(this, "playerH2")
             .attributes({ tabindex: "-1" })
-            .children("Player")
+            .text("Player")
         ),
       playerContent
         ? component(TunesPlayer)

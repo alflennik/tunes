@@ -18,7 +18,7 @@ export default class TunesPlayer extends HTMLElement {
     lastBoundPlaylist: null,
     isPlaying: false,
     isEnded: false,
-    hasCompletedInitialClick: false,
+    hasCompletedInitialClick: false
   }
 
   initializeActions = ({ stateSetters }) => ({
@@ -54,7 +54,7 @@ export default class TunesPlayer extends HTMLElement {
         setIsReady(true)
       }
     },
-    onUpdateTime: (time) => {
+    onUpdateTime: time => {
       const { setTime } = stateSetters
 
       setTime(time)
@@ -66,7 +66,7 @@ export default class TunesPlayer extends HTMLElement {
         setLastBoundPlaylist,
         setCurrentVideo,
         setCurrentPlaylist,
-        setTime,
+        setTime
       } = stateSetters
       setLastBoundVideo(content.video)
       setLastBoundPlaylist(content.playlist)
@@ -95,9 +95,7 @@ export default class TunesPlayer extends HTMLElement {
       const { setCurrentVideo } = stateSetters
 
       if (currentPlaylist) {
-        const currentIndex = currentPlaylist.videos.findIndex(
-          (video) => video.id === currentVideo.id
-        )
+        const currentIndex = currentPlaylist.videos.findIndex(video => video.id === currentVideo.id)
 
         const nextVideo = currentPlaylist.videos[currentIndex + 1]
 
@@ -108,13 +106,13 @@ export default class TunesPlayer extends HTMLElement {
     },
     play: () => {
       this.youTubePlayer.play()
-    },
+    }
   })
 
   connectedCallback() {
     const { handleFirstClick, handleContentChange } = this.actions
 
-    const listenForFirstClick = async (event) => {
+    const listenForFirstClick = async event => {
       const isKeyDown = event.type === "keydown"
 
       const clickInterceptor = document.querySelector(".click-interceptor")
@@ -143,7 +141,7 @@ export default class TunesPlayer extends HTMLElement {
       onYouTubePlay,
       onYouTubeEnd,
       onDescriptionEnd,
-      handleContentChange,
+      handleContentChange
     } = this.actions
     const { content } = this.bindings
     const { currentVideo, lastBoundVideo, lastBoundPlaylist, hasCompletedInitialClick } = this.state
@@ -162,17 +160,17 @@ export default class TunesPlayer extends HTMLElement {
       element("div")
         .reference(this, "clickInterceptor")
         .attributes({ class: "click-interceptor", "tab-index": 0 })
-        .children(element("button").children(`Play ${currentVideo.title}`)),
+        .items(element("button").text(`Play ${currentVideo.title}`)),
       component(YouTubePlayer)
-        .attributes({ "aria-hidden": hasCompletedInitialClick ? undefined : true })
         .reference(this, "youTubePlayer")
+        .attributes({ "aria-hidden": hasCompletedInitialClick ? undefined : true })
         .bindings({
           videoId: currentVideo.youTubeId,
           onUpdateTime,
           onReady: onYouTubeReady,
           onPlay: onYouTubePlay,
           onPause: onYouTubePause,
-          onEnd: onYouTubeEnd,
+          onEnd: onYouTubeEnd
         }),
       component(AudioDescription).reference(this, "audioDescription").bindings({
         song: currentVideo,
@@ -182,7 +180,7 @@ export default class TunesPlayer extends HTMLElement {
         voice: this.voiceSynthesized,
         onLoading: onDescriptionsLoading,
         onReady: onDescriptionsReady,
-        onEnd: onDescriptionEnd,
+        onEnd: onDescriptionEnd
       })
     )
   }

@@ -11,11 +11,11 @@ while (true) {
     .shadowRoot.querySelector("ytd-continuation-item-renderer")
   if (!spinner) break
   spinner.scrollIntoView({ behavior: "smooth" })
-  await new Promise((resolve) => setTimeout(resolve, 1000))
+  await new Promise(resolve => setTimeout(resolve, 1000))
 }
 
 // Keeps copy() function from working!
-Array.from(document.querySelectorAll("#copy")).forEach((copyElement) => {
+Array.from(document.querySelectorAll("#copy")).forEach(copyElement => {
   copyElement.remove()
 })
 
@@ -29,8 +29,8 @@ copy(
         .shadowRoot.querySelector("ytd-playlist-video-list-renderer")
         .shadowRoot.querySelectorAll("ytd-playlist-video-renderer")
     )
-      .map((vid) => vid.shadowRoot)
-      .map((vid) => {
+      .map(vid => vid.shadowRoot)
+      .map(vid => {
         const id = vid
           .querySelector("#video-title")
           .getAttribute("href")

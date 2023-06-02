@@ -2,7 +2,7 @@ import { build } from "./reconciler.js"
 
 export const tagNameWeakMap = new WeakMap()
 
-export default async (Components) => {
+export default async Components => {
   let definitions = []
   for (const [name, Component] of Object.entries(Components)) {
     definitions.push(defineComponent(name, Component))
@@ -33,10 +33,10 @@ function defineComponent(name, UserComponent) {
       if (this.initializeState) {
         this.#mutableState = this.initializeState
 
-        Object.keys(this.initializeState).forEach((name) => {
+        Object.keys(this.initializeState).forEach(name => {
           const setterName = "set" + name.substr(0, 1).toUpperCase() + name.substr(1)
 
-          stateSetters[setterName] = (value) => {
+          stateSetters[setterName] = value => {
             this.#didStateChange = true
             this.#mutableState[name] = value
             this.#refresh()
@@ -88,10 +88,10 @@ function defineComponent(name, UserComponent) {
       }
 
       // https://medium.com/@nikhil_gupta/how-to-deepfreeze-a-nested-object-array-800671147d53
-      const deepFreeze = (obj) => {
+      const deepFreeze = obj => {
         if (obj && typeof obj === "object" && !Object.isFrozen(obj)) {
           Object.freeze(obj)
-          Object.getOwnPropertyNames(obj).forEach((prop) => deepFreeze(obj[prop]))
+          Object.getOwnPropertyNames(obj).forEach(prop => deepFreeze(obj[prop]))
         }
         return obj
       }
@@ -131,7 +131,7 @@ function defineComponent(name, UserComponent) {
         build(this, getBuilder, {
           onComplete: () => {
             this.#buildQueued = false
-          },
+          }
         })
       }
     }

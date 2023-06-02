@@ -59,7 +59,7 @@ const siteBuildScript = async ({ environment }) => {
       throw new Error("You need to push your changes")
     }
 
-    const checkoutBranch = async (branch) => {
+    const checkoutBranch = async branch => {
       await new Promise((resolve, reject) => {
         exec(`git checkout ${branch}`, (error, stdout, stderr) => {
           if (error || (stderr && !stderr.startsWith("Switched"))) {
@@ -67,7 +67,7 @@ const siteBuildScript = async ({ environment }) => {
           }
           resolve()
         })
-      }).catch((error) => {
+      }).catch(error => {
         console.error(error)
         throw new Error("Failed to checkout")
       })
@@ -79,7 +79,7 @@ const siteBuildScript = async ({ environment }) => {
 
     await checkoutBranch(environment)
 
-    const pushBranch = async (branch) => {
+    const pushBranch = async branch => {
       await new Promise((resolve, reject) => {
         exec(`git push`, (error, stdout, stderr) => {
           if (error || (stderr && !stderr.startsWith("Everything up-to-date"))) {
@@ -87,7 +87,7 @@ const siteBuildScript = async ({ environment }) => {
           }
           resolve()
         })
-      }).catch((error) => {
+      }).catch(error => {
         console.error(error)
         throw new Error("Failed to push")
       })
@@ -115,7 +115,7 @@ const siteBuildScript = async ({ environment }) => {
 
     const fileNames = await fs.readdir(buildFolderPath)
     await Promise.all(
-      fileNames.map(async (fileName) => {
+      fileNames.map(async fileName => {
         const filePath = path.resolve(buildFolderPath, fileName)
         await fs.rm(filePath, { recursive: true })
       })
@@ -126,7 +126,7 @@ const siteBuildScript = async ({ environment }) => {
 
   const copyAssets = async () => {
     await Promise.all(
-      assetLocations.map(async (assetLocation) => {
+      assetLocations.map(async assetLocation => {
         const newName =
           renameAssets.find(([beforeName]) => beforeName === assetLocation)?.[1] ?? assetLocation
         const assetSource = path.resolve(__dirname, "../", assetLocation)
@@ -138,7 +138,7 @@ const siteBuildScript = async ({ environment }) => {
 
   await copyAssets()
 
-  const setFirebaseProject = async (firebaseId) => {
+  const setFirebaseProject = async firebaseId => {
     await new Promise((resolve, reject) => {
       exec(`firebase use tunes-${environment}`, { cwd: __dirname }, (error, stdout, stderr) => {
         if (!stdout.match(`Now using project ${firebaseId}`)) {
@@ -146,7 +146,7 @@ const siteBuildScript = async ({ environment }) => {
         }
         resolve()
       })
-    }).catch((error) => {
+    }).catch(error => {
       console.error(error)
       throw new Error("Failed to set Firebase project")
     })
@@ -160,15 +160,15 @@ const siteBuildScript = async ({ environment }) => {
     await new Promise((resolve, reject) => {
       const firebaseDeploy = spawn("firebase", ["deploy"], { cwd: __dirname })
 
-      firebaseDeploy.stdout.on("data", (data) => {
+      firebaseDeploy.stdout.on("data", data => {
         console.log(data.toString())
       })
 
-      firebaseDeploy.stderr.on("data", (data) => {
+      firebaseDeploy.stderr.on("data", data => {
         console.error(data.toString())
       })
 
-      firebaseDeploy.on("close", (code) => {
+      firebaseDeploy.on("close", code => {
         if (code !== 0) return reject()
         resolve()
       })

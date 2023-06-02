@@ -1,6 +1,6 @@
 export default class Voice {
   onFirstInteraction() {
-    return new Promise((resolve) => {
+    return new Promise(resolve => {
       // Thanks AblePlayer!
       // https://github.com/ableplayer/ableplayer/blob/main/scripts/description.js
       var greeting = new SpeechSynthesisUtterance("Hi!")
@@ -38,7 +38,7 @@ export default class Voice {
 
         // Windows
         ["Microsoft Steffan Online (Natural) - English (United States)", 1.7], // Edge only
-        ["Microsoft Mark - English (United States)", isChrome ? 2.8 : 1.7], // Chrome and Firefox
+        ["Microsoft Mark - English (United States)", isChrome ? 2.8 : 1.7] // Chrome and Firefox
       ]
 
       let defaultVoice
@@ -46,7 +46,7 @@ export default class Voice {
 
       let bestVoiceRank
 
-      const englishVoices = speechSynthesis.getVoices().filter((voice) => voice.lang === "en-US")
+      const englishVoices = speechSynthesis.getVoices().filter(voice => voice.lang === "en-US")
 
       for (const voice of englishVoices) {
         for (let i = 0; i < bestVoicesAndRates.length; i += 1) {
@@ -68,7 +68,7 @@ export default class Voice {
       }
     }
 
-    return new Promise((resolve) => {
+    return new Promise(resolve => {
       if (speechSynthesis.getVoices().length) {
         setBestVoice()
         resolve()
@@ -84,7 +84,7 @@ export default class Voice {
 
   async say(description) {
     const { voiceName, voiceRate } = this
-    const voice = speechSynthesis.getVoices().find((each) => each.name === voiceName)
+    const voice = speechSynthesis.getVoices().find(each => each.name === voiceName)
     const utterance = new SpeechSynthesisUtterance(description.text)
 
     // On iOS the best voice is the default voice, which is not listed in the voice list
@@ -96,7 +96,7 @@ export default class Voice {
       utterance.rate = 1.1
     }
     utterance.lang = "en-US"
-    return new Promise((resolve) => {
+    return new Promise(resolve => {
       utterance.addEventListener("end", resolve)
       speechSynthesis.speak(utterance)
     })

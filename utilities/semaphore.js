@@ -1,7 +1,7 @@
 export default () => {
   const waiting = []
 
-  return (callback) => {
+  return callback => {
     const isBlocked = waiting.length
     if (isBlocked) {
       waiting.push(callback)

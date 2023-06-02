@@ -13,7 +13,7 @@ export default class AudioDescription extends HTMLElement {
     previousTime: null,
     isCurrentlyPlaying: false,
     lastSongId: null,
-    isReady: false,
+    isReady: false
   }
 
   initializeActions = ({ stateSetters }) => ({
@@ -76,7 +76,7 @@ export default class AudioDescription extends HTMLElement {
       }
     },
 
-    handlePlayChange: async (isPlaying) => {
+    handlePlayChange: async isPlaying => {
       const { voice, isEnded, onEnd } = this.bindings
       const { analysis } = this.state
       const { setIsCurrentlyPlaying, setCurrentDescriptionText } = stateSetters
@@ -104,7 +104,7 @@ export default class AudioDescription extends HTMLElement {
       setCurrentDescriptionText("")
       setPreviousTime(null)
       await fetchDescriptions()
-    },
+    }
   })
 
   async connectedCallback() {
@@ -129,7 +129,7 @@ export default class AudioDescription extends HTMLElement {
 
     return element("div")
       .attributes({ class: "wrapping-box" })
-      .children(element("div").children(currentDescriptionText))
+      .items(element("div").text(currentDescriptionText))
   }
 }
 

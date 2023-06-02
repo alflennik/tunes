@@ -9,7 +9,7 @@ export default class Browser extends HTMLElement {
   }
 
   initializeState = {
-    playlists: undefined,
+    playlists: undefined
   }
 
   initializeActions = ({ stateSetters }) => ({
@@ -20,18 +20,18 @@ export default class Browser extends HTMLElement {
       const playlistListModule = await import(`../playlists/playlist-list.js`)
       const playlistList = playlistListModule.default
       const playlists = await Promise.all(
-        playlistList.map(async (playlistPath) => {
+        playlistList.map(async playlistPath => {
           const playlistModule = await import(`../playlists/${playlistPath}/contents.js`)
           return playlistModule.default
         })
       )
       setPlaylists(playlists)
 
-      const playlist = playlists.find((each) => !each.needsContentAdvisory)
+      const playlist = playlists.find(each => !each.needsContentAdvisory)
 
       onPlayerContentLoaded({ playlist, video: playlist.videos[0] })
     },
-    handleContentClick: async (event) => {
+    handleContentClick: async event => {
       const { playlists } = this.state
       const { onPlayerContentClicked } = this.bindings
 
@@ -42,13 +42,13 @@ export default class Browser extends HTMLElement {
 
       let playerContent
       if (playlistId && videoId) {
-        const playlist = playlists.find((playlist) => playlist.id === playlistId)
-        const video = playlist.videos.find((video) => video.id === videoId)
+        const playlist = playlists.find(playlist => playlist.id === playlistId)
+        const video = playlist.videos.find(video => video.id === videoId)
         playerContent = { playlist, video }
       } else if (videoId) {
-        playerContent = { video: videos.find((video) => video.id === videoId) }
+        playerContent = { video: videos.find(video => video.id === videoId) }
       } else {
-        const playlist = playlists.find((playlist) => playlist.id === playlistId)
+        const playlist = playlists.find(playlist => playlist.id === playlistId)
         playerContent = { playlist, video: playlist.videos[0] }
       }
 
@@ -63,7 +63,7 @@ export default class Browser extends HTMLElement {
       } else {
         onPlayerContentClicked(playerContent)
       }
-    },
+    }
   })
 
   async connectedCallback() {
@@ -78,51 +78,47 @@ export default class Browser extends HTMLElement {
 
     if (!playlists) return null
 
-    return element("nav").children(
-      element("div")
-        .reconcilerId("playlistContainer")
-        .children(
-          element("h2").children("Playlists"),
-          element("ul").children(
-            ...playlists.map((playlist) => {
-              return element("li").children(
-                element("h3").children(
+    return element("nav").items(
+      element("h2").text("Playlists"),
+      element("ul").items(
+        ...playlists.map(playlist =>
+          element("li").items(
+            element("h3").items(
+              element("a")
+                .attributes({ href: "#", "playlist-id": playlist.id })
+                .listeners({ click: handleContentClick })
+                .text(playlist.title)
+            ),
+            element("ul").items(
+              ...playlist.videos.map(video =>
+                element("li").items(
                   element("a")
-                    .attributes({ href: "#", "playlist-id": playlist.id })
+                    .attributes({
+                      href: "#",
+                      "playlist-id": playlist.id,
+                      "video-id": video.id
+                    })
                     .listeners({ click: handleContentClick })
-                    .children(playlist.title)
-                ),
-                element("ul").children(
-                  ...playlist.videos.map((video) => {
-                    return element("li").children(
-                      element("a")
-                        .attributes({
-                          href: "#",
-                          "playlist-id": playlist.id,
-                          "video-id": video.id,
-                        })
-                        .listeners({ click: handleContentClick })
-                        .children(formatTitle(video, { titleStyle: "listenable" }))
-                    )
-                  })
+                    .text(formatTitle(video, { titleStyle: "listenable" }))
                 )
               )
-            })
+            )
           )
-        ),
-      element("h2").children("Other Songs"),
-      element("ul").children(
-        ...videos.map((video) => {
+        )
+      ),
+      element("h2").text("Other Songs"),
+      element("ul").items(
+        ...videos.map(video => {
           const isActive = video.id === playerContent?.video?.id
-          return element("li").children(
+          return element("li").items(
             element("a")
               .attributes({
                 href: "#",
                 "video-id": video.id,
-                "aria-current": isActive ? true : undefined,
+                "aria-current": isActive ? true : undefined
               })
               .listeners({ click: handleContentClick })
-              .children(formatTitle(video, { titleStyle: "listenable" }))
+              .text(formatTitle(video, { titleStyle: "listenable" }))
           )
         })
       )
