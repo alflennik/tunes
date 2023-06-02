@@ -3,7 +3,7 @@ const clips = [
   "She digs into some gelato.",
   "She polishes off an ice cream cone, struggling to look elegant as she takes a mighty bite.",
   "She sprints across the street, ice cream cone in hand.",
-  "She saunters carefully down the street, careful not to unbalance the ice cream cone in her hand.",
+  "She saunters down the street, careful not to unbalance the ice cream cone in her hand.",
   "Sitting in her car, she waves and then converts that wave into a cheeky flip of a middle finger.",
   "The cameraman squishes the camera as close to her face as possible, her eye taking on epic proportions.",
   "On a beach at sunset, she almost arrived too late and shuffle-runs towards the water.",
@@ -29,7 +29,7 @@ const clips = [
   "She pushes a shopping cart through a department store. With the camera situated on the cart, she pushes off and jumps on, gaining the ability, apparently, to levitate.",
   "She's driving and almost ready to park, judging by the blazing sunset and hint of beach outside her car.",
   "She got caught with a tiny dot of lipstick on her front tooth.",
-  "She uses a coin to scratch out numbers on a lottery card. She loses everything.",
+  "She uses a coin to scratch out numbers on a lottery card, and she loses everything.",
   "She takes a kung-fu stance, ready for battle.",
   "In an outburst of silliness, she runs up to hug a support column in some big building, her phone flying quite unintentionally out of her hand, her misfortune a case-study in spectacular comedic timing.",
   "In an art studio she puts the finishing touch of paint on a primitive cartoony man. She points accusatively towards the cameraman.",
@@ -52,7 +52,7 @@ const clips = [
   "She poses in a big empty garage, preparing perhaps to claim the space as her own.",
   "The cameraman dutifully documents her extraction of a drink from a cabinet at the grocery store.",
   "A street light produces a dramatic silhouette, like the stage performer she is.",
-  'She swipes her paw at the camera, "Stop the recording!"',
+  'She swipes her paw at the camera, like "Stop the recording!"',
   "Doggies roam around the living room.",
   "She swipes a right hook at a parking lot mirror.",
   "She boops a hedge.",
@@ -63,7 +63,7 @@ const clips = [
   "She's just filling her gas tank but the camerman feels this is important.",
   "She giggles like someone just said a sick burn.",
   "She gets mauled by a stuffed bear.",
-  "The cameraman makes her laugh next to the roses.",
+  "The cameraman makes her laugh next to roses.",
   "She confuses a little pink flower for an earring.",
   "A little pink flower is squeezed behind her ear as an earring.",
   "She shoots a voluminous jet of water right out of her mouth. Well, it looks that way thanks to some perspective trickery. There's a water fountain in the distance.",
@@ -109,11 +109,11 @@ const clips = [
   "She grimaces with a 90% ugly face, tempered by 10% self-consciousness.",
   "She is trying to concentrate on whether her pot of food is ready and this is really not a good time to be on camera.",
   "She stands next to a firepit, the flame transfixing her.",
-  "She stalks up to a firepit, hurling a log towards it with maximum force, sparks flying everywhere.",
+  "Next to a firepit, she hurls a log towards it with maximum force, sparks flying everywhere.",
   "She spits out her drink as if someone just let loose a shocking revelation. Yes, the patio got completely splattered.",
   "Leaning against the foot of the living room couch, she has studio headphones on, laptop open and ready, and she strums on her guitar and sings. Incredibly, it actually looks like she is singing this song.",
   "She sneaks around the university library, peeks at a textbook, spins and duck walks between the stacks.",
-  "It's not a good time, she goes for the cameraman.",
+  "She goes for the cameraman because it's not a good time.",
   "She puts the bathroom door between her and the cameraman.",
   "In her kitchen, she attempts a smile, but her face is still puffy from tears. And she still hasn't finished cutting the onions.",
   "Like an expert bartender, she slides a soda can towards the edge of her kitchen table, however it flies right off the edge. A few tries later, it stops perfectly at the edge. She is astonished at this achievement.",
@@ -134,7 +134,7 @@ const clips = [
   "Hurriedly proceeding down a hallway, she holds up five fingers to stop the cameraman.",
   "She dances frantically using suburban street lights as stage lights.",
   "On a bus heading somewhere, she is disappointed.",
-  "She is massively undewhelmed at the pajama shop.",
+  "She is massively underwhelmed at the pajama shop.",
   "The camcorder skids around the pavement at a parking lot, finally coming to a standstill with a view of nothing more than her skinny legs.",
   "Skinning a carrot, she recoils her hand from an apparent injury.",
   "Seagulls fly past at sunset.",
@@ -149,28 +149,28 @@ const clips = [
   "She takes a flattened cutout of a leaf and inserts it into the mouth of a flattened cutout of a dinosaur.",
   "In the park she seemingly decries the damn whipper-snappers who won't get off the lawn.",
   "She burns something, holding it carefully at arms length, maybe it's a piece of paper.",
-  "Her face is impossible to see, thanks to the contrast from a bright light in the background, which is a shame, because in her face is an intensity which can be hardly glimpsed.",
+  "Her face is almost impossible to see, thanks to the contrast from a bright light in the background, but there is a hint of an interesting intensity in her face.",
   "At the gas station, she walks back to her car, not at all aware that she is too cool for such an ordinary environment.",
   "In the kitchen, she duels the cameraman, two butcher knives flailing a bit more than is probably safe.",
   "She bows down in reverance to a great big wacky flailing arm inflatable tube man.",
-  "Her sunglasses reflect what she sees, which is idylic palm trees and ocean at sunset.",
-  "Little pink flowers as the backdrop, her body hangs at an angle as she grabs onto the cables attached to a telephone pole. The cameraman turns the camera sideways and now it's the world which is askew.",
+  "Her sunglasses reflect what she sees, which is idyllic palm trees and ocean at sunset.",
+  "She hangs sideways from a pole and the cameraman rotates the camera, so it's the world which is askew.",
   "Tragically, she dropped a tray of french fries onto the concrete.",
   "She laughs in the passenger seat.",
-  "Stopped at a red light, she makes a little tube with her hand in order to direct the camera's gaze towards the sky above, which is yellow, thanks to the sunset.",
+  "Stopped at a red light, she makes a little tube with her hand in order to direct the camera's gaze towards the sunset.",
   "The cameraman examines her hair clip which is in the shape of a little yippy doggy.",
-  "With a smile, she looks not at the camcoder, but behind it, at whoever is on the other side.",
+  "With a smile, she looks not at the camcorder, but behind it, at whoever is on the other side.",
   "She smiles like a movie star under strobing lights which look like flashing photos.",
   "She sticks out her tongue.",
   "She blows some bubbles.",
   "She takes advantage of some empty bleachers at a park to sit down and sip from her green smoothie.",
   "She spins around haphazardly.",
-  "Next to a row of palm trees, she leaps upwards, and even with the aid of the cameraman's low angle, she can't quite reach their level.",
+  "Next to a row of palm trees, she leaps upwards, but she can't quite reach their level.",
   "A few balloons are sitting in the middle of a busy road, and she rockets in at a full sprint, inexplicably, to kick them.",
   "Dressed glamorously, she walks hurriedly towards some opportunity.",
   "At a botanical garden, there is a strange bush which has a bunch of twiggy red branches but no leaves. Anyway she has stuck two twigs in each of her nostrils.",
   "At a department store, she has an absolutely enormous head, or at least that what it looks like becaues she's standing directly behind a little kid-sized mannequin.",
-  "Her attempt to sit on a little-kid sized chair falls and she tumbles into the grass.",
+  "Her attempt to sit on a little-kid sized chair fails and she tumbles into the grass.",
   "Like a kung-fu master she wall jumps off a sloping concrete wall.",
   "She teases the camera with a flaming twig from the fire pit.",
   "A jumbo jet passes by overhead on its way to land.",
@@ -182,7 +182,7 @@ const clips = [
   "Water makes funny ripping shapes as it flows.",
   "She focuses on driving, navigating through a tunnel.",
   "A scoop of ice cream, unfortunately, has splattered on the floor.",
-  "She holds up a one on both fingers, slaps her fingers together, and then has a one on one finger and a two on the other.",
+  "She holds up a one on both fingers, and then like pregnancy, she slaps her fingers together, and then has a one on one finger and a two on the other.",
   "She looks amused at the basketball machine at the arcade.",
   "With no regard for ladylike appearances, she squishes her whole damn face against her car's windshield, producing a horribly unflattering portrait of a strange kind of confidence.",
   "Somewhere at home she slaps her hands together to emphasize a point.",
@@ -206,7 +206,7 @@ const clips = [
   "She drives her car, angling for a parking spot right over there.",
   "She waves the cameraman away, she's got nothing more to offer.",
   "She smiles uncertainly as if someone just told her she's pretty.",
-  "She rides a rental scooter at low speed in an enclosed parking lot.",
+  "She rides a rental scooter at low speed for practice in an enclosed parking lot.",
   "She flashes a smile despite the fact the wind has totally messed up her hair.",
   "A cute little doggo walzes onto her picnic blanket.",
   "A giraffe sculpture doesn't looks silly at all, until of course she copies its expression but in the worst possible way.",
@@ -218,11 +218,11 @@ const clips = [
   "She holds up a phone with eyes on it over her real eyes.",
   "The cameraman's hand reaches into frame to grab some french fries.",
   "Out in the park, she attempts to use a twig as a magic wand.",
-  "She presents her tongue, which is blue probably from some ulta-processed food.",
+  "She presents her tongue, which is blue probably from some ultra-processed food.",
   "With full glamorous dress she twirls around, not in a ballroom but in a parking garage.",
   "In her pajamas, she flips her hair over the front of her face, presumably to run the hair dryer.",
   "She runs helter skelter down the beach.",
-  'She shrugs, like "Sorry bro"',
+  'She shrugs, like "Sorry bro."',
   "Bundled up under her hoodie, she uses the camcorder's digital eye to size herself up.",
   "Famously, the full moon is almost impossible to capture on camera, and this clip is no exception, it's blurry and lacks any detail.",
   "The cameraman sneaks up behind her, looks over her shoulder in an attempt to read the message she's typing on her phone.",
@@ -231,9 +231,10 @@ const clips = [
 
 const sampleClips = () => {
   const openingCount = 13
-  const characterBudget = 100
-  const safetyMargin = 400
-  const overallCharacterBudget = openingCount * 320 + safetyMargin
+  const characterMinimum = 100
+  const characterMaximum = 250
+  const characterMagicNumber = 180
+  const overallCharacterBudget = openingCount * characterMagicNumber
 
   const shufflePreserveIndex = (array) => {
     return array
@@ -268,7 +269,7 @@ const sampleClips = () => {
   i = 0
   selectedClips.forEach((clip) => {
     const currentCount = openings[i]?.join(" ").length ?? 0
-    if (currentCount > characterBudget) {
+    if (currentCount > characterMinimum || currentCount + clip.text.length > characterMaximum) {
       i += 1
       openings[i] = [clip.text]
       return
@@ -279,20 +280,15 @@ const sampleClips = () => {
     openings[i].push(clip.text)
   })
 
+  console.log(openings.length)
+  const extraItems = openings.length - 1 - openingCount
+  for (let i = 0; i < extraItems; i += 1) {
+    // remove random item
+    openings.splice(Math.floor(Math.random() * openings.length), 1)
+  }
+
   return openings.map((clips) => clips.join(" "))
 }
-
-// console.log(JSON.stringify(sampleClips(), "\t", 2))
-// console.log(JSON.stringify(sampleClips(), "\t", 2))
-// console.log(JSON.stringify(sampleClips(), "\t", 2))
-// console.log(JSON.stringify(sampleClips(), "\t", 2))
-// console.log(JSON.stringify(sampleClips(), "\t", 2))
-// console.log(JSON.stringify(sampleClips(), "\t", 2))
-// console.log(JSON.stringify(sampleClips(), "\t", 2))
-// console.log(JSON.stringify(sampleClips(), "\t", 2))
-// console.log(JSON.stringify(sampleClips(), "\t", 2))
-// console.log(JSON.stringify(sampleClips(), "\t", 2))
-// console.log(JSON.stringify(sampleClips(), "\t", 2))
 
 export default {
   get descriptions() {
@@ -377,6 +373,6 @@ export default {
     ]
   },
   analysis: {
-    text: "Analysis: The word backburner seems quite clearly to refer to a kind of love where the other person isn't consistently there. Our lives are full of waiting for something that might or might not happen, and it's the wait ultimately that we're left with.",
+    text: "Analysis: The word backburner seems quite clearly to refer to a kind of love where someone isn't consistently there. Our lives are full of waiting for something that might or might not happen, and it's the wait ultimately that we're left with.",
   },
 }
