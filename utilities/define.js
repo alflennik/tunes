@@ -131,7 +131,7 @@ function defineComponent(name, UserComponent) {
         build(this, getBuilder, {
           onComplete: () => {
             this.#buildQueued = false
-          }
+          },
         })
       }
     }

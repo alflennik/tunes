@@ -9,7 +9,7 @@ class Root extends HTMLElement {
   }
 
   initializeState = {
-    playerContent: undefined
+    playerContent: undefined,
   }
 
   initializeActions = ({ stateSetters }) => ({
@@ -36,7 +36,7 @@ class Root extends HTMLElement {
       const { setPlayerContent } = stateSetters
 
       setPlayerContent(playerContent)
-    }
+    },
   })
 
   reactiveTemplate() {
@@ -54,7 +54,7 @@ class Root extends HTMLElement {
           component(Browser).bindings({
             playerContent,
             onPlayerContentLoaded,
-            onPlayerContentClicked
+            onPlayerContentClicked,
           }),
           element("h2")
             .styles({ display: playerContent ? "initial" : "none" })

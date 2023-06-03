@@ -14,7 +14,7 @@ export default class YouTubePlayer extends HTMLElement {
   initializeState = {
     intervalId: null,
     lastVideoId: undefined,
-    isReady: false
+    isReady: false,
   }
 
   initializeActions = ({ stateSetters }) => ({
@@ -68,7 +68,7 @@ export default class YouTubePlayer extends HTMLElement {
     trackLastVideoId: videoId => {
       const { setLastVideoId } = stateSetters
       setLastVideoId(videoId)
-    }
+    },
   })
 
   async connectedCallback() {
@@ -85,8 +85,8 @@ export default class YouTubePlayer extends HTMLElement {
             width: "560",
             videoId,
             playerVars: {
-              playsinline: 1
-            }
+              playsinline: 1,
+            },
           })
         )
       }

@@ -9,7 +9,7 @@ export default class Browser extends HTMLElement {
   }
 
   initializeState = {
-    playlists: undefined
+    playlists: undefined,
   }
 
   initializeActions = ({ stateSetters }) => ({
@@ -63,7 +63,7 @@ export default class Browser extends HTMLElement {
       } else {
         onPlayerContentClicked(playerContent)
       }
-    }
+    },
   })
 
   async connectedCallback() {
@@ -96,7 +96,7 @@ export default class Browser extends HTMLElement {
                     .attributes({
                       href: "#",
                       "playlist-id": playlist.id,
-                      "video-id": video.id
+                      "video-id": video.id,
                     })
                     .listeners({ click: handleContentClick })
                     .text(formatTitle(video, { titleStyle: "listenable" }))
@@ -115,7 +115,7 @@ export default class Browser extends HTMLElement {
               .attributes({
                 href: "#",
                 "video-id": video.id,
-                "aria-current": isActive ? true : undefined
+                "aria-current": isActive ? true : undefined,
               })
               .listeners({ click: handleContentClick })
               .text(formatTitle(video, { titleStyle: "listenable" }))

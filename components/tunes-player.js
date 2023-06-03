@@ -18,7 +18,7 @@ export default class TunesPlayer extends HTMLElement {
     lastBoundPlaylist: null,
     isPlaying: false,
     isEnded: false,
-    hasCompletedInitialClick: false
+    hasCompletedInitialClick: false,
   }
 
   initializeActions = ({ stateSetters }) => ({
@@ -66,8 +66,9 @@ export default class TunesPlayer extends HTMLElement {
         setLastBoundPlaylist,
         setCurrentVideo,
         setCurrentPlaylist,
-        setTime
+        setTime,
       } = stateSetters
+
       setLastBoundVideo(content.video)
       setLastBoundPlaylist(content.playlist)
       setCurrentVideo(content.video)
@@ -88,11 +89,12 @@ export default class TunesPlayer extends HTMLElement {
     },
     onDescriptionsLoading: () => {
       const { setIsReady } = stateSetters
+
       setIsReady(false)
     },
     onDescriptionEnd: () => {
       const { currentPlaylist, currentVideo } = this.state
-      const { setCurrentVideo } = stateSetters
+      const { setCurrentVideo, setTime } = stateSetters
 
       if (currentPlaylist) {
         const currentIndex = currentPlaylist.videos.findIndex(video => video.id === currentVideo.id)
@@ -101,12 +103,13 @@ export default class TunesPlayer extends HTMLElement {
 
         if (nextVideo) {
           setCurrentVideo(nextVideo)
+          setTime(null)
         }
       }
     },
     play: () => {
       this.youtubePlayer.play()
-    }
+    },
   })
 
   connectedCallback() {
@@ -140,25 +143,29 @@ export default class TunesPlayer extends HTMLElement {
       onYouTubePause,
       onYouTubePlay,
       onYouTubeEnd,
+      onVoiceSpeak,
+      onVoiceEnd,
       onDescriptionEnd,
-      handleContentChange
+      handleContentChange,
     } = this.actions
     const { content } = this.bindings
-    const { currentVideo, lastBoundVideo, lastBoundPlaylist, hasCompletedInitialClick } = this.state
+    const { lastBoundVideo, lastBoundPlaylist, hasCompletedInitialClick } = this.state
 
     if (!this.voiceSynthesized) {
-      this.voiceSynthesized = new VoiceSynthesized()
+      this.voiceSynthesized = new VoiceSynthesized({
+        onSpeak: onVoiceSpeak,
+        onEnd: onVoiceEnd,
+      })
     }
 
     if (content.video.id !== lastBoundVideo?.id || content.playlist?.id !== lastBoundPlaylist?.id) {
       handleContentChange()
     }
 
-    const { time, isPlaying, isEnded } = this.state
+    const { currentVideo, time, isPlaying, isEnded } = this.state
 
     return fragment(
       element("div")
-        .reference(this, "clickInterceptor")
         .attributes({ class: "click-interceptor", "tab-index": 0 })
         .items(element("button").text(`Play ${currentVideo.title}`)),
       component(YouTubePlayer)
@@ -170,7 +177,7 @@ export default class TunesPlayer extends HTMLElement {
           onReady: onYouTubeReady,
           onPlay: onYouTubePlay,
           onPause: onYouTubePause,
-          onEnd: onYouTubeEnd
+          onEnd: onYouTubeEnd,
         }),
       component(AudioDescription).reference(this, "audioDescription").bindings({
         video: currentVideo,
@@ -180,7 +187,7 @@ export default class TunesPlayer extends HTMLElement {
         voice: this.voiceSynthesized,
         onLoading: onDescriptionsLoading,
         onReady: onDescriptionsReady,
-        onEnd: onDescriptionEnd
+        onEnd: onDescriptionEnd,
       })
     )
   }

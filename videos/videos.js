@@ -7,7 +7,7 @@ export default [
     thumbnailSrc: "TODO",
     thumbnailAlt: "TODO",
     youtubeId: "3tixhS3ilNw",
-    descriptionPath: "/songs/annatoria-the-divide.js"
+    descriptionPath: "/videos/annatoria-the-divide.js",
   },
   {
     id: "rimon-i-choose-u",
@@ -20,7 +20,7 @@ export default [
     thumbnailAlt:
       "A man holds the business end of a bow and arrow and the artist RIMON pulls the drawstring back, ready to fire it into his heart.",
     youtubeId: "W1yyy-CkGqY",
-    descriptionPath: "/songs/rimon-i-choose-u.js"
+    descriptionPath: "/videos/rimon-i-choose-u.js",
   },
   {
     id: "kirinji-twilight",
@@ -30,7 +30,7 @@ export default [
     videoType: "musicVideo",
     thumbnailAlt: "A despondent young woman in a dark city gazes at a toy carousel.",
     youtubeId: "fzGaTj0LdeM",
-    descriptionPath: "/songs/kirinji-twilight.js"
+    descriptionPath: "/videos/kirinji-twilight.js",
   },
   {
     id: "hybs-would-you-mind",
@@ -39,7 +39,7 @@ export default [
     videoType: "musicVideo",
     thumbnailAlt: "A girl in a cafe smiles shyly at someone.",
     youtubeId: "WW6VE7ROcyA",
-    descriptionPath: "/songs/hybs-would-you-mind.js"
+    descriptionPath: "/videos/hybs-would-you-mind.js",
   },
   {
     id: "nsp-welcome-to-my-parents-house",
@@ -48,7 +48,7 @@ export default [
     videoType: "musicVideo",
     thumbnailAlt: "A cartoon gal and guy smile sexily.",
     youtubeId: "3YXUWWZJXpE",
-    descriptionPath: "/songs/nsp-welcome-to-my-parents-house.js"
+    descriptionPath: "/videos/nsp-welcome-to-my-parents-house.js",
   },
   {
     id: "fka-twigs-holy-terrain",
@@ -59,7 +59,7 @@ export default [
     thumbnailAlt:
       "The artist FKA twigs looks profoundly stoned with her right eye red and her left eye blue.",
     youtubeId: "WEJRyBWpuvA",
-    descriptionPath: "/songs/fka-twigs-holy-terrain.js"
+    descriptionPath: "/videos/fka-twigs-holy-terrain.js",
   },
   {
     id: "amtrac-nobody-else",
@@ -68,7 +68,7 @@ export default [
     videoType: "musicVideo",
     thumbnailAlt: "A tiny robot hides in the bushes.",
     youtubeId: "nE1ZXUE_BXU",
-    descriptionPath: "/songs/amtrac-nobody-else.js"
+    descriptionPath: "/videos/amtrac-nobody-else.js",
   },
   {
     id: "seulgi-anywhere-but-home",
@@ -79,6 +79,6 @@ export default [
     thumbnailAlt:
       "In nighttime streets the artist Seulgi stares down the camera like a wild animal.",
     youtubeId: "2hVimOZHbOI",
-    descriptionPath: "/songs/seulgi-anywhere-but-home.js"
-  }
+    descriptionPath: "/videos/seulgi-anywhere-but-home.js",
+  },
 ]

@@ -38,7 +38,7 @@ export default class Voice {
 
         // Windows
         ["Microsoft Steffan Online (Natural) - English (United States)", 1.7], // Edge only
-        ["Microsoft Mark - English (United States)", isChrome ? 2.8 : 1.7] // Chrome and Firefox
+        ["Microsoft Mark - English (United States)", isChrome ? 2.8 : 1.7], // Chrome and Firefox
       ]
 
       let defaultVoice

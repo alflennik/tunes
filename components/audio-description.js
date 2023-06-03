@@ -13,7 +13,7 @@ export default class AudioDescription extends HTMLElement {
     previousTime: null,
     isCurrentlyPlaying: false,
     lastVideoId: null,
-    isReady: false
+    isReady: false,
   }
 
   initializeActions = ({ stateSetters }) => ({
@@ -104,7 +104,7 @@ export default class AudioDescription extends HTMLElement {
       setCurrentDescriptionText("")
       setPreviousTime(null)
       await fetchDescriptions()
-    }
+    },
   })
 
   async connectedCallback() {

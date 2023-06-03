@@ -76,7 +76,7 @@ export const fragment = (...childBuilders) => {
 
   const elementProperties = {
     isFragment: true,
-    childBuilders
+    childBuilders,
   }
 
   propertiesWeakMap.set(builder, elementProperties)
@@ -199,7 +199,7 @@ const getVirtualTree = (component, builder) => {
       },
       append: child => {
         children.push(child)
-      }
+      },
     }
   }
   const getRootElement = () => {
@@ -222,7 +222,7 @@ const getVirtualTree = (component, builder) => {
       getPreviousSiblingElement: () => null,
       append: child => {
         children.push(child)
-      }
+      },
     }
   }
 
@@ -244,7 +244,7 @@ const getVirtualTree = (component, builder) => {
     parentId,
     siblingIndex = 0,
     positionIdIndex = 0,
-    builders
+    builders,
   }) => {
     builders.forEach(builder => {
       if (builder === null) return
@@ -261,7 +261,7 @@ const getVirtualTree = (component, builder) => {
           parentId,
           siblingIndex,
           positionIdIndex,
-          builders: properties.childBuilders
+          builders: properties.childBuilders,
         })
         return
       }
@@ -272,7 +272,7 @@ const getVirtualTree = (component, builder) => {
         id,
         siblingIndex,
         properties,
-        parentVirtualElement
+        parentVirtualElement,
       })
 
       virtualElementsById[id] = virtualElement
@@ -288,7 +288,7 @@ const getVirtualTree = (component, builder) => {
         recurseBuilders({
           parentVirtualElement: virtualElement,
           parentId: id,
-          builders: properties.childBuilders
+          builders: properties.childBuilders,
         })
       }
     })
@@ -299,7 +299,7 @@ const getVirtualTree = (component, builder) => {
   recurseBuilders({
     parentVirtualElement: rootElement,
     parentId: null,
-    builders: [builder]
+    builders: [builder],
   })
 
   const getIterator = () => {
@@ -328,7 +328,7 @@ const getVirtualTree = (component, builder) => {
         current = next
         return next
       },
-      isDone: () => isDone
+      isDone: () => isDone,
     }
   }
 
@@ -345,7 +345,7 @@ const getVirtualTree = (component, builder) => {
         }
       })
       return discardedElements
-    }
+    },
   }
 }
 

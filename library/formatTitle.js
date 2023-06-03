@@ -35,7 +35,7 @@ const formatTitle = (video, { titleStyle = "standard" } = {}) => {
       "-",
       video.title,
       inParens(featuredArtistFormatted),
-      inParens(videoTypeFormatted)
+      inParens(videoTypeFormatted),
     ]
       .filter(item => !!item)
       .join(" ")
@@ -45,7 +45,7 @@ const formatTitle = (video, { titleStyle = "standard" } = {}) => {
       "by",
       video.artist,
       featuredArtistFormatted,
-      inParens(videoTypeFormatted)
+      inParens(videoTypeFormatted),
     ]
       .filter(item => !!item)
       .join(" ")
