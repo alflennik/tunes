@@ -9,8 +9,8 @@ export default {
       videoType: "musicVideo",
       thumbnailSrc: "TODO",
       thumbnailAlt: "The artist Olivia Dean dances down a touristic British street.",
-      youTubeId: "NM4e606yFJg",
-      descriptionPath: "/playlists/2023-04-23-freedom-falls/01-olivia-dean-dive.js",
+      youtubeId: "NM4e606yFJg",
+      descriptionPath: "/playlists/2023-04-23-freedom-falls/01-olivia-dean-dive.js"
     },
     {
       id: "atarashii-gakko-otonablue-the-first-take",
@@ -20,9 +20,9 @@ export default {
       livePerformanceShow: "The First Take",
       thumbnailSrc: "TODO",
       thumbnailAlt: "Four Japanese girls in schoolgirl outfits leap into the air.",
-      youTubeId: "9MNPt-zlz-8",
+      youtubeId: "9MNPt-zlz-8",
       descriptionPath:
-        "/playlists/2023-04-23-freedom-falls/02-atarashii-gakko-otonablue-the-first-take.js",
+        "/playlists/2023-04-23-freedom-falls/02-atarashii-gakko-otonablue-the-first-take.js"
     },
     {
       id: "akini-jing-pump-up",
@@ -31,8 +31,8 @@ export default {
       videoType: "musicVideo",
       thumbnailSrc: "TODO",
       thumbnailAlt: "The artist Akini Jing stands in athletic garb in a workout studio.",
-      youTubeId: "grEYQfd7uv0",
-      descriptionPath: "/playlists/2023-04-23-freedom-falls/03-akini-jing-pump-up.js",
+      youtubeId: "grEYQfd7uv0",
+      descriptionPath: "/playlists/2023-04-23-freedom-falls/03-akini-jing-pump-up.js"
     },
     {
       id: "xikers-tricky-house",
@@ -41,8 +41,8 @@ export default {
       videoType: "musicVideo",
       thumbnailSrc: "TODO",
       thumbnailAlt: "The xikers team pose in a cavernous garage.",
-      youTubeId: "HefrSFeMyPs",
-      descriptionPath: "/playlists/2023-04-23-freedom-falls/04-xikers-tricky-house.js",
+      youtubeId: "HefrSFeMyPs",
+      descriptionPath: "/playlists/2023-04-23-freedom-falls/04-xikers-tricky-house.js"
     },
     {
       id: "alison-goldfrapp-neverstop",
@@ -52,8 +52,8 @@ export default {
       videoTypeCustomLabel: "Video Vignette",
       thumbnailSrc: "TODO",
       thumbnailAlt: "The artist Alison Goldfrapp is dressed like a citizen of another world.",
-      youTubeId: "Xcsvgsedz20",
-      descriptionPath: "/playlists/2023-04-23-freedom-falls/05-alison-goldfrapp-neverstop.js",
+      youtubeId: "Xcsvgsedz20",
+      descriptionPath: "/playlists/2023-04-23-freedom-falls/05-alison-goldfrapp-neverstop.js"
     },
     {
       id: "jessie-ware-begin-again",
@@ -62,8 +62,8 @@ export default {
       videoType: "musicVideo",
       thumbnailSrc: "TODO",
       thumbnailAlt: "On a stage, the artist Jessie Ware is surrounded by dancers.",
-      youTubeId: "yd3C69lVU5w",
-      descriptionPath: "/playlists/2023-04-23-freedom-falls/06-jessie-ware-begin-again.js",
+      youtubeId: "yd3C69lVU5w",
+      descriptionPath: "/playlists/2023-04-23-freedom-falls/06-jessie-ware-begin-again.js"
     },
     {
       id: "leah-dou-monday",
@@ -72,8 +72,8 @@ export default {
       videoType: "musicVideo",
       thumbnailSrc: "TODO",
       thumbnailAlt: "The artist Leah Dou flashes a smile.",
-      youTubeId: "vos32LuLjZs",
-      descriptionPath: "/playlists/2023-04-23-freedom-falls/07-leah-dou-monday.js",
+      youtubeId: "vos32LuLjZs",
+      descriptionPath: "/playlists/2023-04-23-freedom-falls/07-leah-dou-monday.js"
     },
     {
       id: "rahill-fables",
@@ -83,8 +83,8 @@ export default {
       videoType: "musicVideo",
       thumbnailSrc: "TODO",
       thumbnailAlt: "The artist Rahill is much too big to be sitting in a doll house.",
-      youTubeId: "Ysf6UULedRk",
-      descriptionPath: "/playlists/2023-04-23-freedom-falls/08-rahill-fables.js",
+      youtubeId: "Ysf6UULedRk",
+      descriptionPath: "/playlists/2023-04-23-freedom-falls/08-rahill-fables.js"
     },
     {
       id: "kaytramine-4eva",
@@ -94,8 +94,8 @@ export default {
       videoType: "musicVideo",
       thumbnailSrc: "TODO",
       thumbnailAlt: "TODO",
-      youTubeId: "fAPt8AxjPbI",
-      descriptionPath: "/playlists/2023-04-23-freedom-falls/09-kaytramine-4eva.js",
+      youtubeId: "fAPt8AxjPbI",
+      descriptionPath: "/playlists/2023-04-23-freedom-falls/09-kaytramine-4eva.js"
     },
     {
       id: "remi-wold-disco-man",
@@ -104,8 +104,8 @@ export default {
       videoType: "musicVideo",
       thumbnailSrc: "TODO",
       thumbnailAlt: "TODO",
-      youTubeId: "V1dtRs_vN6Y",
-      descriptionPath: "/playlists/2023-04-23-freedom-falls/10-remi-wold-disco-man.js",
+      youtubeId: "V1dtRs_vN6Y",
+      descriptionPath: "/playlists/2023-04-23-freedom-falls/10-remi-wold-disco-man.js"
     },
     {
       id: "jack-black-peaches",
@@ -115,8 +115,8 @@ export default {
       videoType: "musicVideo",
       thumbnailSrc: "TODO",
       thumbnailAlt: "TODO",
-      youTubeId: "aW7bzd8uwyQ",
-      descriptionPath: "/playlists/2023-04-23-freedom-falls/11-jack-black-peaches.js",
+      youtubeId: "aW7bzd8uwyQ",
+      descriptionPath: "/playlists/2023-04-23-freedom-falls/11-jack-black-peaches.js"
     },
     {
       id: "ceranda-sugar-rush",
@@ -125,8 +125,8 @@ export default {
       videoType: "musicVideo",
       thumbnailSrc: "TODO",
       thumbnailAlt: "TODO",
-      youTubeId: "LQOib1ny6WY",
-      descriptionPath: "/playlists/2023-04-23-freedom-falls/12-ceranda-sugar-rush.js",
+      youtubeId: "LQOib1ny6WY",
+      descriptionPath: "/playlists/2023-04-23-freedom-falls/12-ceranda-sugar-rush.js"
     },
     {
       id: "neona-click",
@@ -135,8 +135,8 @@ export default {
       videoType: "musicVideo",
       thumbnailSrc: "TODO",
       thumbnailAlt: "TODO",
-      youTubeId: "aGjh-juOyc4",
-      descriptionPath: "/playlists/2023-04-23-freedom-falls/13-neona-click.js",
+      youtubeId: "aGjh-juOyc4",
+      descriptionPath: "/playlists/2023-04-23-freedom-falls/13-neona-click.js"
     },
     {
       id: "iri-season",
@@ -145,8 +145,8 @@ export default {
       videoType: "musicVideo",
       thumbnailSrc: "TODO",
       thumbnailAlt: "TODO",
-      youTubeId: "eQtvqaM1i58",
-      descriptionPath: "/playlists/2023-04-23-freedom-falls/14-iri-season.js",
+      youtubeId: "eQtvqaM1i58",
+      descriptionPath: "/playlists/2023-04-23-freedom-falls/14-iri-season.js"
     },
     {
       id: "juno-come-thru",
@@ -155,8 +155,8 @@ export default {
       videoType: "musicVideo",
       thumbnailSrc: "TODO",
       thumbnailAlt: "TODO",
-      youTubeId: "5oRG_lDPYCk",
-      descriptionPath: "/playlists/2023-04-23-freedom-falls/15-juno-come-thru.js",
+      youtubeId: "5oRG_lDPYCk",
+      descriptionPath: "/playlists/2023-04-23-freedom-falls/15-juno-come-thru.js"
     },
     {
       id: "lee-chae-yeon-knock",
@@ -165,8 +165,8 @@ export default {
       videoType: "musicVideo",
       thumbnailSrc: "TODO",
       thumbnailAlt: "TODO",
-      youTubeId: "3bnjH5jXxJc",
-      descriptionPath: "/playlists/2023-04-23-freedom-falls/16-lee-chae-yeon-knock.js",
+      youtubeId: "3bnjH5jXxJc",
+      descriptionPath: "/playlists/2023-04-23-freedom-falls/16-lee-chae-yeon-knock.js"
     },
     {
       id: "pink-trustfall",
@@ -176,8 +176,8 @@ export default {
       thumbnailSrc:
         "https://i.ytimg.com/vi/D2KE2a5qo0g/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLBzC3dFk_g_YF4cUX9rUT8EdzXKXw",
       thumbnailAlt: "With windswept hair, the artist P!NK prepares to dance.",
-      youTubeId: "D2KE2a5qo0g",
-      descriptionPath: "/playlists/2023-04-23-freedom-falls/17-pink-trustfall.js",
-    },
-  ],
+      youtubeId: "D2KE2a5qo0g",
+      descriptionPath: "/playlists/2023-04-23-freedom-falls/17-pink-trustfall.js"
+    }
+  ]
 }

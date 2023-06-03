@@ -50,7 +50,7 @@ export default class TunesPlayer extends HTMLElement {
     onDescriptionsReady: () => {
       const { setIsReady } = stateSetters
 
-      if (this.youTubePlayer.state.isReady) {
+      if (this.youtubePlayer.state.isReady) {
         setIsReady(true)
       }
     },
@@ -75,7 +75,7 @@ export default class TunesPlayer extends HTMLElement {
       setTime(null)
     },
     handleFirstClick: async ({ isKeyDown, isClickInterceptor }) => {
-      const { youTubePlayer, voiceSynthesized } = this
+      const { youtubePlayer, voiceSynthesized } = this
       const { setHasCompletedInitialClick } = stateSetters
 
       await voiceSynthesized.onFirstInteraction()
@@ -84,7 +84,7 @@ export default class TunesPlayer extends HTMLElement {
       clickInterceptor.style.display = "none"
       setHasCompletedInitialClick(true)
 
-      if (!isKeyDown && isClickInterceptor) youTubePlayer.play()
+      if (!isKeyDown && isClickInterceptor) youtubePlayer.play()
     },
     onDescriptionsLoading: () => {
       const { setIsReady } = stateSetters
@@ -105,7 +105,7 @@ export default class TunesPlayer extends HTMLElement {
       }
     },
     play: () => {
-      this.youTubePlayer.play()
+      this.youtubePlayer.play()
     }
   })
 
@@ -162,10 +162,10 @@ export default class TunesPlayer extends HTMLElement {
         .attributes({ class: "click-interceptor", "tab-index": 0 })
         .items(element("button").text(`Play ${currentVideo.title}`)),
       component(YouTubePlayer)
-        .reference(this, "youTubePlayer")
+        .reference(this, "youtubePlayer")
         .attributes({ "aria-hidden": hasCompletedInitialClick ? undefined : true })
         .bindings({
-          videoId: currentVideo.youTubeId,
+          videoId: currentVideo.youtubeId,
           onUpdateTime,
           onReady: onYouTubeReady,
           onPlay: onYouTubePlay,

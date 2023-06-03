@@ -11,7 +11,7 @@ export default {
       thumbnailSrc:
         "https://i.ytimg.com/vi/FRGJnz6w4-A/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLDfl73HlpJXjaAtk-xFp62ZeWC_4w",
       thumbnailAlt: "TODO",
-      youTubeId: "FRGJnz6w4-A",
+      youtubeId: "FRGJnz6w4-A",
       descriptionPath: "/playlists/2022-10-31-love-letter/01-lute-finding-self.js"
     },
     {
@@ -22,7 +22,7 @@ export default {
       thumbnailSrc:
         "https://i.ytimg.com/vi/PcR8I-7oCnU/hqdefault.jpg?sqp=-oaymwE2CNACELwBSFXyq4qpAygIARUAAIhCGAFwAcABBvABAfgB_gmAAtAFigIMCAAQARhlIF0oTzAP&rs=AOn4CLDXPEoxfcKsC9DcokOOUAT7gHXR6w",
       thumbnailAlt: "TODO",
-      youTubeId: "PcR8I-7oCnU",
+      youtubeId: "PcR8I-7oCnU",
       descriptionPath:
         "/playlists/2022-10-31-love-letter/02-salvatore-ganacci-take-me-to-america.js"
     },
@@ -34,7 +34,7 @@ export default {
       thumbnailSrc:
         "https://i.ytimg.com/vi/G6K_hkVdQgw/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLCiwnbqQ7CZO9tBBGZNQHrK9Fizxg",
       thumbnailAlt: "TODO",
-      youTubeId: "G6K_hkVdQgw",
+      youtubeId: "G6K_hkVdQgw",
       descriptionPath: "/playlists/2022-10-31-love-letter/03-the-blaze-dreamer.js"
     }
   ]

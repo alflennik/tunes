@@ -6,8 +6,8 @@ export default [
     videoType: "musicVideo",
     thumbnailSrc: "TODO",
     thumbnailAlt: "TODO",
-    youTubeId: "3tixhS3ilNw",
-    descriptionPath: "/songs/annatoria-the-divide.js",
+    youtubeId: "3tixhS3ilNw",
+    descriptionPath: "/songs/annatoria-the-divide.js"
   },
   {
     id: "rimon-i-choose-u",
@@ -19,8 +19,8 @@ export default [
       "https://i.ytimg.com/vi/W1yyy-CkGqY/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLD5LBvddMgEbfZVzD85sku1DtbEHw",
     thumbnailAlt:
       "A man holds the business end of a bow and arrow and the artist RIMON pulls the drawstring back, ready to fire it into his heart.",
-    youTubeId: "W1yyy-CkGqY",
-    descriptionPath: "/songs/rimon-i-choose-u.js",
+    youtubeId: "W1yyy-CkGqY",
+    descriptionPath: "/songs/rimon-i-choose-u.js"
   },
   {
     id: "kirinji-twilight",
@@ -29,8 +29,8 @@ export default [
     title: "Twilight",
     videoType: "musicVideo",
     thumbnailAlt: "A despondent young woman in a dark city gazes at a toy carousel.",
-    youTubeId: "fzGaTj0LdeM",
-    descriptionPath: "/songs/kirinji-twilight.js",
+    youtubeId: "fzGaTj0LdeM",
+    descriptionPath: "/songs/kirinji-twilight.js"
   },
   {
     id: "hybs-would-you-mind",
@@ -38,8 +38,8 @@ export default [
     title: "Would You Mind",
     videoType: "musicVideo",
     thumbnailAlt: "A girl in a cafe smiles shyly at someone.",
-    youTubeId: "WW6VE7ROcyA",
-    descriptionPath: "/songs/hybs-would-you-mind.js",
+    youtubeId: "WW6VE7ROcyA",
+    descriptionPath: "/songs/hybs-would-you-mind.js"
   },
   {
     id: "nsp-welcome-to-my-parents-house",
@@ -47,8 +47,8 @@ export default [
     title: "Welcome To My Parents' House",
     videoType: "musicVideo",
     thumbnailAlt: "A cartoon gal and guy smile sexily.",
-    youTubeId: "3YXUWWZJXpE",
-    descriptionPath: "/songs/nsp-welcome-to-my-parents-house.js",
+    youtubeId: "3YXUWWZJXpE",
+    descriptionPath: "/songs/nsp-welcome-to-my-parents-house.js"
   },
   {
     id: "fka-twigs-holy-terrain",
@@ -58,8 +58,8 @@ export default [
     videoType: "musicVideo",
     thumbnailAlt:
       "The artist FKA twigs looks profoundly stoned with her right eye red and her left eye blue.",
-    youTubeId: "WEJRyBWpuvA",
-    descriptionPath: "/songs/fka-twigs-holy-terrain.js",
+    youtubeId: "WEJRyBWpuvA",
+    descriptionPath: "/songs/fka-twigs-holy-terrain.js"
   },
   {
     id: "amtrac-nobody-else",
@@ -67,8 +67,8 @@ export default [
     title: "Nobody Else",
     videoType: "musicVideo",
     thumbnailAlt: "A tiny robot hides in the bushes.",
-    youTubeId: "nE1ZXUE_BXU",
-    descriptionPath: "/songs/amtrac-nobody-else.js",
+    youtubeId: "nE1ZXUE_BXU",
+    descriptionPath: "/songs/amtrac-nobody-else.js"
   },
   {
     id: "seulgi-anywhere-but-home",
@@ -78,7 +78,7 @@ export default [
     videoTypeCustomLabel: "Special Film",
     thumbnailAlt:
       "In nighttime streets the artist Seulgi stares down the camera like a wild animal.",
-    youTubeId: "2hVimOZHbOI",
-    descriptionPath: "/songs/seulgi-anywhere-but-home.js",
-  },
+    youtubeId: "2hVimOZHbOI",
+    descriptionPath: "/songs/seulgi-anywhere-but-home.js"
+  }
 ]
