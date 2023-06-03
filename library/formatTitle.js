@@ -1,53 +1,53 @@
-const toSentence = (list) => {
+const toSentence = list => {
   return `${list.slice(0, -1).join(", ")} and ${list.slice(-1)}`
 }
 
-const formatTitle = (song, { titleStyle = "standard" } = {}) => {
+const formatTitle = (video, { titleStyle = "standard" } = {}) => {
   let featuredArtistFormatted
   if (titleStyle === "standard") {
-    const featuredList = song.featuredArtists?.join(", ") ?? song.featuredArtist ?? ""
+    const featuredList = video.featuredArtists?.join(", ") ?? video.featuredArtist ?? ""
     featuredArtistFormatted = featuredList ? `feat. ${featuredList}` : ""
   } else if (titleStyle === "listenable") {
     let featuredList
-    if (song.featuredArtists) {
-      featuredList = toSentence(song.featuredArtists)
+    if (video.featuredArtists) {
+      featuredList = toSentence(video.featuredArtists)
     } else {
-      featuredList = song.featuredArtist ?? ""
+      featuredList = video.featuredArtist ?? ""
     }
     featuredArtistFormatted = featuredList ? `featuring ${featuredList}` : ""
   }
 
   let videoTypeFormatted
-  if (song.videoTypeCustomLabel) {
-    videoTypeFormatted = song.videoTypeCustomLabel
-  } else if (song.videoType === "musicVideo") {
+  if (video.videoTypeCustomLabel) {
+    videoTypeFormatted = video.videoTypeCustomLabel
+  } else if (video.videoType === "musicVideo") {
     videoTypeFormatted = "" // It's like the default
-  } else if (song.videoType === "livePerformance") {
+  } else if (video.videoType === "livePerformance") {
     videoTypeFormatted = "Live"
   }
 
-  const inParens = (text) => (text ? `(${text})` : "")
+  const inParens = text => (text ? `(${text})` : "")
 
   let finalTitle
   if (titleStyle === "standard") {
     finalTitle = [
-      song.artist,
+      video.artist,
       "-",
-      song.title,
+      video.title,
       inParens(featuredArtistFormatted),
-      inParens(videoTypeFormatted),
+      inParens(videoTypeFormatted)
     ]
-      .filter((item) => !!item)
+      .filter(item => !!item)
       .join(" ")
   } else if (titleStyle === "listenable") {
     finalTitle = [
-      song.title,
+      video.title,
       "by",
-      song.artist,
+      video.artist,
       featuredArtistFormatted,
-      inParens(videoTypeFormatted),
+      inParens(videoTypeFormatted)
     ]
-      .filter((item) => !!item)
+      .filter(item => !!item)
       .join(" ")
   }
   return finalTitle

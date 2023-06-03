@@ -173,7 +173,7 @@ export default class TunesPlayer extends HTMLElement {
           onEnd: onYouTubeEnd
         }),
       component(AudioDescription).reference(this, "audioDescription").bindings({
-        song: currentVideo,
+        video: currentVideo,
         time,
         isPlaying,
         isEnded,

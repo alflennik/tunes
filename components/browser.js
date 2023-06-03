@@ -1,5 +1,5 @@
 import formatTitle from "../library/formatTitle.js"
-import videos from "../songs/songs.js"
+import videos from "../videos/videos.js"
 import define from "../utilities/define.js"
 import { element } from "../utilities/reconciler.js"
 

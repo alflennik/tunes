@@ -12,19 +12,19 @@ export default class AudioDescription extends HTMLElement {
     currentDescriptionText: "",
     previousTime: null,
     isCurrentlyPlaying: false,
-    lastSongId: null,
+    lastVideoId: null,
     isReady: false
   }
 
   initializeActions = ({ stateSetters }) => ({
     fetchDescriptions: async () => {
-      const { song, onLoading, onReady } = this.bindings
+      const { video, onLoading, onReady } = this.bindings
       const { setDescriptions, setAnalysis, setIsReady } = stateSetters
 
       setIsReady(false)
       onLoading()
 
-      const descriptionModule = await import(song.descriptionPath)
+      const descriptionModule = await import(video.descriptionPath)
       const { descriptions, analysis } = descriptionModule.default
       setDescriptions(descriptions)
       setAnalysis(analysis)
@@ -35,10 +35,10 @@ export default class AudioDescription extends HTMLElement {
 
     handleConnect: async () => {
       const { fetchDescriptions } = this.actions
-      const { song } = this.bindings
-      const { setLastSongId } = stateSetters
+      const { video } = this.bindings
+      const { setLastVideoId } = stateSetters
 
-      setLastSongId(song.id)
+      setLastVideoId(video.id)
       await fetchDescriptions()
     },
 
@@ -93,14 +93,14 @@ export default class AudioDescription extends HTMLElement {
       }
     },
 
-    handleSongChange: async () => {
-      const { setLastSongId, setCurrentDescriptionText, setPreviousTime } = stateSetters
-      const { song, voice } = this.bindings
+    handleVideoChange: async () => {
+      const { setLastVideoId, setCurrentDescriptionText, setPreviousTime } = stateSetters
+      const { video, voice } = this.bindings
       const { fetchDescriptions } = this.actions
 
       voice.clear()
 
-      setLastSongId(song.id)
+      setLastVideoId(video.id)
       setCurrentDescriptionText("")
       setPreviousTime(null)
       await fetchDescriptions()
@@ -113,11 +113,11 @@ export default class AudioDescription extends HTMLElement {
   }
 
   reactiveTemplate() {
-    const { handleTimeChange, handlePlayChange, handleSongChange } = this.actions
+    const { handleTimeChange, handlePlayChange, handleVideoChange } = this.actions
 
-    const { song } = this.bindings
-    const { lastSongId } = this.state
-    if (lastSongId !== song.id) handleSongChange()
+    const { video } = this.bindings
+    const { lastVideoId } = this.state
+    if (lastVideoId !== video.id) handleVideoChange()
 
     const { isPlaying } = this.bindings
     const { isCurrentlyPlaying } = this.state
