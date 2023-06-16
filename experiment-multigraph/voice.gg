@@ -1,0 +1,43 @@
+voice {
+	shares { say, pause, play, clear, playMode }
+	receives { 
+		voiceType
+		isFirstInteraction
+		requiredSpeech
+		voiceSynthesized
+		voicePrerecorded
+		volume
+	}
+	stops { getVoiceSynthesisPermissions, getVoicePrerecordedPermissions }
+
+	update {
+		if isFirstInteraction {
+			return stop getVoiceSynthesisPermissions(voiceSynthesized.getPermissions)
+		}
+
+		if requiredSpeech.justChanged() {
+			return stop getVoicePrerecordedPermissions(voicePrerecorded.getPermissions, requiredSpeech)
+		}
+		
+		set { say as voiceSay, pause, play, clear, playMode } {
+			given voiceType {
+				when .synthesized { return voiceSynthesized }
+				when .prerecorded { return voicePrerecorded }
+			}
+		}
+
+		set say {
+			given voiceType {
+				when .synthesized { return (speech) => voiceSay(speech, { volume }) }
+				when .voicePrerecorded { return voiceSay }
+			}
+		}
+
+		once { voicePrerecorded.setVolume(volume) }
+		if voiceType == .prerecorded && volume.justChanged() {
+			voicePrerecorded.setVolume(volume)
+		}
+
+		return { shares { say, pause, play, clear, playMode } }
+	}
+}

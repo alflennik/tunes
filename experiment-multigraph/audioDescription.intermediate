@@ -1,0 +1,102 @@
+set description = descriptions.reverse().find(each => time > each.time)
+
+set description = 
+	<expression>?
+		<name><gapOk>.<name>
+		<name>(<gapOk><arguments><gapOk>)
+			no arguments
+		<name><gapOk>.<name>
+		<name>(<gapOk><arguments><gapOk>)
+			<name> =\\> <expression>
+				<expression> \\> <expression>
+					<name>
+					<name><gapOk>.<name>
+
+set {
+	description,
+	equals {
+		value { descriptions },
+		| readProperty { reverse },
+		| call {},
+		| readProperty { find },
+		| call {
+			function {
+				parameters { each },
+				body {
+					value { time },
+					| isGreaterThan {
+						value { each },
+						| readProperty { time }
+					}
+				}
+			}
+		}
+	}
+}
+
+block("audioDescription").sourceMap("1:1").items(
+	block("watches").sourceMap("2:3").items(
+		block("tunesPlayer").items(
+			block("video")
+		)
+	)
+)
+
+
+
+body {
+	value { time }
+	| isGreaterThan {
+		value { each }
+		| readProperty { time }
+	}
+}
+
+set a = (1 + 3) * (4 + 5)
+
+set {
+	a
+	equals {
+		group {
+			add { 1, 3 }
+		}
+		| multiply { 
+			group {
+				add { 1, 5 }
+			}
+		}
+	}
+}
+
+block("set")
+  .sourceMap("55:1")
+  .items(
+    blockEnd("a").sourceMap("55:5"),
+    block("equals")
+      .sourceMap("55:7")
+      .items(
+        block("group")
+          .sourceMap("55:9")
+          .items(
+            block("add")
+              .sourceMap("55:12")
+              .items(
+                blockEnd(1).sourceMap("55:10"),
+                blockEnd(3).sourceMap("55:14")
+              )
+          )
+          .pipe(
+            block("multiply")
+              .sourceMap("55:17")
+              .items(
+                block("add")
+                  .sourceMap("55:22")
+                  .items(
+                    blockEnd(4).sourceMap("55:20"),
+                    blockEnd(5).sourceMap("55:24")
+                  )
+              )
+          )
+      )
+  );
+

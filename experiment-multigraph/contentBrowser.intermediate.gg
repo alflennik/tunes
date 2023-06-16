@@ -1,0 +1,43 @@
+assignment {
+	setTunesGraph {
+		read { tunesPlayer } }, to {
+		watches { 
+			contentBrowser { video, playlist }}
+		shares { video }
+		manages {
+			voice { voiceType }
+			videoPlayer { timeInterval }}
+	
+		labeledValue {
+			label { update }
+			value {
+				assignment { set { video } to { steps {
+					if { call { read { contentBrowser, video, justChanged }, arguments {}}
+						do { return { read { contentBrowser, video }}}}
+					if { call { read { contentBrowser, playMode, justChanged } arguments {}}
+						do {
+							assignment { set { currentIndex } to {
+								call {
+									read { playlist, videos, findIndex }
+									arguments {
+										defineFunction { parameters { each }
+											body {
+												equivalent { read { each, id }, read { browserVideo, id }}}}}}}}}}}}}
+				if {
+					call { read { audioDescription, playMode, justChanged }, arguments { textlike { ended }}}
+					do {
+						assignment { set { currentIndex } to {
+							call { read { playlist, videos, findIndex }, arguments {
+								defineFunction { parameters { each }
+								body { equivalent { read { each, id }, read { browserVideo, id }}}}}}}}
+						assignment { set { nextVideo }, to {
+							readIndex { on { read { playlist, videos }}, index {
+								add { read { currentIndex }, number { 1 }}}}}}
+						return { backupValue { read { nextVideo }, read { last, video }}}}}
+	
+				
+				return { tree {
+					shares { video }
+					manages {
+						voice { labeledValue { label { voiceType }, value { textlike { synthesized }}}}
+						videoPlayer { labeledValue { label { timeInterval }, value { number { 400 }}}}}}}}}}}

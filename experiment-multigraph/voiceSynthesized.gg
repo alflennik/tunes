@@ -1,0 +1,11 @@
+voiceSynthesized {
+	receives { isInteraction }
+	shares { say, pause, play, clear, playMode }
+	stops { getPermissions }
+	bridges { voiceSynthesized }
+
+	update {
+		once if isInteraction { return stop getPermissions() }
+
+	}
+}

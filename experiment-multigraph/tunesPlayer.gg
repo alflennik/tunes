@@ -1,0 +1,28 @@
+tunesPlayer {
+	watches { 
+		contentBrowser { video, playlist }
+	}
+	shares { video }
+	manages {
+		voice { voiceType }
+		videoPlayer { timeInterval }
+	}
+
+	update {
+		set video {
+			if contentBrowser.video.justChanged() { return contentBrowser.video }
+			if audioDescription.playMode.justChanged(.ended) {
+				set currentIndex = playlist.videos.findIndex(each => each.id == contentBrowser.video.id)
+				set nextVideo = playlist.videos[currentIndex + 1]
+				return nextVideo ?? last.video
+			}
+		}
+
+		set once manages = {
+			voice { voiceType: .synthesized }
+			videoPlayer { timeInterval: 400 }
+		}
+
+		return { shares { video }, manages }
+	}
+}

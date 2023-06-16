@@ -1,0 +1,56 @@
+audioDescription {
+	watches {
+		tunesPlayer { video }
+		videoPlayer { playMode, time }
+		voice { say, pause, play, clear, playMode }
+	}
+	shares { descriptions, description, analysis, spokenItem, playMode }
+	stops { fetchDescriptions }
+
+	update {
+		if video.justChanged() { return stop fetchDescriptions() }
+
+		set description = descriptions.reverse().find(each => time > each.time)
+
+		set playMode {
+			if videoPlayer.playMode.justChanged() {
+				given videoPlayer.playMode {
+					when .playing { return .playing }
+					when .paused, .buffering { return .paused }
+					when .ended {
+						if !analysis { return .ended }
+						return .playing
+					}
+				}
+			}
+			if voice.playMode.justChanged(.ended) && last.spokenItem == analysis { 
+				return .ended
+			}
+		}
+
+		set spokenItem {
+			if videoPlayer.time.justChanged(none) && analysis {
+				return analysis
+			}
+			return description
+		}
+
+		set isTimeSeek = last?.time && (time - last.time).getAbsoluteValue() > 1
+
+		unset handleVoice {
+			if spokenItem != last.spokenItem {
+				if (!isTimeSeek) {
+					voice.play()
+					voice.say(spokenItem)
+				} else {
+					voice.clear()
+				}
+			}
+			if videoPlayer.playMode.justChanged(.paused) {
+				voice.pause()
+			}
+		}
+
+		return { shares { descriptions, description, analysis, spokenItem, playMode } }
+	}
+}

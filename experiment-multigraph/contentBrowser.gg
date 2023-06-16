@@ -1,0 +1,23 @@
+contentBrowser {
+	watches { tunesPlayer { video } }
+  stops { fetchPlaylists }
+
+	update {
+		if !last { return stop fetchPlaylists() }
+
+		set playlists = fetchPlaylists.completed()
+
+		set once select = ({ playlist, video }) => {
+			return complete({ playlist, video: video ?? playlist?.videos[0] })
+		}
+
+		set { playlist, video } {
+			if select.justCompleted() { return select.completed() }
+			if last { return last }
+			set playlist = playlists.find(each => !each.needsContentAdvisory)
+			return { playlist, video: playlist.videos[0] }
+		}
+
+		return { shares { playlists, playlist, video, select } }
+	}
+}

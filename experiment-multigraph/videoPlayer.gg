@@ -1,0 +1,23 @@
+videoPlayer {
+  receives { video, timeInterval }
+  shares { play, pause, time, volume, setVolume, playMode }
+  stops { loadYouTubePlayer }
+
+  update {
+		if !last { return stop loadYouTubePlayer({ video }) }
+
+		set player = loadYouTubePlayer.completed()
+		set once { play, pause, setVolume } = player
+		set { playMode, time, volume } = player
+
+		set updateInterval {
+		  if playMode.isPlaying { return timeInterval }
+			return none
+		}
+
+		return {
+			shares { play, pause, time, volume, setVolume, playMode },
+			reupdateDelay: timeInterval
+		}
+  }
+}

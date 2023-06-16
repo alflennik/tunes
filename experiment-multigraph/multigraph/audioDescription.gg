@@ -1,0 +1,9 @@
+audioDescription {
+  watches {
+    tunesPlayer { video }
+    videoPlayer { playMode, time }
+    voice { say, pause, play, clear, playMode }
+  }
+  shares { descriptions, description, analysis, spokenItem, playMode }
+  stops { fetchDescriptions }
+}
