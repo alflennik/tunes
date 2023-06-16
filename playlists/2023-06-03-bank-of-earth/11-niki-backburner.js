@@ -169,7 +169,7 @@ const clips = [
   "A few balloons are sitting in the middle of a busy road, and she rockets in at a full sprint, inexplicably, to kick them.",
   "Dressed glamorously, she walks hurriedly towards some opportunity.",
   "At a botanical garden, there is a strange bush which has a bunch of twiggy red branches but no leaves. Anyway she has stuck two twigs in each of her nostrils.",
-  "At a department store, she has an absolutely enormous head, or at least that what it looks like becaues she's standing directly behind a little kid-sized mannequin.",
+  "At a department store, she has an absolutely enormous head, or at least that's what it looks like becaues she's standing directly behind a little kid-sized mannequin.",
   "Her attempt to sit on a little-kid sized chair fails and she tumbles into the grass.",
   "Like a kung-fu master she wall jumps off a sloping concrete wall.",
   "She teases the camera with a flaming twig from the fire pit.",
@@ -192,7 +192,7 @@ const clips = [
   "The nighttime wind wafts over her hair.",
   "She takes a lighter to a bit of leather for an unknown purpose.",
   "Sunglasses on, she stands in front of a giant size pair of sunglasses.",
-  "Complete devoid of logic, the cameraman has placed a doll face near the camera, and she sticks her tongue out like she's about to launch into a lewd makeout scene.",
+  "Completely devoid of logic, the cameraman has placed a doll face near the camera, and she sticks her tongue out like she's about to launch into a lewd makeout scene.",
   "Looking drained, she shakes her head and rubs her eyes.",
   "She stands on a suburban road, looking up as the cameraman shines a spotlight her way.",
   "She smiles as she plays back a music recording on her studio headphones.",
@@ -236,7 +236,7 @@ const sampleClips = () => {
   const characterMagicNumber = 180
   const overallCharacterBudget = openingCount * characterMagicNumber
 
-  const shufflePreserveIndex = (array) => {
+  const shufflePreserveIndex = array => {
     return array
       .map((text, index) => ({ text, index, sort: Math.random() }))
       .sort((a, b) => a.sort - b.sort)
@@ -267,7 +267,7 @@ const sampleClips = () => {
   const openings = []
 
   i = 0
-  selectedClips.forEach((clip) => {
+  selectedClips.forEach(clip => {
     const currentCount = openings[i]?.join(" ").length ?? 0
     if (currentCount > characterMinimum || currentCount + clip.text.length > characterMaximum) {
       i += 1
@@ -287,7 +287,7 @@ const sampleClips = () => {
     openings.splice(Math.floor(Math.random() * openings.length), 1)
   }
 
-  return openings.map((clips) => clips.join(" "))
+  return openings.map(clips => clips.join(" "))
 }
 
 export default {

@@ -34,7 +34,7 @@ export default {
     },
     {
       time: 118.532,
-      text: "Jack Black hops up, out of character, gives an hopeful thumbs up that it's a good take.",
+      text: "Jack Black hops up, out of character, gives a hopeful thumbs up that it's a good take.",
     },
     {
       time: 125.124,
