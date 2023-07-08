@@ -77,5 +77,16 @@ export default {
       youtubeId: "M2cckDmNLMI",
       descriptionPath: "/playlists/2022-10-31-love-letter/07-kenshi-yonezu-kickback.js",
     },
+    {
+      id: "slom-anirago",
+      artist: "Slom",
+      featuredArtist: "Zion.T",
+      title: "ANIRAGO",
+      videoType: "musicVideo",
+      thumbnailSrc: "TODO",
+      thumbnailAlt: "TODO",
+      youtubeId: "K_eRv94tcec",
+      descriptionPath: "/playlists/2022-10-31-love-letter/08-slom-anirago.js",
+    },
   ],
 }

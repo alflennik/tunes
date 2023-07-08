@@ -106,7 +106,7 @@ export default {
     },
     {
       time: 289.611,
-      text: "So the kids up the difficulty with a more developed challenge, and points again.",
+      text: "So the kid ups the difficulty with a more developed challenge, and points again.",
     },
     {
       time: 294.71,

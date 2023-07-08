@@ -29,7 +29,7 @@ export default {
       text: "Life sure is a gas; they giggle around the alleyways, eat hotdogs, jump on the bed. But their joyful commotion alerts the bullies.",
     },
     {
-      time: 87.425,
+      time: 84.63,
       text: "It also catches the attention of a group of misfits, one boy in a shirt and tie with slicked hair, another with spikey punk hair, another with an unseasonable whooly earflap hat.",
     },
     {
