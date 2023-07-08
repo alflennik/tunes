@@ -1,7 +1,6 @@
 const fs = require("fs/promises")
 const path = require("path")
 
-/*
 ;(async () => {
   const filePath = path.resolve(__dirname, "./multigraph.gg")
   const code = await fs.readFile(filePath, { encoding: "utf8" })
@@ -91,8 +90,8 @@ const path = require("path")
   console.log(blocks)
   console.log()
 })()
-*/
 
+//
 ;(async () => {
   const filePath = path.resolve(__dirname, "./audioDescription.gg")
   const code = await fs.readFile(filePath, { encoding: "utf8" })

@@ -1,11 +1,16 @@
 voiceSynthesized {
-	receives { isInteraction }
-	shares { say, pause, play, clear, playMode }
-	stops { getPermissions }
-	bridges { voiceSynthesized }
+	watch {
+		platform { isFirstInteraction }
+	}
+	share { say, pause, play, clear, playMode }
+	stop { getPermissions }
 
 	update {
-		once if isInteraction { return stop getPermissions() }
+		if isFirstInteraction { return stop getPermissions() }
+		
+		set isReady = !!firstInteraction.completed()
+		
+		set { voiceName, voiceRate } = firstInteration.completed()
 
 	}
 }

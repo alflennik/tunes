@@ -1,4 +1,4 @@
-import { _, stop, complete, justChanged, watched } from "./multigraph/index.js"
+import { _, stop, complete, justChanged, watched, identity } from "./multigraph/index.js"
 import tunesMultigraph from "./tunesMultigraph.js"
 
 tunesMultigraph.define("audioDescription", {
@@ -20,7 +20,7 @@ tunesMultigraph.define("audioDescription", {
 
     const description = descriptions.reverse().find(each => time > each.time)
 
-    const playMode = (() => {
+    const playMode = identity(() => {
       if (justChanged([videoPlayer, "playMode"])) {
         if (videoPlayer.playMode === "PLAYING") {
           return "PLAYING"
@@ -37,7 +37,7 @@ tunesMultigraph.define("audioDescription", {
         return "ENDED"
       }
       return last.playMode
-    })()
+    })
 
     const spokenItem = (() => {
       if (justChanged([videoPlayer, "time"], null) && analysis) {

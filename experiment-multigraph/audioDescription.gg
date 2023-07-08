@@ -10,6 +10,8 @@ audioDescription {
 	update {
 		if video.justChanged() { return stop fetchDescriptions() }
 
+		const { descriptions, analysis } = fetchDescriptions.completed()
+
 		set description = descriptions.reverse().find(each => time > each.time)
 
 		set playMode {
@@ -28,16 +30,11 @@ audioDescription {
 			}
 		}
 
-		set spokenItem {
-			if videoPlayer.time.justChanged(none) && analysis {
-				return analysis
-			}
-			return description
-		}
+		set spokenItem = videoPlayer.time.justChanged(none) && analysis ? analysis : description
+		
+		section handleVoice {
+			set isTimeSeek = last?.time && (time - last.time).getAbsoluteValue() > 1
 
-		set isTimeSeek = last?.time && (time - last.time).getAbsoluteValue() > 1
-
-		unset handleVoice {
 			if spokenItem != last.spokenItem {
 				if (!isTimeSeek) {
 					voice.play()
@@ -51,6 +48,12 @@ audioDescription {
 			}
 		}
 
-		return { shares { descriptions, description, analysis, spokenItem, playMode } }
+		const content = (
+			element("div").attributes({ class: "wrapping-box" }).items(
+				element("div").text(spokenItem.text)
+			)
+		)
+
+		return { content, shares { descriptions, description, analysis, spokenItem, playMode } }
 	}
 }
