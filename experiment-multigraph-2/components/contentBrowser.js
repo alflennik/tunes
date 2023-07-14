@@ -8,33 +8,33 @@ define({ contentBrowser })({
   },
   track: { playlists, select },
 
-  update: ({ _ }) => {
+  update: ({ beat }) => {
     if (!last) {
       return stop(async () => {
-        const playlistListModule = await import("../playlists/playlist-list.js")
+        const playlistListModule = await import("../playlists/playlist-list.js").then(beat)
         const playlistList = playlistListModule.default
-        _.set(_.playlists)(
-          await Promise.all(
-            playlistList.map(async playlistPath => {
-              const playlistModule = await import(`../playlists/${playlistPath}/contents.js`)
-              return playlistModule.default
-            })
-          )
-        )
+        const playlistsData = await Promise.all(
+          playlistList.map(async playlistPath => {
+            const playlistModule = await import(`../playlists/${playlistPath}/contents.js`)
+            return playlistModule.default
+          })
+        ).then(beat)
+
+        set(playlists)(playlistsData)
 
         // Cannot show a playlist with a content advisory by default because it would bypass the
         // permission dialog
-        _.set(_.playlist)(_.playlists.find(each => !each.needsContentAdvisory))
+        set(playlist)(playlists.find(each => !each.needsContentAdvisory))
 
-        _.set(_.video)(playlist.videos[0])
+        set(video)(playlist.videos[0])
       })
     }
 
-    set(select).once(() => async ({ event, playlist, video }) => {
+    set(select).once(() => async ({ event, playlist: newPlaylist, video: newVideo }) => {
       event.preventDefault()
 
       if (
-        playlist?.needsContentAdvisory &&
+        newPlaylist?.needsContentAdvisory &&
         !window.confirm(
           "This playlist contains content some viewers might find disturbing, are you sure you " +
             "want to continue?"
@@ -43,10 +43,10 @@ define({ contentBrowser })({
         return
       }
 
-      _.set(_.playlist)(playlist)
-      _.set(_.video)(video ?? playlist?.videos[0])
+      set(playlist)(newPlaylist)
+      set(video)(newVideo ?? playlist?.videos[0])
 
-      await ripple()
+      await ripple().then(beat)
 
       document.querySelector("#player-h2").focus({ preventScroll: true })
       elementReference(tunesPlayer).scrollIntoView({ behavior: "smooth", block: "start" })

@@ -6,7 +6,7 @@ define({ videoPlayer })({
   share: { time, play, pause, playMode },
   track: { youtubePlayer, intervalId },
 
-  update: ({ _ }) => {
+  update: ({ beat }) => {
     if (!last) {
       set(content).once(() => `<div id="player"></div>`)
 
@@ -41,14 +41,15 @@ define({ videoPlayer })({
 
     section("play mode").once(() => {
       youtubePlayer.addEventListener("onStateChange", () => {
+        beat()
         if (eventData === YT.PlayerState.PLAYING) {
-          _.set(_.playMode)("playing")
+          set(playMode)("playing")
         } else if (eventData === YT.PlayerState.PAUSED) {
-          _.set(_.playMode)("paused")
+          set(playMode)("paused")
         } else if (eventData === YT.PlayerState.BUFFERING) {
-          _.set(_.playMode)("buffering")
+          set(playMode)("buffering")
         } else if (eventData === YT.PlayerState.ENDED) {
-          _.set(_.playMode)("ended")
+          set(playMode)("ended")
         }
       })
     })
@@ -57,8 +58,9 @@ define({ videoPlayer })({
       if ($playMode === "playing" && !$intervalId) {
         set(intervalId)(
           setInterval(() => {
-            _.set(_.time)(_.youtubePlayer.getCurrentTime())
-            console.info(Math.round(_.$time * 1000) / 1000)
+            beat()
+            set(time)(youtubePlayer.getCurrentTime())
+            console.info(Math.round($time * 1000) / 1000)
           }, $timeInterval)
         )
       } else if ($intervalId) {
@@ -68,8 +70,14 @@ define({ videoPlayer })({
 
     if (justChanged(youtubeId)) youtubePlayer.loadVideoById({ videoId: youtubeId })
 
-    set(play).once(() => () => youtubePlayer.playVideo())
+    set(play).once(() => () => {
+      beat()
+      youtubePlayer.playVideo()
+    })
 
-    set(pause).once(() => () => youtubePlayer.pauseVideo())
+    set(pause).once(() => () => {
+      beat()
+      youtubePlayer.pauseVideo()
+    })
   },
 })

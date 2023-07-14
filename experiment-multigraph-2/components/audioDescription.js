@@ -7,11 +7,11 @@ define({ audioDescription })({
   share: { playMode },
   track: { descriptions, description, analysis, spokenItem },
 
-  update: ({ _ }) => {
+  update: ({ beat }) => {
     if (justChanged(video)) {
       return stop(async () => {
-        const descriptionModule = await import(_.video.descriptionPath)
-        _.set(_.descriptions, _.analysis)(descriptionModule.default)
+        const descriptionModule = await import(video.descriptionPath).then(beat)
+        set({ descriptions, analysis })(descriptionModule.default)
       })
     }
 

@@ -16,7 +16,7 @@ define({ tunesPlayer })({
     permissions: { onFirstInteraction },
   },
 
-  update: ({ _ }) => {
+  update: ({ beat }) => {
     set(video).by(() => {
       if (justChanged(contentBrowser.video)) return contentBrowser.video
       if (justChanged(audioDescription.playMode, "ended")) {
@@ -33,8 +33,8 @@ define({ tunesPlayer })({
     manage(timeInterval).once(() => 400)
 
     manage(onFirstInteraction).once(() => async ({ isKeyDown, isVideoPlayerInteraction }) => {
-      await _.voiceSynthesized.getPermissions()
-      if (!isKeyDown && isVideoPlayerInteraction) _.videoPlayer.play()
+      await voiceSynthesized.getPermissions().then(beat)
+      if (!isKeyDown && isVideoPlayerInteraction) videoPlayer.play()
     })
 
     reconcile(rootContent)(
