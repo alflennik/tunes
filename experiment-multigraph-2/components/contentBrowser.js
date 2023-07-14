@@ -2,7 +2,11 @@ define({ contentBrowser })({
   watch: {
     tunesPlayer: { video: { id, titleSentence } },
   },
-  share: { playlists, playlist, video, select },
+  share: {
+    playlist: { id, title, videos: [{ id, titleSentence }] },
+    video: { id, titleSentence },
+  },
+  track: { playlists, select },
 
   update: ({ _ }) => {
     if (!last) {
@@ -59,7 +63,7 @@ define({ contentBrowser })({
                 element("a")
                   .attributes({ href: "#" })
                   .listeners({ click: event => select({ event, playlist }) })
-                  .text(playlist.title())
+                  .text(playlist.$title)
               ),
               element("ul").items(
                 ...playlist.videos.map(video =>
@@ -67,7 +71,7 @@ define({ contentBrowser })({
                     element("a")
                       .attributes({ href: "#" })
                       .listeners({ click: event => select({ event, playlist, video }) })
-                      .text(video.title({ style: "listenable" }))
+                      .text(video.$titleSentence)
                   )
                 )
               )

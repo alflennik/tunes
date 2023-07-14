@@ -1,6 +1,6 @@
 define({ permissions })({
   receive: { onFirstInteraction },
-  share: { firstInteractionComplete },
+  share: { firstInteractionComplete, firstInteractionInterceptor },
   content: { firstInteractionInterceptor },
 
   update: () => {

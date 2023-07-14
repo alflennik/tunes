@@ -1,5 +1,5 @@
 define({ voiceSynthesized })({
-  share: { say, clear, pause, play, getPermissions },
+  share: { say, clear, pause, play, playMode, getPermissions },
   track: { permissionGranted, sayCount, voiceName, voiceRate },
 
   update: ({ _ }) => {

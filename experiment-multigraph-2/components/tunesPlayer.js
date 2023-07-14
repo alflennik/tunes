@@ -1,14 +1,15 @@
 define({ tunesPlayer })({
   watch: {
+    audioDescription: { playMode },
     contentBrowser: {
       video: { id },
-      playlist: { videos: { id } },
+      playlist: { videos: [{ id }] },
     },
     videoPlayer: { play },
     voiceSynthesized: { getPermissions },
     permissions: { firstInteractionInterceptor, firstInteractionComplete },
   },
-  share: { video },
+  share: { video: { id, titleSentence, descriptionPath, youtubeId } },
   manage: {
     voice: { voiceType },
     videoPlayer: { timeInterval },
@@ -19,7 +20,9 @@ define({ tunesPlayer })({
     set(video).by(() => {
       if (justChanged(contentBrowser.video)) return contentBrowser.video
       if (justChanged(audioDescription.playMode, "ended")) {
-        const currentIndex = playlist.videos.findIndex(each => each.$id == contentBrowser.video.$id)
+        const currentIndex = playlist.videos.findIndex(
+          each => each.$id === contentBrowser.video.$id
+        )
         const nextVideo = playlist.videos[currentIndex + 1]
         return nextVideo ?? last.video
       }

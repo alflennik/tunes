@@ -4,7 +4,8 @@ define({ audioDescription })({
     videoPlayer: { playMode, time },
     voice: { say, pause, play, clear, playMode },
   },
-  share: { descriptions, description, analysis, spokenItem, playMode },
+  share: { playMode },
+  track: { descriptions, description, analysis, spokenItem },
 
   update: ({ _ }) => {
     if (justChanged(video)) {
@@ -29,7 +30,7 @@ define({ audioDescription })({
             return "playing"
         }
       }
-      if (justChanged(voice.playMode, "ended") && spokenItem === analysis) {
+      if (justChanged(voice.playMode, "ended") && equivalent(spokenItem, analysis)) {
         return "ended"
       }
     })
@@ -39,7 +40,7 @@ define({ audioDescription })({
     section("voice").by(() => {
       const isTimeSeek = last?.$time && Math.abs($time - last.$time) > 1
 
-      if (spokenItem !== analysis) {
+      if (equivalent(spokenItem, analysis)) {
         if (!isTimeSeek) {
           voice.play()
           voice.say(spokenItem)
