@@ -1,13 +1,14 @@
-define({ permissions })({
+permissions = defineModule({
   receive: { onFirstInteraction },
   share: { firstInteractionComplete, firstInteractionInterceptor },
   content: { firstInteractionInterceptor },
 
-  update: () => {
-    if (!last) set(firstInteractionComplete)(false)
+  update: ({ beat }) => {
+    if (!last) firstInteractionComplete = false
 
-    if (justAttached(firstInteractionInterceptor)) {
+    if (justAttached($firstInteractionInterceptor)) {
       const listenForFirstInteraction = event => {
+        beat()
         const isKeyDown = event.type === "keydown"
 
         const interactionInterceptor = document.querySelector(".interaction-interceptor")
@@ -17,7 +18,7 @@ define({ permissions })({
         onFirstInteraction({ isKeyDown, isVideoPlayerInteraction })
 
         interactionInterceptor.style.display = "none"
-        _.set(_.firstInteractionComplete)(true)
+        firstInteractionComplete = true
 
         document.removeEventListener("click", listenForFirstInteraction)
         document.removeEventListener("keydown", listenForFirstInteraction)
@@ -26,7 +27,8 @@ define({ permissions })({
       document.addEventListener("keydown", listenForFirstInteraction)
     }
 
-    reconcile(firstInteractionInterceptor)(
+    firstInteractionInterceptor = reconcile(
+      $firstInteractionInterceptor,
       element("div")
         .attributes({ class: "interaction-interceptor", "tab-index": 0 })
         .items(element("button").text(`Play ${video.title()}`))

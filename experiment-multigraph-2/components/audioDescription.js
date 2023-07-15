@@ -1,4 +1,4 @@
-define({ audioDescription })({
+audioDescription = defineModule({
   watch: {
     tunesPlayer: { video: { descriptionPath } },
     videoPlayer: { playMode, time },
@@ -8,18 +8,18 @@ define({ audioDescription })({
   track: { descriptions, description, analysis, spokenItem },
 
   update: ({ beat }) => {
-    if (justChanged(video)) {
+    if (justChanged($video)) {
       return stop(async () => {
         const descriptionModule = await import(video.descriptionPath).then(beat)
-        set({ descriptions, analysis })(descriptionModule.default)
+        ;({ descriptions, analysis } = descriptionModule.default)
       })
     }
 
-    set(description)(descriptions.reverse().find(each => $time > each.$time))
+    description = descriptions.reverse().find(each => time > each.time)
 
-    set(playMode).by(() => {
-      if (justChanged(videoPlayer.playMode)) {
-        switch (videoPlayer.$playMode) {
+    playMode = (() => {
+      if (justChanged($videoPlayer.$playMode)) {
+        switch (videoPlayer.playMode) {
           case "playing":
             return "playing"
           case "paused":
@@ -30,17 +30,18 @@ define({ audioDescription })({
             return "playing"
         }
       }
-      if (justChanged(voice.playMode, "ended") && equivalent(spokenItem, analysis)) {
+      if (justChanged($voice.$playMode, "ended") && spokenItem === analysis) {
         return "ended"
       }
-    })
+    })()
 
-    set(spokenItem)(justChanged(videoPlayer.time, null) && analysis ? analysis : description)
+    spokenItem = justChanged($videoPlayer.$time, null) && analysis ? analysis : description
 
-    section("voice").by(() => {
-      const isTimeSeek = last?.$time && Math.abs($time - last.$time) > 1
+    /* Voice */
+    {
+      const isTimeSeek = last?.time && Math.abs(time - last.time) > 1
 
-      if (equivalent(spokenItem, analysis)) {
+      if (spokenItem === analysis) {
         if (!isTimeSeek) {
           voice.play()
           voice.say(spokenItem)
@@ -48,12 +49,13 @@ define({ audioDescription })({
           voice.clear()
         }
       }
-      if (justChanged(videoPlayer.playMode, "paused")) {
+      if (justChanged($videoPlayer.$playMode, "paused")) {
         voice.pause()
       }
-    })
+    }
 
-    reconcile(content)(
+    content = reconcile(
+      $content,
       element("div")
         .attributes({ class: "wrapping-box" })
         .items(element("div").text(spokenItem.text))

@@ -1,4 +1,4 @@
-define({ tunesPlayer })({
+tunesPlayer = defineModule({
   watch: {
     audioDescription: { playMode },
     contentBrowser: {
@@ -17,27 +17,29 @@ define({ tunesPlayer })({
   },
 
   update: ({ beat }) => {
-    set(video).by(() => {
-      if (justChanged(contentBrowser.video)) return contentBrowser.video
-      if (justChanged(audioDescription.playMode, "ended")) {
-        const currentIndex = playlist.videos.findIndex(
-          each => each.$id === contentBrowser.video.$id
-        )
+    video = by($video, () => {
+      if (justChanged(contentBrowser.$video)) return contentBrowser.video
+      if (justChanged(audioDescription.$playMode, "ended")) {
+        const currentIndex = playlist.videos.findIndex(each => each.id === contentBrowser.video.id)
         const nextVideo = playlist.videos[currentIndex + 1]
         return nextVideo ?? last.video
       }
     })
 
-    manage(voiceType).once(() => "synthesized")
+    voiceType = once($voiceType, () => "synthesized")
 
-    manage(timeInterval).once(() => 400)
+    timeInterval = once($timeInterval, () => 400)
 
-    manage(onFirstInteraction).once(() => async ({ isKeyDown, isVideoPlayerInteraction }) => {
-      await voiceSynthesized.getPermissions().then(beat)
-      if (!isKeyDown && isVideoPlayerInteraction) videoPlayer.play()
-    })
+    onFirstInteraction = onceFn(
+      $onFirstInteraction,
+      async ({ isKeyDown, isVideoPlayerInteraction }) => {
+        await voiceSynthesized.getPermissions().then(beat)
+        if (!isKeyDown && isVideoPlayerInteraction) videoPlayer.play()
+      }
+    )
 
-    reconcile(rootContent)(
+    rootContent = reconcile(
+      rootContent,
       element("div")
         .attributes({ class: "content-container" })
         .items(
@@ -50,7 +52,7 @@ define({ tunesPlayer })({
         ),
       content(firstInteractionInterceptor),
       element("div")
-        .attributes({ "aria-hidden": $firstInteractionComplete ? undefined : true })
+        .attributes({ "aria-hidden": firstInteractionComplete ? undefined : true })
         .items(content(videoPlayer)),
       content(audioDescription)
     )

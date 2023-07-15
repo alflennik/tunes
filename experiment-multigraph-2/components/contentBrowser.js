@@ -1,4 +1,4 @@
-define({ contentBrowser })({
+contentBrowser = defineModule({
   watch: {
     tunesPlayer: { video: { id, titleSentence } },
   },
@@ -13,24 +13,22 @@ define({ contentBrowser })({
       return stop(async () => {
         const playlistListModule = await import("../playlists/playlist-list.js").then(beat)
         const playlistList = playlistListModule.default
-        const playlistsData = await Promise.all(
+        playlists = await Promise.all(
           playlistList.map(async playlistPath => {
-            const playlistModule = await import(`../playlists/${playlistPath}/contents.js`)
+            const playlistModule = await beat(import(`../playlists/${playlistPath}/contents.js`))
             return playlistModule.default
           })
         ).then(beat)
 
-        set(playlists)(playlistsData)
-
         // Cannot show a playlist with a content advisory by default because it would bypass the
         // permission dialog
-        set(playlist)(playlists.find(each => !each.needsContentAdvisory))
+        playlist = playlists.find(each => !each.needsContentAdvisory)
 
-        set(video)(playlist.videos[0])
+        video = playlist.videos[0]
       })
     }
 
-    set(select).once(() => async ({ event, playlist: newPlaylist, video: newVideo }) => {
+    select = onceFn($select, async ({ event, playlist: newPlaylist, video: newVideo }) => {
       event.preventDefault()
 
       if (
@@ -43,17 +41,18 @@ define({ contentBrowser })({
         return
       }
 
-      set(playlist)(newPlaylist)
-      set(video)(newVideo ?? playlist?.videos[0])
+      playlist = newPlaylist
+      video = newVideo ?? playlist?.videos[0]
 
-      await ripple().then(beat)
+      await ripple()
 
       document.querySelector("#player-h2").focus({ preventScroll: true })
       elementReference(tunesPlayer).scrollIntoView({ behavior: "smooth", block: "start" })
       videoPlayer.play()
     })
 
-    reconcile(content)(
+    content = reconcile(
+      $content,
       element("nav").items(
         element("h2").text("Playlists"),
         element("ul").items(
@@ -63,7 +62,7 @@ define({ contentBrowser })({
                 element("a")
                   .attributes({ href: "#" })
                   .listeners({ click: event => select({ event, playlist }) })
-                  .text(playlist.$title)
+                  .text(playlist.title)
               ),
               element("ul").items(
                 ...playlist.videos.map(video =>
@@ -71,7 +70,7 @@ define({ contentBrowser })({
                     element("a")
                       .attributes({ href: "#" })
                       .listeners({ click: event => select({ event, playlist, video }) })
-                      .text(video.$titleSentence)
+                      .text(video.titleSentence)
                   )
                 )
               )
@@ -81,12 +80,12 @@ define({ contentBrowser })({
         element("h2").text("Other Songs"),
         element("ul").items(
           ...videos.map(video => {
-            const isActive = video.$id === tunesPlayer.video.$id
+            const isActive = video.id === tunesPlayer.video.id
             return element("li").items(
               element("a")
                 .attributes({ href: "#", "aria-current": isActive ? true : undefined })
                 .listeners({ click: event => select({ event, playlist, video }) })
-                .text(video.$titleSentence)
+                .text(video.titleSentence)
             )
           })
         )

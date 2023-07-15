@@ -1,4 +1,4 @@
-define({ bootstrap })({
+bootstrap = defineModule({
   watch: { contentBrowser, tunesPlayer, videoPlayer, audioDescription },
 
   updateFirst: () => {
