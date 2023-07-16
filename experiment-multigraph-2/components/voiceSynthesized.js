@@ -1,4 +1,6 @@
-voiceSynthesized = defineModule({
+import { define, once } from "../multigraph.js"
+
+define("voiceSynthesized", {
   share: { say, clear, pause, play, playMode, getPermissions },
   track: { permissionGranted, sayCount, voiceName, voiceRate },
 

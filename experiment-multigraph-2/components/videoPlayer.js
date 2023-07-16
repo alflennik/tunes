@@ -1,4 +1,6 @@
-videoPlayer = defineModule({
+import { define, isFirstRender, justChanged, doOnce } from "../multigraph.js"
+
+define("videoPlayer", {
   watch: {
     tunesPlayer: { video: { youtubeId } },
   },
@@ -7,7 +9,7 @@ videoPlayer = defineModule({
   track: { youtubePlayer, intervalId },
 
   update: function ({ stop, change }) {
-    if (!last) {
+    if (!isFirstRender($this)) {
       return stop(async () => {
         this.content.innerHTML = `<div id="player"></div>`
 
@@ -43,7 +45,7 @@ videoPlayer = defineModule({
       })
     }
 
-    doOnce("play mode", () => {
+    doOnce($playMode, () => {
       youtubePlayer.addEventListener("onStateChange", eventData => {
         change(() => {
           if (eventData === YT.PlayerState.PLAYING) {

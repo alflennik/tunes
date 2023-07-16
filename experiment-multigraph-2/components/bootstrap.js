@@ -1,8 +1,10 @@
-bootstrap = defineModule({
+import { define, isFirstRender, render } from "../multigraph.js"
+
+define("bootstrap", {
   watch: { contentBrowser, tunesPlayer, videoPlayer, audioDescription },
 
   updateFirst: function ({ stop }) {
-    if (!last) {
+    if (isFirstRender($this)) {
       return stop(async () => {
         // Loads initial content
         await render(this.$contentBrowser)

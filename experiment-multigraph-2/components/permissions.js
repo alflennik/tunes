@@ -1,10 +1,12 @@
-permissions = defineModule({
+import { define, once, justAttached, reconcile } from "../multigraph.js"
+
+define("permissions", {
   receive: { onFirstInteraction },
   share: { firstInteractionComplete, firstInteractionInterceptor },
   content: { firstInteractionInterceptor },
 
   update: function ({ change }) {
-    if (!last) firstInteractionComplete = false
+    firstInteractionComplete = once($firstInteractionComplete, false)
 
     if (justAttached($firstInteractionInterceptor)) {
       const listenForFirstInteraction = event => {

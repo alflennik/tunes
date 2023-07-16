@@ -1,4 +1,6 @@
-contentBrowser = defineModule({
+import { define, isFirstRender, once, reconcile } from "../multigraph.js"
+
+define("contentBrowser", {
   watch: {
     tunesPlayer: { video: { id, titleSentence } },
   },
@@ -9,7 +11,7 @@ contentBrowser = defineModule({
   track: { playlists, select },
 
   update: function ({ stop, ripple }) {
-    if (!last) {
+    if (isFirstRender($this)) {
       return stop(async () => {
         const playlistListModule = await import("../playlists/playlist-list.js")
         const playlistList = playlistListModule.default

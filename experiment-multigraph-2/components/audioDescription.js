@@ -1,4 +1,6 @@
-audioDescription = defineModule({
+import { define, justChanged, reconcile } from "../multigraph.js"
+
+define("audioDescription", {
   watch: {
     tunesPlayer: { video: { descriptionPath } },
     videoPlayer: { playMode, time },
@@ -7,7 +9,7 @@ audioDescription = defineModule({
   share: { playMode },
   track: { descriptions, description, analysis, spokenItem },
 
-  update: function () {
+  update: function ({ stop }) {
     if (justChanged($video)) {
       return stop(async () => {
         const descriptionModule = await import(this.video.descriptionPath)
@@ -32,7 +34,7 @@ audioDescription = defineModule({
             return "playing"
         }
       }
-      if (justChanged($voice.$playMode, "ended") && spokenItem === analysis) {
+      if (justChanged($voice.$playMode, "ended") && spokenItem && spokenItem === analysis) {
         return "ended"
       }
     })()
@@ -41,9 +43,9 @@ audioDescription = defineModule({
 
     /* Voice */
     {
-      const isTimeSeek = last?.time && Math.abs(time - last.time) > 1
+      const isTimeSeek = $time.last && Math.abs(time - $time.last) > 1
 
-      if (spokenItem === analysis) {
+      if (spokenItem && spokenItem === analysis) {
         if (!isTimeSeek) {
           voice.play()
           voice.say(spokenItem)
@@ -60,7 +62,7 @@ audioDescription = defineModule({
       $content,
       element("div")
         .attributes({ class: "wrapping-box" })
-        .items(element("div").text(spokenItem.text))
+        .items(element("div").text(spokenItem?.text ?? ""))
     )
   },
 })

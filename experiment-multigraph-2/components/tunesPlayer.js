@@ -1,4 +1,6 @@
-tunesPlayer = defineModule({
+import { define, justChanged, once, reconcile } from "../multigraph.js"
+
+define("tunesPlayer", {
   watch: {
     audioDescription: { playMode },
     contentBrowser: {
@@ -16,13 +18,13 @@ tunesPlayer = defineModule({
     permissions: { onFirstInteraction },
   },
 
-  update: () => {
+  update: function () {
     video = (() => {
       if (justChanged($contentBrowser.$video)) return contentBrowser.video
       if (justChanged($audioDescription.$playMode, "ended")) {
         const currentIndex = playlist.videos.findIndex(each => each.id === contentBrowser.video.id)
         const nextVideo = playlist.videos[currentIndex + 1]
-        return nextVideo ?? last.video
+        return nextVideo ?? $video.last
       }
     })()
 
