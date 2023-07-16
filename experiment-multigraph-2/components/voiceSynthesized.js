@@ -2,8 +2,8 @@ voiceSynthesized = defineModule({
   share: { say, clear, pause, play, playMode, getPermissions },
   track: { permissionGranted, sayCount, voiceName, voiceRate },
 
-  update: () => {
-    getPermissions = onceFn($getPermissions, () => {
+  update: function ({ stop, change }) {
+    getPermissions = once($getPermissions, () => {
       return stop(async () => {
         const setBestVoice = () => {
           const isChrome = navigator.userAgent.indexOf("Chrome") != -1
@@ -32,8 +32,8 @@ voiceSynthesized = defineModule({
 
           let bestVoiceRank
 
-          let voiceName
-          let voiceRate
+          let foundVoiceName
+          let foundVoiceRate
 
           const englishVoices = speechSynthesis.getVoices().filter(voice => voice.lang === "en-US")
 
@@ -45,8 +45,8 @@ voiceSynthesized = defineModule({
                 (bestVoiceRank === undefined || i < bestVoiceRank)
               ) {
                 bestVoiceRank = i
-                voiceName = voice.name
-                voiceRate = rate
+                foundVoiceName = voice.name
+                foundVoiceRate = rate
               }
               if (voice.default) {
                 defaultVoice = voice
@@ -55,11 +55,11 @@ voiceSynthesized = defineModule({
           }
 
           if (bestVoiceRank === undefined) {
-            voiceName = defaultVoice.name
-            voiceRate = defaultRate
+            foundVoiceName = defaultVoice.name
+            foundVoiceRate = defaultRate
           }
 
-          return { voiceName, voiceRate }
+          return { foundVoiceName, foundVoiceRate }
         }
 
         const getBestVoice = () => {
@@ -75,75 +75,79 @@ voiceSynthesized = defineModule({
           })
         }
 
-        ;({ voiceName, voiceRate } = await beat(
-          new Promise(resolve => {
-            // Thanks AblePlayer!
-            // https://github.com/ableplayer/ableplayer/blob/main/scripts/description.js
-            var greeting = new SpeechSynthesisUtterance("Hi!")
-            greeting.volume = 0 // silent
-            greeting.rate = 10 // fastest speed supported by the API
-            // Wow, thanks to this answer: https://stackoverflow.com/a/58775876/3888572
-            speechSynthesis.cancel()
-            speechSynthesis.speak(greeting)
+        const { foundVoiceName, foundVoiceRate } = await new Promise(resolve => {
+          // Thanks AblePlayer!
+          // https://github.com/ableplayer/ableplayer/blob/main/scripts/description.js
+          var greeting = new SpeechSynthesisUtterance("Hi!")
+          greeting.volume = 0 // silent
+          greeting.rate = 10 // fastest speed supported by the API
+          // Wow, thanks to this answer: https://stackoverflow.com/a/58775876/3888572
+          speechSynthesis.cancel()
+          speechSynthesis.speak(greeting)
 
-            greeting.onend = () => {
-              // should now be able to get browser voices
-              // in browsers that require a click
-              resolve(getBestVoice())
-            }
-          })
-        ))
+          greeting.onend = () => {
+            // should now be able to get browser voices
+            // in browsers that require a click
+            resolve(getBestVoice())
+          }
+        })
 
+        this.voiceName = foundVoiceName
+        this.voiceRate = foundVoiceRate
         permissionGranted = true
       })
     })
 
-    if (!last) {
-      permissionGranted = false
-      sayCount = 0
-    }
+    permissionGranted = once($permissionGranted, false)
 
-    say = onceFn($say, async description => {
-      if (!permissionGranted) throw new Error("Voice permissions were not granted")
+    sayCount = once($sayCount, 0)
 
-      const voice = speechSynthesis.getVoices().find(each => each.name === voiceName)
+    say = once($say, async description => {
+      if (!this.permissionGranted) throw new Error("Voice permissions were not granted")
+
+      const voice = speechSynthesis.getVoices().find(each => each.name === this.voiceName)
       const utterance = new SpeechSynthesisUtterance(description.text)
 
       // On iOS the best voice is the default voice, which is not listed in the voice list
       const isIOS = /iPhone|iPod|iPad/.test(navigator.platform)
       if (!isIOS) {
         utterance.voice = voice
-        utterance.rate = $voiceRate
+        utterance.rate = this.voiceRate
       } else {
         utterance.rate = 1.1
       }
       utterance.lang = "en-US"
-      return new Promise(resolve => {
-        utterance.addEventListener("end", () => {
-          beat()
-          sayCount -= 1
+      return new Promise(async resolve => {
+        utterance.addEventListener("end", async () => {
+          change(() => {
+            this.sayCount -= 1
+          })
           resolve()
         })
-        sayCount += 1
+        change(() => {
+          this.sayCount += 1
+        })
         speechSynthesis.speak(utterance)
       })
     })
 
-    clear = onceFn($clear, () => {
-      sayCount = 0
+    clear = once($clear, () => {
+      change(() => {
+        this.sayCount = 0
+      })
       speechSynthesis.cancel()
     })
 
-    pause = onceFn($pause, () => {
+    pause = once($pause, () => {
       speechSynthesis.pause()
     })
 
-    play = onceFn($play, () => {
+    play = once($play, () => {
       speechSynthesis.resume()
     })
 
-    playMode = onceFn($playMode, () => {
-      if (sayCount === 0) return "ended"
+    playMode = once($playMode, () => {
+      if (this.sayCount === 0) return "ended"
       return speechSynthesis.paused ? "paused" : "playing"
     })
   },

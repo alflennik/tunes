@@ -8,31 +8,31 @@ contentBrowser = defineModule({
   },
   track: { playlists, select },
 
-  update: ({ beat }) => {
+  update: function ({ stop, ripple }) {
     if (!last) {
       return stop(async () => {
-        const playlistListModule = await import("../playlists/playlist-list.js").then(beat)
+        const playlistListModule = await import("../playlists/playlist-list.js")
         const playlistList = playlistListModule.default
-        playlists = await Promise.all(
+        this.playlists = await Promise.all(
           playlistList.map(async playlistPath => {
-            const playlistModule = await beat(import(`../playlists/${playlistPath}/contents.js`))
+            const playlistModule = await import(`../playlists/${playlistPath}/contents.js`)
             return playlistModule.default
           })
-        ).then(beat)
+        )
 
         // Cannot show a playlist with a content advisory by default because it would bypass the
         // permission dialog
-        playlist = playlists.find(each => !each.needsContentAdvisory)
+        this.playlist = this.playlists.find(each => !each.needsContentAdvisory)
 
-        video = playlist.videos[0]
+        this.video = this.playlist.videos[0]
       })
     }
 
-    select = onceFn($select, async ({ event, playlist: newPlaylist, video: newVideo }) => {
+    select = once($select, async ({ event, playlist, video }) => {
       event.preventDefault()
 
       if (
-        newPlaylist?.needsContentAdvisory &&
+        playlist.needsContentAdvisory &&
         !window.confirm(
           "This playlist contains content some viewers might find disturbing, are you sure you " +
             "want to continue?"
@@ -41,14 +41,14 @@ contentBrowser = defineModule({
         return
       }
 
-      playlist = newPlaylist
-      video = newVideo ?? playlist?.videos[0]
-
-      await ripple()
+      await ripple(() => {
+        this.playlist = playlist
+        this.video = video ?? playlist?.videos[0]
+      })
 
       document.querySelector("#player-h2").focus({ preventScroll: true })
-      elementReference(tunesPlayer).scrollIntoView({ behavior: "smooth", block: "start" })
-      videoPlayer.play()
+      document.querySelector("tunes-player").scrollIntoView({ behavior: "smooth", block: "start" })
+      this.videoPlayer.play()
     })
 
     content = reconcile(

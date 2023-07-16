@@ -3,22 +3,23 @@ permissions = defineModule({
   share: { firstInteractionComplete, firstInteractionInterceptor },
   content: { firstInteractionInterceptor },
 
-  update: ({ beat }) => {
+  update: function ({ change }) {
     if (!last) firstInteractionComplete = false
 
     if (justAttached($firstInteractionInterceptor)) {
       const listenForFirstInteraction = event => {
-        beat()
         const isKeyDown = event.type === "keydown"
 
         const interactionInterceptor = document.querySelector(".interaction-interceptor")
         const isVideoPlayerInteraction =
           event.target === interactionInterceptor || interactionInterceptor.contains(event.target)
 
-        onFirstInteraction({ isKeyDown, isVideoPlayerInteraction })
+        this.onFirstInteraction({ isKeyDown, isVideoPlayerInteraction })
 
         interactionInterceptor.style.display = "none"
-        firstInteractionComplete = true
+        change(() => {
+          this.firstInteractionComplete = true
+        })
 
         document.removeEventListener("click", listenForFirstInteraction)
         document.removeEventListener("keydown", listenForFirstInteraction)

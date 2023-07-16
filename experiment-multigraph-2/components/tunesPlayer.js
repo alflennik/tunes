@@ -16,30 +16,30 @@ tunesPlayer = defineModule({
     permissions: { onFirstInteraction },
   },
 
-  update: ({ beat }) => {
-    video = by($video, () => {
-      if (justChanged(contentBrowser.$video)) return contentBrowser.video
-      if (justChanged(audioDescription.$playMode, "ended")) {
+  update: () => {
+    video = (() => {
+      if (justChanged($contentBrowser.$video)) return contentBrowser.video
+      if (justChanged($audioDescription.$playMode, "ended")) {
         const currentIndex = playlist.videos.findIndex(each => each.id === contentBrowser.video.id)
         const nextVideo = playlist.videos[currentIndex + 1]
         return nextVideo ?? last.video
       }
-    })
+    })()
 
-    voiceType = once($voiceType, () => "synthesized")
+    voiceType = once($voiceType, "synthesized")
 
-    timeInterval = once($timeInterval, () => 400)
+    timeInterval = once($timeInterval, 400)
 
-    onFirstInteraction = onceFn(
+    onFirstInteraction = once(
       $onFirstInteraction,
       async ({ isKeyDown, isVideoPlayerInteraction }) => {
-        await voiceSynthesized.getPermissions().then(beat)
-        if (!isKeyDown && isVideoPlayerInteraction) videoPlayer.play()
+        await this.voiceSynthesized.getPermissions()
+        if (!isKeyDown && isVideoPlayerInteraction) this.videoPlayer.play()
       }
     )
 
     rootContent = reconcile(
-      rootContent,
+      $rootContent,
       element("div")
         .attributes({ class: "content-container" })
         .items(

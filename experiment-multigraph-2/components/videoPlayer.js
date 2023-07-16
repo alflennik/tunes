@@ -6,19 +6,18 @@ videoPlayer = defineModule({
   share: { time, play, pause, playMode },
   track: { youtubePlayer, intervalId },
 
-  update: ({ beat }) => {
+  update: function ({ stop, change }) {
     if (!last) {
-      content = once($content, () => `<div id="player"></div>`)
-
       return stop(async () => {
+        this.content.innerHTML = `<div id="player"></div>`
+
         const youtubePlayer = await new Promise(async resolve => {
           window.onYouTubeIframeAPIReady = function () {
-            beat()
             resolve(
               new YT.Player("player", {
                 height: "315",
                 width: "560",
-                videoId: youtubeId,
+                videoId: this.youtubeId,
                 playerVars: {
                   playsinline: 1,
                 },
@@ -30,29 +29,33 @@ videoPlayer = defineModule({
           scriptElement.src = "https://www.youtube.com/iframe_api"
           var firstScriptTag = document.getElementsByTagName("script")[0]
           firstScriptTag.parentNode.insertBefore(scriptElement, firstScriptTag)
-        }).then(beat)
-
-        youtubePlayer.addEventListener("onReady", () => {
-          beat()
-          youtubePlayer.setVolume(50)
         })
 
-        return youtubePlayer
+        youtubePlayer.addEventListener("onReady", () => {
+          change(() => {
+            this.youtubePlayer.setVolume(50)
+          })
+        })
+
+        change(() => {
+          this.youtubePlayer = youtubePlayer
+        })
       })
     }
 
-    once("play mode", () => {
+    doOnce("play mode", () => {
       youtubePlayer.addEventListener("onStateChange", eventData => {
-        beat()
-        if (eventData === YT.PlayerState.PLAYING) {
-          playMode = "playing"
-        } else if (eventData === YT.PlayerState.PAUSED) {
-          playMode = "paused"
-        } else if (eventData === YT.PlayerState.BUFFERING) {
-          playMode = "buffering"
-        } else if (eventData === YT.PlayerState.ENDED) {
-          playMode = "ended"
-        }
+        change(() => {
+          if (eventData === YT.PlayerState.PLAYING) {
+            this.playMode = "playing"
+          } else if (eventData === YT.PlayerState.PAUSED) {
+            this.playMode = "paused"
+          } else if (eventData === YT.PlayerState.BUFFERING) {
+            this.playMode = "buffering"
+          } else if (eventData === YT.PlayerState.ENDED) {
+            this.playMode = "ended"
+          }
+        })
       })
     })
 
@@ -60,9 +63,10 @@ videoPlayer = defineModule({
     {
       if (playMode === "playing" && !intervalId) {
         intervalId = setInterval(() => {
-          beat()
-          time = youtubePlayer.getCurrentTime()
-          console.info(Math.round($time * 1000) / 1000)
+          change(() => {
+            this.time = this.youtubePlayer.getCurrentTime()
+          })
+          console.info(Math.round(this.time * 1000) / 1000)
         }, timeInterval)
       } else if (intervalId) {
         clearInterval(intervalId)
@@ -71,12 +75,12 @@ videoPlayer = defineModule({
 
     if (justChanged($youtubeId)) youtubePlayer.loadVideoById({ videoId: youtubeId })
 
-    play = onceFn($play, () => {
-      youtubePlayer.playVideo()
+    play = once($play, () => {
+      this.youtubePlayer.playVideo()
     })
 
-    pause = onceFn($pause, () => {
-      youtubePlayer.pauseVideo()
+    pause = once($pause, () => {
+      this.youtubePlayer.pauseVideo()
     })
   },
 })
