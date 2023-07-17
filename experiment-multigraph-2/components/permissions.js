@@ -30,11 +30,10 @@ define("permissions", {
       document.addEventListener("keydown", listenForFirstInteraction)
     }
 
-    firstInteractionInterceptor = reconcile(
-      $firstInteractionInterceptor,
-      element("div")
+    firstInteractionInterceptor = once($firstInteractionInterceptor, ({ items }) => {
+      return element("div")
         .attributes({ class: "interaction-interceptor", "tab-index": 0 })
-        .items(element("button").text(`Play ${video.title()}`))
-    )
+        .items(items)
+    })
   },
 })

@@ -2,12 +2,13 @@ import { define, justChanged, once, reconcile } from "../multigraph.js"
 
 define("tunesPlayer", {
   watch: {
-    audioDescription: { playMode },
+    audioDescription: { playMode, content },
     contentBrowser: {
       video: { id },
       playlist: { videos: [{ id }] },
+      content,
     },
-    videoPlayer: { play },
+    videoPlayer: { play, content },
     voiceSynthesized: { getPermissions },
     permissions: { firstInteractionInterceptor, firstInteractionComplete },
   },
@@ -17,6 +18,8 @@ define("tunesPlayer", {
     videoPlayer: { timeInterval },
     permissions: { onFirstInteraction },
   },
+  receive: { rootElement },
+  track: { rootContent },
 
   update: function () {
     video = (() => {
@@ -42,21 +45,29 @@ define("tunesPlayer", {
 
     rootContent = reconcile(
       $rootContent,
-      element("div")
-        .attributes({ class: "content-container" })
-        .items(
-          element("h1").text("Tunes"),
-          element("p").text(
-            "The Tunes project implements audio descriptions for music videos, which are written by some guy named Alex."
+      fragment(
+        element("div")
+          .attributes({ class: "content-container" })
+          .items(
+            element("h1").text("Tunes"),
+            element("p").text(
+              "The Tunes project implements audio descriptions for music videos, which are written by some guy named Alex."
+            ),
+            contentBrowser.content,
+            element("h2").attributes({ id: "player-h2", tabindex: "-1" }).text("Player")
           ),
-          content(contentBrowser),
-          element("h2").attributes({ id: "player-h2", tabindex: "-1" }).text("Player")
-        ),
-      content(firstInteractionInterceptor),
-      element("div")
-        .attributes({ "aria-hidden": firstInteractionComplete ? undefined : true })
-        .items(content(videoPlayer)),
-      content(audioDescription)
+        firstInteractionInterceptor({
+          items: element("button").text(`Play ${video.title}`),
+        }),
+        element("div")
+          .attributes({ "aria-hidden": firstInteractionComplete ? undefined : true })
+          .items(videoPlayer.content),
+        audioDescription.content
+      )
     )
+
+    doOnce($rootContent, () => {
+      document.body.appendChild(rootContent)
+    })
   },
 })

@@ -96,7 +96,7 @@ define("voiceSynthesized", {
 
         this.voiceName = foundVoiceName
         this.voiceRate = foundVoiceRate
-        permissionGranted = true
+        this.permissionGranted = true
       })
     })
 

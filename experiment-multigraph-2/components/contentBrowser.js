@@ -1,4 +1,4 @@
-import { define, isFirstRender, once, reconcile } from "../multigraph.js"
+import { define, once, reconcile } from "../multigraph.js"
 
 define("contentBrowser", {
   watch: {
@@ -7,11 +7,12 @@ define("contentBrowser", {
   share: {
     playlist: { id, title, videos: [{ id, titleSentence }] },
     video: { id, titleSentence },
+    content,
   },
   track: { playlists, select },
 
   update: function ({ stop, ripple }) {
-    if (isFirstRender($this)) {
+    if (!$this.last) {
       return stop(async () => {
         const playlistListModule = await import("../playlists/playlist-list.js")
         const playlistList = playlistListModule.default

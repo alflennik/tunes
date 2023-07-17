@@ -1,17 +1,19 @@
-import { define, isFirstRender, justChanged, doOnce } from "../multigraph.js"
+import { define, justChanged, reconcile, once, doOnce } from "../multigraph.js"
 
 define("videoPlayer", {
   watch: {
     tunesPlayer: { video: { youtubeId } },
   },
   receive: { timeInterval },
-  share: { time, play, pause, playMode },
+  share: { time, play, pause, playMode, content },
   track: { youtubePlayer, intervalId },
 
-  update: function ({ stop, change }) {
-    if (!isFirstRender($this)) {
+  update: function ({ stop, ripple, change }) {
+    if (!$this.last) {
       return stop(async () => {
-        this.content.innerHTML = `<div id="player"></div>`
+        await ripple(() => {
+          this.content = reconcile(this.$content, element("div").attributes({ id: "player" }))
+        })
 
         const youtubePlayer = await new Promise(async resolve => {
           window.onYouTubeIframeAPIReady = function () {
