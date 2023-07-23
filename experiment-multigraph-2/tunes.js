@@ -1,8 +1,4 @@
-import multigraph from "./utilities/multigraph.js"
-import componentPaths from "./components/component-list.js"
+import { loadGraph } from "./utilities/multigraph.js"
+import allUnitPaths from "./units/all.js"
 
-multigraph.loadGraph({
-  componentPaths: componentPaths.map(
-    componentPath => `/experiment-multigraph-2/components/${componentPath}`
-  ),
-})
+loadGraph(allUnitPaths.map(unitPath => `/experiment-multigraph-2/units/${unitPath}`))

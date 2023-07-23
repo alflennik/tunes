@@ -5,7 +5,7 @@ define("contentBrowser", {
     tunesPlayer: { video: { id, titleSentence } },
   },
   share: {
-    playlist: { id, title, videos: [{ id, titleSentence }] },
+    playlist: { id, title, videos },
     video: { id, titleSentence },
     content,
   },

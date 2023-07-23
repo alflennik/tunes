@@ -1,3 +1,97 @@
+export { reconcile, element } from "./reconciler.js"
+
+const RenderQueue = () => {
+  const getFirstKey = obj => {
+    for (key in obj) {
+      return key
+    }
+  }
+  const isEmpty = obj => {
+    for (key in obj) {
+      return false
+    }
+    return true
+  }
+
+  const queue = {}
+  const onEmptyCallbacks = []
+
+  const stopCount = 0
+
+  const emptyQueue = () => {
+    let firstThisUnit
+    while ((firstThisUnit = getFirstKey(queue))) {
+      console.log("empty queue")
+      render(firstThisUnit)
+      delete queue[firstThisUnit.name]
+    }
+  }
+
+  return {
+    isStopped: () => stopCount !== 0,
+
+    add: thisUnit => {
+      const isBlocked = !isEmpty(queue)
+      if (isBlocked) {
+        queue[thisUnit.name] = thisUnit
+        return
+      }
+
+      queue[thisUnit.name] = thisUnit
+      render(thisUnit)
+      delete queue[thisUnit.name]
+
+      emptyQueue()
+    },
+
+    stop: async promise => {
+      stopCount += 1
+      await promise
+      stopCount -= 1
+
+      if (stopCount === 0) emptyQueue()
+    },
+
+    onEmpty: callback => {
+      onEmptyCallbacks.push(callback)
+    },
+  }
+}
+
+const unitDefinitions = {}
+const mainRenderQueue = RenderQueue()
+
+let updateFirst
+const thisUnits = {}
+
+export const loadGraph = async unitPaths => {
+  let globals = new Set()
+
+  await Promise.all(
+    unitPaths.map(async unitPath => {
+      const unitText = await fetch(unitPath).then(response => response.text())
+      extractGlobals(unitText, globals)
+    })
+  )
+
+  keywords.forEach(keyword => {
+    window[keyword] = undefined
+  })
+
+  await Promise.all(
+    unitPaths.map(async unitPath => {
+      await import(unitPath)
+    })
+  )
+
+  defineUnits()
+
+  mainRenderQueue.add(updateFirst)
+  Object.values(thisUnits).forEach(thisUnit => {
+    mainRenderQueue.add(thisUnit)
+  })
+}
+
 const extractGlobals = (text, globals) => {
   const smartMatchParentheses = () => {
     const parenMap = {}
@@ -60,8 +154,10 @@ const extractGlobals = (text, globals) => {
       if (isBlockComment) {
         if (twoCharacters === "*/") {
           isBlockComment = false
+          index += 2
+          continue
         }
-        index += 2
+        index += 1
         continue
       }
 
@@ -120,8 +216,9 @@ const extractGlobals = (text, globals) => {
 
   const matches = []
   let match
-  const re = /\bdefine\s*\(\s*{\s*(\w+)\s*,?\s*}\s*\)\s*\(\s*\{/g
+  const re = /\bdefine\s*\(\s*["']\w+["']\s*,\s*{\s*(\w+)\s*,?\s*}\s*\)\s*\(\s*\{/g
   while ((match = re.exec(text)) != null) {
+    console.log("next match")
     matches.push(match)
   }
 
@@ -132,7 +229,7 @@ const extractGlobals = (text, globals) => {
     const end = parenMap[start]
     const defineContentSuperset = text.slice(start, end)
 
-    // Remove update part
+    // Removes update part
     const updateMatch = defineContentSuperset.match(/update(First)?\s*:\s*\([^)]*\)\s*=>\s*{/)
     const updateParenStart = updateMatch.index + updateMatch[0].length - 1
     const updateStart = updateMatch.index
@@ -142,437 +239,412 @@ const extractGlobals = (text, globals) => {
       defineContentSuperset.slice(0, updateStart) + defineContentSuperset.slice(updateEnd)
 
     defineContent.match(/\w+/g).forEach(word => {
-      if (["watch", "share", "manage", "receive", "content", "track"].includes(word)) return
       globals.add(word)
     })
   })
 }
 
-export default {
-  loadGraph: async ({ componentPaths }) => {
-    let globals = new Set()
+const lockToUnlockMap = new Map()
+const unlockToLockMap = new Map()
 
-    await Promise.all(
-      componentPaths.map(async componentPath => {
-        const componentText = await fetch(componentPath).then(response => response.text())
-        extractGlobals(componentText, globals)
-      })
-    )
+const lock = anyNamed => {
+  if (unlockToLockMap.has(anyNamed)) return unlockToLockMap.get(anyNamed)
 
-    const wmIsProxy = new WeakMap()
-    const isProxy = proxy => !!wmIsProxy.get(proxy)
-    const identifyProxy = proxy => wmIsProxy.set(proxy, true)
+  const anyNamedLockedInner = {}
+  const anyLastLocked = {}
 
-    const wmProxyName = new WeakMap()
-    const wmProxyMemory = new WeakMap()
+  Object.entries(anyNamed.subproperties).forEach(([subpropertyName, subproperty]) => {
+    anyNamedLockedInner[`$${subpropertyName}`] = lock(subproperty)
+  })
 
-    const dummyFunction = () => {}
+  anyNamed[`$last`] = anyLastLocked
 
-    let activeScope = null
+  const anyNamedLocked = new Proxy(anyNamedLockedInner, {
+    get: (target, prop, receiver) => {
+      if (prop === "last") {
+        if (anyNamed.isInProperty) return anyNamed.lastValue
+        return deepClone(anyNamed.inProperty.lastValue)
+      }
+      return Reflect.get(target, prop, receiver)
+    },
+    set: () => {
+      throw new Error("Cannot set")
+    },
+  })
 
-    const getFromActiveScope = name => ({
-      apply: (target, receiver, args) => {
-        if (!activeScope || !activeScope[name]) {
-          throw new Error(`Cannot call ${name} in this scope`)
-        }
-        return activeScope[name](...args)
-      },
-      get: (target, property) => {
-        if (!activeScope || !activeScope[name]) {
-          throw new Error(`Cannot read ${name} in this scope`)
-        }
-        return activeScope[property]
-      },
-      set: () => {
-        throw new Error("Not permitted")
-      },
-    })
+  lockToUnlockMap.set(anyNamedLocked, anyNamed)
+  unlockToLockMap.set(anyNamed, anyNamedLocked)
+  lockToUnlockMap.set(anyLastLocked, anyNamed.last)
+  unlockToLockMap.set(anyNamed.last, anyLastLocked)
 
-    const keywords = [
-      "justChanged",
-      "stop",
-      "set",
-      "section",
-      "render",
-      "ripple",
-      "reconcile",
-      "element",
-      "component",
-      "justAttached",
-      "manage",
-      "content",
-      "last",
-    ]
+  return anyNamedLocked
+}
 
-    keywords.forEach(keyword => {
-      window[keyword] = new Proxy(dummyFunction, getFromActiveScope(keyword))
-      identifyProxy(window[keyword])
-    })
+const isLocked = anyNamedLocked => {
+  return Object.isObject(anyNamedLocked) && lockToUnlockMap.has(anyNamedLocked)
+}
 
-    globals.forEach(name => {
-      window[name] = new Proxy(dummyFunction, getFromActiveScope(name))
-      identifyProxy(window[name])
-      wmProxyName.set(window[name], name)
-      window[`$${name}`] = null
-    })
+const unlock = anyNamedLocked => {
+  return lockToUnlockMap.get(anyNamedLocked)
+}
 
-    let components = {}
-    const stoppedComponents = {}
+const isAnyNamed = anyNamed => {
+  return Object.isObject(anyNamed) && anyNamed.isAnyNamed
+}
 
-    // Used to tell the difference between genuinely not set and being set to undefined
-    const notSet = {}
+const isAnyProperty = anyProperty => {
+  return Object.isObject(anyProperty) && anyProperty.isAnyProperty
+}
 
-    window.define = nameObj => defineContent => {
-      const componentName = Object.keys(nameObj)[0]
-      components[componentName] = defineContent
+const isAnyLast = anyLast => {
+  return Object.isObject(anyLast) && anyLast.isAnyLast
+}
+
+const isAnyUnit = anyUnit => {
+  return Object.isObject(anyUnit) && anyUnit.isAnyUnit
+}
+
+export const once = (anyNamedLocked, value) => {
+  const anyNamed = unlock(anyNamedLocked)
+  if (anyNamed.onceValue === undefined) {
+    if (value === undefined) {
+      throw new Error(`The second argument for once is required and cannot be undefined`)
+    }
+    anyNamed.onceValue = value
+    return value
+  } else {
+    return anyNamed.onceValue
+  }
+}
+
+export const doOnce = (anyNamedLocked, callback) => {
+  const anyNamed = unlock(anyNamedLocked)
+  if (!anyNamed.didOnce) {
+    callback()
+    anyNamed.didOnce = true
+  }
+}
+
+export const justChanged = (anyPropertyLocked, to) => {
+  const anyProperty = unlock(anyPropertyLocked)
+  const inProperty = anyProperty.isInProperty ? anyProperty : anyProperty.inProperty
+  const changed = inProperty.value !== inProperty.lastValue
+  if (to !== undefined) {
+    return changed && equivalent(anyProperty, to)
+  }
+  return changed
+}
+
+export const equivalent = (a, b) => {
+  const getRawValue = a => {
+    if (!isAnyNamed(a)) {
+      return a
+    }
+    if (isLocked(a)) {
+      a = unlock(a)
+    }
+    if (isAnyProperty(a)) return a.value
+    if (isAnyLast(a)) return a.inProperty.lastValue
+    if (isAnyUnit(a)) return a
+  }
+  return getRawValue(a) === getRawValue(b)
+}
+
+export const render = thisUnitLocked => {
+  let thisUnit
+  if (isLocked(thisUnitLocked)) {
+    thisUnit = unlock(thisUnitLocked)
+  } else {
+    thisUnit = thisUnitLocked
+  }
+  Object.entries(unit.scope).forEach((name, value) => {
+    window[name] = value
+  })
+  thisUnit.update.apply(unit.scope, {
+    ripple: unit.ripple,
+    stop: unit.stop,
+    change: unit.change,
+  })
+  thisUnit.handleChanges()
+  Object.keys(thisUnit.scope).forEach(name => {
+    delete window[name]
+  })
+  return new Promise(resolve => {
+    mainRenderQueue.onEmpty(resolve)
+  })
+}
+
+export const define = (thisUnitName, unitConfig) => {
+  unitDefinitions[thisUnitName] = unitConfig
+}
+
+const defineUnits = () => {
+  const addToScope = (scope, anyNamed) => {
+    const name = anyNamed.name
+    const parent = anyNamed.parent
+    const dollarName = `$${anyNamed.name}`
+
+    const applyName = () => {
+      scope[dollarName] = lock(anyNamed)
+      scope[name] = undefined
+    }
+    const conflictingNamed = scope[name]
+    if (conflictingNamed) {
+      const isInaccessible = !conflictingNamed.parent && !parent
+      if (isInaccessible) {
+        throw new Error(`In define "${unitName}" found conflicting names for ${name}`)
+      }
+      if (!conflictingNamed.parent) {
+        applyName()
+      }
+    } else {
+      applyName()
+    }
+  }
+
+  const manageProperties = {}
+
+  Object.entries(unitDefinitions).forEach(([thisUnitName, unitConfig]) => {
+    const thisUnit = {}
+    thisUnits[thisUnitName] = thisUnit
+
+    thisUnit.name = thisUnitName
+    thisUnit.isUnit = true
+    thisUnit.isThisUnit = true
+
+    if (unitConfig.updateFirst) {
+      if (updateFirst) throw new Error("Found multiple units trying to update first")
+      updateFirst = thisUnit
+      thisUnit.isUpdateFirst = true
+      thisUnit.update = unitConfig.updateFirst
+    } else {
+      thisUnit.update = unitConfig.update
     }
 
-    await Promise.all(
-      componentPaths.map(async componentPath => {
-        await import(componentPath)
-      })
-    )
+    const scope = {}
 
-    const getType = value => {
-      if (typeof value === "object") {
-        if (Array.isArray(value)) return "array"
-        if (value === null) return "null"
-      }
-      return typeof value
-    }
+    scope["$this"] = lock(thisUnit)
 
-    const canProxy = value => value !== null && typeof value === "object"
+    thisUnit.scope = scope
+    //
+    ;(function defineInProperties() {
+      const defineInProperty = ({ name, propertyType, parent }) => {
+        const inProperty = {}
+        inProperty.isAnyNamed = true
+        inProperty.parent = parent
+        inProperty.isAnyProperty = true
+        inProperty.type = propertyType
+        inProperty.isInProperty = true
+        inProperty.thisUnit = thisUnit
+        inProperty.last = { isAnyLast: true, isInLast: true, inProperty }
 
-    const defineKeywords = ({ scope, memoryMap }) => {
-      const unlock = proxy => {
-        const name = wmProxyName.get(proxy)
-        return memoryMap.get(scope[name])
-      }
+        inProperty.path = (() => {
+          if (!parent) return [name]
+          return [...parent.path, name]
+        })()
 
-      const wmSetOnce = new WeakMap()
-      const wmSetOnceValue = new WeakMap()
-      const renderList = Object.fromEntries(
-        Object.keys(components).map(componentName => [componentName, true])
-      )
+        if (!parent.subproperties) parent.subproperties = {}
+        parent.subproperties[name] = inProperty
 
-      scope.stop = async callback => {
-        if (stoppedComponents[componentName]) throw new Error("Cannot stop component twice")
-        stoppedComponents[componentName] = true
-        await callback()
-        delete stoppedComponents[componentName]
-      }
+        addToScope(thisUnit.scope, anyNamed)
 
-      scope.set = (...proxies) => {
-        const setValue = ({ memory, value }) => {
-          const changed = memory.value !== notSet && memory.value !== value
-          memory.lastValue = memory.value
-          memory.value = value
-          if (!canProxy(value) || (memory.lastValue !== notSet && !canProxy(memory.lastValue))) {
-            if (memory.scopeName) {
-              scope[memory.scopeName] = value
-              scope[`$${memory.scopeName}`] = value
-            }
+        if (propertyType === "manage") {
+          if (manageProperties[name]) {
+            throw new Error(`Found multiple units attempting to manage "${name}"`)
           }
-          memory.watches.forEach(watch => {
-            watch.changed = true
-            renderList[watch.componentName] = true
-          })
+          receiveProperties[name] = inProperty
         }
 
-        return {
-          by: callback => {
-            const memory = unlock(proxy)
-            const value = callback()
-            setValue({ memory, value })
-          },
-          once: callback => {
-            let overallValue
+        return inProperty
+      }
 
-            if (wmSetOnce.get(proxies[0])) {
-              overallValue = wmSetOnceValue.get(proxy)
-            } else {
-              wmSetOnce.set(proxies[0], true)
-              overallValue = callback()
-              wmSetOnceValue.set(proxies[0], value)
-            }
+      const recurse = (nameObject, data, action) => {
+        Object.entries(nameObject).forEach((name, childNameObject) => {
+          const childData = action(name, data)
+          if (childNameObject) recurse(childNameObject, childData, action)
+        })
+      }
 
-            proxies.forEach(proxy => {
-              const memory = unlock(proxy)
-              if (proxies.length === 1) {
-                setValue({ memory, value: overallValue })
-              } else {
-                setValue({ memory, value: overallValue[memory.name] })
-              }
+      if (unitConfig.share) {
+        const action = (name, { parent }) => {
+          const inProperty = defineInProperty({ name, propertyType: "share", parent })
+          return { parent: inProperty }
+        }
+        recurse(unitConfig.receive, { parent: null }, action)
+      }
+      if (unitConfig.manage) {
+        const action = (name, { parent }) => {
+          const inProperty = defineInProperty({ name, propertyType: "manage", parent })
+          return { parent: inProperty }
+        }
+        recurse(unitConfig.manage, { parent: null }, action)
+      }
+      if (unitConfig.track) {
+        const action = (name, { parent }) => {
+          const inProperty = defineInProperty({ name, propertyType: "track", parent })
+          return { parent: inProperty }
+        }
+        recurse(unitConfig.manage, { parent: null }, action)
+      }
+    })()
+  })
+
+  Object.entries(unitDefinitions).forEach(([thisUnitName, unitConfig]) => {
+    const thisUnit = thisUnits[thisUnitName]
+
+    const defineOutUnit = ({ name }) => {
+      const outUnit = {}
+
+      outUnit.isAnyNamed = true
+      outUnit.isUnit = true
+      outUnit.isOutUnit = true
+      outUnit.thisUnit = thisUnits[name]
+
+      addToScope(thisUnit.scope, outUnit)
+
+      return outUnit
+    }
+
+    const defineOutProperty = ({ name, propertyType, parent, outUnit }) => {
+      const outProperty = {}
+      outProperty.isAnyNamed = true
+      outProperty.isAnyProperty = true
+      outProperty.isOutProperty = true
+      outProperty.type = propertyType
+      outProperty.parent = parent
+      outProperty.thisUnit = thisUnit
+
+      outProperty.path = (() => {
+        if (!parent) return [name]
+        return [...parent.path, name]
+      })()
+
+      if (!parent.subproperties) parent.subproperties = {}
+      parent.subproperties[name] = inProperty
+
+      if (propertyType === "watch") {
+        outProperty.outUnit = outUnit
+        outProperty.inProperty = (() => {
+          try {
+            let findInProperty = outUnit.thisUnit
+            outProperty.path.forEach(segment => {
+              findInProperty = findInProperty[segment]
             })
-          },
-        }
-      }
-
-      scope.justChanged = (proxy, changedTo = notSet) => {
-        const memory = unlock(proxy)
-        const changed = memory.value !== memory.lastValue
-        return changed && (changedTo === notSet || changedTo === memory.value)
-      }
-
-      const sections = {}
-      scope.section = sectionName => {
-        return {
-          by: callback => {
-            callback()
-          },
-          once: callback => {
-            if (sections[sectionName] !== notSet) return sections[sectionName]
-            sections[sectionName] = callback()
-          },
-        }
-      }
-
-      scope.render = proxy => {
-        const memory = unlock(proxy)
-        const component = components[memory.name]
-        const update = component.updateFirst ?? component.update
-        activeScope = component.scope
-        update({ _: component.scope })
-        activeScope = null
-      }
-
-      scope.ripple = () => {
-        const firstKey = obj => {
-          for (key in obj) {
-            return key
-          }
-        }
-        const renderCount = {}
-        let componentName
-        while ((componentName = firstKey(renderList))) {
-          if (renderCount[componentName] === undefined) renderCount[componentName] = 0
-          renderCount[componentName] += 1
-          if (renderCount[componentName] > 4) {
-            throw new Error(`Infinite loop detected while rendering ${componentName}`)
-          }
-          components[componentName].scope.render()
-        }
-      }
-
-      scope.manage = () => {}
-      scope.content = () => {}
-      scope.equivalent = (a, b) => {
-        if (isProxy(a) && isProxy(b)) {
-          const aMemory = unlock(a)
-          const bMemory = unlock(b)
-          return aMemory.value === bMemory.value
-        }
-        return a === b
-      }
-      scope.last = () => {
-        return new Proxy(
-          {},
-          {
-            get: (target, property) => {
-              const memory = getMemory(scope[property])
-              return memory.lastValue
-            },
-          }
-        )
-      }
-
-      scope.reconcile = () => {}
-      scope.element = () => {}
-      scope.component = () => {}
-      scope.justAttached = () => {}
-    }
-
-    let updateFirst
-
-    const wmIsArray = new WeakMap()
-    const wmNoParent = new WeakMap()
-
-    const wmShareWatch = new WeakMap()
-    const wmWatchShare = new WeakMap()
-    const wmShareChanged = new WeakMap()
-    const receiveManage = new Map()
-    const manageReceive = new Map()
-
-    Object.entries(components).forEach(([componentName, defineContent]) => {
-      if (defineContent.updateFirst) {
-        if (updateFirst) throw new Error("Found multiple components trying to update first")
-        updateFirst = components[componentName]
-      }
-
-      const scope = {}
-      const memoryMap = new Map()
-
-      const share = {}
-      const recurseShare = ({ parent, obj, inArray }) => {
-        Object.entries(obj).forEach(([name, value]) => {
-          const memory = { type: "share" }
-          const sharedItem = {}
-          memoryMap.set(sharedItem, memory)
-
-          if (!parent) share[name] = sharedItem
-
-          // Handle name conflicts
-          if (!parent) wmNoParent.set(sharedItem, true)
-          const conflictDetected = !!scope[name]
-          if (conflictDetected) {
-            if (!wmNoParent.get(scope[name])) {
-              // No ambiguous names except in the case that the name wouldn't be accessible any
-              // other way
-              scope[name] = undefined
-            }
-          } else if (!inArray) {
-            scope[name] = sharedItem
-          }
-
-          if (Array.isArray(value)) {
-            inArray = true
-            wmIsArray.set(sharedItem, true)
-            parent[name] = sharedItem
-            recurseShare({ parent: sharedItem, obj: value[0], inArray })
-          } else {
-            if (parent) parent[name] = sharedItem
-            if (!isProxy(value)) recurseShare({ parent: sharedItem, obj: value, inArray })
-          }
-        })
-      }
-      if (defineContent.share) {
-        recurseShare({ parent: null, obj: defineContent.share, inArray: false })
-      }
-
-      defineKeywords({ scope, memoryMap })
-
-      const manage = {}
-      if (defineContent.manage) {
-        Object.keys(defineContent.manage).forEach(name => {
-          const memory = { type: "manage" }
-          const managedItem = {}
-          memoryMap.set(managedItem, memory)
-
-          manage[name] = managedItem
-          if (scope[name]) {
-            if (wmNoParent.get(scope[name])) {
-              throw new Error(`Ambiguous name ${name} in ${componentName}`)
-            }
-            scope[name] = undefined
-          } else {
-            scope[name] = managedItem
-          }
-        })
-      }
-
-      const track = {}
-      if (defineContent.track) {
-        Object.keys(defineContent.track).forEach(name => {
-          const memory = { type: "track" }
-          const trackedItem = {}
-          memoryMap.set(trackedItem, memory)
-
-          track[name] = trackedItem
-          if (scope[name]) {
-            if (wmNoParent.get(scope[name])) {
-              throw new Error(`Ambiguous name ${name} in ${componentName}`)
-            }
-            scope[name] = undefined
-          } else {
-            scope[name] = trackedItem
-          }
-        })
-      }
-
-      components[componentName].scope = scope
-      components[componentName].share = share
-      components[componentName].manage = manage
-      components[componentName].track = track
-
-      // console.log(name)
-    })
-
-    // ({ update, updateFirst, watch, manage, content }) => {
-    Object.entries(components).forEach(([componentName, defineContent]) => {
-      const scope = components[componentName].scope
-
-      const recurseWatch = ({ watchComponentName, obj, shareObj, inArray }) => {
-        Object.entries(obj).forEach(([name, value]) => {
-          const watchedItem = {}
-
-          if (!shareObj[name]) {
+          } catch {
             throw new Error(
-              `Component ${componentName} expected ${name} to be shared by ${watchComponentName}.`
+              `Unit ${thisUnit.name} expected ${name} to be shared by ${outUnit.name}.`
             )
           }
-
-          wmShareWatch.set(shareObj[name], watchedItem)
-          wmWatchShare.set(watchedItem, shareObj[name])
-
-          // Handle name conflicts
-          const conflictDetected = !!scope[name]
-          if (conflictDetected) {
-            if (!wmNoParent.get(scope[name])) {
-              // No ambiguous names except in the case that the name wouldn't be accessible any
-              // other way
-              scope[name] = undefined
-            }
-          } else if (!inArray) {
-            scope[name] = watchedItem
-          }
-
-          if (Array.isArray(value)) {
-            inArray = true
-            wmIsArray.set(watchedItem, true)
-            if (!wmIsArray.get(shareObj[name])) {
-              throw new Error(
-                `Component ${componentName} expected ${name}, shared by ${watchComponentName}, ` +
-                  `to be an array.`
-              )
-            }
-            recurseWatch({ watchComponentName, obj: value[0], shareObj: shareObj[name], inArray })
-          } else {
-            if (!isProxy(value)) {
-              recurseWatch({ watchComponentName, obj: value, shareObj: shareObj[name], inArray })
-            }
-          }
-        })
-      }
-      if (defineContent.watch) {
-        Object.entries(defineContent.watch).forEach(([watchComponentName, watchObj]) => {
-          const shareObj = components[watchComponentName].share
-          recurseWatch({ watchComponentName, obj: watchObj, shareObj, inArray: false })
-        })
+        })()
+      } else if (propertyType === "receive") {
+        if (!manageProperties[name]) {
+          throw new Error(
+            `Receive property ${name} in unit ${thisUnit.name} was not managed by any other units`
+          )
+        }
+        outProperty.inProperty = manageProperties[name]
+        outProperty.outUnit = outProperty.inProperty.thisUnit
       }
 
-      if (defineContent.receive) {
-        const seekingManage = Object.fromEntries(
-          Object.keys(defineContent.receive).map(key => [key, null])
-        )
-        Object.values(components).forEach(({ manage }) => {
-          Object.entries(manage).forEach(([name, managed]) => {
-            if (seekingManage[name] !== undefined) {
-              if (seekingManage[name] !== null) {
-                throw new Error(
-                  `Component ${componentName} received multiple components attempting to manage ` +
-                    `${name}`
-                )
-              }
-              const receivedItem = {}
-              seekingManage[name] = receivedItem
-              receiveManage.set(receivedItem, managed)
-              manageReceive.set(managed, receivedItem)
+      if (!outProperty.inProperty.outProperties) {
+        outProperty.inProperty.outProperties = []
+      }
+      outProperty.inProperty.outProperties.push(outProperty)
 
-              const conflictDetected = !!scope[name]
-              if (conflictDetected) {
-                if (wmNoParent.get(scope[name])) {
-                  throw new Error(`Ambiguous name ${name} in ${componentName}`)
-                }
-                scope[name] = undefined
-              } else {
-                scope[name] = receivedItem
-              }
-            }
+      outProperty.last = {
+        isAnyLast: true,
+        isOutLast: true,
+        inProperty: outProperty.inProperty,
+        outProperty: outProperty,
+      }
+
+      addToScope(thisUnit.scope, outProperty)
+
+      return outProperty
+    }
+
+    const recurse = (nameObject, data, action) => {
+      Object.entries(nameObject).forEach((name, childNameObject) => {
+        const childData = action(name, data)
+        if (childNameObject) recurse(childNameObject, childData, action)
+      })
+    }
+
+    if (unitConfig.watch) {
+      const action = (name, { isOneLevelDeep, parent, outUnit }) => {
+        if (isOneLevelDeep) {
+          const outUnit = defineOutUnit({ name })
+          return { isOneLevelDeep: false, parent: outUnit, outUnit }
+        }
+        const outProperty = defineOutProperty({ name, propertyType: "watch", parent, outUnit })
+        return { isOneLevelDeep: false, parent: outProperty, outUnit: outUnit }
+      }
+      recurse(unitConfig.watch, { isOneLevelDeep: true, parent: null, outUnit: null }, action)
+    }
+    if (unitConfig.receive) {
+      const action = (name, { parent }) => {
+        const anyNamed = defineAnyNamed({
+          thisUnit,
+          name,
+          isOutUnit: false,
+          isAnyProperty: true,
+          propertyType: "receive",
+          parent,
+        })
+        return { parent: anyNamed }
+      }
+      recurse(unitConfig.receive, { parent: null }, action)
+    }
+
+    thisUnit.handleChanges = ({ renderQueue = mainRenderQueue } = {}) => {
+      const action = (inProperty, value) => {
+        inProperty.lastValue = inProperty.value
+        inProperty.value = value
+        if (inProperty.value !== inProperty.lastValue) {
+          inProperty.outProperties.forEach(outProperty => {
+            renderQueue.add(outProperty.thisUnit)
           })
+        }
+      }
+
+      const recurse = (parent, value) => {
+        Object.entries(parent).forEach(([childName, childAnyNamed]) => {
+          let childValue
+          if (value != null) {
+            childValue = value[childName]
+          }
+          if (childAnyNamed.isInProperty) {
+            const childInProperty = childAnyNamed
+            action(childInProperty, childValue)
+            recurse(childInProperty, childValue)
+          }
         })
       }
-    })
 
-    debugger
-  },
+      recurse(thisUnit.scope, thisUnitValue)
+    }
+
+    thisUnit.change = async callback => {
+      callback()
+      thisUnit.handleChanges()
+      return new Promise(resolve => {
+        mainRenderQueue.onEmpty(resolve)
+      })
+    }
+
+    thisUnit.ripple = async callback => {
+      callback()
+      const dedicatedRenderQueue = RenderQueue()
+      thisUnit.handleChanges({ renderQueue: dedicatedRenderQueue })
+      return new Promise(resolve => {
+        dedicatedRenderQueue.onEmpty(resolve)
+      })
+    }
+
+    thisUnit.stop = async callback => {
+      const promise = callback()
+      await mainRenderQueue.stop(promise)
+      thisUnit.handleChanges()
+    }
+  })
 }

@@ -9,7 +9,7 @@ define("bootstrap", {
         // Loads initial content
         await render(this.$contentBrowser)
 
-        // Attaches the rootContent and sets the first video
+        // Attaches the root content and sets the first video
         await render(this.$tunesPlayer)
 
         // Components which require a video to be set

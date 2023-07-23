@@ -5,7 +5,7 @@ define("tunesPlayer", {
     audioDescription: { playMode, content },
     contentBrowser: {
       video: { id },
-      playlist: { videos: [{ id }] },
+      playlist: { videos },
       content,
     },
     videoPlayer: { play, content },

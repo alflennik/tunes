@@ -1,4 +1,4 @@
-import { define, justChanged, reconcile } from "../multigraph.js"
+import { define, justChanged, reconcile, equivalent } from "../utilities/multigraph.js"
 
 define("audioDescription", {
   watch: {
@@ -34,7 +34,7 @@ define("audioDescription", {
             return "playing"
         }
       }
-      if (justChanged($voice.$playMode, "ended") && spokenItem && spokenItem === analysis) {
+      if (justChanged($voice.$playMode, "ended") && equivalent($spokenItem, $analysis)) {
         return "ended"
       }
     })()
@@ -45,7 +45,7 @@ define("audioDescription", {
     {
       const isTimeSeek = $time.last && Math.abs(time - $time.last) > 1
 
-      if (spokenItem && spokenItem === analysis) {
+      if (equivalent($spokenItem, $analysis)) {
         if (!isTimeSeek) {
           voice.play()
           voice.say(spokenItem)
