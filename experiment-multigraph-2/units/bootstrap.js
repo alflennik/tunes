@@ -1,10 +1,10 @@
-import { define, render } from "../multigraph.js"
+import { define, render } from "../utilities/multigraph.js"
 
 define("bootstrap", {
   watch: { contentBrowser, tunesPlayer, videoPlayer, audioDescription },
 
   updateFirst: function ({ stop }) {
-    if (!$this.last) {
+    if ($this.isInitialRender) {
       return stop(async () => {
         // Loads initial content
         await render(this.$contentBrowser)

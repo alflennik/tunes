@@ -1,4 +1,4 @@
-import { define, justChanged, once, reconcile } from "../multigraph.js"
+import { define, justChanged, once, reconcile } from "../utilities/multigraph.js"
 
 define("tunesPlayer", {
   watch: {
@@ -18,7 +18,6 @@ define("tunesPlayer", {
     videoPlayer: { timeInterval },
     permissions: { onFirstInteraction },
   },
-  receive: { rootElement },
   track: { rootContent },
 
   update: function () {

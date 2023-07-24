@@ -1,4 +1,4 @@
-import { define, justChanged, reconcile, once, doOnce } from "../multigraph.js"
+import { define, justChanged, reconcile, once, doOnce } from "../utilities/multigraph.js"
 
 define("videoPlayer", {
   watch: {
@@ -9,7 +9,7 @@ define("videoPlayer", {
   track: { youtubePlayer, intervalId },
 
   update: function ({ stop, ripple, change }) {
-    if (!$this.last) {
+    if ($this.isInitialRender) {
       return stop(async () => {
         await ripple(() => {
           this.content = reconcile(this.$content, element("div").attributes({ id: "player" }))

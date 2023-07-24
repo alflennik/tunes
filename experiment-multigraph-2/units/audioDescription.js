@@ -6,7 +6,7 @@ define("audioDescription", {
     videoPlayer: { playMode, time },
     voice: { say, pause, play, clear, playMode },
   },
-  share: { playMode },
+  share: { playMode, content },
   track: { descriptions, description, analysis, spokenItem },
 
   update: function ({ stop }) {

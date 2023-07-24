@@ -1,4 +1,4 @@
-import { define } from "../multigraph.js"
+import { define } from "../utilities/multigraph.js"
 
 define("voice", {
   watch: { voiceSynthesized: { say, clear, pause, play, playMode } },

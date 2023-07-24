@@ -1,4 +1,4 @@
-import { define, doOnce, once } from "../multigraph.js"
+import { define, doOnce, once } from "../utilities/multigraph.js"
 
 define("permissions", {
   receive: { onFirstInteraction },

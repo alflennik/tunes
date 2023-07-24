@@ -1,4 +1,4 @@
-import { define, once } from "../multigraph.js"
+import { define, once } from "../utilities/multigraph.js"
 
 define("voiceSynthesized", {
   share: { say, clear, pause, play, playMode, getPermissions },

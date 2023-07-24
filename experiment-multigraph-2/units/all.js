@@ -1,10 +1,10 @@
 export default [
-  // "bootstrap.js",
+  "bootstrap.js",
   "audioDescription.js",
-  // "contentBrowser.js",
-  // "permissions.js",
-  // "tunesPlayer.js",
-  // "videoPlayer.js",
-  // "voice.js",
-  // "voiceSynthesized.js",
+  "contentBrowser.js",
+  "permissions.js",
+  "tunesPlayer.js",
+  "videoPlayer.js",
+  "voice.js",
+  "voiceSynthesized.js",
 ]
