@@ -1,17 +1,17 @@
 export { reconcile, element } from "./reconciler.js"
 
 const canProxy = value => {
-  value !== null && (typeof value === "object" || typeof value === "function")
+  return value !== null && (typeof value === "object" || typeof value === "function")
 }
 
 const RenderQueue = () => {
   const getFirstKey = obj => {
-    for (key in obj) {
+    for (const key in obj) {
       return key
     }
   }
   const isEmpty = obj => {
-    for (key in obj) {
+    for (const key in obj) {
       return false
     }
     return true
@@ -20,12 +20,11 @@ const RenderQueue = () => {
   const queue = {}
   const onEmptyCallbacks = []
 
-  const stopCount = 0
+  let stopCount = 0
 
   const emptyQueue = () => {
     let firstThisUnit
     while ((firstThisUnit = getFirstKey(queue))) {
-      console.log("empty queue")
       render(firstThisUnit)
       delete queue[firstThisUnit.name]
     }
@@ -35,7 +34,7 @@ const RenderQueue = () => {
     isStopped: () => stopCount !== 0,
 
     add: thisUnit => {
-      const isBlocked = !isEmpty(queue)
+      const isBlocked = !isEmpty(queue) || stopCount !== 0
       if (isBlocked) {
         queue[thisUnit.name] = thisUnit
         return
@@ -60,6 +59,66 @@ const RenderQueue = () => {
       onEmptyCallbacks.push(callback)
     },
   }
+}
+
+const getAnyNamedRecursiveProxy = (anyNamed, value) => {
+  const getGoodDebuggingExperienceObject = anyNamed => {
+    return Object.fromEntries(Object.keys(anyNamed.subproperties).map(key => [key, "[[value]]"]))
+  }
+
+  if (anyNamed.isOutUnit) {
+    return new Proxy(getGoodDebuggingExperienceObject(anyNamed), {
+      get: (_, key) => {
+        if (!anyNamed.subproperties[key]) return undefined
+        return getAnyNamedRecursiveProxy(
+          anyNamed.subproperties[key],
+          anyNamed.thisUnit.subproperties[key].value
+        )
+      },
+      set: () => {
+        throw new Error("Cannot set")
+      },
+    })
+  }
+
+  if (!anyNamed.isOutProperty) throw new Error("Unexpected Type")
+
+  if (!canProxy(value)) return value
+
+  if (typeof value === "function") {
+    return new Proxy(value, {
+      apply: (value, thisArg, argumentsList) => {
+        return value.apply(thisArg, argumentsList)
+      },
+      set: () => {
+        throw new Error("Cannot set")
+      },
+    })
+  }
+
+  if (Array.isArray(value)) {
+    return new Proxy(value, {
+      set: () => {
+        throw new Error("Cannot set")
+      },
+    })
+  }
+
+  if (typeof value === "object") {
+    return new Proxy(getGoodDebuggingExperienceObject(anyNamed), {
+      get: (_, key) => {
+        const rawValue = anyNamed.inProperty.subproperties[key].value
+        if (!canProxy(rawValue)) return rawValue
+        if (!anyNamed.subproperties[key]) return undefined
+        return getAnyNamedRecursiveProxy(anyNamed.subproperties[key], rawValue)
+      },
+      set: () => {
+        throw new Error("Cannot set")
+      },
+    })
+  }
+
+  throw new Error("Encountered unexpected type")
 }
 
 const unitDefinitions = {}
@@ -257,25 +316,18 @@ const unlockToLockMap = new Map()
 const lock = anyNamed => {
   if (unlockToLockMap.has(anyNamed)) return unlockToLockMap.get(anyNamed)
 
-  const anyNamedLockedInner = {}
   const anyLastLocked = {}
 
-  if (anyNamed.subproperties) {
-    Object.entries(anyNamed.subproperties).forEach(([subpropertyName, subproperty]) => {
-      anyNamedLockedInner[`$${subpropertyName}`] = lock(subproperty)
-    })
-  }
-
-  anyNamed[`$last`] = anyLastLocked
-
-  const anyNamedLocked = new Proxy(anyNamedLockedInner, {
-    get: (target, prop, receiver) => {
+  const anyNamedLocked = new Proxy(anyNamed, {
+    get: (_, prop) => {
       if (prop === "isInitialRender" && anyNamed.isThisUnit) return !anyNamed.hasRenderedOnce
       if (prop === "last") {
         if (anyNamed.isInProperty) return anyNamed.lastValue
         return anyNamed.inProperty.lastValue
       }
-      return Reflect.get(target, prop, receiver)
+      if (prop === "$last") return anyLastLocked
+      if (prop.startsWith("$")) return lock(anyNamed.subproperties[prop.split("$")[1]])
+      return undefined
     },
     set: () => {
       throw new Error("Cannot set")
@@ -320,7 +372,6 @@ const isAnyUnit = anyUnit => {
 
 export const once = (anyNamedLocked, value) => {
   const anyNamed = unlock(anyNamedLocked)
-  if (!anyNamed) debugger
   if (anyNamed.onceValue === undefined) {
     if (value === undefined) {
       throw new Error(`The second argument for once is required and cannot be undefined`)
@@ -375,7 +426,7 @@ export const render = anyUnitLocked => {
     window[name] = value
   })
 
-  thisUnit.update.call(thisUnit.scope, {
+  const result = thisUnit.update.call(thisUnit.scope, {
     ripple: thisUnit.ripple,
     stop: thisUnit.stop,
     change: thisUnit.change,
@@ -385,15 +436,18 @@ export const render = anyUnitLocked => {
     thisUnit.hasRenderedOnce = true
   }
 
-  return new Promise(resolve => {
-    mainRenderQueue.onEmpty(resolve)
-
+  let stoppedPromise
+  if (thisUnit.stoppedCount === 0) {
     thisUnit.handleChanges({ isWindowScoped: true })
+  } else if (result.then) {
+    stoppedPromise = result
+  }
 
-    Object.keys(thisUnit.scope).forEach(name => {
-      delete window[name]
-    })
+  Object.keys(thisUnit.scope).forEach(name => {
+    delete window[name]
   })
+
+  return stoppedPromise
 }
 
 export const define = (thisUnitName, unitConfig) => {
@@ -444,6 +498,7 @@ const defineUnits = () => {
     }
 
     thisUnit.subproperties = {}
+    thisUnit.stopCount = 0
 
     const scope = {}
 
@@ -472,6 +527,8 @@ const defineUnits = () => {
         if (parent) {
           parent.subproperties[name] = inProperty
         }
+
+        inProperty.outProperties = []
 
         addToScope(thisUnit.scope, name, inProperty)
 
@@ -531,7 +588,11 @@ const defineUnits = () => {
         throw new Error(`Unit ${thisUnitName} referenced unit ${name} which does not exist`)
       }
 
+      outUnit.subproperties = {}
+
       addToScope(thisUnit.scope, name, outUnit)
+
+      console.log("defined", outUnit.name)
 
       return outUnit
     }
@@ -551,8 +612,8 @@ const defineUnits = () => {
         return [...parent.path, name]
       })()
 
+      outProperty.subproperties = {}
       if (parent) {
-        if (!parent.subproperties) parent.subproperties = {}
         parent.subproperties[name] = outProperty
       }
 
@@ -572,7 +633,6 @@ const defineUnits = () => {
             )
           }
         })()
-        if (!outProperty.inProperty) debugger
       } else if (propertyType === "receive") {
         if (!manageProperties[name]) {
           throw new Error(
@@ -583,9 +643,6 @@ const defineUnits = () => {
         outProperty.outUnit = outProperty.inProperty.thisUnit
       }
 
-      if (!outProperty.inProperty.outProperties) {
-        outProperty.inProperty.outProperties = []
-      }
       outProperty.inProperty.outProperties.push(outProperty)
 
       outProperty.last = {
@@ -595,29 +652,18 @@ const defineUnits = () => {
         outProperty: outProperty,
       }
 
-      outProperty.readOnlyProxy = new Proxy(() => {}, {
-        apply: (_, thisArg, argumentsList) => {
-          return outProperty.inProperty.value.apply(thisArg, argumentsList)
-        },
-        get: (_, prop) => {
-          const rawValue = outProperty.subproperties[prop].value
-          if (!canProxy(rawValue)) return rawValue
-          return outProperty.subproperties[prop].readOnlyProxy
-        },
-        set: () => {
-          throw new Error("Cannot set")
-        },
-      })
-
       addToScope(thisUnit.scope, name, outProperty)
+
+      console.log("defined", outProperty.name)
 
       return outProperty
     }
 
-    const recurse = (nameObject, data, action) => {
+    const recurse = (nameObject, data, action, postAction) => {
       Object.entries(nameObject).forEach(([name, childNameObject]) => {
         const childData = action(name, data)
         if (childNameObject) recurse(childNameObject, childData, action)
+        if (postAction) postAction(name, data, childData)
       })
     }
 
@@ -630,7 +676,17 @@ const defineUnits = () => {
         const outProperty = defineOutProperty({ name, propertyType: "watch", parent, outUnit })
         return { isOneLevelDeep: false, parent: outProperty, outUnit: outUnit }
       }
-      recurse(unitConfig.watch, { isOneLevelDeep: true, parent: null, outUnit: null }, action)
+      const postAction = (name, { isOneLevelDeep }, { outUnit }) => {
+        if (isOneLevelDeep) {
+          thisUnit.scope[name] = getAnyNamedRecursiveProxy(outUnit)
+        }
+      }
+      recurse(
+        unitConfig.watch,
+        { isOneLevelDeep: true, parent: null, outUnit: null },
+        action,
+        postAction
+      )
     }
     if (unitConfig.receive) {
       const action = (name, { parent }) => {
@@ -647,13 +703,10 @@ const defineUnits = () => {
         if (inProperty.value !== inProperty.lastValue) {
           inProperty.outProperties.forEach(outProperty => {
             if (outProperty.isInRootOfScope) {
-              if (!canProxy(value)) {
-                outProperty.thisUnit.scope[outProperty.name] = value
-              } else if (
-                outProperty.thisUnit.scope[outProperty.name] !== outProperty.readOnlyProxy
-              ) {
-                outProperty.thisUnit.scope[outProperty.name] = outProperty.readOnlyProxy
-              }
+              outProperty.thisUnit.scope[outProperty.name] = getAnyNamedRecursiveProxy(
+                outProperty,
+                value
+              )
             }
             renderQueue.add(outProperty.thisUnit)
           })
@@ -661,23 +714,22 @@ const defineUnits = () => {
       }
 
       const recurse = ({ thisUnit, parent, parentValue }) => {
-        if (!parent.subproperties) debugger
         Object.values(parent.subproperties).forEach(anyNamed => {
           if (anyNamed.isInProperty) {
             const inProperty = anyNamed
             let value = (() => {
               if (parent === thisUnit) {
                 if (isWindowScoped) {
-                  value = window[inProperty.name]
+                  return window[inProperty.name]
                 } else {
-                  value = thisUnit.scope[inProperty.name]
+                  return thisUnit.scope[inProperty.name]
                 }
               } else {
-                value = parentValue?.[inProperty.name]
+                return parentValue?.[inProperty.name]
               }
             })()
             action(inProperty, value)
-            recurse(inProperty, value)
+            recurse({ thisUnit, parent: inProperty, parentValue: value })
           }
         })
       }
@@ -703,8 +755,11 @@ const defineUnits = () => {
     }
 
     thisUnit.stop = async callback => {
+      thisUnit.stopCount += 1
       const promise = callback()
-      await mainRenderQueue.stop(promise)
+      mainRenderQueue.stop(promise)
+      await promise
+      thisUnit.stopCount -= 1
       thisUnit.handleChanges({ isWindowScoped: false })
     }
   })

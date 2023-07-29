@@ -42,6 +42,7 @@ define("tunesPlayer", {
       }
     )
 
+    debugger
     rootContent = reconcile(
       $rootContent,
       fragment(

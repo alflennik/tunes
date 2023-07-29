@@ -572,7 +572,5 @@ export default {
         })
       }
     })
-
-    debugger
   },
 }
