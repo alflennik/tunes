@@ -1,4 +1,4 @@
-import { define, justChanged, once, reconcile } from "../utilities/multigraph.js"
+import { define, justChanged, once, doOnce, reconcile, element } from "../utilities/multigraph.js"
 
 define("tunesPlayer", {
   watch: {
@@ -42,10 +42,9 @@ define("tunesPlayer", {
       }
     )
 
-    debugger
     rootContent = reconcile(
       $rootContent,
-      fragment(
+      element("tunes-player").items(
         element("div")
           .attributes({ class: "content-container" })
           .items(
@@ -56,8 +55,8 @@ define("tunesPlayer", {
             contentBrowser.content,
             element("h2").attributes({ id: "player-h2", tabindex: "-1" }).text("Player")
           ),
-        firstInteractionInterceptor({
-          items: element("button").text(`Play ${video.title}`),
+        firstInteractionInterceptor?.({
+          items: element("button").text(`Play video ${/* video.title */ ""}`),
         }),
         element("div")
           .attributes({ "aria-hidden": firstInteractionComplete ? undefined : true })

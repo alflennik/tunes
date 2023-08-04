@@ -1,4 +1,4 @@
-import { define, justChanged, reconcile, once, doOnce } from "../utilities/multigraph.js"
+import { define, justChanged, reconcile, once, doOnce, element } from "../utilities/multigraph.js"
 
 define("videoPlayer", {
   watch: {
@@ -12,16 +12,19 @@ define("videoPlayer", {
     if ($this.isInitialRender) {
       return stop(async () => {
         await ripple(() => {
+          console.log("setting content")
           this.content = reconcile(this.$content, element("div").attributes({ id: "player" }))
         })
 
         const youtubePlayer = await new Promise(async resolve => {
+          const _this = this
           window.onYouTubeIframeAPIReady = function () {
+            console.log("resolving")
             resolve(
               new YT.Player("player", {
                 height: "315",
                 width: "560",
-                videoId: this.youtubeId,
+                videoId: _this.youtubeId,
                 playerVars: {
                   playsinline: 1,
                 },

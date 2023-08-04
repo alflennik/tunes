@@ -1,4 +1,4 @@
-export { reconcile, element } from "./reconciler.js"
+export { reconcile, element, fragment } from "./reconciler.js"
 
 const canProxy = value => {
   return value !== null && (typeof value === "object" || typeof value === "function")
@@ -61,64 +61,90 @@ const RenderQueue = () => {
   }
 }
 
-const getAnyNamedRecursiveProxy = (anyNamed, value) => {
-  const getGoodDebuggingExperienceObject = anyNamed => {
-    return Object.fromEntries(Object.keys(anyNamed.subproperties).map(key => [key, "[[value]]"]))
+const anyOutToAnyOutValueMap = new Map()
+const anyOutValueToAnyOutMap = new Map()
+
+const isAnyOutValue = anyOutValue => {
+  return !!anyOutValueToAnyOutMap.get(anyOutValue)
+}
+
+const getAnyOutFromValue = anyOutValue => {
+  return anyOutValueToAnyOutMap.get(anyOutValue)
+}
+
+const getAnyOutValue = (anyOut, value) => {
+  const getGoodDebuggingExperienceObject = anyOut => {
+    return Object.fromEntries(Object.keys(anyOut.subproperties).map(key => [key, "[[value]]"]))
   }
 
-  if (anyNamed.isOutUnit) {
-    return new Proxy(getGoodDebuggingExperienceObject(anyNamed), {
-      get: (_, key) => {
-        if (!anyNamed.subproperties[key]) return undefined
-        return getAnyNamedRecursiveProxy(
-          anyNamed.subproperties[key],
-          anyNamed.thisUnit.subproperties[key].value
-        )
-      },
-      set: () => {
-        throw new Error("Cannot set")
-      },
-    })
+  let isProxy = true
+
+  const anyOutValue = (() => {
+    if (anyOut.isOutUnit) {
+      return new Proxy(getGoodDebuggingExperienceObject(anyOut), {
+        get: (_, key) => {
+          if (!anyOut.subproperties[key]) return undefined
+          return getAnyOutValue(anyOut.subproperties[key], anyOut.thisUnit.subproperties[key].value)
+        },
+        set: () => {
+          throw new Error("Cannot set")
+        },
+      })
+    }
+
+    if (!anyOut.isOutProperty) throw new Error("Unexpected Type")
+
+    if (!canProxy(value)) {
+      isProxy = false
+      return value
+    }
+
+    if (typeof value === "function") {
+      return new Proxy(value, {
+        apply: (value, thisArg, argumentsList) => {
+          return value.apply(thisArg, argumentsList)
+        },
+        set: () => {
+          throw new Error("Cannot set")
+        },
+      })
+    }
+
+    if (Array.isArray(value)) {
+      return new Proxy(value, {
+        set: () => {
+          throw new Error("Cannot set")
+        },
+      })
+    }
+
+    if (typeof value === "object") {
+      return new Proxy(getGoodDebuggingExperienceObject(anyOut), {
+        get: (_, key) => {
+          if (!anyOut.inProperty.subproperties[key]) {
+            debugger
+            throw new Error(`Property ${key} does not exist`)
+          }
+          const rawValue = anyOut.inProperty.subproperties[key].value
+          if (!canProxy(rawValue)) return rawValue
+          if (!anyOut.subproperties[key]) return undefined
+          return getAnyOutValue(anyOut.subproperties[key], rawValue)
+        },
+        set: () => {
+          throw new Error("Cannot set")
+        },
+      })
+    }
+
+    throw new Error("Encountered unexpected type")
+  })()
+
+  if (isProxy) {
+    anyOutValueToAnyOutMap.set(anyOutValue, anyOut)
+    anyOutToAnyOutValueMap.set(anyOut, anyOutValue)
   }
 
-  if (!anyNamed.isOutProperty) throw new Error("Unexpected Type")
-
-  if (!canProxy(value)) return value
-
-  if (typeof value === "function") {
-    return new Proxy(value, {
-      apply: (value, thisArg, argumentsList) => {
-        return value.apply(thisArg, argumentsList)
-      },
-      set: () => {
-        throw new Error("Cannot set")
-      },
-    })
-  }
-
-  if (Array.isArray(value)) {
-    return new Proxy(value, {
-      set: () => {
-        throw new Error("Cannot set")
-      },
-    })
-  }
-
-  if (typeof value === "object") {
-    return new Proxy(getGoodDebuggingExperienceObject(anyNamed), {
-      get: (_, key) => {
-        const rawValue = anyNamed.inProperty.subproperties[key].value
-        if (!canProxy(rawValue)) return rawValue
-        if (!anyNamed.subproperties[key]) return undefined
-        return getAnyNamedRecursiveProxy(anyNamed.subproperties[key], rawValue)
-      },
-      set: () => {
-        throw new Error("Cannot set")
-      },
-    })
-  }
-
-  throw new Error("Encountered unexpected type")
+  return anyOutValue
 }
 
 const unitDefinitions = {}
@@ -147,7 +173,7 @@ export const loadGraph = async unitPaths => {
     })
   )
 
-  defineUnits()
+  defineAllNamed()
 
   if (updateFirst) {
     mainRenderQueue.add(updateFirst)
@@ -437,9 +463,9 @@ export const render = anyUnitLocked => {
   }
 
   let stoppedPromise
-  if (thisUnit.stoppedCount === 0) {
+  if (thisUnit.stopCount === 0) {
     thisUnit.handleChanges({ isWindowScoped: true })
-  } else if (result.then) {
+  } else if (result?.then) {
     stoppedPromise = result
   }
 
@@ -454,37 +480,11 @@ export const define = (thisUnitName, unitConfig) => {
   unitDefinitions[thisUnitName] = unitConfig
 }
 
-const defineUnits = () => {
-  const addToScope = (scope, name, anyNamed) => {
-    const parent = anyNamed.parent
-
-    const applyName = () => {
-      anyNamed.isInRootOfScope = true
-      scope[`$${name}`] = lock(anyNamed)
-      scope[name] = undefined
-    }
-
-    const conflictingNamed = scope[name]
-    if (conflictingNamed) {
-      const isInaccessible = !conflictingNamed.parent && !parent
-      if (isInaccessible) {
-        throw new Error(`In define "${unitName}" found conflicting names for ${name}`)
-      }
-      if (!conflictingNamed.parent) {
-        applyName()
-      }
-    } else {
-      applyName()
-    }
-  }
-
-  const manageProperties = {}
-
-  Object.entries(unitDefinitions).forEach(([thisUnitName, unitConfig]) => {
+const defineAllNamed = () => {
+  const defineThisUnit = ({ name, unitConfig }) => {
     const thisUnit = {}
-    thisUnits[thisUnitName] = thisUnit
 
-    thisUnit.name = thisUnitName
+    thisUnit.name = name
     thisUnit.isUnit = true
     thisUnit.isThisUnit = true
 
@@ -505,159 +505,229 @@ const defineUnits = () => {
     scope["$this"] = lock(thisUnit)
 
     thisUnit.scope = scope
-    //
-    ;(function defineInProperties() {
-      const defineInProperty = ({ name, propertyType, parent }) => {
-        const inProperty = {}
-        inProperty.name = name
-        inProperty.isAnyNamed = true
-        inProperty.parent = parent
-        inProperty.isAnyProperty = true
-        inProperty.type = propertyType
-        inProperty.isInProperty = true
-        inProperty.thisUnit = thisUnit
-        inProperty.last = { isAnyLast: true, isInLast: true, inProperty }
 
-        inProperty.path = (() => {
-          if (!parent?.path) return [name]
-          return [...parent.path, name]
-        })()
+    thisUnits[name] = thisUnit
+  }
 
-        inProperty.subproperties = {}
-        if (parent) {
-          parent.subproperties[name] = inProperty
-        }
+  const addToScope = (scope, name, anyNamed) => {
+    const parent = anyNamed.parent
 
-        inProperty.outProperties = []
+    const applyName = () => {
+      anyNamed.isInRootOfScope = true
+      scope[`$${name}`] = lock(anyNamed)
+      scope[name] = undefined
+    }
 
-        addToScope(thisUnit.scope, name, inProperty)
+    const unapplyName = () => {
+      unlock(scope[`$${name}`]).isInRootOfScope = false
+      delete scope[$`$${name}`]
+      delete scope[name]
+    }
 
-        if (propertyType === "manage") {
-          if (manageProperties[name]) {
-            throw new Error(`Found multiple units attempting to manage "${name}"`)
-          }
-          manageProperties[name] = inProperty
-        }
-
-        return inProperty
+    const conflictingNamed = scope[name] && !unlock(scope[`$${name}`]).isOutUnit
+    // Since manage and watch both have unit names, there isn't actually a conflict here
+    if (conflictingNamed) {
+      const isInaccessible = !conflictingNamed.parent && !parent
+      if (isInaccessible) {
+        throw new Error(`In define "${unitName}" found conflicting names for ${name}`)
       }
+      if (!conflictingNamed.parent) {
+        applyName()
+      } else {
+        unapplyName()
+      }
+    } else {
+      applyName()
+    }
+  }
 
-      const recurse = (nameObject, data, action) => {
-        Object.entries(nameObject).forEach(([name, childNameObject]) => {
-          const childData = action(name, data)
-          if (childNameObject) recurse(childNameObject, childData, action)
-        })
-      }
+  const defineOutUnit = ({ name, thisUnit }) => {
+    const outUnit = {}
 
-      if (unitConfig.share) {
-        const action = (name, { parent }) => {
-          const inProperty = defineInProperty({ name, propertyType: "share", parent })
-          return { parent: inProperty }
-        }
-        recurse(unitConfig.share, { parent: thisUnit }, action)
-      }
-      if (unitConfig.manage) {
-        const action = (name, { parent }) => {
-          const inProperty = defineInProperty({ name, propertyType: "manage", parent })
-          return { parent: inProperty }
-        }
-        recurse(unitConfig.manage, { parent: thisUnit }, action)
-      }
-      if (unitConfig.track) {
-        const action = (name, { parent }) => {
-          const inProperty = defineInProperty({ name, propertyType: "track", parent })
-          return { parent: inProperty }
-        }
-        recurse(unitConfig.track, { parent: thisUnit }, action)
-      }
+    outUnit.name = name
+    outUnit.isAnyNamed = true
+    outUnit.isUnit = true
+    outUnit.isOutUnit = true
+    outUnit.thisUnit = thisUnits[name]
+    if (!outUnit.thisUnit) {
+      throw new Error(`Unit ${thisUnitName} referenced unit ${name} which does not exist`)
+    }
+
+    outUnit.subproperties = {}
+
+    addToScope(thisUnit.scope, name, outUnit)
+
+    return outUnit
+  }
+
+  const defineInProperty = ({ name, propertyType, parent, thisUnit }) => {
+    const inProperty = {}
+    inProperty.name = name
+    inProperty.isAnyNamed = true
+    inProperty.parent = parent
+    inProperty.isAnyProperty = true
+    inProperty.type = propertyType
+    inProperty.isInProperty = true
+    inProperty.thisUnit = thisUnit
+    inProperty.last = { isAnyLast: true, isInLast: true, inProperty }
+
+    inProperty.path = (() => {
+      if (!parent?.path) return [name]
+      return [...parent.path, name]
     })()
+
+    inProperty.subproperties = {}
+    if (parent) {
+      parent.subproperties[name] = inProperty
+    }
+
+    inProperty.outProperties = []
+
+    addToScope(thisUnit.scope, name, inProperty)
+
+    if (propertyType === "manage") {
+      if (manageProperties[name]) {
+        throw new Error(`Found multiple units attempting to manage "${name}"`)
+      }
+      manageProperties[name] = inProperty
+    }
+
+    return inProperty
+  }
+
+  const defineOutProperty = ({ name, propertyType, parent, outUnit, thisUnit }) => {
+    const outProperty = {}
+    outProperty.name = name
+    outProperty.isAnyNamed = true
+    outProperty.isAnyProperty = true
+    outProperty.isOutProperty = true
+    outProperty.type = propertyType
+    outProperty.parent = parent
+    outProperty.thisUnit = thisUnit
+
+    outProperty.path = (() => {
+      if (!parent?.path) return [name]
+      return [...parent.path, name]
+    })()
+
+    outProperty.subproperties = {}
+    if (parent) {
+      parent.subproperties[name] = outProperty
+    }
+
+    if (propertyType === "watch") {
+      outProperty.outUnit = outUnit
+      outProperty.inProperty = (() => {
+        try {
+          let findInProperty = outUnit.thisUnit
+          outProperty.path.forEach(segment => {
+            findInProperty = findInProperty.subproperties[segment]
+          })
+          if (!findInProperty) throw true
+          return findInProperty
+        } catch {
+          throw new Error(`Unit ${thisUnit.name} expected ${name} to be shared by ${outUnit.name}.`)
+        }
+      })()
+    } else if (propertyType === "receive") {
+      if (!manageProperties[name]) {
+        throw new Error(
+          `Receive property ${name} in unit ${thisUnit.name} was not managed by any other units`
+        )
+      }
+      outProperty.inProperty = manageProperties[name]
+    }
+
+    outProperty.inProperty.outProperties.push(outProperty)
+
+    outProperty.last = {
+      isAnyLast: true,
+      isOutLast: true,
+      inProperty: outProperty.inProperty,
+      outProperty: outProperty,
+    }
+
+    addToScope(thisUnit.scope, name, outProperty)
+
+    return outProperty
+  }
+
+  /* Define AllNamed. It needs to happen in a specific order. First are thisUnits, then outUnits,
+  then inProperties, then outProperties. */
+
+  const manageProperties = {}
+
+  /* ThisUnits */
+  Object.entries(unitDefinitions).forEach(([name, unitConfig]) => {
+    defineThisUnit({ name, unitConfig })
   })
 
+  /* OutUnits */
   Object.entries(unitDefinitions).forEach(([thisUnitName, unitConfig]) => {
     const thisUnit = thisUnits[thisUnitName]
 
-    const defineOutUnit = ({ name }) => {
-      const outUnit = {}
-
-      outUnit.name = name
-      outUnit.isAnyNamed = true
-      outUnit.isUnit = true
-      outUnit.isOutUnit = true
-      outUnit.thisUnit = thisUnits[name]
-      if (!outUnit.thisUnit) {
-        throw new Error(`Unit ${thisUnitName} referenced unit ${name} which does not exist`)
+    if (unitConfig.watch || unitConfig.manage) {
+      if (unitConfig.watch) {
+        Object.keys(unitConfig.watch).forEach(name => {
+          const outUnit = defineOutUnit({ name, thisUnit })
+          thisUnit.subproperties[name] = outUnit
+        })
       }
+      if (unitConfig.manage) {
+        Object.keys(unitConfig.manage).forEach(name => {
+          if (thisUnit.subproperties[name]) return
+          const outUnit = defineOutUnit({ name, thisUnit })
+          thisUnit.subproperties[name] = outUnit
+        })
+      }
+    }
+  })
 
-      outUnit.subproperties = {}
+  /* InProperties */
+  Object.entries(unitDefinitions).forEach(([thisUnitName, unitConfig]) => {
+    const thisUnit = thisUnits[thisUnitName]
 
-      addToScope(thisUnit.scope, name, outUnit)
-
-      console.log("defined", outUnit.name)
-
-      return outUnit
+    const recurse = (nameObject, data, action) => {
+      Object.entries(nameObject).forEach(([name, childNameObject]) => {
+        const childData = action(name, data)
+        if (childNameObject) recurse(childNameObject, childData, action)
+      })
     }
 
-    const defineOutProperty = ({ name, propertyType, parent, outUnit }) => {
-      const outProperty = {}
-      outProperty.name = name
-      outProperty.isAnyNamed = true
-      outProperty.isAnyProperty = true
-      outProperty.isOutProperty = true
-      outProperty.type = propertyType
-      outProperty.parent = parent
-      outProperty.thisUnit = thisUnit
-
-      outProperty.path = (() => {
-        if (!parent?.path) return [name]
-        return [...parent.path, name]
-      })()
-
-      outProperty.subproperties = {}
-      if (parent) {
-        parent.subproperties[name] = outProperty
+    if (unitConfig.share) {
+      const action = (name, { parent }) => {
+        const inProperty = defineInProperty({ name, propertyType: "share", parent, thisUnit })
+        return { parent: inProperty }
       }
+      recurse(unitConfig.share, { parent: thisUnit }, action)
+    }
 
-      if (propertyType === "watch") {
-        outProperty.outUnit = outUnit
-        outProperty.inProperty = (() => {
-          try {
-            let findInProperty = outUnit.thisUnit
-            outProperty.path.forEach(segment => {
-              findInProperty = findInProperty.subproperties[segment]
-            })
-            if (!findInProperty) throw true
-            return findInProperty
-          } catch {
-            throw new Error(
-              `Unit ${thisUnit.name} expected ${name} to be shared by ${outUnit.name}.`
-            )
-          }
-        })()
-      } else if (propertyType === "receive") {
-        if (!manageProperties[name]) {
-          throw new Error(
-            `Receive property ${name} in unit ${thisUnit.name} was not managed by any other units`
-          )
+    // This one's a bit tricky, the parent of the inProperties are outUnits. It makes sense if you
+    // think about it.
+    if (unitConfig.manage) {
+      const action = (name, { isOneLevelDeep, parent }) => {
+        if (isOneLevelDeep) {
+          const outUnit = thisUnit.subproperties[name]
+          return { isOneLevelDeep: false, parent: outUnit }
         }
-        outProperty.inProperty = manageProperties[name]
-        outProperty.outUnit = outProperty.inProperty.thisUnit
+        const inProperty = defineInProperty({ name, propertyType: "manage", parent, thisUnit })
+        return { isOneLevelDeep: false, parent: inProperty }
       }
-
-      outProperty.inProperty.outProperties.push(outProperty)
-
-      outProperty.last = {
-        isAnyLast: true,
-        isOutLast: true,
-        inProperty: outProperty.inProperty,
-        outProperty: outProperty,
-      }
-
-      addToScope(thisUnit.scope, name, outProperty)
-
-      console.log("defined", outProperty.name)
-
-      return outProperty
+      recurse(unitConfig.manage, { isOneLevelDeep: true, parent: thisUnit }, action)
     }
+
+    if (unitConfig.track) {
+      const action = (name, { parent }) => {
+        const inProperty = defineInProperty({ name, propertyType: "track", parent, thisUnit })
+        return { parent: inProperty }
+      }
+      recurse(unitConfig.track, { parent: thisUnit }, action)
+    }
+  })
+
+  /* OutProperties */
+  Object.entries(unitDefinitions).forEach(([thisUnitName, unitConfig]) => {
+    const thisUnit = thisUnits[thisUnitName]
 
     const recurse = (nameObject, data, action, postAction) => {
       Object.entries(nameObject).forEach(([name, childNameObject]) => {
@@ -670,15 +740,21 @@ const defineUnits = () => {
     if (unitConfig.watch) {
       const action = (name, { isOneLevelDeep, parent, outUnit }) => {
         if (isOneLevelDeep) {
-          const outUnit = defineOutUnit({ name })
+          const outUnit = thisUnit.subproperties[name]
           return { isOneLevelDeep: false, parent: outUnit, outUnit }
         }
-        const outProperty = defineOutProperty({ name, propertyType: "watch", parent, outUnit })
+        const outProperty = defineOutProperty({
+          name,
+          propertyType: "watch",
+          parent,
+          thisUnit,
+          outUnit,
+        })
         return { isOneLevelDeep: false, parent: outProperty, outUnit: outUnit }
       }
       const postAction = (name, { isOneLevelDeep }, { outUnit }) => {
         if (isOneLevelDeep) {
-          thisUnit.scope[name] = getAnyNamedRecursiveProxy(outUnit)
+          thisUnit.scope[name] = getAnyOutValue(outUnit)
         }
       }
       recurse(
@@ -690,12 +766,15 @@ const defineUnits = () => {
     }
     if (unitConfig.receive) {
       const action = (name, { parent }) => {
-        const outProperty = defineOutProperty({ name, propertyType: "receive", parent })
+        const outProperty = defineOutProperty({ name, propertyType: "receive", parent, thisUnit })
         return { parent: outProperty }
       }
       recurse(unitConfig.receive, { parent: null }, action)
     }
+  })
 
+  /* thisUnit methods */
+  Object.values(thisUnits).forEach(thisUnit => {
     thisUnit.handleChanges = ({ isWindowScoped, renderQueue = mainRenderQueue }) => {
       const action = (inProperty, value) => {
         inProperty.lastValue = inProperty.value
@@ -703,10 +782,7 @@ const defineUnits = () => {
         if (inProperty.value !== inProperty.lastValue) {
           inProperty.outProperties.forEach(outProperty => {
             if (outProperty.isInRootOfScope) {
-              outProperty.thisUnit.scope[outProperty.name] = getAnyNamedRecursiveProxy(
-                outProperty,
-                value
-              )
+              outProperty.thisUnit.scope[outProperty.name] = getAnyOutValue(outProperty, value)
             }
             renderQueue.add(outProperty.thisUnit)
           })
@@ -716,6 +792,7 @@ const defineUnits = () => {
       const recurse = ({ thisUnit, parent, parentValue }) => {
         Object.values(parent.subproperties).forEach(anyNamed => {
           if (anyNamed.isInProperty) {
+            if (thisUnit.name === "videoPlayer" && anyNamed.name === "content") debugger
             const inProperty = anyNamed
             let value = (() => {
               if (parent === thisUnit) {
@@ -728,8 +805,21 @@ const defineUnits = () => {
                 return parentValue?.[inProperty.name]
               }
             })()
-            action(inProperty, value)
-            recurse({ thisUnit, parent: inProperty, parentValue: value })
+
+            // Allows a unit to share one of its outProperties
+            let fixedValue = (() => {
+              if (isAnyOutValue(value)) {
+                const anyOut = getAnyOutFromValue(value)
+                if (anyOut.isOutUnit) {
+                  throw new Error("Not yet implemented")
+                }
+                return anyOut.inProperty.value
+              }
+              return value
+            })()
+
+            action(inProperty, fixedValue)
+            recurse({ thisUnit, parent: inProperty, parentValue: fixedValue })
           }
         })
       }
@@ -746,12 +836,14 @@ const defineUnits = () => {
     }
 
     thisUnit.ripple = async callback => {
-      callback()
+      await callback()
       const dedicatedRenderQueue = RenderQueue()
       thisUnit.handleChanges({ isWindowScoped: false, renderQueue: dedicatedRenderQueue })
-      return new Promise(resolve => {
-        dedicatedRenderQueue.onEmpty(resolve)
-      })
+      if (dedicatedRenderQueue.isStopped()) {
+        return new Promise(resolve => {
+          dedicatedRenderQueue.onEmpty(resolve)
+        })
+      }
     }
 
     thisUnit.stop = async callback => {

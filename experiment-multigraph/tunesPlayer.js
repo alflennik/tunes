@@ -24,6 +24,7 @@ tunesMultigraph.define("tunesPlayer", {
         return nextVideo ?? last.video
       }
     })()
+    console.log(video)
 
     return {
       shares: { video },

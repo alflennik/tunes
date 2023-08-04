@@ -54,20 +54,6 @@ export const element = tagName => {
   return builder
 }
 
-export const component = Component => {
-  const tagName = tagNameWeakMap.get(Component)
-  const builder = element(tagName)
-
-  const elementProperties = propertiesWeakMap.get(builder)
-
-  builder.bindings = bindings => {
-    elementProperties.bindings = bindings
-    return builder
-  }
-
-  return builder
-}
-
 export const fragment = (...childBuilders) => {
   const builder = {}
 
@@ -163,7 +149,7 @@ const updateElement = virtualElement => {
   return element
 }
 
-const getVirtualTree = (component, builder) => {
+const getVirtualTree = builder => {
   const getVirtualElement = ({ id, siblingIndex, properties, parentVirtualElement }) => {
     let element
     let children = []
@@ -174,49 +160,26 @@ const getVirtualTree = (component, builder) => {
       getFirstChild: () => children[0],
       getElement: () => element,
       getParent: () => parentVirtualElement,
-      getParentElement: () => parentVirtualElement.getElement(),
+      getParentElement: () => parentVirtualElement?.getElement() ?? null,
       getPreviousSibling: () => {
-        const parentChildren = parentVirtualElement.getChildren()
-        return parentChildren[siblingIndex - 1] ?? null
+        const parentChildren = parentVirtualElement?.getChildren()
+        return parentChildren?.[siblingIndex - 1] ?? null
       },
       getPreviousSiblingElement: () => {
-        const parentChildren = parentVirtualElement.getChildren()
-        return parentChildren[siblingIndex - 1]?.getElement() ?? null
+        const parentChildren = parentVirtualElement?.getChildren()
+        return parentChildren?.[siblingIndex - 1]?.getElement() ?? null
       },
       getNextSibling: () => {
-        const parentChildren = parentVirtualElement.getChildren()
-        return parentChildren[siblingIndex + 1] ?? null
+        const parentChildren = parentVirtualElement?.getChildren()
+        return parentChildren?.[siblingIndex + 1] ?? null
       },
       getNextSiblingElement: () => {
-        const parentChildren = parentVirtualElement.getChildren()
-        return parentChildren[siblingIndex + 1]?.getElement() ?? null
+        const parentChildren = parentVirtualElement?.getChildren()
+        return parentChildren?.[siblingIndex + 1]?.getElement() ?? null
       },
       associateElement: newElement => {
         element = newElement
       },
-      append: child => {
-        children.push(child)
-      },
-    }
-  }
-  const getRootElement = () => {
-    let children = []
-    return {
-      id: null,
-      properties: null,
-      getChildren: () => children,
-      getFirstChild: () => children[0],
-      getElement: () => component,
-      getParent: () => {
-        throw new Error("Unexpected")
-      },
-      getParentElement: () => {
-        throw new Error("Unexpected")
-      },
-      getNextSibling: () => null,
-      getNextSiblingElement: () => null,
-      getPreviousSibling: () => null,
-      getPreviousSiblingElement: () => null,
       append: child => {
         children.push(child)
       },
@@ -235,6 +198,7 @@ const getVirtualTree = (component, builder) => {
   }
 
   const virtualElementsById = {}
+  let rootVirtualElement
 
   const recurseBuilders = ({
     parentVirtualElement,
@@ -244,7 +208,7 @@ const getVirtualTree = (component, builder) => {
     builders,
   }) => {
     builders.forEach(builder => {
-      if (builder === null) return
+      if (builder == null) return
 
       const properties = propertiesWeakMap.get(builder)
 
@@ -272,6 +236,8 @@ const getVirtualTree = (component, builder) => {
         parentVirtualElement,
       })
 
+      if (!rootVirtualElement) rootVirtualElement = virtualElement
+
       virtualElementsById[id] = virtualElement
 
       siblingIndex += 1
@@ -279,7 +245,9 @@ const getVirtualTree = (component, builder) => {
         positionIdIndex += 1
       }
 
-      parentVirtualElement.append(virtualElement)
+      if (parentVirtualElement) {
+        parentVirtualElement.append(virtualElement)
+      }
 
       if (properties.childBuilders) {
         recurseBuilders({
@@ -291,23 +259,26 @@ const getVirtualTree = (component, builder) => {
     })
   }
 
-  const rootElement = getRootElement()
-
   recurseBuilders({
-    parentVirtualElement: rootElement,
+    parentVirtualElement: null,
     parentId: null,
     builders: [builder],
   })
 
   const getIterator = () => {
-    const hasNoContent = rootElement.getChildren().length === 0
+    const hasNoContent = rootVirtualElement.getChildren().length === 0
 
     let backlog = []
-    let current = rootElement
+    let current
     let isDone = hasNoContent
 
     return {
       next: () => {
+        if (!current) {
+          current = rootVirtualElement
+          return rootVirtualElement
+        }
+
         let next
         if (current.getFirstChild()) {
           backlog.push(current.getFirstChild)
@@ -330,6 +301,7 @@ const getVirtualTree = (component, builder) => {
   }
 
   return {
+    rootVirtualElement,
     getIterator,
     getById: id => {
       return virtualElementsById[id]
@@ -346,11 +318,9 @@ const getVirtualTree = (component, builder) => {
   }
 }
 
-export const reconcile = (component, getBuilder) => {
-  const builder = getBuilder()
-
-  const virtualTree = getVirtualTree(component, builder)
-  const oldVirtualTree = oldVirtualTreeWeakMap.get(component)
+export const reconcile = (anyNamedLocked, builder) => {
+  const virtualTree = getVirtualTree(builder)
+  const oldVirtualTree = oldVirtualTreeWeakMap.get(anyNamedLocked)
 
   const discardedElements = oldVirtualTree?.getDiscardedElements(virtualTree) ?? []
   discardedElements.forEach(discardedElement => {
@@ -402,17 +372,12 @@ export const reconcile = (component, getBuilder) => {
       if (previousElement) {
         previousElement.insertAdjacentElement("afterend", element)
       } else {
-        parentElement.insertAdjacentElement("afterbegin", element)
+        parentElement?.insertAdjacentElement("afterbegin", element)
       }
     }
   }
 
-  oldVirtualTreeWeakMap.set(component, virtualTree)
-}
+  oldVirtualTreeWeakMap.set(anyNamedLocked, virtualTree)
 
-export const build = (component, getBuilder, { onComplete }) => {
-  buildSemaphore(() => {
-    reconcile(component, getBuilder)
-    onComplete()
-  })
+  return virtualTree.rootVirtualElement.getElement()
 }
