@@ -60,9 +60,11 @@ define("audioDescription", {
 
     content = reconcile(
       $content,
-      element("div")
-        .attributes({ class: "wrapping-box" })
-        .items(element("div").text(spokenItem?.text ?? ""))
+      element("audio-description").items(
+        element("div")
+          .attributes({ class: "wrapping-box" })
+          .items(element("div").text(spokenItem?.text ?? ""))
+      )
     )
   },
 })

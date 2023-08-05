@@ -88,8 +88,10 @@ const getAnyOutValue = (anyOut, value) => {
           if (!anyOut.subproperties[key]) return undefined
           return getAnyOutValue(anyOut.subproperties[key], anyOut.thisUnit.subproperties[key].value)
         },
-        set: () => {
-          throw new Error("Cannot set")
+        set: (proxyObj, key, newValue) => {
+          if (!anyOut.subproperties[key].isInProperty) throw new Error("Cannot set")
+          proxyObj[key] = newValue
+          return true
         },
       })
     }
@@ -124,7 +126,6 @@ const getAnyOutValue = (anyOut, value) => {
       return new Proxy(getGoodDebuggingExperienceObject(anyOut), {
         get: (_, key) => {
           if (!anyOut.inProperty.subproperties[key]) {
-            debugger
             throw new Error(`Property ${key} does not exist`)
           }
           const rawValue = anyOut.inProperty.subproperties[key].value
@@ -450,8 +451,6 @@ export const render = anyUnitLocked => {
     return anyUnit.isThisUnit ? anyUnit : anyUnit.thisUnit
   })()
 
-  if (!thisUnit) debugger
-
   Object.entries(thisUnit.scope).forEach(([name, value]) => {
     window[name] = value
   })
@@ -513,13 +512,13 @@ const defineAllNamed = () => {
     thisUnits[name] = thisUnit
   }
 
-  const addToScope = (scope, name, anyNamed) => {
+  const addToScope = (scope, name, anyNamed, initialValue) => {
     const parent = anyNamed.parent
 
     const applyName = () => {
       anyNamed.isInRootOfScope = true
       scope[`$${name}`] = lock(anyNamed)
-      scope[name] = undefined
+      scope[name] = initialValue
     }
 
     const unapplyName = () => {
@@ -545,13 +544,14 @@ const defineAllNamed = () => {
     }
   }
 
-  const defineOutUnit = ({ name, thisUnit }) => {
+  const defineOutUnit = ({ name, outUnitType, thisUnit }) => {
     const outUnit = {}
 
     outUnit.name = name
     outUnit.isAnyNamed = true
     outUnit.isUnit = true
     outUnit.isOutUnit = true
+    outUnit.type = outUnitType
     outUnit.thisUnit = thisUnits[name]
     if (!outUnit.thisUnit) {
       throw new Error(`Unit ${thisUnitName} referenced unit ${name} which does not exist`)
@@ -559,7 +559,7 @@ const defineAllNamed = () => {
 
     outUnit.subproperties = {}
 
-    addToScope(thisUnit.scope, name, outUnit)
+    addToScope(thisUnit.scope, name, outUnit, {})
 
     return outUnit
   }
@@ -673,14 +673,14 @@ const defineAllNamed = () => {
     if (unitConfig.watch || unitConfig.manage) {
       if (unitConfig.watch) {
         Object.keys(unitConfig.watch).forEach(name => {
-          const outUnit = defineOutUnit({ name, thisUnit })
+          const outUnit = defineOutUnit({ name, outUnitType: "watch", thisUnit })
           thisUnit.subproperties[name] = outUnit
         })
       }
       if (unitConfig.manage) {
         Object.keys(unitConfig.manage).forEach(name => {
           if (thisUnit.subproperties[name]) return
-          const outUnit = defineOutUnit({ name, thisUnit })
+          const outUnit = defineOutUnit({ name, outUnitType: "manage", thisUnit })
           thisUnit.subproperties[name] = outUnit
         })
       }
@@ -823,6 +823,12 @@ const defineAllNamed = () => {
 
             action(inProperty, fixedValue)
             recurse({ thisUnit, parent: inProperty, parentValue: fixedValue })
+          } else if (anyNamed.isOutUnit && anyNamed.type === "manage") {
+            const parentValue = isWindowScoped
+              ? window[anyNamed.name]
+              : thisUnit.scope[anyNamed.name]
+
+            recurse({ thisUnit, parent: anyNamed, parentValue })
           }
         })
       }

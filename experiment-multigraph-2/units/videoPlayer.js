@@ -16,13 +16,12 @@ define("videoPlayer", {
         })
 
         const youtubePlayer = await new Promise(async resolve => {
-          const _this = this
-          window.onYouTubeIframeAPIReady = function () {
+          window.onYouTubeIframeAPIReady = () => {
             resolve(
               new YT.Player("player", {
                 height: "315",
                 width: "560",
-                videoId: _this.youtubeId,
+                videoId: this.youtubeId,
                 playerVars: {
                   playsinline: 1,
                 },
@@ -65,17 +64,15 @@ define("videoPlayer", {
     })
 
     /* Time */
-    {
-      if (playMode === "playing" && !intervalId) {
-        intervalId = setInterval(() => {
-          change(() => {
-            this.time = this.youtubePlayer.getCurrentTime()
-          })
-          console.info(Math.round(this.time * 1000) / 1000)
-        }, timeInterval)
-      } else if (intervalId) {
-        clearInterval(intervalId)
-      }
+    if (playMode === "playing" && !intervalId) {
+      intervalId = setInterval(() => {
+        change(() => {
+          this.time = this.youtubePlayer.getCurrentTime()
+        })
+        console.info(Math.round(this.time * 1000) / 1000)
+      }, timeInterval)
+    } else if (intervalId) {
+      clearInterval(intervalId)
     }
 
     if (justChanged($youtubeId)) youtubePlayer.loadVideoById({ videoId: youtubeId })

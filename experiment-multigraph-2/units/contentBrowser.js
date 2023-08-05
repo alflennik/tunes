@@ -64,41 +64,43 @@ define("contentBrowser", {
 
     content = reconcile(
       $content,
-      element("nav").items(
-        element("h2").text("Playlists"),
-        element("ul").items(
-          ...playlists.map(playlist =>
-            element("li").items(
-              element("h3").items(
-                element("a")
-                  .attributes({ href: "#" })
-                  .listeners({ click: event => select({ event, playlist }) })
-                  .text(playlist.title)
-              ),
-              element("ul").items(
-                ...playlist.videos.map(video =>
-                  element("li").items(
-                    element("a")
-                      .attributes({ href: "#" })
-                      .listeners({ click: event => select({ event, playlist, video }) })
-                      .text(video.titleSentence)
+      element("content-browser").items(
+        element("nav").items(
+          element("h2").text("Playlists"),
+          element("ul").items(
+            ...playlists.map(playlist =>
+              element("li").items(
+                element("h3").items(
+                  element("a")
+                    .attributes({ href: "#" })
+                    .listeners({ click: event => select({ event, playlist }) })
+                    .text(playlist.title)
+                ),
+                element("ul").items(
+                  ...playlist.videos.map(video =>
+                    element("li").items(
+                      element("a")
+                        .attributes({ href: "#" })
+                        .listeners({ click: event => select({ event, playlist, video }) })
+                        .text(video.titleSentence)
+                    )
                   )
                 )
               )
             )
+          ),
+          element("h2").text("Other Songs"),
+          element("ul").items(
+            ...playlist.videos.map(video => {
+              const isActive = video.id === tunesPlayer.video.id
+              return element("li").items(
+                element("a")
+                  .attributes({ href: "#", "aria-current": isActive ? true : undefined })
+                  .listeners({ click: event => select({ event, playlist, video }) })
+                  .text(video.titleSentence)
+              )
+            })
           )
-        ),
-        element("h2").text("Other Songs"),
-        element("ul").items(
-          ...videos.map(video => {
-            const isActive = video.id === tunesPlayer.video.id
-            return element("li").items(
-              element("a")
-                .attributes({ href: "#", "aria-current": isActive ? true : undefined })
-                .listeners({ click: event => select({ event, playlist, video }) })
-                .text(video.titleSentence)
-            )
-          })
         )
       )
     )

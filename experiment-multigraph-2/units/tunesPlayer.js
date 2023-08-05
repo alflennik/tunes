@@ -28,13 +28,14 @@ define("tunesPlayer", {
         const nextVideo = playlist.videos[currentIndex + 1]
         return nextVideo ?? $video.last
       }
+      return video
     })()
 
-    voiceType = once($voiceType, "synthesized")
+    voice.voiceType = once($voiceType, "synthesized")
 
-    timeInterval = once($timeInterval, 400)
+    videoPlayer.timeInterval = once($timeInterval, 400)
 
-    onFirstInteraction = once(
+    permissions.onFirstInteraction = once(
       $onFirstInteraction,
       async ({ isKeyDown, isVideoPlayerInteraction }) => {
         await this.voiceSynthesized.getPermissions()
@@ -44,7 +45,7 @@ define("tunesPlayer", {
 
     rootContent = reconcile(
       $rootContent,
-      element("tunes-player").items(
+      element("root-element").items(
         element("div")
           .attributes({ class: "content-container" })
           .items(
@@ -55,13 +56,15 @@ define("tunesPlayer", {
             contentBrowser.content,
             element("h2").attributes({ id: "player-h2", tabindex: "-1" }).text("Player")
           ),
-        firstInteractionInterceptor?.({
-          items: element("button").text(`Play ${video.titleSentence}`),
-        }),
-        element("div")
-          .attributes({ "aria-hidden": firstInteractionComplete ? undefined : true })
-          .items(videoPlayer.content),
-        audioDescription.content
+        element("tunes-player").items(
+          firstInteractionInterceptor?.({
+            items: element("button").text(`Play ${video.titleSentence}`),
+          }),
+          element("video-player")
+            .attributes({ "aria-hidden": firstInteractionComplete ? undefined : true })
+            .items(videoPlayer.content),
+          audioDescription.content
+        )
       )
     )
 
