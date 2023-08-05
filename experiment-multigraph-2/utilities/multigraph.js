@@ -5,9 +5,9 @@ const canProxy = value => {
 }
 
 const RenderQueue = () => {
-  const getFirstKey = obj => {
+  const getFirstItem = obj => {
     for (const key in obj) {
-      return key
+      return obj[key]
     }
   }
   const isEmpty = obj => {
@@ -24,7 +24,7 @@ const RenderQueue = () => {
 
   const emptyQueue = () => {
     let firstThisUnit
-    while ((firstThisUnit = getFirstKey(queue))) {
+    while ((firstThisUnit = getFirstItem(queue))) {
       render(firstThisUnit)
       delete queue[firstThisUnit.name]
     }
@@ -71,6 +71,8 @@ const isAnyOutValue = anyOutValue => {
 const getAnyOutFromValue = anyOutValue => {
   return anyOutValueToAnyOutMap.get(anyOutValue)
 }
+
+export const reconcilerTools = { isAnyOutValue, getAnyOutFromValue }
 
 const getAnyOutValue = (anyOut, value) => {
   const getGoodDebuggingExperienceObject = anyOut => {
@@ -448,6 +450,8 @@ export const render = anyUnitLocked => {
     return anyUnit.isThisUnit ? anyUnit : anyUnit.thisUnit
   })()
 
+  if (!thisUnit) debugger
+
   Object.entries(thisUnit.scope).forEach(([name, value]) => {
     window[name] = value
   })
@@ -792,7 +796,6 @@ const defineAllNamed = () => {
       const recurse = ({ thisUnit, parent, parentValue }) => {
         Object.values(parent.subproperties).forEach(anyNamed => {
           if (anyNamed.isInProperty) {
-            if (thisUnit.name === "videoPlayer" && anyNamed.name === "content") debugger
             const inProperty = anyNamed
             let value = (() => {
               if (parent === thisUnit) {

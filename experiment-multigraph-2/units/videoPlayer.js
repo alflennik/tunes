@@ -12,14 +12,12 @@ define("videoPlayer", {
     if ($this.isInitialRender) {
       return stop(async () => {
         await ripple(() => {
-          console.log("setting content")
           this.content = reconcile(this.$content, element("div").attributes({ id: "player" }))
         })
 
         const youtubePlayer = await new Promise(async resolve => {
           const _this = this
           window.onYouTubeIframeAPIReady = function () {
-            console.log("resolving")
             resolve(
               new YT.Player("player", {
                 height: "315",

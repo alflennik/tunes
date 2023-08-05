@@ -4,7 +4,7 @@ define("tunesPlayer", {
   watch: {
     audioDescription: { playMode, content },
     contentBrowser: {
-      video: { id },
+      video: { id, titleSentence },
       playlist: { videos },
       content,
     },
@@ -56,7 +56,7 @@ define("tunesPlayer", {
             element("h2").attributes({ id: "player-h2", tabindex: "-1" }).text("Player")
           ),
         firstInteractionInterceptor?.({
-          items: element("button").text(`Play video ${/* video.title */ ""}`),
+          items: element("button").text(`Play ${video.titleSentence}`),
         }),
         element("div")
           .attributes({ "aria-hidden": firstInteractionComplete ? undefined : true })
@@ -66,7 +66,7 @@ define("tunesPlayer", {
     )
 
     doOnce($rootContent, () => {
-      document.body.appendChild(rootContent)
+      document.body.appendChild(rootContent.element)
     })
   },
 })

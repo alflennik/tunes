@@ -1,4 +1,4 @@
-import { define, justChanged, reconcile, equivalent } from "../utilities/multigraph.js"
+import { define, justChanged, reconcile, equivalent, element } from "../utilities/multigraph.js"
 
 define("audioDescription", {
   watch: {

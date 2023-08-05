@@ -1,3 +1,4 @@
+import formatTitle from "../library/formatTitle.js"
 import { define, element, once, reconcile } from "../utilities/multigraph.js"
 
 define("contentBrowser", {
@@ -19,7 +20,14 @@ define("contentBrowser", {
         this.playlists = await Promise.all(
           playlistList.map(async playlistPath => {
             const playlistModule = await import(`../../playlists/${playlistPath}/contents.js`)
-            return playlistModule.default
+            const playlist = playlistModule.default
+            return {
+              ...playlist,
+              videos: playlist.videos.map(video => ({
+                ...video,
+                titleSentence: formatTitle(video, { titleStyle: "listenable" }),
+              })),
+            }
           })
         )
 
