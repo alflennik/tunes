@@ -73,7 +73,7 @@ define("contentBrowser", {
                 element("h3").items(
                   element("a")
                     .attributes({ href: "#" })
-                    .listeners({ click: event => select({ event, playlist }) })
+                    .listeners({ click: event => this.select({ event, playlist }) })
                     .text(playlist.title)
                 ),
                 element("ul").items(
@@ -81,7 +81,7 @@ define("contentBrowser", {
                     element("li").items(
                       element("a")
                         .attributes({ href: "#" })
-                        .listeners({ click: event => select({ event, playlist, video }) })
+                        .listeners({ click: event => this.select({ event, playlist, video }) })
                         .text(video.titleSentence)
                     )
                   )
@@ -96,7 +96,7 @@ define("contentBrowser", {
               return element("li").items(
                 element("a")
                   .attributes({ href: "#", "aria-current": isActive ? true : undefined })
-                  .listeners({ click: event => select({ event, playlist, video }) })
+                  .listeners({ click: event => this.select({ event, playlist, video }) })
                   .text(video.titleSentence)
               )
             })

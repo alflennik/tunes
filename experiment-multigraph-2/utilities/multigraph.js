@@ -83,14 +83,20 @@ const getAnyOutValue = (anyOut, value) => {
 
   const anyOutValue = (() => {
     if (anyOut.isOutUnit) {
+      const outUnit = anyOut
+      const managedProperties = {}
       return new Proxy(getGoodDebuggingExperienceObject(anyOut), {
         get: (_, key) => {
-          if (!anyOut.subproperties[key]) return undefined
-          return getAnyOutValue(anyOut.subproperties[key], anyOut.thisUnit.subproperties[key].value)
+          if (!outUnit.subproperties[key]) return undefined
+          if (managedProperties.hasOwnProperty(key)) return managedProperties[key]
+          return getAnyOutValue(
+            outUnit.subproperties[key],
+            outUnit.originalThisUnit.subproperties[key].value
+          )
         },
-        set: (proxyObj, key, newValue) => {
-          if (!anyOut.subproperties[key].isInProperty) throw new Error("Cannot set")
-          proxyObj[key] = newValue
+        set: (_, key, newValue) => {
+          if (!outUnit.subproperties[key].isInProperty) throw new Error("Cannot set")
+          managedProperties[key] = newValue
           return true
         },
       })
@@ -350,7 +356,11 @@ const lock = anyNamed => {
   const anyNamedLocked = new Proxy(anyNamed, {
     get: (_, prop) => {
       if (prop === "isInitialRender" && anyNamed.isThisUnit) return !anyNamed.hasRenderedOnce
-      if (prop === "last") {
+      if (prop === "value") {
+        if (anyNamed.isInProperty) return anyNamed.value
+        return anyNamed.inProperty.value
+      }
+      if (prop === "lastValue") {
         if (anyNamed.isInProperty) return anyNamed.lastValue
         return anyNamed.inProperty.lastValue
       }
@@ -387,8 +397,12 @@ const isAnyNamed = anyNamed => {
   return anyNamed !== null && typeof anyNamed === "object" && anyNamed.isAnyNamed
 }
 
-const isAnyProperty = anyProperty => {
-  return anyProperty !== null && typeof anyProperty === "object" && anyProperty.isAnyProperty
+const isInProperty = anyProperty => {
+  return anyProperty !== null && typeof anyProperty === "object" && anyProperty.isInProperty
+}
+
+const isOutProperty = anyProperty => {
+  return anyProperty !== null && typeof anyProperty === "object" && anyProperty.isOutProperty
 }
 
 const isAnyLast = anyLast => {
@@ -432,13 +446,14 @@ export const justChanged = (anyPropertyLocked, to) => {
 
 export const equivalent = (a, b) => {
   const getRawValue = a => {
-    if (!isAnyNamed(a)) {
+    if (!(isLocked(a) || isAnyNamed(a))) {
       return a
     }
     if (isLocked(a)) {
       a = unlock(a)
     }
-    if (isAnyProperty(a)) return a.value
+    if (isInProperty(a)) return a.value
+    if (isOutProperty(a)) return a.inProperty.value
     if (isAnyLast(a)) return a.inProperty.lastValue
     if (isAnyUnit(a)) return a
   }
@@ -448,7 +463,7 @@ export const equivalent = (a, b) => {
 export const render = anyUnitLocked => {
   const thisUnit = (() => {
     const anyUnit = isLocked(anyUnitLocked) ? unlock(anyUnitLocked) : anyUnitLocked
-    return anyUnit.isThisUnit ? anyUnit : anyUnit.thisUnit
+    return anyUnit.isThisUnit ? anyUnit : anyUnit.originalThisUnit
   })()
 
   Object.entries(thisUnit.scope).forEach(([name, value]) => {
@@ -466,10 +481,10 @@ export const render = anyUnitLocked => {
   }
 
   let stoppedPromise
-  if (thisUnit.stopCount === 0) {
-    thisUnit.handleChanges({ isWindowScoped: true })
-  } else if (result?.then) {
+  if (result?.then) {
     stoppedPromise = result
+  } else {
+    thisUnit.handleChanges({ isWindowScoped: true })
   }
 
   Object.keys(thisUnit.scope).forEach(name => {
@@ -501,7 +516,6 @@ const defineAllNamed = () => {
     }
 
     thisUnit.subproperties = {}
-    thisUnit.stopCount = 0
 
     const scope = {}
 
@@ -551,11 +565,12 @@ const defineAllNamed = () => {
     outUnit.isAnyNamed = true
     outUnit.isUnit = true
     outUnit.isOutUnit = true
-    outUnit.type = outUnitType
-    outUnit.thisUnit = thisUnits[name]
+    outUnit.types = [outUnitType] // Could be both manage and watch
+    outUnit.thisUnit = thisUnit
     if (!outUnit.thisUnit) {
       throw new Error(`Unit ${thisUnitName} referenced unit ${name} which does not exist`)
     }
+    outUnit.originalThisUnit = thisUnits[name]
 
     outUnit.subproperties = {}
 
@@ -623,7 +638,7 @@ const defineAllNamed = () => {
       outProperty.outUnit = outUnit
       outProperty.inProperty = (() => {
         try {
-          let findInProperty = outUnit.thisUnit
+          let findInProperty = outUnit.originalThisUnit
           outProperty.path.forEach(segment => {
             findInProperty = findInProperty.subproperties[segment]
           })
@@ -679,7 +694,10 @@ const defineAllNamed = () => {
       }
       if (unitConfig.manage) {
         Object.keys(unitConfig.manage).forEach(name => {
-          if (thisUnit.subproperties[name]) return
+          if (thisUnit.subproperties[name]) {
+            thisUnit.subproperties[name].types.push("manage")
+            return
+          }
           const outUnit = defineOutUnit({ name, outUnitType: "manage", thisUnit })
           thisUnit.subproperties[name] = outUnit
         })
@@ -781,6 +799,10 @@ const defineAllNamed = () => {
   Object.values(thisUnits).forEach(thisUnit => {
     thisUnit.handleChanges = ({ isWindowScoped, renderQueue = mainRenderQueue }) => {
       const action = (inProperty, value) => {
+        if (inProperty.isInRootOfScope && isWindowScoped) {
+          thisUnit.scope[inProperty.name] = value
+        }
+
         inProperty.lastValue = inProperty.value
         inProperty.value = value
         if (inProperty.value !== inProperty.lastValue) {
@@ -823,7 +845,7 @@ const defineAllNamed = () => {
 
             action(inProperty, fixedValue)
             recurse({ thisUnit, parent: inProperty, parentValue: fixedValue })
-          } else if (anyNamed.isOutUnit && anyNamed.type === "manage") {
+          } else if (anyNamed.isOutUnit && anyNamed.types.includes("manage")) {
             const parentValue = isWindowScoped
               ? window[anyNamed.name]
               : thisUnit.scope[anyNamed.name]
@@ -839,6 +861,7 @@ const defineAllNamed = () => {
     thisUnit.change = async callback => {
       callback()
       thisUnit.handleChanges({ isWindowScoped: false })
+      render(thisUnit)
       return new Promise(resolve => {
         mainRenderQueue.onEmpty(resolve)
       })
@@ -856,12 +879,11 @@ const defineAllNamed = () => {
     }
 
     thisUnit.stop = async callback => {
-      thisUnit.stopCount += 1
       const promise = callback()
       mainRenderQueue.stop(promise)
       await promise
-      thisUnit.stopCount -= 1
       thisUnit.handleChanges({ isWindowScoped: false })
+      mainRenderQueue.add(thisUnit)
     }
   })
 }

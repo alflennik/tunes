@@ -48,16 +48,21 @@ define("videoPlayer", {
     }
 
     doOnce($playMode, () => {
-      youtubePlayer.addEventListener("onStateChange", eventData => {
+      playMode = "unstarted"
+      youtubePlayer.addEventListener("onStateChange", ({ data }) => {
         change(() => {
-          if (eventData === YT.PlayerState.PLAYING) {
+          if (data === YT.PlayerState.UNSTARTED) {
+            this.playMode = "unstarted"
+          } else if (data === YT.PlayerState.PLAYING) {
             this.playMode = "playing"
-          } else if (eventData === YT.PlayerState.PAUSED) {
+          } else if (data === YT.PlayerState.PAUSED) {
             this.playMode = "paused"
-          } else if (eventData === YT.PlayerState.BUFFERING) {
+          } else if (data === YT.PlayerState.BUFFERING) {
             this.playMode = "buffering"
-          } else if (eventData === YT.PlayerState.ENDED) {
+          } else if (data === YT.PlayerState.ENDED) {
             this.playMode = "ended"
+          } else {
+            throw new Error("Unexpected case")
           }
         })
       })
@@ -71,7 +76,7 @@ define("videoPlayer", {
         })
         console.info(Math.round(this.time * 1000) / 1000)
       }, timeInterval)
-    } else if (intervalId) {
+    } else if (playMode !== "playing" && intervalId) {
       clearInterval(intervalId)
     }
 

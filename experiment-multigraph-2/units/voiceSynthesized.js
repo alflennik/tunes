@@ -1,4 +1,4 @@
-import { define, once } from "../utilities/multigraph.js"
+import { define, doOnce, once } from "../utilities/multigraph.js"
 
 define("voiceSynthesized", {
   share: { say, clear, pause, play, playMode, getPermissions },
@@ -100,7 +100,9 @@ define("voiceSynthesized", {
       })
     })
 
-    permissionGranted = once($permissionGranted, false)
+    doOnce($permissionGranted, () => {
+      permissionGranted = false
+    })
 
     sayCount = once($sayCount, 0)
 
@@ -148,9 +150,9 @@ define("voiceSynthesized", {
       speechSynthesis.resume()
     })
 
-    playMode = once($playMode, () => {
+    playMode = (() => {
       if (this.sayCount === 0) return "ended"
       return speechSynthesis.paused ? "paused" : "playing"
-    })
+    })()
   },
 })

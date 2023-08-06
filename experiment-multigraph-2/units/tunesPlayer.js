@@ -26,7 +26,7 @@ define("tunesPlayer", {
       if (justChanged($audioDescription.$playMode, "ended")) {
         const currentIndex = playlist.videos.findIndex(each => each.id === contentBrowser.video.id)
         const nextVideo = playlist.videos[currentIndex + 1]
-        return nextVideo ?? $video.last
+        return nextVideo ?? $video.lastValue
       }
       return video
     })()

@@ -10,7 +10,7 @@ export default {
     },
     {
       time: 23.106,
-      text: "They've made themselves up like hard rockers of the 70's, with permed hair, makeup, earrings and a tastful touch of face paint.",
+      text: "They've made themselves up like hard rockers of the 70's, with permed hair, makeup, earrings and a tasteful touch of face paint.",
     },
     {
       time: 81.872,

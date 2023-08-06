@@ -19,7 +19,7 @@ define("audioDescription", {
       })
     }
 
-    description = descriptions.reverse().find(each => time > each.time)
+    description = time && descriptions.findLast(each => time > each.time)
 
     playMode = (() => {
       if (justChanged($videoPlayer.$playMode)) {
@@ -43,9 +43,9 @@ define("audioDescription", {
 
     /* Voice */
     {
-      const isTimeSeek = $time.last && Math.abs(time - $time.last) > 1
+      const isTimeSeek = $time.lastValue && Math.abs(time - $time.lastValue) > 1
 
-      if (equivalent($spokenItem, $analysis)) {
+      if (time && spokenItem !== $spokenItem.value) {
         if (!isTimeSeek) {
           voice.play()
           voice.say(spokenItem)
