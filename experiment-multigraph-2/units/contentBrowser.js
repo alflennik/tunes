@@ -1,9 +1,16 @@
 import formatTitle from "../library/formatTitle.js"
+import rawOtherVideos from "../../videos/videos.js"
 import { define, element, once, reconcile } from "../utilities/multigraph.js"
+
+const otherVideos = rawOtherVideos.map(video => ({
+  ...video,
+  titleSentence: formatTitle(video, { titleStyle: "listenable" }),
+}))
 
 define("contentBrowser", {
   watch: {
     tunesPlayer: { video: { id, titleSentence } },
+    videoPlayer: { play },
   },
   share: {
     playlist: { id, title, videos },
@@ -43,7 +50,7 @@ define("contentBrowser", {
       event.preventDefault()
 
       if (
-        playlist.needsContentAdvisory &&
+        playlist?.needsContentAdvisory &&
         !window.confirm(
           "This playlist contains content some viewers might find disturbing, are you sure you " +
             "want to continue?"
@@ -91,12 +98,12 @@ define("contentBrowser", {
           ),
           element("h2").text("Other Songs"),
           element("ul").items(
-            ...playlist.videos.map(video => {
+            ...otherVideos.map(video => {
               const isActive = video.id === tunesPlayer.video.id
               return element("li").items(
                 element("a")
                   .attributes({ href: "#", "aria-current": isActive ? true : undefined })
-                  .listeners({ click: event => this.select({ event, playlist, video }) })
+                  .listeners({ click: event => this.select({ event, video }) })
                   .text(video.titleSentence)
               )
             })

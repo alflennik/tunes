@@ -24,6 +24,8 @@ define("audioDescription", {
     playMode = (() => {
       if (justChanged($videoPlayer.$playMode)) {
         switch (videoPlayer.playMode) {
+          case "unstarted":
+            return "unstarted"
           case "playing":
             return "playing"
           case "paused":
@@ -34,9 +36,14 @@ define("audioDescription", {
             return "playing"
         }
       }
-      if (justChanged($voice.$playMode, "ended") && equivalent($spokenItem, $analysis)) {
+      if (
+        justChanged($voice.$playMode, "ended") &&
+        spokenItem &&
+        equivalent($spokenItem, $analysis)
+      ) {
         return "ended"
       }
+      return playMode ?? "unstarted"
     })()
 
     spokenItem = justChanged($videoPlayer.$time, null) && analysis ? analysis : description

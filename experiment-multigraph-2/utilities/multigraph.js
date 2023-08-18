@@ -4,7 +4,7 @@ const canProxy = value => {
   return value !== null && (typeof value === "object" || typeof value === "function")
 }
 
-const RenderQueue = () => {
+function RenderQueue() {
   const getFirstItem = obj => {
     for (const key in obj) {
       return obj[key]
@@ -25,7 +25,7 @@ const RenderQueue = () => {
   const emptyQueue = () => {
     let firstThisUnit
     while ((firstThisUnit = getFirstItem(queue))) {
-      render(firstThisUnit)
+      render(firstThisUnit, { renderQueue: this })
       delete queue[firstThisUnit.name]
     }
   }
@@ -41,7 +41,7 @@ const RenderQueue = () => {
       }
 
       queue[thisUnit.name] = thisUnit
-      render(thisUnit)
+      render(thisUnit, { renderQueue: this })
       delete queue[thisUnit.name]
 
       emptyQueue()
@@ -460,7 +460,7 @@ export const equivalent = (a, b) => {
   return getRawValue(a) === getRawValue(b)
 }
 
-export const render = anyUnitLocked => {
+export const render = (anyUnitLocked, { renderQueue = mainRenderQueue } = {}) => {
   const thisUnit = (() => {
     const anyUnit = isLocked(anyUnitLocked) ? unlock(anyUnitLocked) : anyUnitLocked
     return anyUnit.isThisUnit ? anyUnit : anyUnit.originalThisUnit
@@ -468,6 +468,11 @@ export const render = anyUnitLocked => {
 
   Object.entries(thisUnit.scope).forEach(([name, value]) => {
     window[name] = value
+  })
+
+  let setRenderingComplete
+  thisUnit.renderingComplete = new Promise(resolve => {
+    setRenderingComplete = resolve
   })
 
   const result = thisUnit.update.call(thisUnit.scope, {
@@ -484,8 +489,11 @@ export const render = anyUnitLocked => {
   if (result?.then) {
     stoppedPromise = result
   } else {
-    thisUnit.handleChanges({ isWindowScoped: true })
+    thisUnit.handleChanges({ isWindowScoped: true, renderQueue })
   }
+
+  setRenderingComplete()
+  thisUnit.renderingComplete = undefined
 
   Object.keys(thisUnit.scope).forEach(name => {
     delete window[name]
@@ -529,29 +537,23 @@ const defineAllNamed = () => {
   const addToScope = (scope, name, anyNamed, initialValue) => {
     const parent = anyNamed.parent
 
-    const applyName = () => {
+    const applyName = overwritingNamed => {
+      if (overwritingNamed) overwritingNamed.isInRootOfScope = false
       anyNamed.isInRootOfScope = true
       scope[`$${name}`] = lock(anyNamed)
       scope[name] = initialValue
     }
 
-    const unapplyName = () => {
-      unlock(scope[`$${name}`]).isInRootOfScope = false
-      delete scope[$`$${name}`]
-      delete scope[name]
-    }
-
-    const conflictingNamed = scope[name] && !unlock(scope[`$${name}`]).isOutUnit
+    const conflictingNamedLocked = scope[`$${name}`]
     // Since manage and watch both have unit names, there isn't actually a conflict here
-    if (conflictingNamed) {
-      const isInaccessible = !conflictingNamed.parent && !parent
+    if (conflictingNamedLocked) {
+      const conflictingNamed = unlock(scope[`$${name}`])
+      const isInaccessible = !conflictingNamed.parent.isInRootOfScope && !parent.isInRootOfScope
       if (isInaccessible) {
         throw new Error(`In define "${unitName}" found conflicting names for ${name}`)
       }
-      if (!conflictingNamed.parent) {
-        applyName()
-      } else {
-        unapplyName()
+      if (!parent.isInRootOfScope) {
+        applyName(conflictingNamed)
       }
     } else {
       applyName()
@@ -879,7 +881,9 @@ const defineAllNamed = () => {
     }
 
     thisUnit.stop = async callback => {
-      const promise = callback()
+      const promise = thisUnit.renderingComplete
+        ? thisUnit.renderingComplete.then(callback)
+        : callback()
       mainRenderQueue.stop(promise)
       await promise
       thisUnit.handleChanges({ isWindowScoped: false })
