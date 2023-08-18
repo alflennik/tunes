@@ -1,0 +1,13 @@
+interactionInterceptor {
+  track { hasInteracted }
+
+  update {
+    once {
+			const handleInteraction = () => {
+				hasInteracted = true
+        document.removeEventListener('click', handleInteraction)
+			}
+			document.addEventListener('click', handleInteraction)
+		}
+  }
+}

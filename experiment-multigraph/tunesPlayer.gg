@@ -1,28 +1,64 @@
 tunesPlayer {
-	watches { 
-		contentBrowser { video, playlist }
-	}
-	shares { video }
-	manages {
-		voice { voiceType }
-		videoPlayer { timeInterval }
-	}
+  watch {
+    audioDescription { playMode, content }
+    contentBrowser {
+      video { id, titleSentence }
+      playlist { videos }
+      content
+    }
+    videoPlayer { play, content }
+    voiceSynthesized { getPermissions }
+    permissions { firstInteractionInterceptor, firstInteractionComplete }
+  }
+  share { video { id, titleSentence, descriptionPath, youtubeId } }
+  manage {
+    voice { voiceType }
+    videoPlayer { timeInterval }
+    permissions { onFirstInteraction }
+  }
+  track { rootContent }
 
 	update {
-		set video {
-			if contentBrowser.video.justChanged() { return contentBrowser.video }
-			if audioDescription.playMode.justChanged(.ended) {
+		video {
+			if justChanged(contentBrowser.video) then apply contentBrowser.video
+			if justChanged(audioDescription.playMode, .ended) {
 				set currentIndex = playlist.videos.findIndex(each => each.id == contentBrowser.video.id)
 				set nextVideo = playlist.videos[currentIndex + 1]
-				return nextVideo ?? last.video
+				apply nextVideo ?? last.video
 			}
 		}
 
-		set once manages = {
-			voice { voiceType: .synthesized }
-			videoPlayer { timeInterval: 400 }
-		}
+		voice.voiceType = .synthesized
 
-		return { shares { video }, manages }
+		videoPlayer.timeInterval = 400
+
+    permission.onFirstInteraction = async ({ isKeyDown, isVideoPlayerInteraction }){
+      await voiceSynthesized.getPermissions()
+      if !isKeyDown && isVideoPlayerInteraction then videoPlayer.play()
+    }
+
+    rootContent = reconcile {
+      element("root-element") {
+        element("div", class: "content-container") {
+          element("h1") { "Tunes" }
+          element("p") { "The Tunes project implements audio descriptions for music videos, which are written by some guy named Alex." }
+          contentBrowser.content
+          element("h2", id: "player-h2", tabindex: "-1") { "Player" }
+        }
+				element("tunes-player") {
+					firstInteractionInterceptor() {
+						element("button") { "Play \(video.titleSentence)" }
+					}
+				}
+				element("video-player")
+					.attributes("aria-hidden": firstInteractionComplete ? .unset : true) 
+					{ videoPlayer.content }
+				audioDescription.content
+      }
+    }
+
+		once {
+			document.body.appendChild(rootContent.element)
+		}
 	}
 }
