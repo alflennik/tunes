@@ -99,7 +99,7 @@ define("contentBrowser", {
           element("h2").text("Other Songs"),
           element("ul").items(
             ...otherVideos.map(video => {
-              const isActive = video.id === tunesPlayer.video.id
+              const isActive = video.id === tunesPlayer.video?.id
               return element("li").items(
                 element("a")
                   .attributes({ href: "#", "aria-current": isActive ? true : undefined })

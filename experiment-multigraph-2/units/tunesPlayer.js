@@ -21,15 +21,14 @@ define("tunesPlayer", {
   track: { rootContent },
 
   update: function () {
-    video = (() => {
-      if (justChanged($contentBrowser.$video)) return contentBrowser.video
-      if (justChanged($audioDescription.$playMode, "ended")) {
-        const currentIndex = playlist.videos.findIndex(each => each.id === contentBrowser.video.id)
-        const nextVideo = playlist.videos[currentIndex + 1]
-        return nextVideo ?? $video.lastValue
-      }
-      return video
-    })()
+    /* video */
+    if (justChanged($contentBrowser.$video)) {
+      video = contentBrowser.video
+    } else if (justChanged($audioDescription.$playMode, "ended")) {
+      const currentIndex = playlist.videos.findIndex(each => each.id === contentBrowser.video.id)
+      const nextVideo = playlist.videos[currentIndex + 1]
+      video = nextVideo ?? $video.lastValue
+    }
 
     voice.voiceType = once($voiceType, "synthesized")
 

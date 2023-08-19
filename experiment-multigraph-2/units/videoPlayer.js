@@ -68,18 +68,24 @@ define("videoPlayer", {
     })
 
     /* Time */
-    if (playMode === "playing" && !intervalId) {
-      intervalId = setInterval(() => {
-        change(() => {
-          this.time = this.youtubePlayer.getCurrentTime()
-        })
-        console.info(Math.round(this.time * 1000) / 1000)
-      }, timeInterval)
-    } else if (playMode !== "playing" && intervalId) {
-      clearInterval(intervalId)
+    {
+      if (justChanged($youtubeId)) time = null
+      if (playMode === "playing" && !intervalId) {
+        intervalId = setInterval(() => {
+          change(() => {
+            this.time = this.youtubePlayer.getCurrentTime()
+          })
+          console.info(Math.round(this.time * 1000) / 1000)
+        }, timeInterval)
+      } else if (playMode !== "playing" && intervalId) {
+        clearInterval(intervalId)
+        intervalId = null
+      }
     }
 
-    if (justChanged($youtubeId)) youtubePlayer.loadVideoById({ videoId: youtubeId })
+    if (justChanged($youtubeId)) {
+      youtubePlayer.loadVideoById({ videoId: youtubeId })
+    }
 
     play = once($play, () => {
       this.youtubePlayer.playVideo()

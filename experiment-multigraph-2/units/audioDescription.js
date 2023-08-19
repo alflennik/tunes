@@ -52,7 +52,7 @@ define("audioDescription", {
     {
       const isTimeSeek = $time.lastValue && Math.abs(time - $time.lastValue) > 1
 
-      if (time && spokenItem !== $spokenItem.value) {
+      if (time && spokenItem && spokenItem !== $spokenItem.currentValue) {
         if (!isTimeSeek) {
           voice.play()
           voice.say(spokenItem)
@@ -60,8 +60,12 @@ define("audioDescription", {
           voice.clear()
         }
       }
-      if (justChanged($videoPlayer.$playMode, "paused")) {
-        voice.pause()
+      if (justChanged($videoPlayer.$playMode)) {
+        if (videoPlayer.playMode === "playing") {
+          voice.play()
+        } else if (videoPlayer.playMode === "paused") {
+          voice.pause()
+        }
       }
     }
 

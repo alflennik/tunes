@@ -25,12 +25,16 @@ function RenderQueue() {
   const emptyQueue = () => {
     let firstThisUnit
     while ((firstThisUnit = getFirstItem(queue))) {
-      render(firstThisUnit, { renderQueue: this })
+      render(firstThisUnit, { renderQueue: self })
       delete queue[firstThisUnit.name]
+    }
+    let callback
+    while ((callback = onEmptyCallbacks.shift())) {
+      callback()
     }
   }
 
-  return {
+  const self = {
     isStopped: () => stopCount !== 0,
 
     add: thisUnit => {
@@ -41,7 +45,7 @@ function RenderQueue() {
       }
 
       queue[thisUnit.name] = thisUnit
-      render(thisUnit, { renderQueue: this })
+      render(thisUnit, { renderQueue: self })
       delete queue[thisUnit.name]
 
       emptyQueue()
@@ -59,6 +63,8 @@ function RenderQueue() {
       onEmptyCallbacks.push(callback)
     },
   }
+
+  return self
 }
 
 const anyOutToAnyOutValueMap = new Map()
@@ -351,20 +357,17 @@ const unlockToLockMap = new Map()
 const lock = anyNamed => {
   if (unlockToLockMap.has(anyNamed)) return unlockToLockMap.get(anyNamed)
 
-  const anyLastLocked = {}
-
   const anyNamedLocked = new Proxy(anyNamed, {
     get: (_, prop) => {
       if (prop === "isInitialRender" && anyNamed.isThisUnit) return !anyNamed.hasRenderedOnce
-      if (prop === "value") {
-        if (anyNamed.isInProperty) return anyNamed.value
-        return anyNamed.inProperty.value
+      if (prop === "currentValue") {
+        if (anyNamed.isInProperty) return anyNamed.value // Shouldn't this be a proxy?
+        return anyNamed.inProperty.value // Shouldn't this be a proxy?
       }
       if (prop === "lastValue") {
-        if (anyNamed.isInProperty) return anyNamed.lastValue
-        return anyNamed.inProperty.lastValue
+        if (anyNamed.isAnyProperty) return anyNamed.lastValue // Shouldn't this be a proxy?
+        return undefined
       }
-      if (prop === "$last") return anyLastLocked
       if (prop.startsWith("$")) return lock(anyNamed.subproperties[prop.split("$")[1]])
       return undefined
     },
@@ -375,8 +378,6 @@ const lock = anyNamed => {
 
   lockToUnlockMap.set(anyNamedLocked, anyNamed)
   unlockToLockMap.set(anyNamed, anyNamedLocked)
-  lockToUnlockMap.set(anyLastLocked, anyNamed.last)
-  unlockToLockMap.set(anyNamed.last, anyLastLocked)
 
   return anyNamedLocked
 }
@@ -403,10 +404,6 @@ const isInProperty = anyProperty => {
 
 const isOutProperty = anyProperty => {
   return anyProperty !== null && typeof anyProperty === "object" && anyProperty.isOutProperty
-}
-
-const isAnyLast = anyLast => {
-  return anyLast !== null && typeof anyLast === "object" && anyLast.isAnyLast
 }
 
 const isAnyUnit = anyUnit => {
@@ -436,8 +433,9 @@ export const doOnce = (anyNamedLocked, callback) => {
 
 export const justChanged = (anyPropertyLocked, to) => {
   const anyProperty = unlock(anyPropertyLocked)
+  const lastValue = anyProperty.lastValue
   const inProperty = anyProperty.isInProperty ? anyProperty : anyProperty.inProperty
-  const changed = inProperty.value !== inProperty.lastValue
+  const changed = inProperty.value !== lastValue
   if (to !== undefined) {
     return changed && equivalent(anyProperty, to)
   }
@@ -454,7 +452,6 @@ export const equivalent = (a, b) => {
     }
     if (isInProperty(a)) return a.value
     if (isOutProperty(a)) return a.inProperty.value
-    if (isAnyLast(a)) return a.inProperty.lastValue
     if (isAnyUnit(a)) return a
   }
   return getRawValue(a) === getRawValue(b)
@@ -474,6 +471,7 @@ export const render = (anyUnitLocked, { renderQueue = mainRenderQueue } = {}) =>
   thisUnit.renderingComplete = new Promise(resolve => {
     setRenderingComplete = resolve
   })
+  thisUnit.currentRenderQueue = renderQueue
 
   const result = thisUnit.update.call(thisUnit.scope, {
     ripple: thisUnit.ripple,
@@ -494,6 +492,7 @@ export const render = (anyUnitLocked, { renderQueue = mainRenderQueue } = {}) =>
 
   setRenderingComplete()
   thisUnit.renderingComplete = undefined
+  thisUnit.currentRenderQueue = undefined
 
   Object.keys(thisUnit.scope).forEach(name => {
     delete window[name]
@@ -590,7 +589,6 @@ const defineAllNamed = () => {
     inProperty.type = propertyType
     inProperty.isInProperty = true
     inProperty.thisUnit = thisUnit
-    inProperty.last = { isAnyLast: true, isInLast: true, inProperty }
 
     inProperty.path = (() => {
       if (!parent?.path) return [name]
@@ -660,13 +658,6 @@ const defineAllNamed = () => {
     }
 
     outProperty.inProperty.outProperties.push(outProperty)
-
-    outProperty.last = {
-      isAnyLast: true,
-      isOutLast: true,
-      inProperty: outProperty.inProperty,
-      outProperty: outProperty,
-    }
 
     addToScope(thisUnit.scope, name, outProperty)
 
@@ -800,7 +791,7 @@ const defineAllNamed = () => {
   /* thisUnit methods */
   Object.values(thisUnits).forEach(thisUnit => {
     thisUnit.handleChanges = ({ isWindowScoped, renderQueue = mainRenderQueue }) => {
-      const action = (inProperty, value) => {
+      const inPropertyAction = (inProperty, value) => {
         if (inProperty.isInRootOfScope && isWindowScoped) {
           thisUnit.scope[inProperty.name] = value
         }
@@ -845,9 +836,14 @@ const defineAllNamed = () => {
               return value
             })()
 
-            action(inProperty, fixedValue)
+            inPropertyAction(inProperty, fixedValue)
             recurse({ thisUnit, parent: inProperty, parentValue: fixedValue })
-          } else if (anyNamed.isOutUnit && anyNamed.types.includes("manage")) {
+          } else if (anyNamed.isOutProperty) {
+            const outProperty = anyNamed
+            const value = outProperty.inProperty.value
+            outProperty.lastValue = value
+            recurse({ thisUnit, parent: outProperty, parentValue: value })
+          } else if (anyNamed.isOutUnit) {
             const parentValue = isWindowScoped
               ? window[anyNamed.name]
               : thisUnit.scope[anyNamed.name]
@@ -881,13 +877,23 @@ const defineAllNamed = () => {
     }
 
     thisUnit.stop = async callback => {
-      const promise = thisUnit.renderingComplete
+      const renderQueue = thisUnit.currentRenderQueue ?? mainRenderQueue
+
+      const finishedStopping = thisUnit.renderingComplete
         ? thisUnit.renderingComplete.then(callback)
         : callback()
-      mainRenderQueue.stop(promise)
-      await promise
-      thisUnit.handleChanges({ isWindowScoped: false })
-      mainRenderQueue.add(thisUnit)
+
+      const promise = finishedStopping.then(() => {
+        thisUnit.handleChanges({ isWindowScoped: false, renderQueue })
+        render(thisUnit)
+      })
+
+      renderQueue.stop(promise)
+      if (thisUnit.currentRenderQueue !== mainRenderQueue) {
+        mainRenderQueue.stop(promise) // always stop the main render queue
+      }
+
+      return promise
     }
   })
 }
