@@ -38,7 +38,7 @@ export default {
     },
     {
       time: 99.455,
-      text: "She has a bloodless white face, devoid of expression, and an aged schoolgirl uniform.",
+      text: "She has a bloodless white face, devoid of expression, and an out-of-date schoolgirl uniform.",
     },
     {
       time: 120.3,
