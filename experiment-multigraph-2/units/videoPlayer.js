@@ -48,6 +48,7 @@ define("videoPlayer", {
     }
 
     doOnce($playMode, () => {
+      playMode = "unstarted"
       youtubePlayer.addEventListener("onStateChange", ({ data }) => {
         change(() => {
           if (data === YT.PlayerState.UNSTARTED) {

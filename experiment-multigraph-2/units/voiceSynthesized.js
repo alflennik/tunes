@@ -104,7 +104,9 @@ define("voiceSynthesized", {
       permissionGranted = false
     })
 
-    sayCount = once($sayCount, 0)
+    doOnce($sayCount, () => {
+      sayCount = 0
+    })
 
     say = once($say, async description => {
       if (!this.permissionGranted) throw new Error("Voice permissions were not granted")
@@ -151,7 +153,7 @@ define("voiceSynthesized", {
     })
 
     playMode = (() => {
-      if (this.sayCount === 0) return "ended"
+      if (sayCount === 0) return "ended"
       return speechSynthesis.paused ? "paused" : "playing"
     })()
   },

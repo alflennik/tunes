@@ -46,7 +46,11 @@ define("audioDescription", {
       return playMode ?? "unstarted"
     })()
 
-    spokenItem = justChanged($videoPlayer.$time, null) && analysis ? analysis : description
+    spokenItem = (() => {
+      if (justChanged($videoPlayer.$playMode, "ended") && analysis) return analysis
+      if (description !== $description.currentValue) return description
+      return spokenItem
+    })()
 
     /* Voice */
     {

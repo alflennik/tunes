@@ -361,11 +361,11 @@ const lock = anyNamed => {
     get: (_, prop) => {
       if (prop === "isInitialRender" && anyNamed.isThisUnit) return !anyNamed.hasRenderedOnce
       if (prop === "currentValue") {
-        if (anyNamed.isInProperty) return anyNamed.value // Shouldn't this be a proxy?
-        return anyNamed.inProperty.value // Shouldn't this be a proxy?
+        if (anyNamed.isInProperty) return anyNamed.value // Needs to be proxy
+        return anyNamed.inProperty.value // Needs to be proxy
       }
       if (prop === "lastValue") {
-        if (anyNamed.isAnyProperty) return anyNamed.lastValue // Shouldn't this be a proxy?
+        if (anyNamed.isAnyProperty) return anyNamed.lastValue // Needs to be proxy
         return undefined
       }
       if (prop.startsWith("$")) return lock(anyNamed.subproperties[prop.split("$")[1]])
@@ -457,15 +457,33 @@ export const equivalent = (a, b) => {
   return getRawValue(a) === getRawValue(b)
 }
 
+let currentlyRendering
+
 export const render = (anyUnitLocked, { renderQueue = mainRenderQueue } = {}) => {
+  const applyWindowScope = holder => {
+    Object.entries(holder).forEach(([name, value]) => {
+      window[name] = value
+    })
+  }
+
+  const unapplyWindowScope = (thisUnitScope, holder = null) => {
+    Object.keys(thisUnitScope).forEach(name => {
+      if (holder) holder[name] = window[name]
+      delete window[name]
+    })
+  }
+
   const thisUnit = (() => {
     const anyUnit = isLocked(anyUnitLocked) ? unlock(anyUnitLocked) : anyUnitLocked
     return anyUnit.isThisUnit ? anyUnit : anyUnit.originalThisUnit
   })()
 
-  Object.entries(thisUnit.scope).forEach(([name, value]) => {
-    window[name] = value
-  })
+  const interrupted = currentlyRendering
+  const interruptedScopeHolder = {}
+  if (interrupted) unapplyWindowScope(interrupted.scope, interruptedScopeHolder)
+  currentlyRendering = thisUnit
+
+  applyWindowScope(thisUnit.scope)
 
   let setRenderingComplete
   thisUnit.renderingComplete = new Promise(resolve => {
@@ -494,9 +512,13 @@ export const render = (anyUnitLocked, { renderQueue = mainRenderQueue } = {}) =>
   thisUnit.renderingComplete = undefined
   thisUnit.currentRenderQueue = undefined
 
-  Object.keys(thisUnit.scope).forEach(name => {
-    delete window[name]
-  })
+  currentlyRendering = null
+
+  unapplyWindowScope(thisUnit.scope)
+
+  if (interrupted) {
+    applyWindowScope(interruptedScopeHolder)
+  }
 
   return stoppedPromise
 }
