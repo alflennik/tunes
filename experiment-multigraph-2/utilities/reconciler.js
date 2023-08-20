@@ -120,7 +120,7 @@ const createElement = virtualElement => {
     })
   }
 
-  if (text) {
+  if (text != null) {
     element.innerText = text
   }
 
@@ -155,7 +155,7 @@ const updateElement = virtualElement => {
     element.setBindings(bindings)
   }
 
-  if (text && element.innerText !== text) {
+  if (text != null && element.innerText !== text) {
     element.innerText = text
   }
 
