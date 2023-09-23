@@ -49,7 +49,7 @@ export default {
       text: "Bodies touch and connect and they stumble drunk to a hotel room.",
     },
     {
-      time: 109.035,
+      time: 118.795,
       text: "Their legs entwine.",
     },
     {

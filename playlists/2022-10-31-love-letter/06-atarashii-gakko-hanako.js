@@ -65,12 +65,20 @@ export default {
       text: "As she sings she gently brings her hands towards you, strokes your cheeks.",
     },
     {
+      time: 175.698,
+      text: 'Captions read, "An eternal illusion, wash it away, from memory."',
+    },
+    {
       time: 187.571,
       text: "Hanako gone, the four girls dance.",
     },
     {
       time: 201.57,
-      text: "They run across the school. But one of them stops. And turns. And with a necrotic smile Hanako drags you straight to hell.",
+      text: "They run across the school. But one of them stops. And turns.",
+    },
+    {
+      time: 211.673,
+      text: "And with a necrotic smile Hanako drags you straight to hell.",
     },
   ],
 }

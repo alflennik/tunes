@@ -2,7 +2,7 @@ export default {
   descriptions: [
     {
       time: 2.26,
-      text: "Six black men are perched on a tower, reminiscent in shape to the Eiffel Tower, albeit a lot smaller, only like thirty feet tall.",
+      text: "Six African men are perched on a tower, reminiscent in shape to the Eiffel Tower, albeit a lot smaller, only like thirty feet tall.",
     },
     {
       time: 11.056,
@@ -22,7 +22,7 @@ export default {
     },
     {
       time: 75.061,
-      text: "He walks with his brothers along the coastline.",
+      text: "He walks with his brothers along the beach.",
     },
     {
       time: 90.664,

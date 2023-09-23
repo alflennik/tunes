@@ -105,7 +105,7 @@ export default {
       text: "Salvatore turns and leaves, wading into the ocean at the end of the Earth, a sky full of alien planets and dissociation.",
     },
     {
-      time: 236.856,
+      time: 236.399,
       text: "He walks himself all the way underwater.",
     },
   ],
