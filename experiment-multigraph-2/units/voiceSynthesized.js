@@ -133,6 +133,7 @@ define("voiceSynthesized", {
         change(() => {
           this.sayCount += 1
         })
+        console.log("speaking", "paused?", speechSynthesis.paused)
         speechSynthesis.speak(utterance)
       })
     })

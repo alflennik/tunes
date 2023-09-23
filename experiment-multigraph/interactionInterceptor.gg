@@ -1,0 +1,23 @@
+interactionInterceptor:
+	track: hasInteracted toggle!
+
+	ready:
+		once:
+      new handleInteraction ():
+				hasInteracted = true
+				document.removeEventListener('click', handleInteraction)
+			document.addEventListener('click', handleInteraction)
+
+.
+
+module interaction-interceptor {
+  track has-interacted toggle = off
+
+  {
+    new handle-interaction () {
+      hasInteracted = yes
+      document.removeEventListener("click", handleInteraction)
+    }
+    document.addEventListener("click", handleInteraction)
+  }
+}

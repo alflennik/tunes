@@ -95,5 +95,14 @@ define("videoPlayer", {
     pause = once($pause, () => {
       this.youtubePlayer.pauseVideo()
     })
+
+    doOnce($this, () => {
+      document.addEventListener("keydown", event => {
+        if (event.key === "k") {
+          if (this.playMode === "playing") this.pause()
+          if (this.playMode === "paused") this.play()
+        }
+      })
+    })
   },
 })

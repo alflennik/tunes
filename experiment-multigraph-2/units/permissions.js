@@ -5,7 +5,9 @@ define("permissions", {
   share: { firstInteractionComplete, firstInteractionInterceptor },
 
   update: function ({ change }) {
-    firstInteractionComplete = once($firstInteractionComplete, false)
+    doOnce($firstInteractionComplete, () => {
+      firstInteractionComplete = false
+    })
 
     firstInteractionInterceptor = once($firstInteractionInterceptor, ({ items }) => {
       doOnce(this.$this, () => {

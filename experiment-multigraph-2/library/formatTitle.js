@@ -36,8 +36,9 @@ const formatTitle = (video, { titleStyle = "standard" } = {}) => {
       video.title,
       inParens(featuredArtistFormatted),
       inParens(videoTypeFormatted),
+      video.titleAddendum,
     ]
-      .filter(item => !!item)
+      .filter(item => item)
       .join(" ")
   } else if (titleStyle === "listenable") {
     finalTitle = [
@@ -46,8 +47,9 @@ const formatTitle = (video, { titleStyle = "standard" } = {}) => {
       video.artist,
       featuredArtistFormatted,
       inParens(videoTypeFormatted),
+      video.titleAddendum,
     ]
-      .filter(item => !!item)
+      .filter(item => item)
       .join(" ")
   }
   return finalTitle
