@@ -52,13 +52,13 @@
           --description-font-size: 1em;
         }
       }
-      .click-interceptor {
+      .interaction-interceptor {
         width: 100%;
         height: calc(100% - var(--description-total-height));
         position: absolute;
         cursor: pointer;
       }
-      .click-interceptor * {
+      .interaction-interceptor * {
         opacity: 0;
       }
       iframe {
@@ -82,10 +82,10 @@
       audio-description .wrapping-box > div {
         text-align: center;
       }
-      browser-element a {
+      content-browser a {
         color: white;
       }
-      browser-element a[aria-current] {
+      content-browser a[aria-current] {
         font-weight: bold;
         color: #fffa93;
       }
@@ -98,8 +98,7 @@
     </style>
   </head>
   <body>
-    <root-element></root-element>
-    <script type="module" src="components/root.js"></script>
+    <script type="module" src="tunes.js"></script>
 
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-MNGWCMB6VJ"></script>

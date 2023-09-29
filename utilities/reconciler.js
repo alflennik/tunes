@@ -1,10 +1,20 @@
-import { tagNameWeakMap } from "./define.js"
-import getSemaphore from "./semaphore.js"
+import { reconcilerTools } from "./multigraph.js"
 
 const propertiesWeakMap = new WeakMap()
 const oldVirtualTreeWeakMap = new WeakMap()
+const isReconcilerRootWeakMap = new WeakMap()
 
-const buildSemaphore = getSemaphore()
+const getReconcilerRootElement = builder => {
+  if (!reconcilerTools.isAnyOutValue(builder)) return false
+  const value = (() => {
+    const anyOut = reconcilerTools.getAnyOutFromValue(builder)
+    if (!anyOut.isOutProperty) throw new Error("Not yet implemented")
+    return anyOut.inProperty.value
+  })()
+  if (isReconcilerRootWeakMap.get(value)) {
+    return value.element
+  }
+}
 
 export const element = tagName => {
   let elementProperties = {}
@@ -53,20 +63,6 @@ export const element = tagName => {
   }
 
   propertiesWeakMap.set(builder, elementProperties)
-
-  return builder
-}
-
-export const component = Component => {
-  const tagName = tagNameWeakMap.get(Component)
-  const builder = element(tagName)
-
-  const elementProperties = propertiesWeakMap.get(builder)
-
-  builder.bindings = bindings => {
-    elementProperties.bindings = bindings
-    return builder
-  }
 
   return builder
 }
@@ -124,7 +120,7 @@ const createElement = virtualElement => {
     })
   }
 
-  if (text) {
+  if (text != null) {
     element.innerText = text
   }
 
@@ -159,67 +155,65 @@ const updateElement = virtualElement => {
     element.setBindings(bindings)
   }
 
-  if (text && element.innerText !== text) {
+  if (text != null && element.innerText !== text) {
     element.innerText = text
   }
 
   return element
 }
 
-const getVirtualTree = (component, builder) => {
-  const getVirtualElement = ({ id, siblingIndex, properties, parentVirtualElement }) => {
+const getVirtualTree = builder => {
+  const getVirtualElement = ({
+    id,
+    siblingIndex,
+    properties,
+    parentVirtualElement,
+    isNullBuilder,
+    isReconcilerRoot,
+  }) => {
     let element
     let children = []
     return {
       id,
       properties,
+      isReconcilerRoot,
+      isNullBuilder,
       getChildren: () => children,
       getFirstChild: () => children[0],
       getElement: () => element,
       getParent: () => parentVirtualElement,
-      getParentElement: () => parentVirtualElement.getElement(),
+      getParentElement: () => parentVirtualElement?.getElement() ?? null,
       getPreviousSibling: () => {
-        const parentChildren = parentVirtualElement.getChildren()
-        return parentChildren[siblingIndex - 1] ?? null
+        const parentChildren = parentVirtualElement?.getChildren()
+        return parentChildren?.[siblingIndex - 1] ?? null
       },
       getPreviousSiblingElement: () => {
-        const parentChildren = parentVirtualElement.getChildren()
-        return parentChildren[siblingIndex - 1]?.getElement() ?? null
+        const parentChildren = parentVirtualElement?.getChildren()
+        let currentIndex = siblingIndex - 1
+        while (true) {
+          if (currentIndex < 0) return null
+          const previousElement = parentChildren[currentIndex]?.getElement()
+          if (previousElement) return previousElement
+          currentIndex -= 1
+        }
       },
       getNextSibling: () => {
-        const parentChildren = parentVirtualElement.getChildren()
-        return parentChildren[siblingIndex + 1] ?? null
+        const parentChildren = parentVirtualElement?.getChildren()
+        return parentChildren?.[siblingIndex + 1] ?? null
       },
       getNextSiblingElement: () => {
-        const parentChildren = parentVirtualElement.getChildren()
-        return parentChildren[siblingIndex + 1]?.getElement() ?? null
+        const parentChildren = parentVirtualElement?.getChildren()
+        let currentIndex = siblingIndex + 1
+        while (true) {
+          if (currentIndex === parentChildren.length) return null
+          const nextElement = parentChildren[currentIndex]?.getElement()
+          if (nextElement) return nextElement
+          currentIndex += 1
+        }
       },
       associateElement: newElement => {
         element = newElement
       },
-      append: child => {
-        children.push(child)
-      },
-    }
-  }
-  const getRootElement = () => {
-    let children = []
-    return {
-      id: null,
-      properties: null,
-      getChildren: () => children,
-      getFirstChild: () => children[0],
-      getElement: () => component,
-      getParent: () => {
-        throw new Error("Unexpected")
-      },
-      getParentElement: () => {
-        throw new Error("Unexpected")
-      },
-      getNextSibling: () => null,
-      getNextSiblingElement: () => null,
-      getPreviousSibling: () => null,
-      getPreviousSiblingElement: () => null,
       append: child => {
         children.push(child)
       },
@@ -238,6 +232,7 @@ const getVirtualTree = (component, builder) => {
   }
 
   const virtualElementsById = {}
+  let rootVirtualElement
 
   const recurseBuilders = ({
     parentVirtualElement,
@@ -247,15 +242,18 @@ const getVirtualTree = (component, builder) => {
     builders,
   }) => {
     builders.forEach(builder => {
-      if (builder === null) return
+      const isNullBuilder = builder == null
+
+      const reconcilerRootElement = getReconcilerRootElement(builder)
+      const isReconcilerRoot = !!reconcilerRootElement
 
       const properties = propertiesWeakMap.get(builder)
 
-      if (!properties) {
-        throw new Error("Invalid return from reactiveTemplate")
+      if (!properties && !(isNullBuilder || isReconcilerRoot)) {
+        throw new Error("Invalid content provided to reconcile function")
       }
 
-      if (properties.isFragment) {
+      if (properties?.isFragment) {
         recurseBuilders({
           parentVirtualElement,
           parentId,
@@ -266,25 +264,35 @@ const getVirtualTree = (component, builder) => {
         return
       }
 
-      const id = getId({ parentId, positionIdIndex, reconcilerId: properties.reconcilerId })
+      const id = getId({ parentId, positionIdIndex, reconcilerId: properties?.reconcilerId })
 
       const virtualElement = getVirtualElement({
         id,
         siblingIndex,
         properties,
         parentVirtualElement,
+        isReconcilerRoot,
+        isNullBuilder,
       })
+
+      if (isReconcilerRoot) {
+        virtualElement.associateElement(reconcilerRootElement)
+      }
+
+      if (!rootVirtualElement) rootVirtualElement = virtualElement
 
       virtualElementsById[id] = virtualElement
 
       siblingIndex += 1
-      if (!properties.reconcilerId) {
+      if (!properties?.reconcilerId) {
         positionIdIndex += 1
       }
 
-      parentVirtualElement.append(virtualElement)
+      if (parentVirtualElement) {
+        parentVirtualElement.append(virtualElement)
+      }
 
-      if (properties.childBuilders) {
+      if (properties?.childBuilders) {
         recurseBuilders({
           parentVirtualElement: virtualElement,
           parentId: id,
@@ -294,23 +302,27 @@ const getVirtualTree = (component, builder) => {
     })
   }
 
-  const rootElement = getRootElement()
-
   recurseBuilders({
-    parentVirtualElement: rootElement,
+    parentVirtualElement: null,
     parentId: null,
     builders: [builder],
   })
 
   const getIterator = () => {
-    const hasNoContent = rootElement.getChildren().length === 0
+    const hasNoContent = !rootVirtualElement?.properties
 
     let backlog = []
-    let current = rootElement
+    let current
     let isDone = hasNoContent
 
     return {
       next: () => {
+        if (!current) {
+          current = rootVirtualElement
+          if (!rootVirtualElement.getChildren().length) isDone = true
+          return rootVirtualElement
+        }
+
         let next
         if (current.getFirstChild()) {
           backlog.push(current.getFirstChild)
@@ -333,6 +345,7 @@ const getVirtualTree = (component, builder) => {
   }
 
   return {
+    rootVirtualElement,
     getIterator,
     getById: id => {
       return virtualElementsById[id]
@@ -349,11 +362,9 @@ const getVirtualTree = (component, builder) => {
   }
 }
 
-const reconcile = (component, getBuilder) => {
-  const builder = getBuilder()
-
-  const virtualTree = getVirtualTree(component, builder)
-  const oldVirtualTree = oldVirtualTreeWeakMap.get(component)
+export const reconcile = (anyNamedLocked, builder) => {
+  const virtualTree = getVirtualTree(builder)
+  const oldVirtualTree = oldVirtualTreeWeakMap.get(anyNamedLocked)
 
   const discardedElements = oldVirtualTree?.getDiscardedElements(virtualTree) ?? []
   discardedElements.forEach(discardedElement => {
@@ -369,7 +380,16 @@ const reconcile = (component, getBuilder) => {
 
     const oldVirtualElement = oldVirtualTree?.getById(virtualElement.id)
 
-    if (oldVirtualElement) {
+    if (oldVirtualElement && oldVirtualElement.getElement()) {
+      if (virtualElement.isReconcilerRoot) {
+        if (oldVirtualElement.getElement() !== virtualElement.getElement()) {
+          throw new Error("not yet implemented")
+        }
+      }
+
+      const isNoop = virtualElement.isReconcilerRoot || virtualElement.isNullBuilder
+      if (isNoop) continue
+
       const element = oldVirtualElement.getElement()
 
       virtualElement.associateElement(element)
@@ -383,6 +403,7 @@ const reconcile = (component, getBuilder) => {
       const previousElement = virtualElement.getPreviousSiblingElement()
       const oldPreviousElement = oldVirtualElement.getPreviousSiblingElement()
       if (
+        parentElement &&
         virtualElement.properties.reconcilerId &&
         (parentElement !== oldParentElement || previousElement !== oldPreviousElement)
       ) {
@@ -394,9 +415,20 @@ const reconcile = (component, getBuilder) => {
         }
       }
     } else {
+      const isNoop =
+        virtualElement.isNullBuilder ||
+        (virtualElement.isReconcilerRoot && !virtualElement.getElement())
+
+      if (isNoop) continue
+
       const parentElement = virtualElement.getParentElement()
 
-      const element = createElement(virtualElement)
+      const element = (() => {
+        if (virtualElement.isReconcilerRoot) {
+          return virtualElement.getElement()
+        }
+        return createElement(virtualElement)
+      })()
 
       const previousElement = virtualElement.getPreviousSiblingElement()
 
@@ -405,17 +437,17 @@ const reconcile = (component, getBuilder) => {
       if (previousElement) {
         previousElement.insertAdjacentElement("afterend", element)
       } else {
-        parentElement.insertAdjacentElement("afterbegin", element)
+        parentElement?.insertAdjacentElement("afterbegin", element)
       }
     }
   }
 
-  oldVirtualTreeWeakMap.set(component, virtualTree)
-}
+  oldVirtualTreeWeakMap.set(anyNamedLocked, virtualTree)
 
-export const build = (component, getBuilder, { onComplete }) => {
-  buildSemaphore(() => {
-    reconcile(component, getBuilder)
-    onComplete()
-  })
+  const reconcilerRoot = { element: virtualTree.rootVirtualElement.getElement() }
+
+  // For identification later
+  isReconcilerRootWeakMap.set(reconcilerRoot, true)
+
+  return reconcilerRoot
 }
