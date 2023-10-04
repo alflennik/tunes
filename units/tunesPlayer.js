@@ -2,7 +2,7 @@ import { define, justChanged, once, doOnce, reconcile, element } from "../utilit
 
 define("tunesPlayer", {
   watch: {
-    audioDescription: { playMode, content },
+    audioDescription: { isPrerecorded, playMode, content },
     contentBrowser: {
       video: { id, titleSentence },
       playlist: { videos },
@@ -10,6 +10,7 @@ define("tunesPlayer", {
     },
     videoPlayer: { play, content },
     voiceSynthesized: { getPermissions },
+    voicePrerecorded: { getPermissions },
     permissions: { firstInteractionInterceptor, firstInteractionComplete },
   },
   share: { video: { id, titleSentence, descriptionPath, youtubeId } },
@@ -30,7 +31,7 @@ define("tunesPlayer", {
       video = nextVideo ?? $video.lastValue
     }
 
-    voice.voiceType = once($voiceType, "synthesized")
+    voice.voiceType = isPrerecorded ? "prerecorded" : "synthesized"
 
     videoPlayer.timeInterval = once($timeInterval, 400)
 
@@ -38,6 +39,9 @@ define("tunesPlayer", {
       $onFirstInteraction,
       async ({ isKeyDown, isVideoPlayerInteraction }) => {
         await this.voiceSynthesized.getPermissions()
+        if (this.isPrerecorded) {
+          await this.voicePrerecorded.getPermissions()
+        }
         if (!isKeyDown && isVideoPlayerInteraction) this.videoPlayer.play()
       }
     )

@@ -18,7 +18,7 @@ export default {
     },
     {
       time: 37.41,
-      text: "The kid's holding a big water jug, and it's empty. They approach a ruined house hidden in a forest.",
+      text: "The kid's holding a big water jug, and it's empty, approaching a ruined house hidden in a forest.",
     },
     {
       time: 49.844,
@@ -34,7 +34,7 @@ export default {
     },
     {
       time: 78.666,
-      text: "They converge on a mucky husk of a car out back.",
+      text: "The kid converges on a mucky husk of a car out back.",
     },
     {
       time: 84.266,

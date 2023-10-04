@@ -6,8 +6,8 @@ define("audioDescription", {
     videoPlayer: { playMode, time },
     voice: { say, pause, play, clear, playMode },
   },
-  share: { playMode, content },
-  track: { descriptions, description, analysis, spokenItem },
+  share: { playMode, isPrerecorded, descriptions, content },
+  track: { description, analysis, spokenItem },
 
   update: function ({ stop }) {
     if (justChanged($video)) {
@@ -16,6 +16,7 @@ define("audioDescription", {
         const { descriptions, analysis } = descriptionModule.default
         this.descriptions = descriptions
         this.analysis = analysis
+        this.isPrerecorded = !!descriptions[0].filePath
       })
     }
 
@@ -60,6 +61,7 @@ define("audioDescription", {
       if (isVoiceReady && time && spokenItem && spokenItem !== $spokenItem.currentValue) {
         if (!isTimeSeek) {
           voice.play()
+          console.log("audioDescription say")
           voice.say(spokenItem)
         } else {
           voice.clear()

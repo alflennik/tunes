@@ -7,4 +7,5 @@ export default [
   "videoPlayer.js",
   "voice.js",
   "voiceSynthesized.js",
+  "voicePrerecorded.js",
 ]
