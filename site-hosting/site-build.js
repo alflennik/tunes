@@ -134,11 +134,11 @@ const siteBuildScript = async ({ environment }) => {
         return { name, stats }
       })
     )
-    fileData.forEach(({ fileName, stats }) => {
+    fileData.forEach(({ name, stats }) => {
       if (stats.isDirectory()) {
-        if (!assetLocations.includes(fileName) && !nonAssetLocations.includes(fileName)) {
+        if (!assetLocations.includes(name) && !nonAssetLocations.includes(name)) {
           throw new Error(
-            `Could not determine whether directory ${fileName} should be deployed. Please update ` +
+            `Could not determine whether directory ${name} should be deployed. Please update ` +
               `either the assetLocations or nonAssetLocations array with this directory name.`
           )
         }
