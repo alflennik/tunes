@@ -280,7 +280,6 @@ const sampleClips = () => {
     openings[i].push(clip.text)
   })
 
-  console.log(openings.length)
   const extraItems = openings.length - 1 - openingCount
   for (let i = 0; i < extraItems; i += 1) {
     // remove random item

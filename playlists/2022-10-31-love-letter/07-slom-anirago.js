@@ -10,7 +10,7 @@ export default {
     },
     {
       time: 14.573,
-      text: 'A woman\'s hand orgasmically slaps and holds against an office window. Titles read, "Anirago" by "Slom."',
+      text: 'A woman\'s hand orgasmically slaps and holds against a window. Titles read, "Anirago" by "Slom."',
     },
     {
       time: 23.757,

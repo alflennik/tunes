@@ -18,7 +18,7 @@ export default {
     },
     {
       time: 37.41,
-      text: "The kid's holding a big water jug, and it's empty, approaching a ruined house hidden in a forest.",
+      text: "The kid's holding a big empty water jug, approaching a ruined house hidden in a forest.",
     },
     {
       time: 49.844,

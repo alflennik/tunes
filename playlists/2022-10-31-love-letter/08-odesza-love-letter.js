@@ -54,7 +54,7 @@ export default {
     },
     {
       time: 141.085,
-      text: '"Unknown signal detected" reads out on her laptop. Standing on her building, a flying saucer descends from the sky. The deciphered signal, in alien hieroglyphics, reads "Not interested at this time."',
+      text: '"Unknown signal detected" reads out on her laptop. Standing on her building, a flying saucer descends from the sky. The deciphered signal, in alien hieroglyphics, reads "Not interested at this time," and exits back to hyperspace.',
     },
     {
       time: 161.206,
@@ -97,12 +97,8 @@ export default {
       text: "Crashing through into a storm of rejection letters.",
     },
     {
-      time: 243.819,
-      text: 'A letter falls into her hands. It reads "Congratulations!"',
-    },
-    {
-      time: 249.42,
-      text: "Somehow, she already knew.",
+      time: 244.819,
+      text: 'A letter falls into her hands. She sees the word "Congratulations!" and stops reading.',
     },
     {
       time: 253.731,
@@ -110,7 +106,7 @@ export default {
     },
     {
       time: 262.803,
-      text: "The ODESZA logo shows in the geometric shape of a diamond.",
+      text: "The ODESZA logo show, a geometric shape of a diamond.",
     },
   ],
 }
