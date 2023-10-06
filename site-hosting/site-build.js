@@ -130,7 +130,8 @@ const siteBuildScript = async ({ environment }) => {
     const fileData = await Promise.all(
       filePaths.map(async name => {
         const filePath = path.resolve(__dirname, "../", name)
-        return { name, stats: fs.stat(filePath) }
+        const stats = await fs.stat(filePath)
+        return { name, stats }
       })
     )
     fileData.forEach(({ fileName, stats }) => {
