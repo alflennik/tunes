@@ -2,8 +2,24 @@ const fs = require("fs/promises")
 const path = require("path")
 const { exec, spawn } = require("child_process")
 
-const nonAssetLocations = []
-const assetLocations = ["tunes.html", "videos", "components", "library", "utilities", "playlists"]
+const nonAssetLocations = [
+  ".git",
+  "experiment-multigraph",
+  "experiment-playlist-modeling",
+  "experiment-tree",
+  "site-hosting",
+]
+
+const assetLocations = [
+  "audio",
+  "library",
+  "playlists",
+  "units",
+  "utilities",
+  "videos",
+  "tunes.html",
+]
+
 const renameAssets = [["tunes.html", "index.html"]]
 
 const siteBuildScript = async ({ environment }) => {
