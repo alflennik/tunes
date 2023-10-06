@@ -39,9 +39,7 @@ define("tunesPlayer", {
       $onFirstInteraction,
       async ({ isKeyDown, isVideoPlayerInteraction }) => {
         await this.voiceSynthesized.getPermissions()
-        if (this.isPrerecorded) {
-          await this.voicePrerecorded.getPermissions()
-        }
+        await this.voicePrerecorded.getPermissions()
         if (!isKeyDown && isVideoPlayerInteraction) this.videoPlayer.play()
       }
     )

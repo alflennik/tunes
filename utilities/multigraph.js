@@ -478,6 +478,8 @@ export const render = (anyUnitLocked, { renderQueue = mainRenderQueue } = {}) =>
     return anyUnit.isThisUnit ? anyUnit : anyUnit.originalThisUnit
   })()
 
+  if (thisUnit.stoppedPromise) return
+
   const interrupted = currentlyRendering
   const interruptedScopeHolder = {}
   if (interrupted) unapplyWindowScope(interrupted.scope, interruptedScopeHolder)
@@ -501,9 +503,10 @@ export const render = (anyUnitLocked, { renderQueue = mainRenderQueue } = {}) =>
     thisUnit.hasRenderedOnce = true
   }
 
-  let stoppedPromise
   if (result?.then) {
-    stoppedPromise = result
+    thisUnit.stoppedPromise = result.then(() => {
+      thisUnit.stoppedPromise = null
+    })
   } else {
     thisUnit.handleChanges({ isWindowScoped: true, renderQueue })
   }
@@ -520,7 +523,7 @@ export const render = (anyUnitLocked, { renderQueue = mainRenderQueue } = {}) =>
     applyWindowScope(interruptedScopeHolder)
   }
 
-  return stoppedPromise
+  return thisUnit.stoppedPromise
 }
 
 export const define = (thisUnitName, unitConfig) => {

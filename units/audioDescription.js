@@ -3,11 +3,11 @@ import { define, justChanged, reconcile, equivalent, element } from "../utilitie
 define("audioDescription", {
   watch: {
     tunesPlayer: { video: { descriptionPath } },
-    videoPlayer: { playMode, time },
+    videoPlayer: { playMode, time, volume, setVolume },
     voice: { say, pause, play, clear, playMode },
   },
-  share: { playMode, isPrerecorded, descriptions, content },
-  track: { description, analysis, spokenItem },
+  share: { playMode, isPrerecorded, descriptions, analysis: { filePath }, content },
+  track: { description, spokenItem },
 
   update: function ({ stop }) {
     if (justChanged($video)) {
@@ -61,7 +61,6 @@ define("audioDescription", {
       if (isVoiceReady && time && spokenItem && spokenItem !== $spokenItem.currentValue) {
         if (!isTimeSeek) {
           voice.play()
-          console.log("audioDescription say")
           voice.say(spokenItem)
         } else {
           voice.clear()
@@ -75,6 +74,22 @@ define("audioDescription", {
         } else if (videoPlayer.playMode === "unstarted") {
           voice.clear()
         }
+      }
+    }
+
+    /* Video volume */
+    if (voice.playMode) {
+      switch (voice.playMode) {
+        case "ended":
+        case "paused":
+          if (volume !== 1) setVolume(1)
+          break
+        case "unstarted":
+        case "playing":
+          if (volume !== 0.5) setVolume(0.5)
+          break
+        default:
+          throw new Error("Unexpected case")
       }
     }
 

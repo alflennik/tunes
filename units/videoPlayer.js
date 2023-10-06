@@ -5,8 +5,8 @@ define("videoPlayer", {
     tunesPlayer: { video: { youtubeId } },
   },
   receive: { timeInterval },
-  share: { time, play, pause, playMode, content },
-  track: { youtubePlayer, intervalId },
+  share: { time, play, pause, playMode, volume, setVolume, content },
+  track: { youtubePlayer, intervalId, transitionVolume, transitionVolumeIntervalId },
 
   update: function ({ stop, ripple, change }) {
     if ($this.isInitialRender) {
@@ -17,16 +17,18 @@ define("videoPlayer", {
 
         const youtubePlayer = await new Promise(async resolve => {
           window.onYouTubeIframeAPIReady = () => {
-            resolve(
-              new YT.Player("player", {
-                height: "315",
-                width: "560",
-                videoId: this.youtubeId,
-                playerVars: {
-                  playsinline: 1,
-                },
-              })
-            )
+            const youtubePlayer = new YT.Player("player", {
+              height: "315",
+              width: "560",
+              videoId: this.youtubeId,
+              playerVars: {
+                playsinline: 1,
+              },
+            })
+
+            youtubePlayer.addEventListener("onReady", () => {
+              resolve(youtubePlayer)
+            })
           }
 
           var scriptElement = document.createElement("script")
@@ -35,14 +37,11 @@ define("videoPlayer", {
           firstScriptTag.parentNode.insertBefore(scriptElement, firstScriptTag)
         })
 
-        youtubePlayer.addEventListener("onReady", () => {
-          change(() => {
-            this.youtubePlayer.setVolume(50)
-          })
-        })
-
         change(() => {
           this.youtubePlayer = youtubePlayer
+          this.transitionVolume = 1
+          this.volume = 1
+          this.youtubePlayer.setVolume(this.volume * 100)
         })
       })
     }
@@ -94,6 +93,25 @@ define("videoPlayer", {
 
     pause = once($pause, () => {
       this.youtubePlayer.pauseVideo()
+    })
+
+    setVolume = once($setVolume, number => {
+      if (this.transitionVolumeIntervalId) clearInterval(this.transitionVolumeIntervalId)
+
+      this.transitionVolumeIntervalId = setInterval(() => {
+        if (this.transitionVolume < this.volume) {
+          this.transitionVolume += 0.025
+          this.youtubePlayer.setVolume(this.transitionVolume * 100)
+          if (this.transitionVolume > this.volume) clearInterval(this.transitionVolumeIntervalId)
+        }
+        if (this.transitionVolume > this.volume) {
+          this.transitionVolume -= 0.025
+          this.youtubePlayer.setVolume(this.transitionVolume * 100)
+          if (this.transitionVolume < this.volume) clearInterval(this.transitionVolumeIntervalId)
+        }
+      }, 25)
+
+      this.volume = number
     })
 
     doOnce($this, () => {

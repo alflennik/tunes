@@ -135,7 +135,7 @@ define("voiceSynthesized", {
         })
         console.log("speaking", "paused?", speechSynthesis.paused)
         speechSynthesis.speak(utterance)
-        speechSynthesis.play() // does this help?
+        speechSynthesis.resume() // does this help?
       })
     })
 
