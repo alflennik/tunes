@@ -2,6 +2,7 @@ const fs = require("fs/promises")
 const path = require("path")
 const { exec, spawn } = require("child_process")
 
+const nonAssetLocations = []
 const assetLocations = ["tunes.html", "videos", "components", "library", "utilities", "playlists"]
 const renameAssets = [["tunes.html", "index.html"]]
 
@@ -123,6 +124,28 @@ const siteBuildScript = async ({ environment }) => {
   }
 
   await clearBuildFolder()
+
+  const checkAssets = async () => {
+    const filePaths = await fs.readdir(path.resolve(__dirname, "../"))
+    const fileData = await Promise.all(
+      filePaths.map(async name => {
+        const filePath = path.resolve(__dirname, "../", name)
+        return { name, stats: fs.stat(filePath) }
+      })
+    )
+    fileData.forEach(({ fileName, stats }) => {
+      if (stats.isDirectory()) {
+        if (!assetLocations.includes(fileName) && !nonAssetLocations.includes(fileName)) {
+          throw new Error(
+            `Could not determine whether directory ${fileName} should be deployed. Please update ` +
+              `either the assetLocations or nonAssetLocations array with this directory name.`
+          )
+        }
+      }
+    })
+  }
+
+  await checkAssets()
 
   const copyAssets = async () => {
     await Promise.all(
