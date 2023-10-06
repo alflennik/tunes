@@ -18,6 +18,7 @@ const assetLocations = [
   "utilities",
   "videos",
   "tunes.html",
+  "tunes.js",
 ]
 
 const renameAssets = [["tunes.html", "index.html"]]
