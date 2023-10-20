@@ -26,7 +26,7 @@ export default {
     },
     {
       time: 87.779,
-      text: "The master demonstrates his test. In one deft move, he snaches a plastic fishy from a oversize fish bowl.",
+      text: "The master demonstrates his test. In one deft move, he snaches a plastic fishy from an oversize fish bowl.",
     },
     {
       time: 96.18,
@@ -54,7 +54,7 @@ export default {
     },
     {
       time: 141.085,
-      text: '"Unknown signal detected" reads out on her laptop. Standing on her building, a flying saucer descends from the sky. The deciphered signal, in alien hieroglyphics, reads "Not interested at this time," and exits back to hyperspace.',
+      text: '"Unknown signal detected" reads out on her laptop. Standing on her building, a flying saucer descends from the sky. The deciphered signal, in alien hieroglyphics, reads "Not interested at this time." It exits back to hyperspace.',
     },
     {
       time: 161.206,
@@ -98,7 +98,7 @@ export default {
     },
     {
       time: 244.819,
-      text: 'A letter falls into her hands. She sees the word "Congratulations!" and stops reading.',
+      text: 'A letter falls into her hands. Amazed, she sees the word "Congratulations!" and stops reading.',
     },
     {
       time: 253.731,
@@ -106,7 +106,7 @@ export default {
     },
     {
       time: 262.803,
-      text: "The ODESZA logo show, a geometric shape of a diamond.",
+      text: "The ODESZA logo, a diamond, shows.",
     },
   ],
 }

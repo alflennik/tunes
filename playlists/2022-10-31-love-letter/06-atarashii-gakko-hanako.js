@@ -38,7 +38,7 @@ export default {
     },
     {
       time: 99.455,
-      text: "She has a bloodless white face, devoid of expression, and an out-of-date schoolgirl uniform.",
+      text: "Only there for a second, the visitor had a bloodless white face, devoid of expression, and a dated schoolgirl uniform from generations past.",
     },
     {
       time: 120.3,
@@ -65,7 +65,7 @@ export default {
       text: "As she sings she gently brings her hands towards you, strokes your cheeks.",
     },
     {
-      time: 175.698,
+      time: 175.198,
       text: 'Captions read, "An eternal illusion, wash it away, from memory."',
     },
     {
