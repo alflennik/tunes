@@ -1,5 +1,16 @@
 export default [
   {
+    id: "the-chemical-brothers-skipping-like-a-stone",
+    artist: "The Chemical Brothers",
+    title: "Skipping Like A Stone",
+    featuredArtist: "Beck",
+    videoType: "musicVideo",
+    thumbnailSrc: "TODO",
+    thumbnailAlt: "TODO",
+    youtubeId: "nRtxogXp8sY",
+    descriptionPath: "/videos/the-chemical-brothers-skipping-like-a-stone.js",
+  },
+  {
     id: "annatoria-the-divide",
     artist: "Annatoria",
     title: "The Divide",
