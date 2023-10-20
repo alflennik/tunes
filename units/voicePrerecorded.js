@@ -30,12 +30,12 @@ define("voicePrerecorded", {
         this.activeElement = audioElement
         this.activePromise = new Promise(resolve => {
           const endListener = async () => {
+            this.activeElement.removeEventListener("ended", endListener)
             await change(() => {
               this.activeElement = null
               this.activePromise = null
               this.playMode = "ended"
             })
-            this.activeElement.removeEventListener("ended", endListener)
             resolve()
           }
           this.activeElement.addEventListener("ended", endListener)

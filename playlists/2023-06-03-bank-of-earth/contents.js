@@ -7,11 +7,11 @@ export default {
       id: "generation-loss-connected",
       artist: "Generation Loss",
       title: "Connected.",
-      videoType: "musicVideo",
+      videoType: "foundFootage",
       thumbnailSrc: "TODO",
       thumbnailAlt: "TODO",
       youtubeId: "9N8Y8zmvTyE",
-      descriptionPath: "/playlists/2023-06-03-bank-of-earth/01-generation-loss-connected.js"
+      descriptionPath: "/playlists/2023-06-03-bank-of-earth/01-generation-loss-connected.js",
     },
     {
       id: "aespa-im-unhappy",
@@ -22,7 +22,7 @@ export default {
       thumbnailSrc: "TODO",
       thumbnailAlt: "TODO",
       youtubeId: "CC7OrEx5H4U",
-      descriptionPath: "/playlists/2023-06-03-bank-of-earth/02-aespa-im-unhappy.js"
+      descriptionPath: "/playlists/2023-06-03-bank-of-earth/02-aespa-im-unhappy.js",
     },
     {
       id: "ice-nine-kills-assault-and-batteries",
@@ -33,7 +33,7 @@ export default {
       thumbnailAlt: "TODO",
       youtubeId: "j8vKjIakHbA",
       descriptionPath:
-        "/playlists/2023-06-03-bank-of-earth/03-ice-nine-kills-assault-and-batteries.js"
+        "/playlists/2023-06-03-bank-of-earth/03-ice-nine-kills-assault-and-batteries.js",
     },
     {
       id: "king-gizzard-and-the-lizard-wizard-gila-monster",
@@ -44,7 +44,7 @@ export default {
       thumbnailAlt: "TODO",
       youtubeId: "YQX2CsMCB9M",
       descriptionPath:
-        "/playlists/2023-06-03-bank-of-earth/04-king-gizzard-and-the-lizard-wizard-gila-monster.js"
+        "/playlists/2023-06-03-bank-of-earth/04-king-gizzard-and-the-lizard-wizard-gila-monster.js",
     },
     {
       id: "mette-mamas-eyes",
@@ -54,7 +54,7 @@ export default {
       thumbnailSrc: "TODO",
       thumbnailAlt: "TODO",
       youtubeId: "gi9OBRzbMNI",
-      descriptionPath: "/playlists/2023-06-03-bank-of-earth/05-mette-mamas-eyes.js"
+      descriptionPath: "/playlists/2023-06-03-bank-of-earth/05-mette-mamas-eyes.js",
     },
     {
       id: "mura-masa-whenever-i-want",
@@ -64,7 +64,7 @@ export default {
       thumbnailSrc: "TODO",
       thumbnailAlt: "TODO",
       youtubeId: "mQL-xrUy_eM",
-      descriptionPath: "/playlists/2023-06-03-bank-of-earth/06-mura-masa-whenever-i-want.js"
+      descriptionPath: "/playlists/2023-06-03-bank-of-earth/06-mura-masa-whenever-i-want.js",
     },
     {
       id: "code-kunst-55",
@@ -75,7 +75,7 @@ export default {
       thumbnailSrc: "TODO",
       thumbnailAlt: "TODO",
       youtubeId: "xHnuscnWaRk",
-      descriptionPath: "/playlists/2023-06-03-bank-of-earth/07-code-kunst-55.js"
+      descriptionPath: "/playlists/2023-06-03-bank-of-earth/07-code-kunst-55.js",
     },
     {
       id: "harry-styles-satellite",
@@ -85,7 +85,7 @@ export default {
       thumbnailSrc: "TODO",
       thumbnailAlt: "TODO",
       youtubeId: "bGZplqeIb3w",
-      descriptionPath: "/playlists/2023-06-03-bank-of-earth/08-harry-styles-satellite.js"
+      descriptionPath: "/playlists/2023-06-03-bank-of-earth/08-harry-styles-satellite.js",
     },
     {
       id: "aespa-welcome-to-my-world",
@@ -96,7 +96,7 @@ export default {
       thumbnailSrc: "TODO",
       thumbnailAlt: "TODO",
       youtubeId: "0xdB_vo4r2c",
-      descriptionPath: "/playlists/2023-06-03-bank-of-earth/09-aespa-welcome-to-my-world.js"
+      descriptionPath: "/playlists/2023-06-03-bank-of-earth/09-aespa-welcome-to-my-world.js",
     },
     {
       id: "greta-van-fleet-meeting-the-master",
@@ -107,7 +107,7 @@ export default {
       thumbnailAlt: "TODO",
       youtubeId: "SFFKed1Dt4I",
       descriptionPath:
-        "/playlists/2023-06-03-bank-of-earth/10-greta-van-fleet-meeting-the-master.js"
+        "/playlists/2023-06-03-bank-of-earth/10-greta-van-fleet-meeting-the-master.js",
     },
     {
       id: "niki-backburner",
@@ -117,7 +117,7 @@ export default {
       thumbnailSrc: "TODO",
       thumbnailAlt: "TODO",
       youtubeId: "BBpIV9A1PXc",
-      descriptionPath: "/playlists/2023-06-03-bank-of-earth/11-niki-backburner.js"
+      descriptionPath: "/playlists/2023-06-03-bank-of-earth/11-niki-backburner.js",
     },
     {
       id: "tatsuro-yamashita-sparkle",
@@ -127,7 +127,7 @@ export default {
       thumbnailSrc: "TODO",
       thumbnailAlt: "TODO",
       youtubeId: "pqobRu9aR3M",
-      descriptionPath: "/playlists/2023-06-03-bank-of-earth/12-tatsuro-yamashita-sparkle.js"
+      descriptionPath: "/playlists/2023-06-03-bank-of-earth/12-tatsuro-yamashita-sparkle.js",
     },
     {
       id: "rita-ora-praising-you",
@@ -138,7 +138,7 @@ export default {
       thumbnailSrc: "TODO",
       thumbnailAlt: "TODO",
       youtubeId: "_Sz7fhThrS4",
-      descriptionPath: "/playlists/2023-06-03-bank-of-earth/13-rita-ora-praising-you.js"
-    }
-  ]
+      descriptionPath: "/playlists/2023-06-03-bank-of-earth/13-rita-ora-praising-you.js",
+    },
+  ],
 }
