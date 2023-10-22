@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en" class="sl-theme-dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Shoelace Style</title>
+    <style>
+      body {
+        background: #1a1a1e;
+      }
+    </style>
+  </head>
+  <body>
+    <sl-tree selection="leaf">
+      <sl-tree-item>
+        Deciduous
+        <sl-tree-item>Birch</sl-tree-item>
+        <sl-tree-item>
+          Maple
+          <sl-tree-item>Field maple</sl-tree-item>
+          <sl-tree-item>Red maple</sl-tree-item>
+          <sl-tree-item>Sugar maple</sl-tree-item>
+        </sl-tree-item>
+        <sl-tree-item>Oak</sl-tree-item>
+      </sl-tree-item>
+
+      <sl-tree-item>
+        Coniferous
+        <sl-tree-item>Cedar</sl-tree-item>
+        <sl-tree-item>Pine</sl-tree-item>
+        <sl-tree-item>Spruce</sl-tree-item>
+      </sl-tree-item>
+
+      <sl-tree-item>
+        Non-trees
+        <sl-tree-item>Bamboo</sl-tree-item>
+        <sl-tree-item>Cactus</sl-tree-item>
+        <sl-tree-item>Fern</sl-tree-item>
+      </sl-tree-item>
+    </sl-tree>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.11.0/cdn/themes/dark.css"
+    />
+    <script
+      type="module"
+      src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.11.0/cdn/shoelace-autoloader.js"
+    ></script>
+  </body>
+</html>
