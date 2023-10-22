@@ -14,7 +14,7 @@ define("contentBrowser", {
   },
   share: {
     playlist: { id, title, videos },
-    video: { id, titleSentence },
+    video: { id, titleSentence, youtubeWidth, youtubeHeight },
     content,
   },
   track: { playlists, select },

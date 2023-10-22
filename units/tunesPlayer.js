@@ -4,7 +4,7 @@ define("tunesPlayer", {
   watch: {
     audioDescription: { isPrerecorded, playMode, content },
     contentBrowser: {
-      video: { id, titleSentence },
+      video: { id, titleSentence, youtubeWidth, youtubeHeight },
       playlist: { videos },
       content,
     },
@@ -58,12 +58,18 @@ define("tunesPlayer", {
             element("h2").attributes({ id: "player-h2", tabindex: "-1" }).text("Player")
           ),
         element("tunes-player").items(
-          firstInteractionInterceptor?.({
-            items: element("button").text(`Play ${video.titleSentence}`),
-          }),
           element("video-player")
+            .styles({
+              "--video-width": video.youtubeWidth ?? 1920,
+              "--video-height": video.youtubeHeight ?? 1080,
+            })
             .attributes({ "aria-hidden": firstInteractionComplete ? undefined : true })
-            .items(videoPlayer.content),
+            .items(
+              firstInteractionInterceptor?.({
+                items: element("button").text(`Play ${video.titleSentence}`),
+              }),
+              videoPlayer.content
+            ),
           audioDescription.content
         )
       )

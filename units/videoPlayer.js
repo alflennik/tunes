@@ -22,7 +22,9 @@ define("videoPlayer", {
               width: "560",
               videoId: this.youtubeId,
               playerVars: {
-                playsinline: 1,
+                playsinline: 1, // Instead of immediately going full screen.
+                color: "white", // Instead of youtube red.
+                rel: 0, // Only show videos from the same channel after it ends.
               },
             })
 
