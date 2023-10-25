@@ -80,7 +80,8 @@
         --aspect-ratio: calc(var(--video-width) / var(--video-height));
         aspect-ratio: var(--aspect-ratio);
         --max-height: calc(100dvh - var(--description-total-height));
-        --height: min(var(--max-height), calc(100vw / var(--aspect-ratio)));
+        --full-width: calc(100vw - var(--scrollbar-width));
+        --height: min(var(--max-height), calc(var(--full-width) / var(--aspect-ratio)));
         height: var(--height);
         width: calc(var(--height) * var(--aspect-ratio));
       }

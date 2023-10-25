@@ -87,8 +87,9 @@ define("tunesPlayer", {
         element("tunes-player").items(
           element("video-player")
             .styles({
-              "--video-width": video.youtubeWidth ?? 1920,
-              "--video-height": video.youtubeHeight ?? 1080,
+              "--scrollbar-width": window.innerWidth - document.body.clientWidth + "px",
+              "--video-width": video.youtubeWidth,
+              "--video-height": video.youtubeHeight,
             })
             .attributes({ "aria-hidden": firstInteractionComplete ? undefined : true })
             .items(
