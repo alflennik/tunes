@@ -95,6 +95,7 @@ const getAnyOutValue = (anyOut, value) => {
         get: (_, key) => {
           if (!outUnit.subproperties[key]) return undefined
           if (managedProperties.hasOwnProperty(key)) return managedProperties[key]
+          if (!outUnit.originalThisUnit.subproperties[key]) return undefined
           return getAnyOutValue(
             outUnit.subproperties[key],
             outUnit.originalThisUnit.subproperties[key].value
@@ -478,8 +479,6 @@ export const render = (anyUnitLocked, { renderQueue = mainRenderQueue } = {}) =>
     return anyUnit.isThisUnit ? anyUnit : anyUnit.originalThisUnit
   })()
 
-  if (thisUnit.stoppedPromise) return
-
   const interrupted = currentlyRendering
   const interruptedScopeHolder = {}
   if (interrupted) unapplyWindowScope(interrupted.scope, interruptedScopeHolder)
@@ -630,10 +629,12 @@ const defineAllNamed = () => {
     addToScope(thisUnit.scope, name, inProperty)
 
     if (propertyType === "manage") {
-      if (manageProperties[name]) {
+      if (manageProperties[parent.name]?.[name]) {
         throw new Error(`Found multiple units attempting to manage "${name}"`)
       }
-      manageProperties[name] = inProperty
+      inProperty.outUnit = parent
+      if (!manageProperties[parent.name]) manageProperties[parent.name] = {}
+      manageProperties[parent.name][name] = inProperty
     }
 
     return inProperty
@@ -674,12 +675,12 @@ const defineAllNamed = () => {
         }
       })()
     } else if (propertyType === "receive") {
-      if (!manageProperties[name]) {
+      if (!manageProperties[outProperty.thisUnit.name]?.[name]) {
         throw new Error(
           `Receive property ${name} in unit ${thisUnit.name} was not managed by any other units`
         )
       }
-      outProperty.inProperty = manageProperties[name]
+      outProperty.inProperty = manageProperties[outProperty.thisUnit.name][name]
     }
 
     outProperty.inProperty.outProperties.push(outProperty)
@@ -884,7 +885,9 @@ const defineAllNamed = () => {
     thisUnit.change = async callback => {
       callback()
       thisUnit.handleChanges({ isWindowScoped: false })
-      render(thisUnit)
+      const renderQueue = thisUnit.currentRenderQueue ?? mainRenderQueue
+      renderQueue.add(thisUnit)
+      if (thisUnit.stoppedPromise) return
       return new Promise(resolve => {
         mainRenderQueue.onEmpty(resolve)
       })
@@ -910,7 +913,7 @@ const defineAllNamed = () => {
 
       const promise = finishedStopping.then(() => {
         thisUnit.handleChanges({ isWindowScoped: false, renderQueue })
-        render(thisUnit)
+        renderQueue.add(thisUnit)
       })
 
       renderQueue.stop(promise)

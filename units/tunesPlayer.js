@@ -3,17 +3,14 @@ import { define, justChanged, once, doOnce, reconcile, element } from "../utilit
 define("tunesPlayer", {
   watch: {
     audioDescription: { isPrerecorded, playMode, ui },
-    contentBrowser: {
-      ui,
-      video: { id, titleSentence, youtubeWidth, youtubeHeight },
-      playlist: { videos },
-    },
+    contentBrowser: { ui },
     videoPlayer: { play, ui },
     voiceSynthesized: { getPermissions },
     voicePrerecorded: { getPermissions },
     permissions: { firstInteractionInterceptor, firstInteractionComplete },
   },
-  share: { video: { id, titleSentence, descriptionPath, youtubeId } },
+  share: { video: { id, titleSentence, descriptionPath, youtubeId }, playlist, playContent },
+  receive: { playlists },
   manage: {
     voice: { voiceType },
     videoPlayer: { timeInterval },
@@ -21,14 +18,44 @@ define("tunesPlayer", {
   },
   track: { rootUi },
 
-  update: function () {
-    /* video */
-    if (justChanged($contentBrowser.$video)) {
-      video = contentBrowser.video
-    } else if (playlist && justChanged($audioDescription.$playMode, "ended")) {
-      const currentIndex = playlist.videos.findIndex(each => each.id === contentBrowser.video.id)
-      const nextVideo = playlist.videos[currentIndex + 1]
-      video = nextVideo ?? $video.lastValue
+  update: function ({ change }) {
+    /* active playlist and video */
+    {
+      doOnce($this, () => {
+        // Cannot show a playlist with a content advisory by default because it would bypass the
+        // permission dialog
+        playlist = playlists.find(each => !each.needsContentAdvisory)
+        video = playlist.videos[0]
+      })
+
+      playContent = once($playContent, async ({ playlist, video }) => {
+        if (
+          playlist?.needsContentAdvisory &&
+          !window.confirm(
+            "This playlist contains content some viewers might find disturbing, are you sure you " +
+              "want to continue?"
+          )
+        ) {
+          return
+        }
+
+        await change(() => {
+          this.playlist = playlist
+          this.video = video ?? playlist?.videos[0]
+        })
+
+        document.querySelector("#player-h2").focus({ preventScroll: true })
+        document
+          .querySelector("tunes-player")
+          .scrollIntoView({ behavior: "smooth", block: "start" })
+        this.videoPlayer.play()
+      })
+
+      if (playlist && justChanged($audioDescription.$playMode, "ended")) {
+        const currentIndex = playlist.videos.findIndex(each => each.id === video.id)
+        const nextVideo = playlist.videos[currentIndex + 1]
+        video = nextVideo ?? $video.lastValue
+      }
     }
 
     voice.voiceType = isPrerecorded ? "prerecorded" : "synthesized"
@@ -75,7 +102,7 @@ define("tunesPlayer", {
       )
     )
 
-    doOnce($Ui, () => {
+    doOnce($rootUi, () => {
       document.body.appendChild(rootUi.element)
     })
   },

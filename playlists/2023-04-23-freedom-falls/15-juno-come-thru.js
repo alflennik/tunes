@@ -33,7 +33,7 @@ export default {
       text: "They take turns approaching the fisheye lens, letting it warp and expand their shapes to heroic proportions.",
     },
     {
-      time: 160.646,
+      time: 161.784,
       text: "Her whole body bounces as she releases that confession.",
     },
   ],
