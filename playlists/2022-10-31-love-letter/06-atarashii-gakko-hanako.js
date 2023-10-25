@@ -37,7 +37,7 @@ export default {
       text: "Someone is in the room with them.",
     },
     {
-      time: 99.455,
+      time: 97.847,
       text: "Only there for a second, the visitor had a bloodless white face, devoid of expression, and a dated schoolgirl uniform from generations past.",
     },
     {
@@ -46,14 +46,14 @@ export default {
     },
     {
       time: 131.802,
-      text: "Dripping in cold sweat, the girls each turn and look.",
+      text: "Dripping in cold sweat, the girls sense her presence.",
     },
     {
       time: 139.935,
       text: "The bathroom door jiggles.",
     },
     {
-      time: 145.846,
+      time: 147.693,
       text: "The ghost leans in, close enough almost to kiss your nose.",
     },
     {
@@ -70,7 +70,7 @@ export default {
     },
     {
       time: 187.571,
-      text: "Hanako gone, the four girls dance.",
+      text: "Hanako gone, the four girls hold hands and dance.",
     },
     {
       time: 201.57,

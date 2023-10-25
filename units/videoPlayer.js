@@ -24,7 +24,7 @@ define("videoPlayer", {
               playerVars: {
                 playsinline: 1, // Instead of immediately going full screen.
                 color: "white", // Instead of youtube red.
-                rel: 0, // Prefer videos from the same channel after it ends.
+                rel: 0, // Recommend videos from the same channel after it ends.
               },
             })
 
@@ -33,9 +33,9 @@ define("videoPlayer", {
             })
           }
 
-          var scriptElement = document.createElement("script")
+          const scriptElement = document.createElement("script")
           scriptElement.src = "https://www.youtube.com/iframe_api"
-          var firstScriptTag = document.getElementsByTagName("script")[0]
+          const firstScriptTag = document.getElementsByTagName("script")[0]
           firstScriptTag.parentNode.insertBefore(scriptElement, firstScriptTag)
         })
 

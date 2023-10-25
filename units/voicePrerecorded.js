@@ -1,7 +1,6 @@
 import { define, once } from "../utilities/multigraph.js"
 
 define("voicePrerecorded", {
-  watch: { audioDescription: { descriptions, analysis: { filePath } } },
   share: { say, clear, pause, play, playMode, getPermissions },
   track: { audioElements, activeElement, activePromise },
 

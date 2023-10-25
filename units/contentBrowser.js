@@ -9,8 +9,7 @@ const otherVideos = rawOtherVideos.map(video => ({
 
 define("contentBrowser", {
   watch: {
-    tunesPlayer: { video: { id, titleSentence }, playContent },
-    videoPlayer: { play },
+    tunesPlayer: { video: { id }, playContent },
   },
   receive: { playlists },
   share: { ui },

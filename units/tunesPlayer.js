@@ -9,14 +9,14 @@ define("tunesPlayer", {
     voicePrerecorded: { getPermissions },
     permissions: { firstInteractionInterceptor, firstInteractionComplete },
   },
-  share: { video: { id, titleSentence, descriptionPath, youtubeId }, playlist, playContent },
+  share: { video: { id, titleSentence, descriptionPath, youtubeId }, playContent },
   receive: { playlists },
   manage: {
     voice: { voiceType },
     videoPlayer: { timeInterval },
     permissions: { onFirstInteraction },
   },
-  track: { rootUi },
+  track: { rootUi, playlist },
 
   update: function ({ change }) {
     /* active playlist and video */

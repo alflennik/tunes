@@ -14,7 +14,7 @@ export default {
     },
     {
       time: 23.757,
-      text: "The man walks into the office. He wears a suit, just like most everyone else.",
+      text: "The man walks into the office. He wears a suit, outclassing the clothing of most everyone else.",
     },
     {
       time: 41.46,
