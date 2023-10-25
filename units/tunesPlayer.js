@@ -2,13 +2,13 @@ import { define, justChanged, once, doOnce, reconcile, element } from "../utilit
 
 define("tunesPlayer", {
   watch: {
-    audioDescription: { isPrerecorded, playMode, content },
+    audioDescription: { isPrerecorded, playMode, ui },
     contentBrowser: {
+      ui,
       video: { id, titleSentence, youtubeWidth, youtubeHeight },
       playlist: { videos },
-      content,
     },
-    videoPlayer: { play, content },
+    videoPlayer: { play, ui },
     voiceSynthesized: { getPermissions },
     voicePrerecorded: { getPermissions },
     permissions: { firstInteractionInterceptor, firstInteractionComplete },
@@ -19,7 +19,7 @@ define("tunesPlayer", {
     videoPlayer: { timeInterval },
     permissions: { onFirstInteraction },
   },
-  track: { rootContent },
+  track: { rootUi },
 
   update: function () {
     /* video */
@@ -44,8 +44,8 @@ define("tunesPlayer", {
       }
     )
 
-    rootContent = reconcile(
-      $rootContent,
+    rootUi = reconcile(
+      $rootUi,
       element("root-element").items(
         element("div")
           .attributes({ class: "content-container" })
@@ -54,7 +54,7 @@ define("tunesPlayer", {
             element("p").text(
               "The Tunes project implements audio descriptions for music videos, which are written by some guy named Alex."
             ),
-            contentBrowser.content,
+            contentBrowser.ui,
             element("h2").attributes({ id: "player-h2", tabindex: "-1" }).text("Player")
           ),
         element("tunes-player").items(
@@ -68,15 +68,15 @@ define("tunesPlayer", {
               firstInteractionInterceptor?.({
                 items: element("button").text(`Play ${video.titleSentence}`),
               }),
-              videoPlayer.content
+              videoPlayer.ui
             ),
-          audioDescription.content
+          audioDescription.ui
         )
       )
     )
 
-    doOnce($rootContent, () => {
-      document.body.appendChild(rootContent.element)
+    doOnce($Ui, () => {
+      document.body.appendChild(rootUi.element)
     })
   },
 })

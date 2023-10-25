@@ -15,7 +15,7 @@ define("contentBrowser", {
   share: {
     playlist: { id, title, videos },
     video: { id, titleSentence, youtubeWidth, youtubeHeight },
-    content,
+    ui,
   },
   track: { playlists, select },
 
@@ -69,8 +69,8 @@ define("contentBrowser", {
       this.videoPlayer.play()
     })
 
-    content = reconcile(
-      $content,
+    ui = reconcile(
+      $ui,
       element("content-browser").items(
         element("h2").text("Playlists"),
         ...playlists.map(playlist =>

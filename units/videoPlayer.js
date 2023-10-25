@@ -5,14 +5,14 @@ define("videoPlayer", {
     tunesPlayer: { video: { youtubeId } },
   },
   receive: { timeInterval },
-  share: { time, play, pause, playMode, volume, setVolume, content },
+  share: { time, play, pause, playMode, volume, setVolume, ui },
   track: { youtubePlayer, intervalId, transitionVolume, transitionVolumeIntervalId },
 
   update: function ({ stop, ripple, change }) {
     if ($this.isInitialRender) {
       return stop(async () => {
         await ripple(() => {
-          this.content = reconcile(this.$content, element("div").attributes({ id: "player" }))
+          this.ui = reconcile(this.$ui, element("div").attributes({ id: "player" }))
         })
 
         const youtubePlayer = await new Promise(async resolve => {
@@ -24,7 +24,7 @@ define("videoPlayer", {
               playerVars: {
                 playsinline: 1, // Instead of immediately going full screen.
                 color: "white", // Instead of youtube red.
-                rel: 0, // Only show videos from the same channel after it ends.
+                rel: 0, // Prefer videos from the same channel after it ends.
               },
             })
 

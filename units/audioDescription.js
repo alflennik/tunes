@@ -6,7 +6,7 @@ define("audioDescription", {
     videoPlayer: { playMode, time, volume, setVolume },
     voice: { say, pause, play, clear, playMode },
   },
-  share: { playMode, isPrerecorded, descriptions, analysis: { filePath }, content },
+  share: { playMode, isPrerecorded, descriptions, analysis: { filePath }, ui },
   track: { description, spokenItem },
 
   update: function ({ stop }) {
@@ -93,8 +93,8 @@ define("audioDescription", {
       }
     }
 
-    content = reconcile(
-      $content,
+    ui = reconcile(
+      $ui,
       element("audio-description").items(
         element("div")
           .attributes({ class: "wrapping-box" })
