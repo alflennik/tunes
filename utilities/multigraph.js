@@ -60,6 +60,7 @@ function RenderQueue() {
     },
 
     onEmpty: callback => {
+      if (stopCount === 0) callback()
       onEmptyCallbacks.push(callback)
     },
   }
