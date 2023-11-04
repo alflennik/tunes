@@ -1,6 +1,7 @@
 import { define, doOnce, once } from "../utilities/multigraph.js"
 
 define("voiceSynthesized", {
+  receive: { isIOS },
   share: { say, clear, pause, play, playMode, getPermissions },
   track: { permissionGranted, voiceName, voiceRate, activeUtterances },
 
@@ -117,9 +118,9 @@ define("voiceSynthesized", {
       const voice = speechSynthesis.getVoices().find(each => each.name === this.voiceName)
       const utterance = new SpeechSynthesisUtterance(description.text)
 
-      // On iOS the best voice is the default voice, which is not listed in the voice list
-      const isIOS = /iPhone|iPod|iPad/.test(navigator.platform)
-      if (!isIOS) {
+      // On older versions of iOS (v16) the best voice is the default voice, which is not listed in
+      // the voice list
+      if (!this.isIOS) {
         utterance.voice = voice
         utterance.rate = this.voiceRate
       } else {
@@ -146,7 +147,7 @@ define("voiceSynthesized", {
           description.text
         )
         speechSynthesis.speak(utterance)
-        speechSynthesis.resume() // does this help?
+        // speechSynthesis.resume() // does this help?
       })
     })
 

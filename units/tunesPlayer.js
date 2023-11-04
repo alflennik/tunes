@@ -13,10 +13,11 @@ define("tunesPlayer", {
   receive: { playlists },
   manage: {
     voice: { voiceType },
+    voiceSynthesized: { isIOS },
     videoPlayer: { timeInterval },
     permissions: { onFirstInteraction },
   },
-  track: { rootUi, playlist },
+  track: { rootUi, playlist, isIOS },
 
   update: function ({ change }) {
     /* active playlist and video */
@@ -58,7 +59,15 @@ define("tunesPlayer", {
       }
     }
 
-    voice.voiceType = isPrerecorded ? "prerecorded" : "synthesized"
+    doOnce($isIOS, () => {
+      isIOS = /iPhone|iPod|iPad/.test(navigator.platform)
+      voiceSynthesized.isIOS = isIOS
+    })
+
+    voice.voiceType = (() => {
+      if (isIOS) return "synthesized" // Not usable on iOS since there is no audio ducking control
+      return isPrerecorded ? "prerecorded" : "synthesized"
+    })()
 
     videoPlayer.timeInterval = once($timeInterval, 400)
 
