@@ -2,9 +2,16 @@ import { define, doOnce, once } from "../utilities/multigraph.js"
 
 define("voiceSynthesized", {
   share: { say, clear, pause, play, playMode, getPermissions },
-  track: { permissionGranted, sayCount, voiceName, voiceRate },
+  track: { permissionGranted, voiceName, voiceRate, activeUtterances },
 
   update: function ({ stop, change }) {
+    // A reference needs to be kept for active utterances, or they might be garbage collected!
+    // See https://stackoverflow.com/a/35935851/3888572
+    // See https://bugs.chromium.org/p/chromium/issues/detail?id=509488
+    doOnce($this.$activeUtterances, () => {
+      activeUtterances = new Set()
+    })
+
     getPermissions = once($getPermissions, () => {
       return stop(async () => {
         const setBestVoice = () => {
@@ -104,10 +111,6 @@ define("voiceSynthesized", {
       permissionGranted = false
     })
 
-    doOnce($sayCount, () => {
-      sayCount = 0
-    })
-
     say = once($say, async description => {
       if (!this.permissionGranted) throw new Error("Voice permissions were not granted")
 
@@ -126,19 +129,19 @@ define("voiceSynthesized", {
       return new Promise(async resolve => {
         utterance.addEventListener("end", async () => {
           change(() => {
-            this.sayCount -= 1
+            this.activeUtterances.delete(utterance)
           })
-          console.log("speaking done. sayCount", this.sayCount)
+          console.log("speaking done. activeUtterances.size", this.activeUtterances.size)
           resolve()
         })
         change(() => {
-          this.sayCount += 1
+          this.activeUtterances.add(utterance)
         })
         console.log(
           "speaking paused?",
           speechSynthesis.paused,
-          "sayCount",
-          this.sayCount,
+          "activeUtterances.size",
+          this.activeUtterances.size,
           "description.text",
           description.text
         )
@@ -149,7 +152,7 @@ define("voiceSynthesized", {
 
     clear = once($clear, () => {
       change(() => {
-        this.sayCount = 0
+        this.activeUtterances.clear()
       })
       speechSynthesis.cancel()
     })
@@ -163,7 +166,7 @@ define("voiceSynthesized", {
     })
 
     playMode = (() => {
-      if (sayCount === 0) return "ended"
+      if (activeUtterances.size === 0) return "ended"
       return speechSynthesis.paused ? "paused" : "playing"
     })()
   },
