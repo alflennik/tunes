@@ -12,7 +12,7 @@ Instructions:
   const date = new Date(
     Date.parse(
       document
-        .querySelector("tp-yt-paper-tooltip[for=info] #tooltip")
+        .querySelector("tp-yt-paper-tooltip.ytd-watch-info-text #tooltip")
         .innerText.match(/•\s*(?:Premiered )?(\w{3} \d{1,2}, \d{4})/)[1]
     )
   )
