@@ -34,11 +34,11 @@ export default {
     },
     {
       time: 97.856,
-      text: "Glowering or no, this girl has charisma, especially compared to her high school compatriots come in to surround her.",
+      text: "Glowering or no, this girl has charisma, especially compared to her high school compatriots who come in to surround her.",
     },
     {
       time: 133.057,
-      text: "Everyone takes out their phones and films her dance.",
+      text: "Everyone takes out their phones and film her dance.",
     },
     {
       time: 160.256,

@@ -147,7 +147,7 @@ define("voiceSynthesized", {
           description.text
         )
         speechSynthesis.speak(utterance)
-        // speechSynthesis.resume() // does this help?
+        speechSynthesis.resume() // Required by Chrome
       })
     })
 
