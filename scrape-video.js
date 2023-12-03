@@ -7,8 +7,8 @@ Instructions:
 */
 
 ;(() => {
-  const youtubeWidth = document.querySelector("video").videoWidth
-  const youtubeHeight = document.querySelector("video").videoHeight
+  const width = document.querySelector("video").videoWidth
+  const height = document.querySelector("video").videoHeight
   const date = new Date(
     Date.parse(
       document
@@ -19,18 +19,29 @@ Instructions:
     .toISOString()
     .substring(0, 10)
 
+  const duration = document.querySelector(".ytp-time-duration").innerText
+
   const id = document.location.href.match(/v=(.+?)&/)[1]
 
   const thumbnailSrc = `https://img.youtube.com/vi/${id}/maxresdefault.jpg`
 
+  const channel = document.querySelector(".ytd-video-owner-renderer .ytd-channel-name a").innerText
+
+  const title = document.querySelector("#title h1").innerText
+
   const output = {
-    // id,
-    date,
+    youtubeVideo: {
+      id,
+      date,
+      duration,
+      width,
+      height,
+      channel,
+      title,
+    },
     thumbnailSrc,
-    youtubeWidth,
-    youtubeHeight,
   }
   console.log(output)
-  copy(output)
+  copy(`${JSON.stringify(output, null, "  ")},`)
   console.log("✅ Copied to clipboard")
 })()

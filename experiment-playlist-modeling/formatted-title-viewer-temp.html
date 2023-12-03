@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      textarea,
+      input {
+        width: 100%;
+      }
+      textarea {
+        height: 400px;
+      }
+    </style>
+  </head>
+  <body>
+    <textarea>
+    {
+      youtubeVideo: {
+        id: "W7AeETUJwy4",
+        date: "2023-08-08",
+        duration: "3:46",
+        width: 2560,
+        height: 1440,
+        channel: "Hikari Mitsushima  満島ひかり",
+        title: "Hikari Mitsushima「Shadow Dance (Prod. MONDO GROSSO)」MUSIC VIDEO",
+      },
+      videoType: "musicVideo",
+      providedVideoTypeLabel: "musicVideo",
+      song: {
+        by: {
+          artist: "Hikari Mitsushima",
+          featuring: {
+            featuringType: "producedBy",
+            artist: "MONDO GROSSO",
+          },
+        },
+        title: "Shadow Dance",
+      },
+      thumbnailSrc: "https://img.youtube.com/vi/W7AeETUJwy4/maxresdefault.jpg",
+    }
+  </textarea
+    ><br />
+    <input type="text" readonly />
+    <script>
+      const formatTitle = video => {
+        if (!video.song) return video.youtubeVideo.title
+
+        let artistFormatted
+        if (video.song.by.artists) {
+          artistFormatted = video.song.by.artists.join(", ")
+        } else {
+          artistFormatted = video.song.by.artist
+        }
+
+        let featuredArtistFormatted
+        const featuredList =
+          video.song.by.featuring?.artists?.join(", ") ?? video.song.by.featuring?.artist ?? ""
+        if (featuredList) {
+          if (video.song.by.featuring.featuringType === "producedBy") {
+            featuredArtistFormatted = `prod. ${featuredList}`
+          } else {
+            featuredArtistFormatted = `feat. ${featuredList}`
+          }
+        } else {
+          featuredArtistFormatted = ""
+        }
+
+        const videoTypeLabels = [
+          ["officialLyricVideo", "Lyric Video"],
+          ["fanVideo", "Fan Video"],
+          ["unlabeled", ""],
+        ]
+        const videoTypes = videoTypeLabels.map(item => item[0])
+
+        let videoTypeFormatted
+        if (video.providedVideoTypeCustomLabel) {
+          videoTypeFormatted = video.providedVideoTypeCustomLabel
+        } else if (video.providedVideoTypeLabel === "misleading") {
+          videoTypeFormatted =
+            videoTypeLabels[videoTypes.findIndex(typeName => typeName === video.videoType)][1]
+        } else if (videoTypes.includes(video.providedVideoTypeLabel)) {
+          videoTypeFormatted =
+            videoTypeLabels[
+              videoTypes.findIndex(typeName => typeName === video.providedVideoTypeLabel)
+            ][1]
+        } else if (video.videoType === "musicVideo") {
+          videoTypeFormatted = "" // It's like the default
+        } else if (video.videoType === "livePerformance") {
+          videoTypeFormatted = "Live"
+        }
+
+        let coverFormatted
+        if (video.song.by?.covering?.artist) {
+          coverFormatted = `${video.song.by?.covering?.artist} Cover`
+        } else {
+          coverFormatted = ""
+        }
+
+        let seriesFormatted
+        if (video.series) {
+          seriesFormatted = `| ${video.series}`
+        } else {
+          seriesFormatted = ""
+        }
+
+        const inParens = text => (text ? `(${text})` : "")
+
+        const finalTitle = [
+          artistFormatted,
+          "-",
+          video.song.title,
+          inParens(featuredArtistFormatted),
+          inParens(coverFormatted),
+          inParens(videoTypeFormatted),
+          inParens(video.titleAddendum),
+          seriesFormatted,
+        ]
+          .filter(item => item)
+          .join(" ")
+
+        return finalTitle
+      }
+
+      const refresh = () => {
+        const video = eval(`(${document.querySelector("textarea").value})`)
+        // const video = JSON.parse(document.querySelector("textarea").value)
+        const input = document.querySelector("input")
+        input.value = formatTitle(video)
+      }
+
+      document.querySelector("textarea").addEventListener("input", refresh)
+
+      refresh()
+    </script>
+  </body>
+</html>
