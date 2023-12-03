@@ -96,7 +96,7 @@ define("tunesPlayer", {
         element("tunes-player").items(
           element("video-player")
             .styles({
-              "--scrollbar-width": window.innerWidth - document.body.clientWidth + "px",
+              "--scrollbar-width": getScrollBarWidth() + "px",
               "--video-width": video.youtubeWidth,
               "--video-height": video.youtubeHeight,
             })
