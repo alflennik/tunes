@@ -22,7 +22,7 @@ export default {
     },
     {
       time: 49.844,
-      text: "Delapidated, mucky and unlit, there are still cans and bottles in the dead refrigerator.",
+      text: "Dilapidated, mucky and unlit, there are still cans and bottles in the dead refrigerator.",
     },
     {
       time: 60.895,
