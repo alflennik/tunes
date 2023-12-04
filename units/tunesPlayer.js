@@ -1,4 +1,5 @@
 import { define, justChanged, once, doOnce, reconcile, element } from "../utilities/multigraph.js"
+import getScrollBarWidth from "../utilities/getScrollbarWidth.js"
 
 define("tunesPlayer", {
   watch: {
@@ -13,11 +14,11 @@ define("tunesPlayer", {
   receive: { playlists },
   manage: {
     voice: { voiceType },
-    voiceSynthesized: { isIOS },
+    voiceSynthesized: { isIOS, isAndroid },
     videoPlayer: { timeInterval },
     permissions: { onFirstInteraction },
   },
-  track: { rootUi, playlist, isIOS },
+  track: { rootUi, playlist, isIOS, isAndroid },
 
   update: function ({ change }) {
     /* active playlist and video */
@@ -61,7 +62,9 @@ define("tunesPlayer", {
 
     doOnce($isIOS, () => {
       isIOS = /iPhone|iPod|iPad/.test(navigator.platform)
+      isAndroid = /android/i.test(navigator.userAgent)
       voiceSynthesized.isIOS = isIOS
+      voiceSynthesized.isAndroid = isAndroid
     })
 
     voice.voiceType = (() => {

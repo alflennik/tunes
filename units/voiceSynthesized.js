@@ -1,9 +1,9 @@
 import { define, doOnce, once } from "../utilities/multigraph.js"
 
 define("voiceSynthesized", {
-  receive: { isIOS },
+  receive: { isIOS, isAndroid },
   share: { say, clear, pause, play, playMode, getPermissions },
-  track: { permissionGranted, voiceName, voiceRate, activeUtterances },
+  track: { permissionGranted, voiceName, voiceRate, activeUtterances, androidNeedsRestart },
 
   update: function ({ stop, change }) {
     // A reference needs to be kept for active utterances, or they might be garbage collected!
@@ -35,6 +35,9 @@ define("voiceSynthesized", {
             // Windows
             ["Microsoft Steffan Online (Natural) - English (United States)", 1.7], // Edge only
             ["Microsoft Mark - English (United States)", isChrome ? 2.8 : 1.7], // Chrome and Firefox
+
+            // Android
+            ["English United States", 1.7],
           ]
 
           let defaultVoice
@@ -45,7 +48,9 @@ define("voiceSynthesized", {
           let foundVoiceName
           let foundVoiceRate
 
-          const englishVoices = speechSynthesis.getVoices().filter(voice => voice.lang === "en-US")
+          const englishVoices = speechSynthesis
+            .getVoices()
+            .filter(voice => voice.lang === "en-US" || voice.lang === "en_US")
 
           for (const voice of englishVoices) {
             for (let i = 0; i < bestVoicesAndRates.length; i += 1) {
@@ -132,22 +137,13 @@ define("voiceSynthesized", {
           change(() => {
             this.activeUtterances.delete(utterance)
           })
-          console.log("speaking done. activeUtterances.size", this.activeUtterances.size)
           resolve()
         })
         change(() => {
           this.activeUtterances.add(utterance)
         })
-        console.log(
-          "speaking paused?",
-          speechSynthesis.paused,
-          "activeUtterances.size",
-          this.activeUtterances.size,
-          "description.text",
-          description.text
-        )
         speechSynthesis.speak(utterance)
-        speechSynthesis.resume() // Required by Chrome
+        speechSynthesis.resume() // Required by desktop Chrome
       })
     })
 
@@ -159,6 +155,8 @@ define("voiceSynthesized", {
     })
 
     pause = once($pause, () => {
+      // In Android pause is the same as clear and must be handled as such
+      if (this.isAndroid) return this.clear()
       speechSynthesis.pause()
     })
 
