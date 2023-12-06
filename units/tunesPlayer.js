@@ -11,7 +11,7 @@ define("tunesPlayer", {
     permissions: { firstInteractionInterceptor, firstInteractionComplete },
   },
   share: { video: { id, titleSentence, descriptionPath, youtubeId }, playContent },
-  receive: { playlists },
+  receive: { playlists, otherVideos },
   manage: {
     voice: { voiceType },
     voiceSynthesized: { isIOS, isAndroid },
@@ -24,6 +24,34 @@ define("tunesPlayer", {
     /* active playlist and video */
     {
       doOnce($this, () => {
+        if (location.hash) {
+          const onRenderedWholeApp = callback => change(() => {}).then(callback)
+
+          onRenderedWholeApp(() => {
+            document.querySelector("#player-h2").focus({ preventScroll: true })
+            document
+              .querySelector("tunes-player")
+              .scrollIntoView({ behavior: "instant", block: "start" })
+          })
+
+          const videoId = location.hash.substring(1)
+          const otherVideo = this.otherVideos.find(video => video.id === videoId)
+          if (otherVideo) {
+            video = otherVideo
+            return
+          }
+
+          for (const eachPlaylist of this.playlists) {
+            for (const eachVideo of eachPlaylist.videos) {
+              if (eachVideo.id === videoId) {
+                playlist = eachPlaylist
+                video = eachVideo
+                return
+              }
+            }
+          }
+        }
+
         // Cannot show a playlist with a content advisory by default because it would bypass the
         // permission dialog
         playlist = playlists.find(each => !each.needsContentAdvisory)

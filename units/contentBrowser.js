@@ -1,17 +1,10 @@
-import formatTitle from "../library/formatTitle.js"
-import rawOtherVideos from "../../videos/videos.js"
 import { define, element, reconcile } from "../utilities/multigraph.js"
-
-const otherVideos = rawOtherVideos.map(video => ({
-  ...video,
-  titleSentence: formatTitle(video, { titleStyle: "standard" }),
-}))
 
 define("contentBrowser", {
   watch: {
     tunesPlayer: { video: { id }, playContent },
   },
-  receive: { playlists },
+  receive: { playlists, otherVideos },
   share: { ui },
 
   update: function () {

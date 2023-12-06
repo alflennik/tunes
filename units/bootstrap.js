@@ -1,11 +1,18 @@
 import formatTitle from "../library/formatTitle.js"
+import rawOtherVideos from "../../videos/videos.js"
 import { define, render } from "../utilities/multigraph.js"
+
+const otherVideos = rawOtherVideos.map(video => ({
+  ...video,
+  titleSentence: formatTitle(video, { titleStyle: "standard" }),
+}))
 
 define("bootstrap", {
   watch: { contentBrowser, tunesPlayer, videoPlayer, audioDescription },
   manage: {
-    tunesPlayer: { playlists },
-    contentBrowser: { playlists },
+    tunesPlayer: { playlists, otherVideos },
+    contentBrowser: { playlists, otherVideos },
+    urls: { playlists, otherVideos },
   },
 
   updateFirst: function ({ stop, change }) {
@@ -29,7 +36,9 @@ define("bootstrap", {
 
         await change(() => {
           this.tunesPlayer.playlists = playlists
+          this.tunesPlayer.otherVideos = otherVideos
           this.contentBrowser.playlists = playlists
+          this.contentBrowser.otherVideos = otherVideos
         })
 
         // Must render next to attach the root ui and set the first video
