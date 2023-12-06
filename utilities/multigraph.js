@@ -886,9 +886,9 @@ const defineAllNamed = () => {
 
     thisUnit.change = async callback => {
       callback()
-      thisUnit.handleChanges({ isWindowScoped: false })
       const renderQueue = thisUnit.currentRenderQueue ?? mainRenderQueue
       renderQueue.add(thisUnit)
+      thisUnit.handleChanges({ isWindowScoped: false })
       if (thisUnit.stoppedPromise) return
       return new Promise(resolve => {
         mainRenderQueue.onEmpty(resolve)
