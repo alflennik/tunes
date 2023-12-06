@@ -30,7 +30,7 @@ export default {
     },
     {
       time: 102.726,
-      text: "Captions are not available in English. Their excited delivery of the lines results in the old lady letting go of the golden balloon he happened to be holding, which flies away into the smoggy sky.",
+      text: "Captions are not available in English. Their excited delivery of the lines results in the old man letting go of the golden balloon he happened to be holding, which flies away into the smoggy sky.",
     },
     {
       time: 134.848,

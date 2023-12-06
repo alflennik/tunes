@@ -29,7 +29,7 @@ export default {
       text: 'She builds a vibe of moments free from structure and continuity: she sticks her head out a car window like a dog on the way to the park, knocks on the camera lens like "is anybody home?" hopscotches down an uncharted alleyway, and at a park bench she knocks her boots together like a child not picked up after school.',
     },
     {
-      time: 163.484,
+      time: 163.884,
       text: "Every camera has a point where it breaks, where the color channels overflow, the image oversaturates, overexposes, clips, distorts and falls apart, and one by one, like her unhinged dance in the city, she breaks every camera.",
     },
     {

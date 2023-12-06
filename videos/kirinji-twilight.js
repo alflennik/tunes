@@ -62,7 +62,7 @@ export default {
     },
     {
       time: 260.694,
-      text: "Darkness having lifted with the arrival of dawn, she crosses a bridge, ferris wheel in the background. A passing car's headlines shine, the car driven by the man. The woman notices him. She smiles a secret smile and walks in the opposite direction.",
+      text: "Darkness having lifted with the arrival of dawn, she crosses a bridge, ferris wheel in the background. A passing car's headlights shine, the car driven by the man. The woman notices him. She smiles a secret smile and walks in the opposite direction.",
     },
   ],
 }

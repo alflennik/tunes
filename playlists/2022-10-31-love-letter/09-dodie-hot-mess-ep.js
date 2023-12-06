@@ -26,7 +26,7 @@ export default {
     },
     {
       time: 101.13,
-      text: "Their clothing is flowing and relaxed like pajamas. Long strings hang from dodie's wrists like untied shoelaces",
+      text: "Their clothing is flowing and relaxed like pajamas. Long strings hang from dodie's wrists like untied shoelaces.",
     },
     {
       time: 166.821,
