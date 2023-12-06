@@ -730,6 +730,7 @@ const defineAllNamed = () => {
     const thisUnit = thisUnits[thisUnitName]
 
     const recurse = (nameObject, data, action) => {
+      if (Array.isArray(nameObject)) return
       Object.entries(nameObject).forEach(([name, childNameObject]) => {
         const childData = action(name, data)
         if (childNameObject) recurse(childNameObject, childData, action)
