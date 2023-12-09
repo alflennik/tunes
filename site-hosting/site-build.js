@@ -4,8 +4,10 @@ const { exec, spawn } = require("child_process")
 
 const nonAssetLocations = [
   ".git",
+  "experiment-application-mode",
   "experiment-multigraph",
   "experiment-playlist-modeling",
+  "experiment-shoelace-style",
   "experiment-tree",
   "site-hosting",
 ]
