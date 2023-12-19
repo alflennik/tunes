@@ -1,0 +1,51 @@
+
+build phase {
+  const tunesPlayer = module {
+
+	}
+}
+
+const app {
+	build phase {
+		const modules {
+			audioDescription from './tunesPlayer'
+			contentBrowser from './tunesPlayer'
+			tunesPlayer from './tunesPlayer'
+			tunesPlayer from './tunesPlayer'
+			tunesPlayer from './tunesPlayer'
+		}
+		bootstrap.init(tunesPlayer)
+	}
+}
+
+
+module tunesPlayer {
+	method getScrollBarWidth
+	method reconcile
+
+	resolve {
+
+	}
+}
+
+tunesPlayer {
+	type module
+
+	state video,
+	state playlist,
+	method playContent in './playContent.iui'
+
+	state isIOS,
+	state isAndroid in './platform.iui'
+
+	receive voice
+	manage voice.voiceType {
+		receive audioDescription {
+			if isIOS then .synthesized
+			else if isPrerecorded then .prerecorded
+		}
+	}
+
+	receive videoPlayer { manage videoPlayer.timeInterval { 400 } }
+		
+}

@@ -1,0 +1,63 @@
+audioDescription {
+  subscribe {
+    videoPlayer { status, time, volume }
+    voice { status }
+  }
+  actions {
+    videoPlayer { setVolume }
+    voice { say, pause, play, clear }
+  }
+  share { status, isPrerecorded, descriptions, analysis, ui }
+  --
+  descriptions, analysis, isPrerecorded in "../descriptions.iui"
+
+  description {
+    * time && descriptions.findLast((each) { * time > each.time })
+  }
+
+  spokenItem {
+    if videoPlayer.status.justChangedTo(.ended) then * analysis
+    if description.willChange then * description
+  }
+
+  status in "./status.iui"
+
+  section "voice" {
+    set isTimeSeek = time.lastValue && absoluteValue(time - time.lastValue) > 1
+    set isVoiceReady = !!voice.status
+
+    if isVoiceReady && time && spokenItem.willChange {
+      if !isTimeSeek {
+        voice.play()
+        voice.say(spokenItem)
+      } else {
+        voice.clear()
+      }
+    }
+    if isVoiceReady && videoPlayer.status.justChanged {
+      videoPlayer.status ..{
+        .playing ? voice.play()
+        .paused ? voice.pause()
+        .unstarted ? voice.clear()
+      }
+    }
+  }
+
+  section "volume" {
+    voice.status ..{
+      .ended, .paused ? if volume != 1 then setVolume(1)
+      .unstarted, .playing ? if volume != 0.5 then setVolume(0.5)
+    }
+  }
+
+  ui {
+    * reconcile(
+      ui.lastValue, 
+      element("audio-description").items(
+        element("div")
+          .attributes((class = "wrapping-box"))
+          .items(element("div").text(spokenItem.text ?? ""))
+      )
+    )
+  }
+}

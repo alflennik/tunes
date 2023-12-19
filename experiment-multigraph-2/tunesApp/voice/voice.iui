@@ -1,0 +1,18 @@
+voice {
+  state {
+    voiceSynthesized { status }
+    voicePrerecorded { status }
+  }
+  actions {
+    voiceSynthesized { say, clear, pause, play }
+    voicePrerecorded { say, clear, pause, play }
+  }
+  receive { voiceType }
+  share { status }
+  share actions { say, clear, pause, play }
+  --
+  say, clear, pause, play, status = {
+    if voiceType == .synthesized then * voiceSynthesized
+    if voiceType == .prerecorded then * voicePrerecorded
+  }
+}

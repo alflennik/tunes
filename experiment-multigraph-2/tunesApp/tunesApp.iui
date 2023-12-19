@@ -1,0 +1,17 @@
+tunesApp {
+  playlists in "./playlists.iui"
+  audioDescription in "./audioDescription.iui"
+  voice in "./voice.iui"
+
+  contentBrowser in "./contentBrowser.iui"
+  videoPlayer in "./videoPlayer.iui"
+
+  isIOS,
+  isAndroid in "./platforms.iui"
+
+  video,
+  playlist
+  playContent in "./content.iui"
+
+  rootElement in './rootElement.iui'
+}

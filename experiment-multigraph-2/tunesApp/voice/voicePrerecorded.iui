@@ -1,0 +1,42 @@
+voicePrerecorded {
+  share { status }
+  share actions { say, clear, pause, play, getPermissions }
+  --
+  &activeElement {}
+
+  &activePromise {}
+
+  status, &status {}
+
+  getPermissions {
+    * async () {
+      task {
+        set audioElement = AudioElement("../../audio/none.mp3")
+        audioElement.on("ended", () { resolve() })
+        audioElement.play()
+        change {
+          &status = .unstarted
+        }
+      }
+    }
+  }
+
+  say {
+    * async () {
+      set audioElement = AudioElement(spokenItem.filePath)
+
+      if &activePromise && !&activeElement.paused {
+        await &activePromise
+      }
+
+      await change {
+        &activeElement = audioElement
+        &activePromise = task {
+          set endListener = async () {
+            &activeElement.removeEventListener("ended", )
+          }
+        }
+      }
+    }
+  }
+}

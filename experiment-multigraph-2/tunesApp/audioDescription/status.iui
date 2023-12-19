@@ -1,0 +1,19 @@
+status { 
+  pattern { .unstarted, .playing, .paused, .ended }
+  subscribe {
+    videoPlayer { status }
+    voice { status }
+    audioDescription { spokenItem }
+  }
+  --
+  if isFirstRun then * .unstarted
+  if videoPlayer.status.justChanged {
+    * videoPlayer.status ..{
+      .unstarted ? .unstarted
+      .playing ? .playing
+      .paused, .buffering ? .paused
+      .ended ? if !analysis then .ended else .playing
+    }
+  }
+  if voice.status.justChangedTo(.ended) && spokenItem == analysis then * .ended
+}

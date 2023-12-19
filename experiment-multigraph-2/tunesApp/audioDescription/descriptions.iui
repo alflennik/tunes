@@ -1,0 +1,12 @@
+descriptions, analysis, isPrerecorded {
+	subscribe { tunesPlayer { video } }
+  --
+  if video.justChanged {
+    suspend {
+      set descriptionModule = await dynamicImport(video.descriptionPath)
+      descriptions = descriptionModule.descriptions
+      analysis = descriptionsModule.analysis
+      isPrerecorded = !!descriptions[0].filePath
+    }
+  }
+}
