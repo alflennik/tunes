@@ -1,0 +1,111 @@
+* (web:, reconcile:, youtubeId:, timeInterval:) {
+  ui = reconcile(element("div").attributes(id: "player"))
+
+  onUiAttached = +- () {
+    youtubePlayer = -- Promise((resolve) {
+      web.window.onYouTubeIframeAPIReady = () {
+        youtubePlayer = web.window.YT.Player("player", [
+          height: "315",
+          width: "560",
+          videoId: youtubeId,
+          playerVars: {
+            playsinline: 1, // Instead of immediately going full screen.
+            color: "white", // Instead of youtube red.
+            rel: 0, // Recommend videos from the same channel after it ends.
+          },
+        ])
+
+        youtubePlayer.addEventListener("onReady", () {
+          resolve(youtubePlayer)
+        })
+      }
+
+      scriptElement = web.document.createElement("script")
+      scriptElement.src = "https://www.youtube.com/iframe_api"
+      firstScriptTag = document.getElementsByTagName("script")[0]
+      firstScriptTag.parentNode.insertBefore(scriptElement, firstScriptTag)
+    })
+
+    status = {
+      &status = .unstarted
+
+      youtubePlayer.addEventListener("onStateChange", (data) {
+        &status = data .. {
+          web.window.YT.PlayerState.UNSTARTED : * .unstarted ;
+          web.window.YT.PlayerState.PLAYING : * .playing ;
+          web.window.YT.PlayerState.PAUSED : * .paused ;
+          web.window.YT.PlayerState.BUFFERING : * .buffering ;
+          web.window.YT.PlayerState.ENDED : * .ended ;
+          else : crash("Unexpected case") ;
+        }
+      })
+
+      * ^ &status
+    }
+
+    ?time = {
+      &?intervalId = null
+
+      ~ [status] \[youtubePlayer] :
+        if status == .playing && ! &?intervalId :
+          &?intervalId = web.setInterval(() :
+            if ?time as time {
+              log.info(round(places: 3, time))
+            }
+            * youtubePlayer.getCurrentTime()
+          ;, timeInterval)
+        ; else if status != .playing && &?intervalId {
+          web.clearInterval(&?intervalId)
+          &?intervalId = null
+        }
+      ;
+
+      ~ [youtubeId] : * null ;
+    }
+
+    ~ [youtubeId] \[youtubePlayer] {
+      youtubePlayer.loadVideoById(videoId: youtubeId)
+    }
+
+    play = () : youtubePlayer.playVideo() ;
+
+    pause = () : youtubePlayer.pauseVideo() ;
+
+    setVolume = {
+      &?intervalId = null
+      &transitionVolume = 1
+      &volume = 1
+      youtubePlayer.setVolume(100)
+
+      * (number) {
+        if &?intervalId as intervalId : web.clearInterval(intervalId) ;
+
+        &?intervalId = web.setInterval(() {
+          if isLessThan(transitionVolume, volume) {
+            transitionVolume += 0.025
+            youtubePlayer.setVolume(transitionVolume * 100)
+            if isGreaterThan(transitionVolume, volume) : web.clearInterval(&?intervalId) ;
+          }
+          if isGreaterThan(transitionVolume, volume) {
+            transitionVolume -= 0.025
+            youtubePlayer.setVolume(transitionVolume * 100)
+            if isLessThan(transitionVolume, volume) : web.clearInterval(&?intervalId) ;
+          }
+        }, 25)
+
+        &volume = number
+      }
+    }
+
+    web.document.addEventListener("keydown", (event) {
+      if event.key == "k" {
+        if status == .playing : pause() ;
+        if status == .paused : play() ;
+      }
+    })
+
+    * [status:, ?time:, play:, pause:, setVolume:, ui:]
+  }
+
+  * [ui:, onUiAttached:]
+}

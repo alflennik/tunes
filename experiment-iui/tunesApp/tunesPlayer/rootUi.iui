@@ -1,0 +1,90 @@
+* (videoPlayerUi:, &?audioDescription:, video, playContent) {
+  * reconcile(
+    ~ [videoPlayerUi, &?audioDescription.ui, video] \[playContent] {
+      * (
+        element("root-element").items(
+          element("div")
+            .attributes(class: "content-container")
+            .items(
+              element("h1").text("Tunes"),
+              element("p").text(
+                "The Tunes project implements audio descriptions for music videos, which are " +
+                  "written by some guy named Alex."
+              ),
+              element("content-browser").items(
+                element("h2").text("Playlists"),
+                ...playlists.each((playlist) {
+                  * fragment(
+                    element("h3").items(
+                      element("a")
+                        .attributes(href: "#")
+                        .listeners(
+                          click: (event) {
+                            event.preventDefault
+                            playContent(?playlist: playlist)
+                          },
+                        )
+                        .text(playlist.title)
+                    ),
+                    element("ul").items(
+                      ...playlist.videos.each((eachVideo) {
+                        isActive = eachVideo.id == video.id
+                        * element("li").items(
+                          element("a")
+                            .attributes(
+                              href: "#", 
+                              "aria-current": if isActive : true ; else : null ;
+                            )
+                            .listeners({
+                              click: (event) {
+                                event.preventDefault
+                                playContent(?playlist: playlist, ?video: eachVideo)
+                              },
+                            })
+                            .text(eachVideo.titleSentence)
+                        )
+                      })
+                    )
+                  )
+                }),
+                element("h2").text("Other Songs"),
+                element("ul").items(
+                  ...otherVideos.each((eachVideo) {
+                    isActive = eachVideo.id == video.id
+                    * element("li").items(
+                      element("a")
+                        .attributes(href: "#", "aria-current": if isActive : true ; else : null ;)
+                        .listeners(
+                          click: (event) {
+                            event.preventDefault
+                            playContent(?video: eachVideo)
+                          },
+                        )
+                        .text(eachVideo.titleSentence)
+                    )
+                  })
+                )
+              ),
+              element("h2").attributes(id: "player-h2", tabindex: "-1").text("Player")
+            ),
+          element("tunes-player").items(
+            element("video-player")
+              .styles(
+                "--scrollbar-width": getScrollBarWidth() + "px",
+                "--video-width": video.youtubeWidth,
+                "--video-height": video.youtubeHeight,
+              )
+              .attributes("aria-hidden": if firstInteractionComplete : null ; else : true ;)
+              .items(
+                firstInteractionInterceptor(
+                  items: element("button").text("Play ${video.titleSentence}"),
+                ),
+                videoPlayerUi
+              ),
+            &?audioDescription.ui
+          )
+        )
+      )
+    }
+  )
+}

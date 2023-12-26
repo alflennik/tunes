@@ -1,0 +1,18 @@
+ app +- {
+  web = import("core:web")
+
+  reconcile = import("core:reconcile")(web:)
+
+  // TODO: how to create index.html
+
+  otherVideos = import("../../videos/videos.iui")
+
+  playlists = {
+    playlistList = import("../../playlists/playlist-list.iui")
+    * playlistList.each((playlistPath) {
+      * import("../../playlists/${playlistPath}/contents.iui")
+    })
+  }
+  
+  -- import("./tunesPlayer/tunesPlayer.iui")(web:, reconcile:, playlists:, otherVideos:)
+}

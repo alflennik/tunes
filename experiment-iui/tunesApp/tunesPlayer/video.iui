@@ -1,0 +1,55 @@
+* (web:, playlists:, otherVideos:, ?videoPlayer:) {
+  &video = null
+  &?playlist = null
+  &onUiComplete = () {}
+  
+  if web.location.hash {
+    &onUiComplete = () {
+      web.document.querySelector("#player-h2").focus(preventScroll: true)
+      web.document
+        .querySelector("tunes-player")
+        .scrollIntoView(behavior: "instant", block: "start")
+    }
+  
+    videoId = web.location.hash[1:]
+
+    ?otherVideo = otherVideos.find((video) { * video.id == videoId })
+    if ?otherVideo as otherVideo :
+      &video = otherVideo
+      *
+    ;
+
+    playlists.each((playlist) :
+      playlist.videos.each((video) :
+        if video.id == videoId :
+          &video = video
+          &?playlist = playlist
+          *
+        ;
+      ;)
+    ;)
+  } else {
+    // Cannot show a playlist with a content advisory by default because it would bypass the
+    // permission dialog
+    &?playlist = playlists.find((playlist) { * !playlist.needsContentAdvisory })
+    &video = playlist.videos[0].required
+  }
+
+  playContent = (?video:, ?playlist:) {
+    if ?playlist.needsContentAdvisory && ! web.window.confirm(
+      "This playlist contains content some viewers might find disturbing, are you sure you " +
+        "want to continue?"
+    ) : * ;
+
+    &video = ?video
+    &?playlist = ?playlist
+
+    web.document.querySelector("#player-h2").focus(preventScroll: true)
+    web.document
+      .querySelector("tunes-player")
+      .scrollIntoView(behavior: "smooth", block: "start")
+    ?videoPlayer.play()
+  }
+
+  * [video: ^ &video, playlist: ^ &playlist, playContent:, onUiComplete: ^ &onUiComplete]
+}

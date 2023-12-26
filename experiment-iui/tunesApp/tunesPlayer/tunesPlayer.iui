@@ -1,0 +1,66 @@
+* +- tunesPlayer(web:, reconcile:, playlists:, otherVideos:) {
+  &?videoPlayer = null
+  &?audioDescription = null
+
+  [video:, ?playlist:, playContent:, onUiComplete:] = import("./video.iui")(
+    web:,
+    playlists:,
+    otherVideos:,
+    ?videoPlayer: ^ &?videoPlayer,
+  )
+
+  &areVoicesReady = false
+  [firstInteractionInterceptor] = import("./permissions")( // TODO
+    onFirstInteraction: +- (isKeyDown:, isVideoPlayerInteraction:) {
+      -- concurrent([
+        voiceSynthesized.getPermissions(),
+        voicePrerecorded.getPermissions()
+      ])
+      &areVoicesReady = true
+      if ! isKeyDown && isVideoPlayerInteraction : ?videoPlayer.play() ;
+    }
+  )
+
+  [isIOS, isAndroid] = [
+    regex("iPhone|iPod|iPad").test(web.navigator.platform),
+    regex("android").modes("i").test(web.navigator.userAgent)
+  ]
+
+  voiceSynthesized = import("./voiceSynthesized")() // TODO
+  voicePrerecorded = import("./voicePrerecorded")() // TODO
+
+  ?voice = ~ [isIOS, &?audioDescription.isPrerecorded] {
+    if ! &areVoicesReady : * null
+    if isIOS : * voiceSynthesized ; // Not usable on iOS since there is no audio ducking control
+    if &?audioDescription.isPrerecorded : * voicePrerecorded ; else : * voiceSynthesized ;
+  }
+
+  audioDescription = import("./audioDescription")(
+    web:,
+    video:,
+    ?videoPlayer:,
+    ?voice:,
+  )
+  &?audioDescription = audioDescription
+
+  [ui: videoPlayerUi, onUiAttached: getVideoPlayer] = import("./videoPlayer")(
+    web:,
+    reconcile:,
+    youtubeId: video.youtubeId,
+    timeInterval: 400
+  )
+
+  rootUi = import("./rootUi.iui")(
+    videoPlayerUi:,
+    &?audioDescription:,
+    video:,
+    playContent:
+  )
+
+  web.document.body.appendChild(rootUi.element)
+
+  videoPlayer = -- getVideoPlayer()
+  &?videoPlayer = videoPlayer
+
+  onUiComplete()
+}

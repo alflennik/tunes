@@ -1,0 +1,75 @@
+* +- (web:, video:, ?videoPlayer:, ?voice:) {
+  [descriptions, ?analysis] = ~ [video.descriptionPath] {
+    descriptionModule = -- web.dynamicImport(video.descriptionPath)
+    descriptions = required(descriptionModule["descriptions"])
+    ?analysis = descriptionModule["analysis"]
+    * [descriptions, ?analysis]
+  }
+
+  isPrerecorded = ~ [descriptions] { 
+    * !!descriptions[0].filePath
+  }
+
+  ?description = ~ [?videoPlayer.?time, descriptions] {
+    if ?videoPlayer.?time as time : 
+      * descriptions.findLast((each) { * isGreaterThan(time, each.time) })
+    ;
+  }
+
+  ?spokenItem = ~ [?videoPlayer.status] \[?description, ?analysis] {
+    if ?videoPlayer.status == .ended && ?analysis as analysis : * analysis ;
+    * ?description
+  }
+
+  status = {
+    ~ [?videoPlayer.status] :
+      if ?videoPlayer.status as videoPlayerStatus : 
+        videoPlayerStatus .. :
+          .unstarted : * .cleared ;
+          .playing : * .playing ;
+          .paused, .buffering : * .paused ;
+          .ended :
+            if !?analysis : * .ended ;
+            * .playing
+          ;
+        ;
+      ;
+    ;
+    
+    ~ [?voice.status] \[?spokenItem, ?analysis] :
+      if ?spokenItem && ?spokenItem == ?analysis :
+        * .ended
+      ;
+    ;
+
+    * .cleared
+  }
+
+  isTimeSeek = ~ [?videoPlayer.time] \[?videoPlayer] {
+    if ?videoPlayer.?time as time && ?lastValue(time) as lastTime :
+      * absoluteValue(time - lastTime) > 1
+    ;
+    * false
+  }
+
+  ~ [?spokenItem] \[?voice, ?spokenItem, isTimeSeek] {
+    if ?voice as voice && ?spokenItem as spokenItem {
+      if isTimeSeek {
+        voice.play()
+        voice.say(spokenItem)
+      } else {
+        voice.clear()
+      }
+    }
+  }
+
+  ~ [?videoPlayer.status] \[?voice] {
+    if ?voice as voice ?videoPlayer as videoPlayer {
+      videoPlayer.status .. {
+        .playing : voice.play() ;
+        .paused : voice.play() ;
+        .unstarted : voice.clear() ;
+      }
+    }
+  }
+}

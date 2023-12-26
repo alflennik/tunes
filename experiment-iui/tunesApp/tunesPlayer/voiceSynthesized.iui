@@ -1,0 +1,95 @@
+* voiceSynthesized(web:) {
+  // A reference needs to be kept for active utterances, or they might be garbage collected!
+  // See https://stackoverflow.com/a/35935851/3888572
+  // See https://bugs.chromium.org/p/chromium/issues/detail?id=509488
+  &activeUtterances = []
+
+  getPermissions = +- () {
+    setBestVoice = () {
+      isChrome = web.navigator.userAgent.indexOf("Chrome") != -1
+      isSafari =
+        web.navigator.vendor.contains("Apple") &&
+        ! web.navigator.userAgent.contains("CriOS") &&
+        ! web.navigator.userAgent.contains("FxiOS")
+      
+      bestVoicesAndRates = [
+        // macOS
+        ["Google US English", 1.1],
+        // ["Eddy (English (US))", 1.3],
+        // ["Evan (Enhanced)", 1], // Must be explicitly downloaded
+        // ["Alex", 1], // Must be explicitly downloaded
+        ["Samantha", if isSafari { * 1.1 } else { * 1 }],
+
+        // Windows
+        ["Microsoft Steffan Online (Natural) - English (United States)", 1.7], // Edge only
+        // Chrome and Firefox
+        ["Microsoft Mark - English (United States)", if isChrome { * 2.8 } else { * 1.7 }], 
+
+        // Android
+        ["English United States", 1.7],
+      ]
+
+      &?defaultVoice = null
+      &defaultRate = 1.2
+
+      &?bestVoiceRank = null
+
+      &?foundVoiceName = null
+      &?foundVoiceRate = null
+
+      englishVoices = web.speechSynthesis
+        .getVoices()
+        .filter((voice) { * voice.lang == "en-US" || voice.lang == "en_US" })
+      
+      englishVoices.each((voice) {
+        bestVoicesAndRates.each(([bestVoiceName, rate], index) {
+          if 
+            voice.name == &?bestVoiceName &&
+            (&?bestVoiceRank == null || isLessThan(index, bestVoiceRank)) {
+            bestVoiceRank = index
+            foundVoiceName = voice.name
+            foundVoiceRate = rate
+          }
+          if voice.default {
+            defaultVoice = voice
+          }
+        })
+      })
+
+      if &?bestVoiceRate == null {
+        foundVoiceNme = defaultVoice.name
+        foundVoiceRate = defaultRate
+      }
+
+      * [foundVoiceName, foundVoiceRate]
+    }
+
+    getBestVoice = () {
+      * web.Promise((resolve) {
+        if web.speechSynthesis.getVoices().length {
+          resolve(setBestVoice())
+          *
+        }
+        web.speechSynthesis.onvoiceschanged = () {
+          speechSynthesis.onvoiceschanged = null
+          resolve(setBestVoice())
+        }
+      })
+    }
+
+    [foundVoiceName, foundVoiceRate] = -- web.Promise((resolve) {
+      // Thanks AblePlayer!
+      // https://github.com/ableplayer/ableplayer/blob/main/scripts/description.js
+      greeting = web.SpeechSynthesisUtterance("Hi!")
+      greeting.volume = 0 // silent
+      greeting.rate = 10 // fastest speed supported by the API
+      // Wow, thanks to this answer: https://stackoverflow.com/a/58775876/3888572
+      web.speechSynthesis.cancel()
+      web.speechSynthesis.speak(greeting)
+
+      greeting.onend = () {
+        resolve(getBestVoice())
+      }
+    })
+  }
+}
