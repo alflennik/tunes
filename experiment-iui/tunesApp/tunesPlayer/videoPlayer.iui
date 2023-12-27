@@ -1,18 +1,20 @@
-* (web:, reconcile:, youtubeId:, timeInterval:) {
+* (reconcile:, youtubeId:, timeInterval:) {
+  [document, location, window, setInterval, clearInterval] = import("core:web")
+  
   ui = reconcile(element("div").attributes(id: "player"))
 
-  onUiAttached = +- () {
-    youtubePlayer = -- Promise((resolve) {
-      web.window.onYouTubeIframeAPIReady = () {
-        youtubePlayer = web.window.YT.Player("player", [
+  onUiAttached = async () {
+    youtubePlayer = await Promise((resolve) {
+      window.onYouTubeIframeAPIReady = () {
+        youtubePlayer = window.YT.Player("player", [
           height: "315",
           width: "560",
           videoId: youtubeId,
-          playerVars: {
+          playerVars: [
             playsinline: 1, // Instead of immediately going full screen.
             color: "white", // Instead of youtube red.
             rel: 0, // Recommend videos from the same channel after it ends.
-          },
+          ],
         ])
 
         youtubePlayer.addEventListener("onReady", () {
@@ -20,50 +22,46 @@
         })
       }
 
-      scriptElement = web.document.createElement("script")
+      scriptElement = document.createElement("script")
       scriptElement.src = "https://www.youtube.com/iframe_api"
       firstScriptTag = document.getElementsByTagName("script")[0]
       firstScriptTag.parentNode.insertBefore(scriptElement, firstScriptTag)
     })
 
     status = {
-      &status = .unstarted
+      youtubePlayer.addEventListener("onStateChange", (data) :
+        given data :
+          window.YT.PlayerState.UNSTARTED : * .cleared ;
+          window.YT.PlayerState.PLAYING : * .playing ;
+          window.YT.PlayerState.PAUSED : * .paused ;
+          window.YT.PlayerState.BUFFERING : * .buffering ;
+          window.YT.PlayerState.ENDED : * .ended ;
+          else : break ;
+        ;
+      ;)
 
-      youtubePlayer.addEventListener("onStateChange", (data) {
-        &status = data .. {
-          web.window.YT.PlayerState.UNSTARTED : * .unstarted ;
-          web.window.YT.PlayerState.PLAYING : * .playing ;
-          web.window.YT.PlayerState.PAUSED : * .paused ;
-          web.window.YT.PlayerState.BUFFERING : * .buffering ;
-          web.window.YT.PlayerState.ENDED : * .ended ;
-          else : crash("Unexpected case") ;
-        }
-      })
-
-      * ^ &status
+      * .cleared
     }
 
-    ?time = {
-      &?intervalId = null
+    time? = {
+      &intervalId? = null
 
-      ~ [status] \[youtubePlayer] :
-        if status == .playing && ! &?intervalId :
-          &?intervalId = web.setInterval(() :
-            if ?time as time {
-              log.info(round(places: 3, time))
-            }
+      watch [status] \[youtubePlayer] :
+        if status == .playing && &intervalId? == null :
+          &intervalId? = setInterval(() :
+            if time? as time : log.info(round(time, places: 3)) ;
             * youtubePlayer.getCurrentTime()
           ;, timeInterval)
-        ; else if status != .playing && &?intervalId {
-          web.clearInterval(&?intervalId)
-          &?intervalId = null
-        }
+        ; else if status != .playing && &intervalId? as &intervalId :
+          clearInterval(intervalId)
+          &intervalId? = null
+        ;
       ;
 
-      ~ [youtubeId] : * null ;
+      watch [youtubeId] : * null ;
     }
 
-    ~ [youtubeId] \[youtubePlayer] {
+    watch [youtubeId] \[youtubePlayer] {
       youtubePlayer.loadVideoById(videoId: youtubeId)
     }
 
@@ -72,24 +70,24 @@
     pause = () : youtubePlayer.pauseVideo() ;
 
     setVolume = {
-      &?intervalId = null
+      &intervalId? = null
       &transitionVolume = 1
       &volume = 1
       youtubePlayer.setVolume(100)
 
       * (number) {
-        if &?intervalId as intervalId : web.clearInterval(intervalId) ;
+        if &intervalId? as intervalId : clearInterval(intervalId) ;
 
-        &?intervalId = web.setInterval(() {
-          if isLessThan(transitionVolume, volume) {
+        &intervalId? = setInterval(() {
+          if transitionVolume < volume {
             transitionVolume += 0.025
             youtubePlayer.setVolume(transitionVolume * 100)
-            if isGreaterThan(transitionVolume, volume) : web.clearInterval(&?intervalId) ;
+            if isGreaterThan(transitionVolume, volume) : clearInterval(&intervalId?) ;
           }
-          if isGreaterThan(transitionVolume, volume) {
+          if transitionVolume > volume {
             transitionVolume -= 0.025
             youtubePlayer.setVolume(transitionVolume * 100)
-            if isLessThan(transitionVolume, volume) : web.clearInterval(&?intervalId) ;
+            if isLessThan(transitionVolume, volume) : clearInterval(&intervalId?) ;
           }
         }, 25)
 
@@ -97,14 +95,14 @@
       }
     }
 
-    web.document.addEventListener("keydown", (event) {
+    document.addEventListener("keydown", (event) {
       if event.key == "k" {
         if status == .playing : pause() ;
         if status == .paused : play() ;
       }
     })
 
-    * [status:, ?time:, play:, pause:, setVolume:, ui:]
+    * [status:, time?:, play:, pause:, setVolume:, ui:]
   }
 
   * [ui:, onUiAttached:]

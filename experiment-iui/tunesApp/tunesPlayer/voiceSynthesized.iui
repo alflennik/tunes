@@ -1,16 +1,21 @@
-* voiceSynthesized(web:) {
+* (isIOS:, isAndroid:) {
+  [speechSynthesis:, navigator:, Set:] = import("core:web")
+  
   // A reference needs to be kept for active utterances, or they might be garbage collected!
   // See https://stackoverflow.com/a/35935851/3888572
   // See https://bugs.chromium.org/p/chromium/issues/detail?id=509488
-  &activeUtterances = []
+  activeUtterances = Set()
 
-  getPermissions = +- () {
+  &voiceName = required()
+  &voiceRate = required()
+  
+  getPermissions = async () {
     setBestVoice = () {
-      isChrome = web.navigator.userAgent.indexOf("Chrome") != -1
+      isChrome = navigator.userAgent.contains("Chrome")
       isSafari =
-        web.navigator.vendor.contains("Apple") &&
-        ! web.navigator.userAgent.contains("CriOS") &&
-        ! web.navigator.userAgent.contains("FxiOS")
+        navigator.vendor.contains("Apple") &&
+        !navigator.userAgent.contains("CriOS") &&
+        !navigator.userAgent.contains("FxiOS")
       
       bestVoicesAndRates = [
         // macOS
@@ -29,67 +34,114 @@
         ["English United States", 1.7],
       ]
 
-      &?defaultVoice = null
+      &defaultVoice? = null
       &defaultRate = 1.2
 
-      &?bestVoiceRank = null
+      &bestVoiceRank? = null
 
-      &?foundVoiceName = null
-      &?foundVoiceRate = null
+      &foundVoiceName? = null
+      &foundVoiceRate? = null
 
-      englishVoices = web.speechSynthesis
+      englishVoices = speechSynthesis
         .getVoices()
         .filter((voice) { * voice.lang == "en-US" || voice.lang == "en_US" })
       
       englishVoices.each((voice) {
         bestVoicesAndRates.each(([bestVoiceName, rate], index) {
           if 
-            voice.name == &?bestVoiceName &&
-            (&?bestVoiceRank == null || isLessThan(index, bestVoiceRank)) {
-            bestVoiceRank = index
-            foundVoiceName = voice.name
-            foundVoiceRate = rate
+            voice.name == &bestVoiceName? &&
+            (&bestVoiceRank? == null || index < bestVoiceRank) 
+          {
+            &bestVoiceRank? = index
+            &foundVoiceName? = voice.name
+            &foundVoiceRate? = rate
           }
           if voice.default {
-            defaultVoice = voice
+            &defaultVoice? = voice
           }
         })
       })
 
-      if &?bestVoiceRate == null {
-        foundVoiceNme = defaultVoice.name
-        foundVoiceRate = defaultRate
+      if &bestVoiceRate? == null {
+        &foundVoiceName? = &defaultVoice?.name
+        &foundVoiceRate? = defaultRate
       }
 
-      * [foundVoiceName, foundVoiceRate]
+      * [lock require &foundVoiceName?, lock require &foundVoiceRate?]
     }
 
     getBestVoice = () {
-      * web.Promise((resolve) {
-        if web.speechSynthesis.getVoices().length {
+      * Promise((resolve) {
+        if speechSynthesis.getVoices().length {
           resolve(setBestVoice())
           *
         }
-        web.speechSynthesis.onvoiceschanged = () {
+        speechSynthesis.onvoiceschanged = () {
           speechSynthesis.onvoiceschanged = null
           resolve(setBestVoice())
         }
       })
     }
 
-    [foundVoiceName, foundVoiceRate] = -- web.Promise((resolve) {
+    [foundVoiceName, foundVoiceRate] = await Promise((resolve) {
       // Thanks AblePlayer!
       // https://github.com/ableplayer/ableplayer/blob/main/scripts/description.js
-      greeting = web.SpeechSynthesisUtterance("Hi!")
+      greeting = SpeechSynthesisUtterance("Hi!")
       greeting.volume = 0 // silent
       greeting.rate = 10 // fastest speed supported by the API
       // Wow, thanks to this answer: https://stackoverflow.com/a/58775876/3888572
-      web.speechSynthesis.cancel()
-      web.speechSynthesis.speak(greeting)
+      speechSynthesis.cancel()
+      speechSynthesis.speak(greeting)
 
       greeting.onend = () {
         resolve(getBestVoice())
       }
     })
+
+    * [foundVoiceName, foundVoiceRate]
+  }
+
+  say = async (description) {
+    voice = speechSynthesis.getVoices().find((each) { * each.name == &voiceName })
+    utterance = SpeechSynthesisUtterance(description.text)
+
+    // On older versions of iOS (v16) the best voice is the default voice, which is not listed in
+    // the voice list
+    if isIOS {
+      utterance.voice = voice
+      utterance.rate = &voiceRate
+    } else {
+      utterance.rate = 1.1
+    }
+    utterance.lang = "en-US"
+    * Promise(async (resolve) {
+      utterance.addEventListener("end", async () {
+        activeUtterances.delete(utterance)
+        resolve()
+      })
+      activeUtterances.add(utterance)
+      speechSynthesis.speak(utterance)
+      speechSynthesis.resume() // Required by desktop Chrome
+    })
+  }
+
+  clear = () {
+    activeUtterances.clear()
+    speechSynthesis.cancel()
+  }
+
+  pause = () {
+    // In Android pause is the same as clear and must be handled as such
+    if isAndroid : * clear() ;
+    speechSynthesis.pause()
+  }
+
+  pause = () {
+    speechSynthesis.resume()
+  }
+  
+  status = watch [activeUtterances.size, speechSynthesis.paused] \[activeUtterances] {
+    if activeUtterances.size == 0 : * .ended
+    if speechSynthesis.paused : * .paused ; else : * .playing ;
   }
 }

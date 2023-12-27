@@ -1,6 +1,8 @@
-* (videoPlayerUi:, &?audioDescription:, video, playContent) {
+* (videoPlayerUi:, audioDescription:, video:, playContent:) {
+  reconcile = import("core:reconcile")
+  
   * reconcile(
-    ~ [videoPlayerUi, &?audioDescription.ui, video] \[playContent] {
+    watch [videoPlayerUi, audioDescription.ui, video] \[playContent] {
       * (
         element("root-element").items(
           element("div")
@@ -17,11 +19,11 @@
                   * fragment(
                     element("h3").items(
                       element("a")
-                        .attributes(href: "#")
+                        .attributes(href: "*")
                         .listeners(
                           click: (event) {
                             event.preventDefault
-                            playContent(?playlist: playlist)
+                            playContent(playlist?: playlist)
                           },
                         )
                         .text(playlist.title)
@@ -32,13 +34,13 @@
                         * element("li").items(
                           element("a")
                             .attributes(
-                              href: "#", 
-                              "aria-current": if isActive : true ; else : null ;
+                              href: "*", 
+                              "aria-current": if isActive { * true } else { * null }
                             )
                             .listeners({
                               click: (event) {
                                 event.preventDefault
-                                playContent(?playlist: playlist, ?video: eachVideo)
+                                playContent(playlist?: playlist, video?: eachVideo)
                               },
                             })
                             .text(eachVideo.titleSentence)
@@ -53,11 +55,14 @@
                     isActive = eachVideo.id == video.id
                     * element("li").items(
                       element("a")
-                        .attributes(href: "#", "aria-current": if isActive : true ; else : null ;)
+                        .attributes(
+                          href: "*",
+                          "aria-current": if isActive { * true } else { * null }
+                        )
                         .listeners(
                           click: (event) {
                             event.preventDefault
-                            playContent(?video: eachVideo)
+                            playContent(video?: eachVideo)
                           },
                         )
                         .text(eachVideo.titleSentence)
@@ -70,18 +75,18 @@
           element("tunes-player").items(
             element("video-player")
               .styles(
-                "--scrollbar-width": getScrollBarWidth() + "px",
+                "--scrollbar-width": "${getScrollBarWidth()}px",
                 "--video-width": video.youtubeWidth,
                 "--video-height": video.youtubeHeight,
               )
-              .attributes("aria-hidden": if firstInteractionComplete : null ; else : true ;)
+              .attributes("aria-hidden": if firstInteractionComplete { * null } else { * true })
               .items(
                 firstInteractionInterceptor(
                   items: element("button").text("Play ${video.titleSentence}"),
                 ),
                 videoPlayerUi
               ),
-            &?audioDescription.ui
+            audioDescription.ui
           )
         )
       )

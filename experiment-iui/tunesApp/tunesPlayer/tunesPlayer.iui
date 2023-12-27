@@ -1,66 +1,58 @@
-* +- tunesPlayer(web:, reconcile:, playlists:, otherVideos:) {
-  &?videoPlayer = null
-  &?audioDescription = null
+* async (playlists:, otherVideos:) {
+  &videoPlayer? = null
+  &audioDescription? = null
 
-  [video:, ?playlist:, playContent:, onUiComplete:] = import("./video.iui")(
-    web:,
+  [video:, playlist?:, playContent:, onUiComplete:] = import("./video.iui")(
     playlists:,
     otherVideos:,
-    ?videoPlayer: ^ &?videoPlayer,
+    videoPlayer?: lock &videoPlayer?,
   )
 
   &areVoicesReady = false
   [firstInteractionInterceptor] = import("./permissions")( // TODO
-    onFirstInteraction: +- (isKeyDown:, isVideoPlayerInteraction:) {
-      -- concurrent([
+    onFirstInteraction: async (isKeyDown:, isVideoPlayerInteraction:) {
+      await concurrent([
         voiceSynthesized.getPermissions(),
         voicePrerecorded.getPermissions()
       ])
       &areVoicesReady = true
-      if ! isKeyDown && isVideoPlayerInteraction : ?videoPlayer.play() ;
+      if !isKeyDown && isVideoPlayerInteraction : videoPlayer?.play() ;
     }
   )
 
   [isIOS, isAndroid] = [
-    regex("iPhone|iPod|iPad").test(web.navigator.platform),
-    regex("android").modes("i").test(web.navigator.userAgent)
+    regex("iPhone|iPod|iPad").matches(web.navigator.platform),
+    regex("android").modes("i").matches(web.navigator.userAgent)
   ]
 
   voiceSynthesized = import("./voiceSynthesized")() // TODO
   voicePrerecorded = import("./voicePrerecorded")() // TODO
 
-  ?voice = ~ [isIOS, &?audioDescription.isPrerecorded] {
-    if ! &areVoicesReady : * null
+  voice? = watch [isIOS, &audioDescription?.isPrerecorded] \[voiceSynthesized, voicePrerecorded] {
+    if !&areVoicesReady : * null
     if isIOS : * voiceSynthesized ; // Not usable on iOS since there is no audio ducking control
-    if &?audioDescription.isPrerecorded : * voicePrerecorded ; else : * voiceSynthesized ;
+    if &audioDescription?.isPrerecorded : * voicePrerecorded ; else : * voiceSynthesized ;
   }
 
   audioDescription = import("./audioDescription")(
     web:,
     video:,
-    ?videoPlayer:,
-    ?voice:,
+    videoPlayer?:,
+    voice?:
   )
-  &?audioDescription = audioDescription
+  &audioDescription? = audioDescription
 
   [ui: videoPlayerUi, onUiAttached: getVideoPlayer] = import("./videoPlayer")(
-    web:,
-    reconcile:,
     youtubeId: video.youtubeId,
     timeInterval: 400
   )
 
-  rootUi = import("./rootUi.iui")(
-    videoPlayerUi:,
-    &?audioDescription:,
-    video:,
-    playContent:
-  )
+  rootUi = import("./rootUi.iui")(videoPlayerUi:, audioDescription:, video:, playContent:)
 
   web.document.body.appendChild(rootUi.element)
 
-  videoPlayer = -- getVideoPlayer()
-  &?videoPlayer = videoPlayer
+  videoPlayer = await getVideoPlayer()
+  &videoPlayer? = videoPlayer
 
   onUiComplete()
 }

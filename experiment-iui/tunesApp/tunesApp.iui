@@ -1,7 +1,5 @@
- app +- {
+ app {
   web = import("core:web")
-
-  reconcile = import("core:reconcile")(web:)
 
   // TODO: how to create index.html
 
@@ -14,5 +12,5 @@
     })
   }
   
-  -- import("./tunesPlayer/tunesPlayer.iui")(web:, reconcile:, playlists:, otherVideos:)
+  await import("./tunesPlayer/tunesPlayer.iui")(playlists:, otherVideos:)
 }

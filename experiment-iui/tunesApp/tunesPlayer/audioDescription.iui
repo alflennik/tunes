@@ -1,59 +1,65 @@
-* +- (web:, video:, ?videoPlayer:, ?voice:) {
-  [descriptions, ?analysis] = ~ [video.descriptionPath] {
-    descriptionModule = -- web.dynamicImport(video.descriptionPath)
-    descriptions = required(descriptionModule["descriptions"])
-    ?analysis = descriptionModule["analysis"]
-    * [descriptions, ?analysis]
+* async (video:, videoPlayer?:, voice?:) {
+  [dynamicImport:] = import("core:web")
+
+  @spoken = [text: @string, filePath?: @string]
+  @description = [time: @number, ...@spoken]
+  @descriptions = [@description...]
+
+  [descriptions, analysis?] = watch [video.descriptionPath] {
+    module = await dynamicImport(video.descriptionPath)
+    descriptions = require module["descriptions"]? as @descriptions
+    analysis? = module["analysis"]? as @spoken?
+    * [descriptions, analysis?]
   }
 
-  isPrerecorded = ~ [descriptions] { 
-    * !!descriptions[0].filePath
-  }
+  isPrerecorded = watch [descriptions] { * !!descriptions[0]?.filePath? }
 
-  ?description = ~ [?videoPlayer.?time, descriptions] {
-    if ?videoPlayer.?time as time : 
-      * descriptions.findLast((each) { * isGreaterThan(time, each.time) })
+  description? = watch [videoPlayer?.time?, descriptions] {
+    if videoPlayer?.time? as time : 
+      * descriptions.findLast((each) { * time < each.time })
     ;
   }
 
-  ?spokenItem = ~ [?videoPlayer.status] \[?description, ?analysis] {
-    if ?videoPlayer.status == .ended && ?analysis as analysis : * analysis ;
-    * ?description
+  spokenItem? @spoken? = watch [videoPlayer?.status] \[description?, analysis?] {
+    if videoPlayer?.status == .ended && analysis? as analysis : 
+      * analysis
+    ;
+    * description?
   }
 
   status = {
-    ~ [?videoPlayer.status] :
-      if ?videoPlayer.status as videoPlayerStatus : 
-        videoPlayerStatus .. :
+    watch [videoPlayer?.status] :
+      if videoPlayer? as videoPlayer : 
+        given videoPlayer.status :
           .unstarted : * .cleared ;
           .playing : * .playing ;
           .paused, .buffering : * .paused ;
           .ended :
-            if !?analysis : * .ended ;
+            if !analysis? : * .ended ;
             * .playing
           ;
         ;
       ;
     ;
     
-    ~ [?voice.status] \[?spokenItem, ?analysis] :
-      if ?spokenItem && ?spokenItem == ?analysis :
-        * .ended
+    watch [voice?.status] \[spokenItem?, analysis?] :
+      if spokenItem? && spokenItem? == analysis? :
+        * .cleared
       ;
     ;
 
     * .cleared
   }
 
-  isTimeSeek = ~ [?videoPlayer.time] \[?videoPlayer] {
-    if ?videoPlayer.?time as time && ?lastValue(time) as lastTime :
+  isTimeSeek = watch [videoPlayer?.time] \[videoPlayer?] {
+    if videoPlayer?.time? as time && lastValue?(time) as lastTime :
       * absoluteValue(time - lastTime) > 1
     ;
     * false
   }
 
-  ~ [?spokenItem] \[?voice, ?spokenItem, isTimeSeek] {
-    if ?voice as voice && ?spokenItem as spokenItem {
+  watch [spokenItem?] \[voice?, spokenItem?, isTimeSeek] {
+    if voice? as voice && spokenItem? as spokenItem {
       if isTimeSeek {
         voice.play()
         voice.say(spokenItem)
@@ -63,13 +69,15 @@
     }
   }
 
-  ~ [?videoPlayer.status] \[?voice] {
-    if ?voice as voice ?videoPlayer as videoPlayer {
-      videoPlayer.status .. {
+  watch [videoPlayer?.status] \[?voice] {
+    if voice? as voice && videoPlayer? as videoPlayer {
+      given videoPlayer.status {
         .playing : voice.play() ;
         .paused : voice.play() ;
         .unstarted : voice.clear() ;
       }
     }
   }
+
+  * [isPrerecorded:, status:]
 }
