@@ -34,13 +34,13 @@
         ["English United States", 1.7],
       ]
 
-      &defaultVoice? = null
-      &defaultRate = 1.2
+      &defaultVoice = required()
+      defaultRate = 1.2
 
-      &bestVoiceRank? = null
+      &bestVoiceRank<?>
 
-      &foundVoiceName? = null
-      &foundVoiceRate? = null
+      &foundVoiceName = required()
+      &foundVoiceRate = required()
 
       englishVoices = speechSynthesis
         .getVoices()
@@ -49,25 +49,25 @@
       englishVoices.each((voice) {
         bestVoicesAndRates.each(([bestVoiceName, rate], index) {
           if 
-            voice.name == &bestVoiceName? &&
-            (&bestVoiceRank? == null || index < bestVoiceRank) 
+            voice.name == &bestVoiceName &&
+            (!&bestVoiceRank<?> || index < &bestVoiceRank) 
           {
-            &bestVoiceRank? = index
-            &foundVoiceName? = voice.name
-            &foundVoiceRate? = rate
+            &bestVoiceRank<?> = index
+            &foundVoiceName = voice.name
+            &foundVoiceRate = rate
           }
           if voice.default {
-            &defaultVoice? = voice
+            &defaultVoice = voice
           }
         })
       })
 
-      if &bestVoiceRate? == null {
-        &foundVoiceName? = &defaultVoice?.name
-        &foundVoiceRate? = defaultRate
+      if !&bestVoiceRate {
+        &foundVoiceName = &defaultVoice.name
+        &foundVoiceRate = defaultRate
       }
 
-      * [lock require &foundVoiceName?, lock require &foundVoiceRate?]
+      * [lock require foundVoiceName<&>, lock require foundVoiceRate<&>]
     }
 
     getBestVoice = () {
@@ -98,7 +98,8 @@
       }
     })
 
-    * [foundVoiceName, foundVoiceRate]
+    &voiceName = foundVoiceName
+    &voiceRate = foundVoiceRate
   }
 
   say = async (description) {
@@ -136,12 +137,14 @@
     speechSynthesis.pause()
   }
 
-  pause = () {
+  play = () {
     speechSynthesis.resume()
   }
   
-  status = watch [activeUtterances.size, speechSynthesis.paused] \[activeUtterances] {
-    if activeUtterances.size == 0 : * .ended
+  status = watch [activeUtterances.size, speechSynthesis.paused] {
+    if activeUtterances.size == 0 : * .ended ;
     if speechSynthesis.paused : * .paused ; else : * .playing ;
   }
+
+  * [getPermissions:, say:, clear:, pause:, play:, status:]
 }

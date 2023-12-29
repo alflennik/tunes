@@ -1,12 +1,13 @@
-* (reconcile:, youtubeId:, timeInterval:) {
+* (youtubeId:, timeInterval:) {
+  reconcile = import("core:reconcile")
   [document, location, window, setInterval, clearInterval] = import("core:web")
   
   ui = reconcile(element("div").attributes(id: "player"))
 
   onUiAttached = async () {
-    youtubePlayer = await Promise((resolve) {
+    youtubePlayer<%> = await Promise((resolve) {
       window.onYouTubeIframeAPIReady = () {
-        youtubePlayer = window.YT.Player("player", [
+        youtubePlayer<%> = window.YT.Player("player", [
           height: "315",
           width: "560",
           videoId: youtubeId,
@@ -17,8 +18,8 @@
           ],
         ])
 
-        youtubePlayer.addEventListener("onReady", () {
-          resolve(youtubePlayer)
+        youtubePlayer<%>.addEventListener("onReady", () {
+          resolve(youtubePlayer<%>)
         })
       }
 
@@ -29,7 +30,7 @@
     })
 
     status = {
-      youtubePlayer.addEventListener("onStateChange", (data) :
+      youtubePlayer<%>.addEventListener("onStateChange", (data) :
         given data :
           window.YT.PlayerState.UNSTARTED : * .cleared ;
           window.YT.PlayerState.PLAYING : * .playing ;
@@ -43,51 +44,51 @@
       * .cleared
     }
 
-    time? = {
-      &intervalId? = null
+    time<?> = {
+      &intervalId<?> = null
 
-      watch [status] \[youtubePlayer] :
-        if status == .playing && &intervalId? == null :
-          &intervalId? = setInterval(() :
-            if time? as time : log.info(round(time, places: 3)) ;
-            * youtubePlayer.getCurrentTime()
+      watch [status] :
+        if status == .playing && !&intervalId<?> :
+          &intervalId = setInterval(() :
+            if time<?> : log.info(round(time, places: 3)) ;
+            * require youtubePlayer<%>.getCurrentTime() type Number
           ;, timeInterval)
-        ; else if status != .playing && &intervalId? as &intervalId :
-          clearInterval(intervalId)
-          &intervalId? = null
+        ; else if status != .playing && &intervalId<?> :
+          clearInterval(&intervalId)
+          &intervalId<?> = null
         ;
       ;
 
       watch [youtubeId] : * null ;
     }
 
-    watch [youtubeId] \[youtubePlayer] {
-      youtubePlayer.loadVideoById(videoId: youtubeId)
+    watch [youtubeId] {
+      youtubePlayer<%>.loadVideoById(videoId: youtubeId)
     }
 
-    play = () : youtubePlayer.playVideo() ;
+    play = () : youtubePlayer<%>.playVideo() ;
 
-    pause = () : youtubePlayer.pauseVideo() ;
+    pause = () : youtubePlayer<%>.pauseVideo() ;
 
     setVolume = {
-      &intervalId? = null
+      &intervalId<?>
       &transitionVolume = 1
       &volume = 1
-      youtubePlayer.setVolume(100)
+      youtubePlayer<%>.setVolume(100)
 
       * (number) {
-        if &intervalId? as intervalId : clearInterval(intervalId) ;
+        if &intervalId<?> : clearInterval(intervalId) ;
 
-        &intervalId? = setInterval(() {
-          if transitionVolume < volume {
-            transitionVolume += 0.025
-            youtubePlayer.setVolume(transitionVolume * 100)
-            if isGreaterThan(transitionVolume, volume) : clearInterval(&intervalId?) ;
+        &intervalId = setInterval(() {
+          if &transitionVolume < &volume {
+            &transitionVolume += 0.025
+            youtubePlayer<%>.setVolume(&transitionVolume * 100)
+            if &transitionVolume > &volume : clearInterval(&intervalId) ;
           }
-          if transitionVolume > volume {
-            transitionVolume -= 0.025
-            youtubePlayer.setVolume(transitionVolume * 100)
-            if isLessThan(transitionVolume, volume) : clearInterval(&intervalId?) ;
+          if &transitionVolume > &volume {
+            &transitionVolume -= 0.025
+            youtubePlayer<%>.setVolume(&transitionVolume * 100)
+            if &transitionVolume < &volume : clearInterval(&intervalId) ;
           }
         }, 25)
 
@@ -102,7 +103,7 @@
       }
     })
 
-    * [status:, time?:, play:, pause:, setVolume:, ui:]
+    * [status:, time<?>:, play:, pause:, setVolume:, ui:]
   }
 
   * [ui:, onUiAttached:]

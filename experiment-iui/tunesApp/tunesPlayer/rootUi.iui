@@ -1,8 +1,8 @@
-* (videoPlayerUi:, audioDescription:, video:, playContent:) {
+* (playlists: videoPlayerUi:, audioDescription:, video:, playContent:) {
   reconcile = import("core:reconcile")
   
   * reconcile(
-    watch [videoPlayerUi, audioDescription.ui, video] \[playContent] {
+    watch [videoPlayerUi, audioDescription.ui, video] {
       * (
         element("root-element").items(
           element("div")
@@ -22,8 +22,8 @@
                         .attributes(href: "*")
                         .listeners(
                           click: (event) {
-                            event.preventDefault
-                            playContent(playlist?: playlist)
+                            event.preventDefault()
+                            playContent(playlist: playlist)
                           },
                         )
                         .text(playlist.title)
@@ -39,8 +39,8 @@
                             )
                             .listeners({
                               click: (event) {
-                                event.preventDefault
-                                playContent(playlist?: playlist, video?: eachVideo)
+                                event.preventDefault()
+                                playContent(playlist: playlist, video: eachVideo)
                               },
                             })
                             .text(eachVideo.titleSentence)
@@ -61,8 +61,8 @@
                         )
                         .listeners(
                           click: (event) {
-                            event.preventDefault
-                            playContent(video?: eachVideo)
+                            event.preventDefault()
+                            playContent(video: eachVideo)
                           },
                         )
                         .text(eachVideo.titleSentence)

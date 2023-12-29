@@ -1,49 +1,52 @@
-* async (video:, videoPlayer?:, voice?:) {
+* async (video:, videoPlayer<?>:, voice<?>:) {
   [dynamicImport:] = import("core:web")
 
-  @spoken = [text: @string, filePath?: @string]
-  @description = [time: @number, ...@spoken]
-  @descriptions = [@description...]
+  SpokenItem = [text: String, filePath: String?]
+  Description = [...SpokenItem, time: Number]
 
-  [descriptions, analysis?] = watch [video.descriptionPath] {
-    module = await dynamicImport(video.descriptionPath)
-    descriptions = require module["descriptions"]? as @descriptions
-    analysis? = module["analysis"]? as @spoken?
-    * [descriptions, analysis?]
+  [descriptions, analysis<?>] = watch [video.descriptionPath<?>] {
+    module<%> = require await dynamicImport(video.descriptionPath)<!?%>
+    descriptions = require module<%>.descriptions type [Description...]
+    analysis<?> = try? module<?%>.analysis type SpokenItem
+    * [descriptions, analysis<?>]
   }
 
-  isPrerecorded = watch [descriptions] { * !!descriptions[0]?.filePath? }
+  isPrerecorded = watch [descriptions] { * !!descriptions[0]<?>.filePath<?> }
 
-  description? = watch [videoPlayer?.time?, descriptions] {
-    if videoPlayer?.time? as time : 
-      * descriptions.findLast((each) { * time < each.time })
+  description<?> = watch [videoPlayer<?>.time<?>, descriptions] {
+    if videoPlayer<?>.time<?>: 
+      * descriptions.findLast((each) { * videoPlayer.time < each.time })
     ;
   }
 
-  spokenItem? @spoken? = watch [videoPlayer?.status] \[description?, analysis?] {
-    if videoPlayer?.status == .ended && analysis? as analysis : 
+  spokenItem<?> type SpokenItem<?> = watch [videoPlayer<?>.status] {
+    if videoPlayer<?>.status == .cleared && analysis<?> as analysis : 
       * analysis
     ;
-    * description?
+    * description<?>
   }
 
   status = {
-    watch [videoPlayer?.status] :
-      if videoPlayer? as videoPlayer : 
+    watch [videoPlayer<?>.status] :
+      if videoPlayer<?> : 
         given videoPlayer.status :
-          .unstarted : * .cleared ;
+          .cleared : * .cleared ;
           .playing : * .playing ;
           .paused, .buffering : * .paused ;
-          .ended :
-            if !analysis? : * .ended ;
+          .cleared :
+            if !analysis : * .cleared ;
             * .playing
           ;
         ;
       ;
     ;
     
-    watch [voice?.status] \[spokenItem?, analysis?] :
-      if spokenItem? && spokenItem? == analysis? :
+    watch [voice<?>.status] :
+      if 
+        voice<?>.status == .cleared &&
+        spokenItem<?> &&
+        spokenItem == analysis<?>
+      :
         * .cleared
       ;
     ;
@@ -51,30 +54,33 @@
     * .cleared
   }
 
-  isTimeSeek = watch [videoPlayer?.time] \[videoPlayer?] {
-    if videoPlayer?.time? as time && lastValue?(time) as lastTime :
-      * absoluteValue(time - lastTime) > 1
-    ;
-    * false
-  }
-
-  watch [spokenItem?] \[voice?, spokenItem?, isTimeSeek] {
-    if voice? as voice && spokenItem? as spokenItem {
-      if isTimeSeek {
-        voice.play()
-        voice.say(spokenItem)
-      } else {
-        voice.clear()
+  section "voice" {
+    isTimeSeek = watch [videoPlayer<?>.time] {
+      lastTime<?> = lastValue(videoPlayer<?>.time<?>)<?>
+      if videoPlayer<?>.time<?> && lastTime<?> :
+        * absoluteValue(time - lastTime) > 1
+      ;
+      * false
+    }
+    
+    watch [spokenItem<?>] {
+      if voice<?> && spokenItem<?> {
+        if isTimeSeek {
+          voice.play()
+          voice.say(spokenItem)
+        } else {
+          voice.clear()
+        }
       }
     }
-  }
 
-  watch [videoPlayer?.status] \[?voice] {
-    if voice? as voice && videoPlayer? as videoPlayer {
-      given videoPlayer.status {
-        .playing : voice.play() ;
-        .paused : voice.play() ;
-        .unstarted : voice.clear() ;
+    watch [videoPlayer.status] {
+      if voice<?> && videoPlayer<?> {
+        given videoPlayer.status {
+          .playing : voice.play() ;
+          .paused : voice.play() ;
+          .cleared : voice.clear() ;
+        }
       }
     }
   }

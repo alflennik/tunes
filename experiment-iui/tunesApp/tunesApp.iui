@@ -1,5 +1,30 @@
  app {
   web = import("core:web")
+  
+  VideoType = {
+    .musicVideo
+  }
+  
+  Video = [
+    id: String!
+    artist: String
+    title: String
+    date: DateTime!
+    videoType: VideoType!
+    videoTypeCustomLabel: String
+    thumbnailSrc: String!
+    thumbnailAlt: String!
+    youtubeId: String!
+    youtubeWidth: Number!
+    youtubeHeight: Number!
+    descriptionPath: String
+  ]
+
+  Playlist = [
+    id:
+    title:
+    videos:
+  ]
 
   // TODO: how to create index.html
 

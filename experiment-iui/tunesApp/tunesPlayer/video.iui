@@ -1,31 +1,31 @@
-* (playlists:, otherVideos:, videoPlayer?:) {
+* (playlists:, otherVideos:, videoPlayer<?>:) {
   [document:, location:, window:] = import("core:web")
   
   &video = required()
-  &playlist? = null
+  &playlist<?>
   &onUiComplete = () {}
   
   if location.hash {
     &onUiComplete = () {
-      document.querySelector("#player-h2").focus(preventScroll: true)
+      document.querySelector("#player-h2")<?>.focus(preventScroll: true)
       document
-        .querySelector("tunes-player")
+        .querySelector("tunes-player")<?>
         .scrollIntoView(behavior: "instant", block: "start")
     }
   
     videoId = location.hash.slice(1)
 
-    otherVideo? = otherVideos.find((video) { * video.id == videoId })
-    if otherVideo? as otherVideo :
+    otherVideo<?> = otherVideos.find((video) { * video.id == videoId })<?>
+    if otherVideo<?> as otherVideo :
       &video = otherVideo
       *
     ;
 
-    playlists.each((playlist) :
-      playlist.videos.each((video) :
-        if video.id == videoId :
-          &video = video
-          &playlist? = playlist
+    playlists.each((eachPlaylist) :
+      eachPlaylist.videos.each((eachVideo) :
+        if eachVideo.id == videoId :
+          &video = eachVideo
+          &playlist<?> = eachPlaylist
           *
         ;
       ;)
@@ -33,30 +33,35 @@
   } else {
     // Cannot show a playlist with a content advisory by default because it would bypass the
     // permission dialog
-    &playlist? = playlists.find((playlist) { * !playlist.needsContentAdvisory })
-    &video = require playlist.videos[0]?
+    &playlist<?> = playlists.find((playlist) { * !playlist.needsContentAdvisory })
+    &video = require playlist.videos[0]
   }
 
-  playContent = (newVideo?:, newPlaylist?:) {
-    if newPlaylist?.needsContentAdvisory && !window.confirm(
+  playContent = (newVideo<?>:, newPlaylist<?>:) {
+    if newPlaylist<?>.needsContentAdvisory && !window.confirm(
       "This playlist contains content some viewers might find disturbing, are you sure you " +
         "want to continue?"
     ) : * ;
 
-    &video = require newVideo?
-    &playlist? = newPlaylist?
+    &playlist<?> = newPlaylist<?>
 
-    document.querySelector("#player-h2").focus(preventScroll: true)
+    &video = if !newVideo<?> {
+      * require &playlist.videos[0]
+    } else {
+      * require newVideo<?>
+    }
+
+    document.querySelector("#player-h2")<?>.focus(preventScroll: true)
     document
-      .querySelector("tunes-player")
+      .querySelector("tunes-player")<?>
       .scrollIntoView(behavior: "smooth", block: "start")
-    videoPlayer?.play()
+    videoPlayer<?>.play()
   }
 
   * [
-    video: lock &video,
-    playlist?: lock &playlist?,
+    video: lock(&video),
+    playlist<?>: lock(&playlist<?>),
     playContent:,
-    onUiComplete: lock &onUiComplete
+    onUiComplete: lock(&onUiComplete)
   ]
 }

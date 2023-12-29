@@ -1,0 +1,39 @@
+* (onFirstInteraction:) {
+  reconcile = import("core:reconcile")
+  
+  &firstInteractionComplete = false
+  
+  firstInteractionInterceptor = (items<%>:) {
+    * (
+      element("div")
+        .attributes(class: "interaction-interceptor", "tab-index": 0)
+        .items(items<%>)
+    )
+  }
+
+  onUiComplete () {
+    listenForFirstInteraction = (event) {
+      isKeyDown = event.type == "keydown"
+
+      interactionInterceptor = require document.querySelector(".interaction-interceptor")<?>
+      isVideoPlayerInteraction = 
+        event.target == interactionInterceptor || interactionInterceptor.contains(event.target)
+
+      onFirstInteraction(isKeyDown:, isVideoPlayerInteraction:)
+
+      interactionInterceptor.style.display = "none"
+      &firstInteractionComplete = true
+
+      document.removeEventListener("click", listenForFirstInteraction)
+      document.removeEventListener("keydown", listenForFirstInteraction)
+    }
+    document.addEventListener("click", listenForFirstInteraction)
+    document.addEventListener("keydown", listenForFirstInteraction)
+  }
+
+  * [
+    firstInteractionInterceptor:,
+    firstInteractionComplete: lock(&firstInteractionComplete),
+    onUiComplete:
+  ]
+}
