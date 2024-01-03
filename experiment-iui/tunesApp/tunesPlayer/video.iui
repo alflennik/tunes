@@ -1,8 +1,8 @@
-* (playlists:, otherVideos:, videoPlayer<?>:) {
+* (playlists:, otherVideos:, videoPlayer<?%>:) {
   [document:, location:, window:] = import("core:web")
   
-  &video = required()
-  &playlist<?>
+  &video<?%>
+  &playlist<?%>
   &onUiComplete = () {}
   
   if location.hash {
@@ -16,7 +16,7 @@
     videoId = location.hash.slice(1)
 
     otherVideo<?> = otherVideos.find((video) { * video.id == videoId })<?>
-    if otherVideo<?> as otherVideo :
+    if otherVideo<?> :
       &video = otherVideo
       *
     ;
@@ -25,7 +25,7 @@
       eachPlaylist.videos.each((eachVideo) :
         if eachVideo.id == videoId :
           &video = eachVideo
-          &playlist<?> = eachPlaylist
+          &playlist = eachPlaylist
           *
         ;
       ;)
@@ -34,7 +34,7 @@
     // Cannot show a playlist with a content advisory by default because it would bypass the
     // permission dialog
     &playlist<?> = playlists.find((playlist) { * !playlist.needsContentAdvisory })
-    &video = require playlist.videos[0]
+    &video = require!!(playlist.videos[0])
   }
 
   playContent = (newVideo<?>:, newPlaylist<?>:) {
@@ -46,20 +46,20 @@
     &playlist<?> = newPlaylist<?>
 
     &video = if !newVideo<?> {
-      * require &playlist.videos[0]
+      * require!!(&playlist.videos[0]<?>)
     } else {
-      * require newVideo<?>
+      * require!!(newVideo<?>)
     }
 
     document.querySelector("#player-h2")<?>.focus(preventScroll: true)
     document
       .querySelector("tunes-player")<?>
       .scrollIntoView(behavior: "smooth", block: "start")
-    videoPlayer<?>.play()
+    videoPlayer<?%>.play()
   }
 
   * [
-    video: lock(&video),
+    video: lock(require!!(&video<?>)),
     playlist<?>: lock(&playlist<?>),
     playContent:,
     onUiComplete: lock(&onUiComplete)

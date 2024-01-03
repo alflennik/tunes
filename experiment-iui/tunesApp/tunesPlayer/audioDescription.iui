@@ -1,17 +1,17 @@
 * async (video:, videoPlayer<?>:, voice<?>:) {
   [dynamicImport:] = import("core:web")
 
-  SpokenItem = [text: String, filePath: String?]
-  Description = [...SpokenItem, time: Number]
+  SpokenItem = Entries(text: String, filePath<?>: String)
+  Description = Entries(...SpokenItem, time: Number)
 
   [descriptions, analysis<?>] = watch [video.descriptionPath<?>] {
-    module<%> = require await dynamicImport(video.descriptionPath)<!?%>
-    descriptions = require module<%>.descriptions type [Description...]
-    analysis<?> = try? module<?%>.analysis type SpokenItem
+    module<%> = try!!(require!!(await dynamicImport(video.descriptionPath)<!?%>)<!%>)<%>
+    descriptions = module<%>.descriptions.assignType!!(List(Item: Description))
+    analysis<?> = module<%>.analysis.assignType?(SpokenItem)<?>
     * [descriptions, analysis<?>]
   }
 
-  isPrerecorded = watch [descriptions] { * !!descriptions[0]<?>.filePath<?> }
+  isPrerecorded = watch [descriptions] { * toBoolean(descriptions[0]<?>.filePath<?>) }
 
   description<?> = watch [videoPlayer<?>.time<?>, descriptions] {
     if videoPlayer<?>.time<?>: 
@@ -19,8 +19,9 @@
     ;
   }
 
-  spokenItem<?> type SpokenItem<?> = watch [videoPlayer<?>.status] {
-    if videoPlayer<?>.status == .cleared && analysis<?> as analysis : 
+  spokenItem<?> = watch [videoPlayer<?>.status] &Result {
+    &Result = SpokenItem
+    if videoPlayer<?>.status == .cleared && analysis<?> : 
       * analysis
     ;
     * description<?>
@@ -58,7 +59,7 @@
     isTimeSeek = watch [videoPlayer<?>.time] {
       lastTime<?> = lastValue(videoPlayer<?>.time<?>)<?>
       if videoPlayer<?>.time<?> && lastTime<?> :
-        * absoluteValue(time - lastTime) > 1
+        * absoluteValue(videoPlayer.time - lastTime) > 1
       ;
       * false
     }
@@ -67,7 +68,7 @@
       if voice<?> && spokenItem<?> {
         if isTimeSeek {
           voice.play()
-          voice.say(spokenItem)
+          unawait voice.say(spokenItem)
         } else {
           voice.clear()
         }

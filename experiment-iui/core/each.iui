@@ -1,0 +1,42 @@
+each = &isAsync (list<%>, callback<%>) {
+  TheList<?> = Type(list<%>)<?>
+  Callback<?> = Type(callback<%>)<?>
+
+  if TheList<?> && !TheList.matches(List) : 
+    * compileError("The first argument must be a list")
+  ;
+
+  // Type cannot be null because we will need to know the function's isAsync and notices properties
+  if !Callback<?>.matches(Function) :
+    * compileError("The second argument must be a function")
+  ;
+
+  Item<?> = Type(Callback.arguments[0]<?>)<?>
+
+  if TheList<?> && Item<?> && !Item.matches(TheList.Item) :
+    * compileError(
+      "Failed to match the items from the list with the first argument of the provided callback \
+      function"
+    )
+  ;
+
+  list<%>.assignType!!(List(Item: require!!(Item<?>)))
+
+  &isAsync = Callback.isAsync
+  notices = Callback.notices
+
+  newList = [Item...]
+
+  &i = 0
+  while &i < list.count :
+    // TODO: this syntax looks like destructuring (?)
+    result<notices> = if &isAsync {
+      * await callback(list[&i], index<?>: lock(&i))
+    } else {
+      * callback(list[&i], index<?>: lock(&i))
+    }
+    newList.append(result)
+    &i += 1
+  ;
+  * newList
+}

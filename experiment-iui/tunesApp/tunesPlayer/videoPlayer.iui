@@ -45,13 +45,13 @@
     }
 
     time<?> = {
-      &intervalId<?> = null
+      &intervalId<?>
 
       watch [status] :
         if status == .playing && !&intervalId<?> :
           &intervalId = setInterval(() :
             if time<?> : log.info(round(time, places: 3)) ;
-            * require youtubePlayer<%>.getCurrentTime() type Number
+            * require youtubePlayer<%>.getCurrentTime() Number
           ;, timeInterval)
         ; else if status != .playing && &intervalId<?> :
           clearInterval(&intervalId)
@@ -77,7 +77,7 @@
       youtubePlayer<%>.setVolume(100)
 
       * (number) {
-        if &intervalId<?> : clearInterval(intervalId) ;
+        if &intervalId<?> : clearInterval(&intervalId) ;
 
         &intervalId = setInterval(() {
           if &transitionVolume < &volume {

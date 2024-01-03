@@ -1,13 +1,13 @@
 * (isIOS:, isAndroid:) {
-  [speechSynthesis:, navigator:, Set:] = import("core:web")
+  [speechSynthesis:, navigator:, makeSet:] = import("core:web")
   
   // A reference needs to be kept for active utterances, or they might be garbage collected!
   // See https://stackoverflow.com/a/35935851/3888572
   // See https://bugs.chromium.org/p/chromium/issues/detail?id=509488
-  activeUtterances = Set()
+  activeUtterances = makeSet()
 
-  &voiceName = required()
-  &voiceRate = required()
+  &voiceName<?%>
+  &voiceRate<?%>
   
   getPermissions = async () {
     setBestVoice = () {
@@ -34,22 +34,22 @@
         ["English United States", 1.7],
       ]
 
-      &defaultVoice = required()
+      &defaultVoice<?>
       defaultRate = 1.2
 
-      &bestVoiceRank<?>
+      &bestVoiceRank<?> = Number
 
-      &foundVoiceName = required()
-      &foundVoiceRate = required()
+      &foundVoiceName<?>
+      &foundVoiceRate<?>
 
       englishVoices = speechSynthesis
         .getVoices()
         .filter((voice) { * voice.lang == "en-US" || voice.lang == "en_US" })
       
       englishVoices.each((voice) {
-        bestVoicesAndRates.each(([bestVoiceName, rate], index) {
+        bestVoicesAndRates.each(([bestVoiceName, rate], index:) {
           if 
-            voice.name == &bestVoiceName &&
+            voice.name == bestVoiceName &&
             (!&bestVoiceRank<?> || index < &bestVoiceRank) 
           {
             &bestVoiceRank<?> = index
@@ -62,12 +62,12 @@
         })
       })
 
-      if !&bestVoiceRate {
-        &foundVoiceName = &defaultVoice.name
-        &foundVoiceRate = defaultRate
+      if !&bestVoiceRate<?> {
+        &foundVoiceName<?> = &defaultVoice.name
+        &foundVoiceRate<?> = defaultRate
       }
 
-      * [lock require foundVoiceName<&>, lock require foundVoiceRate<&>]
+      * [lock(require!!(&foundVoiceName<?>)), lock(require!!(&foundVoiceRate<?>))]
     }
 
     getBestVoice = () {
@@ -83,7 +83,7 @@
       })
     }
 
-    [foundVoiceName, foundVoiceRate] = await Promise((resolve) {
+    [&voiceName, &voiceRate] = await Promise((resolve) {
       // Thanks AblePlayer!
       // https://github.com/ableplayer/ableplayer/blob/main/scripts/description.js
       greeting = SpeechSynthesisUtterance("Hi!")
@@ -97,18 +97,15 @@
         resolve(getBestVoice())
       }
     })
-
-    &voiceName = foundVoiceName
-    &voiceRate = foundVoiceRate
   }
 
   say = async (description) {
-    voice = speechSynthesis.getVoices().find((each) { * each.name == &voiceName })
+    voice = speechSynthesis.getVoices().find((each) { * each.name == &voiceName })<?>.require!!()
     utterance = SpeechSynthesisUtterance(description.text)
 
     // On older versions of iOS (v16) the best voice is the default voice, which is not listed in
     // the voice list
-    if isIOS {
+    if !isIOS {
       utterance.voice = voice
       utterance.rate = &voiceRate
     } else {
@@ -141,6 +138,7 @@
     speechSynthesis.resume()
   }
   
+  // TODO: revisit reactivity here
   status = watch [activeUtterances.size, speechSynthesis.paused] {
     if activeUtterances.size == 0 : * .ended ;
     if speechSynthesis.paused : * .paused ; else : * .playing ;

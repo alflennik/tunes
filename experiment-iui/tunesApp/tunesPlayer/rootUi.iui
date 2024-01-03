@@ -1,4 +1,11 @@
-* (playlists: videoPlayerUi:, audioDescription:, video:, playContent:) {
+* (
+  playlists:,
+  videoPlayerUi:,
+  audioDescription:,
+  video:,
+  playContent:,
+  firstInteractionInterceptor:
+) {
   reconcile = import("core:reconcile")
   
   * reconcile(

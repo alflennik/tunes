@@ -3,11 +3,11 @@
   
   &firstInteractionComplete = false
   
-  firstInteractionInterceptor = (items<%>:) {
+  firstInteractionInterceptor = (items:) {
     * (
       element("div")
         .attributes(class: "interaction-interceptor", "tab-index": 0)
-        .items(items<%>)
+        .items(items)
     )
   }
 
