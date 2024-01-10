@@ -1,15 +1,16 @@
 * (
   playlists:,
+  otherVideos:
   videoPlayerUi:,
-  audioDescription:,
-  video:,
+  audioDescription.ui:,
+  activeVideo:,
   playContent:,
-  firstInteractionInterceptor:
+  interactionInterceptor:
 ) {
   reconcile = import("core:reconcile")
   
   * reconcile(
-    watch [videoPlayerUi, audioDescription.ui, video] {
+    watch [videoPlayerUi, audioDescription.ui, activeVideo] {
       * (
         element("root-element").items(
           element("div")
@@ -30,14 +31,14 @@
                         .listeners(
                           click: (event) {
                             event.preventDefault()
-                            playContent(playlist: playlist)
+                            playContent(playlist:)
                           },
                         )
                         .text(playlist.title)
                     ),
                     element("ul").items(
-                      ...playlist.videos.each((eachVideo) {
-                        isActive = eachVideo.id == video.id
+                      ...playlist.videos.each((video) {
+                        isActive = video.id == activeVideo.id
                         * element("li").items(
                           element("a")
                             .attributes(
@@ -47,10 +48,10 @@
                             .listeners({
                               click: (event) {
                                 event.preventDefault()
-                                playContent(playlist: playlist, video: eachVideo)
+                                playContent(playlist:, video:)
                               },
                             })
-                            .text(eachVideo.titleSentence)
+                            .text(video.titleSentence)
                         )
                       })
                     )
@@ -58,8 +59,8 @@
                 }),
                 element("h2").text("Other Songs"),
                 element("ul").items(
-                  ...otherVideos.each((eachVideo) {
-                    isActive = eachVideo.id == video.id
+                  ...otherVideos.each((video) {
+                    isActive = video.id == activeVideo.id
                     * element("li").items(
                       element("a")
                         .attributes(
@@ -69,10 +70,10 @@
                         .listeners(
                           click: (event) {
                             event.preventDefault()
-                            playContent(video: eachVideo)
+                            playContent(video:)
                           },
                         )
-                        .text(eachVideo.titleSentence)
+                        .text(video.titleSentence)
                     )
                   })
                 )
@@ -88,7 +89,7 @@
               )
               .attributes("aria-hidden": if firstInteractionComplete { * null } else { * true })
               .items(
-                firstInteractionInterceptor(
+                interactionInterceptor(
                   items: element("button").text("Play ${video.titleSentence}"),
                 ),
                 videoPlayerUi

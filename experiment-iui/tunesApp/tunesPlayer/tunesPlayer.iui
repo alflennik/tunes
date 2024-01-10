@@ -1,11 +1,11 @@
 * async (playlists:, otherVideos:)<!> {
   &videoPlayer<?%>
-  &audioDescription<?%>
+  &audioDescriptionIsPrerecorded = false
 
   [video:, playlist:, playContent:, onUiComplete: onUiComplete1] = import("./video.iui")(
     playlists:,
     otherVideos:,
-    videoPlayer: lock(&videoPlayer<?%>)
+    videoPlayerPlay<?>: &videoPlayer<?%>.play.assignType?(() {})<?>.lock
   )
 
   [isIOS, isAndroid] = [
@@ -18,7 +18,7 @@
 
   &areVoicesReady = false
   [firstInteractionInterceptor, onUiComplete: onUiComplete2] = import("./permissions")(
-    onFirstInteraction: async (isKeyDown:, isVideoPlayerInteraction:) {
+    onFirstInteraction: (isKeyDown:, isVideoPlayerInteraction:)<~> {
       await concurrent([
         voiceSynthesized.getPermissions(),
         voicePrerecorded.getPermissions()
@@ -30,18 +30,18 @@
     }
   )
 
-  voice<?> = watch [isIOS, &audioDescription<?%>.isPrerecorded] {
+  voice<?> = watch [isIOS, &audioDescriptionIsPrerecorded] {
     if !&areVoicesReady : * null ;
     if isIOS : * voiceSynthesized ; // Not usable on iOS since there is no audio ducking control
-    if &audioDescription<?%>.isPrerecorded : * voicePrerecorded ; else : * voiceSynthesized ;
+    if &audioDescriptionIsPrerecorded : * voicePrerecorded ; else : * voiceSynthesized ;
   }
 
   audioDescription = import("./audioDescription")(
     video:,
     videoPlayer<?>: lock(&videoPlayer<?>),
     voice<?>:
-  )<!>
-  &audioDescription = audioDescription
+  )
+  &audioDescriptionIsPrerecorded = audioDescription.isPrerecorded
 
   [ui: videoPlayerUi, onUiAttached: getVideoPlayer] = import("./videoPlayer")(
     youtubeId: video.youtubeId,
@@ -60,7 +60,7 @@
   web.document.body.appendChild(rootUi.element)
 
   videoPlayer = await getVideoPlayer()
-  &videoPlayer = videoPlayer
+  &videoPlayerPlay<?> = videoPlayer.play
 
   onUiComplete1()
   onUiComplete2()

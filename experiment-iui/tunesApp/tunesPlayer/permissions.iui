@@ -3,23 +3,21 @@
   
   &firstInteractionComplete = false
   
-  firstInteractionInterceptor = (items:) {
-    * (
-      element("div")
-        .attributes(class: "interaction-interceptor", "tab-index": 0)
-        .items(items)
-    )
+  firstInteractionInterceptor = (items<%>:) {
+    * element("div")
+      .attributes(class: "interaction-interceptor", "tab-index": 0)
+      .items(items<%>)
   }
 
   onUiComplete () {
     listenForFirstInteraction = (event) {
       isKeyDown = event.type == "keydown"
 
-      interactionInterceptor = require document.querySelector(".interaction-interceptor")<?>
+      interactionInterceptor = document.querySelector(".interaction-interceptor")<?>.require!!
       isVideoPlayerInteraction = 
         event.target == interactionInterceptor || interactionInterceptor.contains(event.target)
 
-      onFirstInteraction(isKeyDown:, isVideoPlayerInteraction:)
+      unawait onFirstInteraction(isKeyDown:, isVideoPlayerInteraction:)
 
       interactionInterceptor.style.display = "none"
       &firstInteractionComplete = true

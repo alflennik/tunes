@@ -9,7 +9,7 @@
   &voiceName<?%>
   &voiceRate<?%>
   
-  getPermissions = async () {
+  getPermissions = ()<~> {
     setBestVoice = () {
       isChrome = navigator.userAgent.contains("Chrome")
       isSafari =
@@ -34,13 +34,13 @@
         ["English United States", 1.7],
       ]
 
-      &defaultVoice<?>
+      &defaultVoice<?%>
       defaultRate = 1.2
 
-      &bestVoiceRank<?> = Number
+      &bestVoiceRank<?%>.assignType(0)<?>
 
-      &foundVoiceName<?>
-      &foundVoiceRate<?>
+      &foundVoiceName<?%>
+      &foundVoiceRate<?%>
 
       englishVoices = speechSynthesis
         .getVoices()
@@ -52,7 +52,7 @@
             voice.name == bestVoiceName &&
             (!&bestVoiceRank<?> || index < &bestVoiceRank) 
           {
-            &bestVoiceRank<?> = index
+            &bestVoiceRank = index
             &foundVoiceName = voice.name
             &foundVoiceRate = rate
           }
@@ -62,17 +62,15 @@
         })
       })
 
-      if !&bestVoiceRate<?> {
-        &foundVoiceName<?> = &defaultVoice.name
-        &foundVoiceRate<?> = defaultRate
-      }
+      if !&foundVoiceName<?> : &foundVoiceName = &defaultVoice<?>.require!!.name ;
+      if !foundVoiceRate<?> : &foundVoiceRate = defaultRate ;
 
-      * [lock(require!!(&foundVoiceName<?>)), lock(require!!(&foundVoiceRate<?>))]
+      * [lock(&foundVoiceName), lock(&foundVoiceRate)]
     }
 
-    getBestVoice = () {
-      * Promise((resolve) {
-        if speechSynthesis.getVoices().length {
+    getBestVoice = ()<~> {
+      * makePromise((resolve) {
+        if speechSynthesis.getVoices().count {
           resolve(setBestVoice())
           *
         }
@@ -83,10 +81,10 @@
       })
     }
 
-    [&voiceName, &voiceRate] = await Promise((resolve) {
+    [&voiceName, &voiceRate] = await makePromise((resolve) {
       // Thanks AblePlayer!
       // https://github.com/ableplayer/ableplayer/blob/main/scripts/description.js
-      greeting = SpeechSynthesisUtterance("Hi!")
+      greeting = makeSpeechSynthesisUtterance("Hi!")
       greeting.volume = 0 // silent
       greeting.rate = 10 // fastest speed supported by the API
       // Wow, thanks to this answer: https://stackoverflow.com/a/58775876/3888572
@@ -94,14 +92,14 @@
       speechSynthesis.speak(greeting)
 
       greeting.onend = () {
-        resolve(getBestVoice())
+        resolve(unawait getBestVoice())
       }
     })
   }
 
   say = async (description) {
-    voice = speechSynthesis.getVoices().find((each) { * each.name == &voiceName })<?>.require!!()
-    utterance = SpeechSynthesisUtterance(description.text)
+    voice = speechSynthesis.getVoices().find((each) { * each.name == &voiceName })<?>.require!!
+    utterance = makeSpeechSynthesisUtterance(description.text)
 
     // On older versions of iOS (v16) the best voice is the default voice, which is not listed in
     // the voice list
@@ -112,7 +110,7 @@
       utterance.rate = 1.1
     }
     utterance.lang = "en-US"
-    * Promise(async (resolve) {
+    * makePromise(async (resolve) {
       utterance.addEventListener("end", async () {
         activeUtterances.delete(utterance)
         resolve()

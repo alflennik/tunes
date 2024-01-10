@@ -1,0 +1,36 @@
+* async (firstInteractionEvent, isVideoInteraction:, videoPlayer:) {
+  startEvent(
+    firstInteractionEvent,
+    async (
+      makeVoiceSynthesized:
+      makeVoicePrerecorded:
+      makeIsPrerecorded:
+      makeAudioDescription:
+    ) {
+      [voiceSynthesized, voicePrerecorded] = await concurrent(
+        makeVoiceSynthesized(),
+        makeVoicePrerecorded(),
+      )
+
+      isPrerecorded = makeIsPrerecorded()
+
+      voice = makeVoice(
+        isPrerecorded:
+        isIOS:,
+        isAndroid:,
+        voiceSynthesized:,
+        voicePrerecorded:
+      )
+
+      audioDescription = makeAudioDescription(voice:)
+
+      if isVideoInteraction :
+        document.querySelector("#player-h2")<?>.focus(preventScroll: true)
+        document
+          .querySelector("tunes-player")<?>
+          .scrollIntoView(behavior: "smooth", block: "start")
+        videoPlayer.play()
+      ;
+    }
+  )
+}

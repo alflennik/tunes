@@ -1,4 +1,4 @@
-* (playlists:, otherVideos:, videoPlayer<?%>:) {
+* (playlists:, otherVideos:, videoPlayerPlay<?>:) {
   [document:, location:, window:] = import("core:web")
   
   &video<?%>
@@ -55,13 +55,13 @@
     document
       .querySelector("tunes-player")<?>
       .scrollIntoView(behavior: "smooth", block: "start")
-    videoPlayer<?%>.play()
+    videoPlayerPlay<?>()
   }
 
   * [
-    video: lock(require!!(&video<?>)),
-    playlist<?>: lock(&playlist<?>),
+    video: &video.lock,
+    playlist<?>: &playlist<?>.lock,
     playContent:,
-    onUiComplete: lock(&onUiComplete)
+    onUiComplete: &onUiComplete.lock
   ]
 }

@@ -4,8 +4,8 @@
   
   ui = reconcile(element("div").attributes(id: "player"))
 
-  onUiAttached = async () {
-    youtubePlayer<%> = await Promise((resolve) {
+  onUiAttached = ()<~> {
+    youtubePlayer<%> = await makePromise((resolve) {
       window.onYouTubeIframeAPIReady = () {
         youtubePlayer<%> = window.YT.Player("player", [
           height: "315",
@@ -32,11 +32,11 @@
     status = {
       youtubePlayer<%>.addEventListener("onStateChange", (data) :
         given data :
-          window.YT.PlayerState.UNSTARTED : * .cleared ;
-          window.YT.PlayerState.PLAYING : * .playing ;
-          window.YT.PlayerState.PAUSED : * .paused ;
-          window.YT.PlayerState.BUFFERING : * .buffering ;
-          window.YT.PlayerState.ENDED : * .ended ;
+          window<%>."YT"."PlayerState".UNSTARTED : * .cleared ;
+          window<%>."YT"."PlayerState".PLAYING : * .playing ;
+          window<%>."YT"."PlayerState".PAUSED : * .paused ;
+          window<%>."YT"."PlayerState".BUFFERING : * .buffering ;
+          window<%>."YT"."PlayerState".ENDED : * .ended ;
           else : break ;
         ;
       ;)
@@ -50,8 +50,8 @@
       watch [status] :
         if status == .playing && !&intervalId<?> :
           &intervalId = setInterval(() :
-            if time<?> : log.info(round(time, places: 3)) ;
-            * require youtubePlayer<%>.getCurrentTime() Number
+            if time<?> : log(round(time, places: 3), level: .info) ;
+            * youtubePlayer<%>.getCurrentTime().assignType!!(0.0)
           ;, timeInterval)
         ; else if status != .playing && &intervalId<?> :
           clearInterval(&intervalId)
@@ -72,8 +72,8 @@
 
     setVolume = {
       &intervalId<?>
-      &transitionVolume = 1
-      &volume = 1
+      &transitionVolume = 1.0
+      &volume = 1.0
       youtubePlayer<%>.setVolume(100)
 
       * (number) {
