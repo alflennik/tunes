@@ -1,16 +1,19 @@
-* async (playlists:, otherVideos:)<!> {
+* (playlists:, otherVideos:)<!~~> {
+  [navigator:,document:] = import("core:web")
+  
   &videoPlayer<?%>
+  &videoPlayerPlay<?> = &.assignType(() {})<?>
   &audioDescriptionIsPrerecorded = false
 
   [video:, playlist:, playContent:, onUiComplete: onUiComplete1] = import("./video.iui")(
     playlists:,
     otherVideos:,
-    videoPlayerPlay<?>: &videoPlayer<?%>.play.assignType?(() {})<?>.lock
+    videoPlayerPlay<?>: &videoPlayerPlay<?>.lock
   )
 
   [isIOS, isAndroid] = [
-    regex("iPhone|iPod|iPad").matches(web.navigator.platform),
-    regex("android").modes("i").matches(web.navigator.userAgent)
+    regex("iPhone|iPod|iPad").matches(navigator.platform),
+    regex("android").modes("i").matches(navigator.userAgent)
   ]
 
   voiceSynthesized = import("./voiceSynthesized")(isIOS:, isAndroid:)
@@ -19,13 +22,13 @@
   &areVoicesReady = false
   [firstInteractionInterceptor, onUiComplete: onUiComplete2] = import("./permissions")(
     onFirstInteraction: (isKeyDown:, isVideoPlayerInteraction:)<~> {
-      await concurrent([
+      await concurrent(
         voiceSynthesized.getPermissions(),
         voicePrerecorded.getPermissions()
-      ])
+      )
       &areVoicesReady = true
-      if !isKeyDown && isVideoPlayerInteraction && &videoPlayer<?> : 
-        &videoPlayer.play()
+      if !isKeyDown && isVideoPlayerInteraction && &videoPlayerPlay<?> : 
+        &videoPlayerPlay()
       ;
     }
   )
@@ -57,9 +60,10 @@
     firstInteractionInterceptor:
   )
 
-  web.document.body.appendChild(rootUi.element)
+  document.body.appendChild(rootUi.element)
 
-  videoPlayer = await getVideoPlayer()
+  videoPlayer = getVideoPlayer()
+  &videoPlayer = videoPlayer
   &videoPlayerPlay<?> = videoPlayer.play
 
   onUiComplete1()
