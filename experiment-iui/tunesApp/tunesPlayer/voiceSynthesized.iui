@@ -81,7 +81,7 @@
       })
     }
 
-    [&voiceName, &voiceRate] = {~}- makePromise((resolve) {
+    [&voiceName, &voiceRate] = makePromise((resolve) {
       // Thanks AblePlayer!
       // https://github.com/ableplayer/ableplayer/blob/main/scripts/description.js
       greeting = makeSpeechSynthesisUtterance("Hi!")
@@ -94,11 +94,11 @@
       greeting.addEventListener("end", () {
         resolve(getBestVoice()<~>)
       })
-    })
+    })<~>[~]
   }
 
   say = (description)<~> {
-    voice = speechSynthesis.getVoices().find((each) { * each.name == &voiceName })<?>-!!{?}
+    voice = speechSynthesis.getVoices().find((each) { * each.name == &voiceName })<?>[?!!]
     utterance = makeSpeechSynthesisUtterance(description.text)
 
     // On older versions of iOS (v16) the best voice is the default voice, which is not listed in
@@ -118,7 +118,7 @@
       activeUtterances.add(utterance)
       speechSynthesis.speak(utterance)
       speechSynthesis.resume() // Required by desktop Chrome
-    })
+    })<~>
   }
 
   clear = () {

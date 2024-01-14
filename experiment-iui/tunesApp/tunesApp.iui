@@ -15,7 +15,7 @@
     youtubeId: "",
     youtubeWidth: 0,
     youtubeHeight: 0,
-    descriptionPath<?>: ""<?>,
+    descriptionPath<?>: "",
   ]
 
   Playlist = [
@@ -35,5 +35,5 @@
     })
   }
   
-  await import("./tunesPlayer/tunesPlayer.iui")(playlists:, otherVideos:)
+  import("./tunesPlayer/tunesPlayer.iui")(playlists:, otherVideos:)<~>
 })

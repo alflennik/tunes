@@ -1,30 +1,30 @@
 each = (list<%>, callback<%>) {
   Each = each
-  List = list<%>-{%}([%...])!!
-  Callback = callback<%>-{%}((%) {%})!!
+  List = list<%>[%!!]([%...])
+  Callback = callback<%>[%!!]((%) {%})
   Item<%> = Callback.arguments[0]<%>
 
   if !Item<%>.matches(List.Item<%>) :
     * error(
       "Failed to match the items from the list with the first argument of the provided callback \
-      function"
+        function"
     )
   ;
 
-  Each.warnings."~" = Callback.warnings."~"
+  Each.warnings["~"] = Callback.warnings["~"]
 
   &newList = [Item<%>...]
 
   &i = 0
   while &i < list.count :
-    result<\(Callback.warnings)> = if Callback.warnings."~" {
-      * callback(list[&i], index<?>: &i-{&})<~>-{~}
+    result<\(Callback.warnings)> = if Callback.warnings["~"] {
+      * callback(list[&i], index<?>: &i[&])<~>[~]
     } else {
-      * callback(list[&i], index<?>: &i-{&})
+      * callback(list[&i], index<?>: &i[&])
     }
     &newList = &.append(result)
     &i += 1
   ;
 
-  * &newList-{&}
+  * &newList[&]
 }

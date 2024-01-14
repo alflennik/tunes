@@ -1,14 +1,13 @@
 * (youtubeId:, timeInterval:) {
   [element:] = import("core:reconcile")
-  [document, location, window, setInterval, clearInterval] = import("core:web")
+  [document, location, windowGlobals, setInterval, clearInterval] = import("core:web")
   
   ui = element("div").attributes(id: "player")
 
   onUiAttached = ()<~> {
-    // </~/>
-    youtubePlayer<%> = {~}- makePromise((resolve) {
+    youtubePlayer<%> = makePromise((resolve) {
       window.onYouTubeIframeAPIReady = () {
-        youtubePlayer<%> = window.YT.Player("player", [
+        youtubePlayer<%> = windowGlobals<%>["YT"]<%>["Player"]<%>("player", [
           height: "315",
           width: "560",
           videoId: youtubeId,
@@ -17,7 +16,7 @@
             color: "white", // Instead of youtube red.
             rel: 0, // Recommend videos from the same channel after it ends.
           ],
-        ])
+        ])<%>
 
         youtubePlayer<%>.addEventListener("onReady", () {
           resolve(youtubePlayer<%>)
@@ -28,16 +27,16 @@
       scriptElement.src = "https://www.youtube.com/iframe_api"
       firstScriptTag = document.getElementsByTagName("script")[0]
       firstScriptTag.parentNode.insertBefore(scriptElement, firstScriptTag)
-    })
+    })<~>[~]
 
     status = {
       youtubePlayer<%>.addEventListener("onStateChange", (data<%>) :
         given data<%> :
-          windowGlobals<%>."YT"<%>."PlayerState"<%>."UNSTARTED"<%> : * .cleared ;
-          windowGlobals<%>."YT"<%>."PlayerState"<%>."PLAYING"<%> : * .playing ;
-          windowGlobals<%>."YT"<%>."PlayerState"<%>."PAUSED"<%> : * .paused ;
-          windowGlobals<%>."YT"<%>."PlayerState"<%>."BUFFERING"<%> : * .buffering ;
-          windowGlobals<%>."YT"<%>."PlayerState"<%>."ENDED"<%> : * .ended ;
+          windowGlobals<%>["YT"]<%>["PlayerState"]<%>["UNSTARTED"]<%> : * .cleared ;
+          windowGlobals<%>["YT"]<%>["PlayerState"]<%>["PLAYING"]<%> : * .playing ;
+          windowGlobals<%>["YT"]<%>["PlayerState"]<%>["PAUSED"]<%> : * .paused ;
+          windowGlobals<%>["YT"]<%>["PlayerState"]<%>["BUFFERING"]<%> : * .buffering ;
+          windowGlobals<%>["YT"]<%>["PlayerState"]<%>["ENDED"]<%> : * .ended ;
           else : break ;
         ;
       ;)
@@ -52,7 +51,7 @@
         if status == .playing && !&intervalId<?%> :
           &intervalId = setInterval(() :
             if time<?> : log(round(time, places: 3), level: .info) ;
-            * youtubePlayer<%>.getCurrentTime()<%>-{%}(0.0)!!
+            * youtubePlayer<%>.getCurrentTime()<%>[%!!](0.0)
           ;, timeInterval)
         ; else if status != .playing && &intervalId<?> :
           clearInterval(&intervalId)

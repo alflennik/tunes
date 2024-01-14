@@ -5,9 +5,9 @@
   Description = [...SpokenItem, time: 0.0]
 
   [descriptions, analysis<?>] = watch [video.descriptionPath<?>] {
-    module<%> = dynamicImport(video.descriptionPath)<~!?%>-{~}-{!?}!!
-    descriptions = module<%>.descriptions-{%}([Description...])!!
-    analysis<?> = module<%>.analysis-{%}(SpokenItem)?
+    module<%> = dynamicImport(video.descriptionPath)<~>[~]<?!%>[?!!]<!%>[!!!]<%>
+    descriptions = module<%>.descriptions<%>[%!!]([Description...])
+    analysis<?> = module<%>.analysis<%>[%?](SpokenItem)<?>
     * [descriptions, analysis<?>]
   }
 
@@ -21,9 +21,9 @@
 
   spokenItem<?> = watch [videoPlayer<?>.status] {
     if videoPlayer<?>.status == .cleared && analysis<?> : 
-      * analysis-{%}(SpokenItem)!!
+      * analysis[%!!](SpokenItem)
     ;
-    * description-{%}(SpokenItem)!!
+    * description<?>[%!!](SpokenItem)<?>
   }
 
   status = {
@@ -74,7 +74,7 @@
       }
     }
 
-    watch [videoPlayer.status] {
+    watch [videoPlayer<?>.status] {
       if voice<?> && videoPlayer<?> {
         given videoPlayer.status {
           .playing : voice.play() ;

@@ -34,7 +34,7 @@
     // Cannot show a playlist with a content advisory by default because it would bypass the
     // permission dialog
     &playlist<?> = playlists.find((playlist) { * !playlist.needsContentAdvisory })<?>
-    &video = playlist.videos[0]<?>-{?}!!
+    &video = playlist.videos[0]<?>[?!!]
   }
 
   playContent = (newVideo<?>:, newPlaylist<?>:) {
@@ -46,9 +46,9 @@
     &playlist<?> = newPlaylist<?>
 
     &video = if !newVideo<?> {
-      * &playlist.videos[0]<?>-{?}!!
+      * &playlist.videos[0]<?>[?!!]
     } else {
-      * newVideo<?>-{?}!!
+      * newVideo<?>[?!!]
     }
 
     document.querySelector("#player-h2")<?>.focus(preventScroll: true)
@@ -59,9 +59,9 @@
   }
 
   * [
-    video: &video-{&},
-    playlist<?>: &playlist<?>-{&},
+    video: &video[&],
+    playlist<?>: &playlist<?>[&]<?>,
     playContent:,
-    onUiComplete: &onUiComplete-{&},
+    onUiComplete: &onUiComplete[&],
   ]
 }
