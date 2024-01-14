@@ -7,97 +7,95 @@
   playContent:,
   interactionInterceptor:
 ) {
-  reconcile = import("core:reconcile")
+  [element:, fragment:] = import("core:reconcile")
   
-  * reconcile(
-    watch [videoPlayerUi, audioDescription.ui, activeVideo] {
-      * (
-        element("root-element").items(
-          element("div")
-            .attributes(class: "content-container")
-            .items(
-              element("h1").text("Tunes"),
-              element("p").text(
-                "The Tunes project implements audio descriptions for music videos, which are " +
-                  "written by some guy named Alex."
-              ),
-              element("content-browser").items(
-                element("h2").text("Playlists"),
-                ...playlists.each((playlist) {
-                  * fragment(
-                    element("h3").items(
-                      element("a")
-                        .attributes(href: "*")
-                        .listeners(
-                          click: (event) {
-                            event.preventDefault()
-                            playContent(playlist:)
-                          },
-                        )
-                        .text(playlist.title)
-                    ),
-                    element("ul").items(
-                      ...playlist.videos.each((video) {
-                        isActive = video.id == activeVideo.id
-                        * element("li").items(
-                          element("a")
-                            .attributes(
-                              href: "*", 
-                              "aria-current": if isActive { * true } else { * null }
-                            )
-                            .listeners({
-                              click: (event) {
-                                event.preventDefault()
-                                playContent(playlist:, video:)
-                              },
-                            })
-                            .text(video.titleSentence)
-                        )
-                      })
-                    )
+  * element("root-element").items(
+    element("div")
+      .attributes(class: "content-container")
+      .items(
+        element("h1").text("Tunes"),
+        element("p").text(
+          "The Tunes project implements audio descriptions for music videos, which are " +
+            "written by some guy named Alex."
+        ),
+        element("content-browser").items(
+          element("h2").text("Playlists"),
+          ...playlists.each((playlist) {
+            * fragment(
+              element("h3").items(
+                element("a")
+                  .attributes(href: "*")
+                  .listeners(
+                    click: (event) {
+                      event.preventDefault()
+                      playContent(playlist:)
+                    },
                   )
-                }),
-                element("h2").text("Other Songs"),
-                element("ul").items(
-                  ...otherVideos.each((video) {
-                    isActive = video.id == activeVideo.id
-                    * element("li").items(
-                      element("a")
-                        .attributes(
-                          href: "*",
-                          "aria-current": if isActive { * true } else { * null }
-                        )
-                        .listeners(
-                          click: (event) {
-                            event.preventDefault()
-                            playContent(video:)
-                          },
-                        )
-                        .text(video.titleSentence)
-                    )
-                  })
-                )
+                  .text(playlist.title)
               ),
-              element("h2").attributes(id: "player-h2", tabindex: "-1").text("Player")
-            ),
-          element("tunes-player").items(
-            element("video-player")
-              .styles(
-                "--scrollbar-width": "${getScrollBarWidth()}px",
-                "--video-width": video.youtubeWidth,
-                "--video-height": video.youtubeHeight,
+              element("ul").items(
+                ...playlist.videos.each((video) {
+                  isActive = watch [activeVideo] { * video.id == activeVideo.id }
+                  * element("li").items(
+                    element("a")
+                      .attributes(
+                        href: "*", 
+                        "aria-current": 
+                          watch [isActive] { * if isActive : * true ; else : * null ; }
+                      )
+                      .listeners({
+                        click: (event) {
+                          event.preventDefault()
+                          playContent(playlist:, video:)
+                        },
+                      })
+                      .text(video.titleSentence)
+                  )
+                })
               )
-              .attributes("aria-hidden": if firstInteractionComplete { * null } else { * true })
-              .items(
-                interactionInterceptor(
-                  items: element("button").text("Play ${video.titleSentence}"),
-                ),
-                videoPlayerUi
-              ),
-            audioDescription.ui
+            )
+          }),
+          element("h2").text("Other Songs"),
+          element("ul").items(
+            ...otherVideos.each((video) {
+              isActive = watch [activeVideo] { * video.id == activeVideo.id }
+              * element("li").items(
+                element("a")
+                  .attributes(
+                    href: "*",
+                    "aria-current": 
+                      watch [isActive] { * if isActive : * true ; else : * null ; }
+                  )
+                  .listeners(
+                    click: (event) {
+                      event.preventDefault()
+                      playContent(video:)
+                    },
+                  )
+                  .text(video.titleSentence)
+              )
+            })
           )
+        ),
+        element("h2").attributes(id: "player-h2", tabindex: "-1").text("Player")
+      ),
+    element("tunes-player").items(
+      element("video-player")
+        .styles(
+          "--scrollbar-width": "\(getScrollBarWidth())px",
+          "--video-width": activeVideo.youtubeWidth,
+          "--video-height": activeVideo.youtubeHeight,
         )
-      )
-    }
+        .attributes("aria-hidden": watch [firstInteractionComplete] { 
+          if firstInteractionComplete : * null ; else : * true ; 
+        })
+        .items(
+          interactionInterceptor(
+            items: element("button").text("Play ${video.titleSentence}"),
+          ),
+          videoPlayerUi
+        ),
+      audioDescription.ui
+    )
   )
 }

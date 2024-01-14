@@ -37,7 +37,7 @@
       &defaultVoice<?%>
       defaultRate = 1.2
 
-      &bestVoiceRank<?%>.assignType(0)<?>
+      &bestVoiceRank<?> = &.assignType(0)<?>
 
       &foundVoiceName<?%>
       &foundVoiceRate<?%>
@@ -62,26 +62,26 @@
         })
       })
 
-      if !&foundVoiceName<?> : &foundVoiceName = &defaultVoice<?>.require!!.name ;
+      if !&foundVoiceName<?> : &foundVoiceName = &defaultVoice<?>-{?}!!.name ;
       if !foundVoiceRate<?> : &foundVoiceRate = defaultRate ;
 
-      * [lock(&foundVoiceName), lock(&foundVoiceRate)]
+      * [&foundVoiceName-{&}, &foundVoiceRate-{&}]
     }
 
     getBestVoice = ()<~> {
       * makePromise((resolve) {
         if speechSynthesis.getVoices().count {
-          resolve(setBestVoice())
+          resolve(setBestVoice()<~>)
           *
         }
         speechSynthesis.onvoiceschanged = () {
           speechSynthesis.onvoiceschanged = null
-          resolve(setBestVoice())
+          resolve(setBestVoice()<~>)
         }
       })
     }
 
-    [&voiceName, &voiceRate] = await makePromise((resolve) {
+    [&voiceName, &voiceRate] = {~}- makePromise((resolve) {
       // Thanks AblePlayer!
       // https://github.com/ableplayer/ableplayer/blob/main/scripts/description.js
       greeting = makeSpeechSynthesisUtterance("Hi!")
@@ -91,14 +91,14 @@
       speechSynthesis.cancel()
       speechSynthesis.speak(greeting)
 
-      greeting.onend = () {
-        resolve(unawait getBestVoice())
-      }
+      greeting.addEventListener("end", () {
+        resolve(getBestVoice()<~>)
+      })
     })
   }
 
-  say = async (description) {
-    voice = speechSynthesis.getVoices().find((each) { * each.name == &voiceName })<?>.require!!
+  say = (description)<~> {
+    voice = speechSynthesis.getVoices().find((each) { * each.name == &voiceName })<?>-!!{?}
     utterance = makeSpeechSynthesisUtterance(description.text)
 
     // On older versions of iOS (v16) the best voice is the default voice, which is not listed in
@@ -136,7 +136,7 @@
     speechSynthesis.resume()
   }
   
-  // TODO: revisit reactivity here
+  // TODO: consider that these web APIs wouldn't support reactivity natively
   status = watch [activeUtterances.size, speechSynthesis.paused] {
     if activeUtterances.size == 0 : * .ended ;
     if speechSynthesis.paused : * .paused ; else : * .playing ;

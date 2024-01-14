@@ -1,11 +1,12 @@
 * (youtubeId:, timeInterval:) {
-  reconcile = import("core:reconcile")
+  [element:] = import("core:reconcile")
   [document, location, window, setInterval, clearInterval] = import("core:web")
   
-  ui = reconcile(element("div").attributes(id: "player"))
+  ui = element("div").attributes(id: "player")
 
   onUiAttached = ()<~> {
-    youtubePlayer<%> = await makePromise((resolve) {
+    // </~/>
+    youtubePlayer<%> = {~}- makePromise((resolve) {
       window.onYouTubeIframeAPIReady = () {
         youtubePlayer<%> = window.YT.Player("player", [
           height: "315",
@@ -20,7 +21,7 @@
 
         youtubePlayer<%>.addEventListener("onReady", () {
           resolve(youtubePlayer<%>)
-        })
+        })<%>
       }
 
       scriptElement = document.createElement("script")
@@ -30,13 +31,13 @@
     })
 
     status = {
-      youtubePlayer<%>.addEventListener("onStateChange", (data) :
-        given data :
-          window<%>."YT"."PlayerState".UNSTARTED : * .cleared ;
-          window<%>."YT"."PlayerState".PLAYING : * .playing ;
-          window<%>."YT"."PlayerState".PAUSED : * .paused ;
-          window<%>."YT"."PlayerState".BUFFERING : * .buffering ;
-          window<%>."YT"."PlayerState".ENDED : * .ended ;
+      youtubePlayer<%>.addEventListener("onStateChange", (data<%>) :
+        given data<%> :
+          windowGlobals<%>."YT"<%>."PlayerState"<%>."UNSTARTED"<%> : * .cleared ;
+          windowGlobals<%>."YT"<%>."PlayerState"<%>."PLAYING"<%> : * .playing ;
+          windowGlobals<%>."YT"<%>."PlayerState"<%>."PAUSED"<%> : * .paused ;
+          windowGlobals<%>."YT"<%>."PlayerState"<%>."BUFFERING"<%> : * .buffering ;
+          windowGlobals<%>."YT"<%>."PlayerState"<%>."ENDED"<%> : * .ended ;
           else : break ;
         ;
       ;)
@@ -45,13 +46,13 @@
     }
 
     time<?> = {
-      &intervalId<?>
+      &intervalId<?%>
 
       watch [status] :
-        if status == .playing && !&intervalId<?> :
+        if status == .playing && !&intervalId<?%> :
           &intervalId = setInterval(() :
             if time<?> : log(round(time, places: 3), level: .info) ;
-            * youtubePlayer<%>.getCurrentTime().assignType!!(0.0)
+            * youtubePlayer<%>.getCurrentTime()<%>-{%}(0.0)!!
           ;, timeInterval)
         ; else if status != .playing && &intervalId<?> :
           clearInterval(&intervalId)
@@ -63,31 +64,31 @@
     }
 
     watch [youtubeId] {
-      youtubePlayer<%>.loadVideoById(videoId: youtubeId)
+      youtubePlayer<%>.loadVideoById(videoId: youtubeId)<%>
     }
 
-    play = () : youtubePlayer<%>.playVideo() ;
+    play = () : youtubePlayer<%>.playVideo()<%> ;
 
-    pause = () : youtubePlayer<%>.pauseVideo() ;
+    pause = () : youtubePlayer<%>.pauseVideo()<%> ;
 
     setVolume = {
-      &intervalId<?>
+      &intervalId<?%>
       &transitionVolume = 1.0
       &volume = 1.0
-      youtubePlayer<%>.setVolume(100)
+      youtubePlayer<%>.setVolume(100)<%>
 
       * (number) {
-        if &intervalId<?> : clearInterval(&intervalId) ;
+        if &intervalId<?%> : clearInterval(&intervalId<%>) ;
 
         &intervalId = setInterval(() {
           if &transitionVolume < &volume {
             &transitionVolume += 0.025
-            youtubePlayer<%>.setVolume(&transitionVolume * 100)
+            youtubePlayer<%>.setVolume(&transitionVolume * 100)<%>
             if &transitionVolume > &volume : clearInterval(&intervalId) ;
           }
           if &transitionVolume > &volume {
             &transitionVolume -= 0.025
-            youtubePlayer<%>.setVolume(&transitionVolume * 100)
+            youtubePlayer<%>.setVolume(&transitionVolume * 100)<%>
             if &transitionVolume < &volume : clearInterval(&intervalId) ;
           }
         }, 25)

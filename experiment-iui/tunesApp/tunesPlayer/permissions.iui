@@ -1,5 +1,5 @@
 * (onFirstInteraction:) {
-  reconcile = import("core:reconcile")
+  [element:] = import("core:reconcile")
   
   &firstInteractionComplete = false
   
@@ -13,13 +13,13 @@
     listenForFirstInteraction = (event) {
       isKeyDown = event.type == "keydown"
 
-      interactionInterceptor = document.querySelector(".interaction-interceptor")<?>.require!!
+      interactionInterceptor = document.querySelector(".interaction-interceptor")<?>-{?}!!
       isVideoPlayerInteraction = 
         event.target == interactionInterceptor || interactionInterceptor.contains(event.target)
 
-      unawait onFirstInteraction(isKeyDown:, isVideoPlayerInteraction:)
+      {~}- onFirstInteraction(isKeyDown:, isVideoPlayerInteraction:)
 
-      interactionInterceptor.style.display = "none"
+      interactionInterceptor.style.&display = "none"
       &firstInteractionComplete = true
 
       document.removeEventListener("click", listenForFirstInteraction)
@@ -31,7 +31,7 @@
 
   * [
     firstInteractionInterceptor:,
-    firstInteractionComplete: lock(&firstInteractionComplete),
+    firstInteractionComplete: &firstInteractionComplete-{&},
     onUiComplete:
   ]
 }

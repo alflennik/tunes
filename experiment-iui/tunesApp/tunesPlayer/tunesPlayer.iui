@@ -2,13 +2,13 @@
   [navigator:,document:] = import("core:web")
   
   &videoPlayer<?%>
-  &videoPlayerPlay<?> = &.assignType(() {})<?>
+  &videoPlayerPlay<?%>-{%}(() {})
   &audioDescriptionIsPrerecorded = false
 
   [video:, playlist:, playContent:, onUiComplete: onUiComplete1] = import("./video.iui")(
     playlists:,
     otherVideos:,
-    videoPlayerPlay<?>: &videoPlayerPlay<?>.lock
+    videoPlayerPlay<?>: &videoPlayerPlay<?>-{&}
   )
 
   [isIOS, isAndroid] = [
@@ -22,9 +22,9 @@
   &areVoicesReady = false
   [firstInteractionInterceptor, onUiComplete: onUiComplete2] = import("./permissions")(
     onFirstInteraction: (isKeyDown:, isVideoPlayerInteraction:)<~> {
-      await concurrent(
+      {~}- concurrent(
         voiceSynthesized.getPermissions(),
-        voicePrerecorded.getPermissions()
+        voicePrerecorded.getPermissions(),
       )
       &areVoicesReady = true
       if !isKeyDown && isVideoPlayerInteraction && &videoPlayerPlay<?> : 
@@ -41,7 +41,7 @@
 
   audioDescription = import("./audioDescription")(
     video:,
-    videoPlayer<?>: lock(&videoPlayer<?>),
+    videoPlayer<?>: &videoPlayer<?>-{&},
     voice<?>:
   )
   &audioDescriptionIsPrerecorded = audioDescription.isPrerecorded

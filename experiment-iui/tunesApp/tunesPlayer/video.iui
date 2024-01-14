@@ -33,22 +33,22 @@
   } else {
     // Cannot show a playlist with a content advisory by default because it would bypass the
     // permission dialog
-    &playlist<?> = playlists.find((playlist) { * !playlist.needsContentAdvisory })
-    &video = require!!(playlist.videos[0])
+    &playlist<?> = playlists.find((playlist) { * !playlist.needsContentAdvisory })<?>
+    &video = playlist.videos[0]<?>-{?}!!
   }
 
   playContent = (newVideo<?>:, newPlaylist<?>:) {
     if newPlaylist<?>.needsContentAdvisory && !window.confirm(
-      "This playlist contains content some viewers might find disturbing, are you sure you " +
-        "want to continue?"
+      "This playlist contains content some viewers might find disturbing, are you sure you want \
+        to continue?"
     ) : * ;
 
     &playlist<?> = newPlaylist<?>
 
     &video = if !newVideo<?> {
-      * require!!(&playlist.videos[0]<?>)
+      * &playlist.videos[0]<?>-{?}!!
     } else {
-      * require!!(newVideo<?>)
+      * newVideo<?>-{?}!!
     }
 
     document.querySelector("#player-h2")<?>.focus(preventScroll: true)
@@ -59,9 +59,9 @@
   }
 
   * [
-    video: &video.lock,
-    playlist<?>: &playlist<?>.lock,
+    video: &video-{&},
+    playlist<?>: &playlist<?>-{&},
     playContent:,
-    onUiComplete: &onUiComplete.lock
+    onUiComplete: &onUiComplete-{&},
   ]
 }
