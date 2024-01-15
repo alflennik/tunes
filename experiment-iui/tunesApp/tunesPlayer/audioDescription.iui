@@ -66,7 +66,7 @@
       if voice<?> && spokenItem<?> {
         if isTimeSeek {
           voice.play()
-          voice.say(spokenItem)<~>
+          voice.say(spokenItem)<~>[~...]
         } else {
           voice.clear()
         }
@@ -86,7 +86,7 @@
 
   ui = element("audio-description").items(
     element("div").attributes(class: "wrapping-box").items(
-      element("div").text(
+      element("div").items(
         watch [spokenItem<?>] { if spokenItem<?> : * spokenItem.text ; else : * "" ; }
       )
     )

@@ -78,7 +78,7 @@
           speechSynthesis.&onvoiceschanged = null
           resolve(setBestVoice()<~>[~...])
         }
-      })<~>[~...]
+      })<~>[~]
     }
 
     [&voiceName, &voiceRate] = makePromise((resolve) {
@@ -118,7 +118,7 @@
       &activeUtterances = &.add(utterance)
       speechSynthesis.speak(utterance)
       speechSynthesis.resume() // Required by desktop Chrome
-    })<~>[~...]
+    })<~>[~]
   }
 
   clear = () {
