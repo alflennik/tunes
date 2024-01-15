@@ -1,0 +1,67 @@
+* () {
+  [makeAudio:, Audio:] = import("core:web")
+
+  &status[%](.cleared, .playing, .paused) = .cleared
+
+  getPermissions = ()<~> {
+    * makePromise((resolve) {
+      audioElement = makeAudio("./audio/none.mp3")
+      audioElement.addEventListener("ended", () {
+        resolve()
+      })
+      audioElement.play()
+    })
+  }
+
+  &activePromise<?%>[%](~())<?>
+  &activeElement<?%>[%](Audio)<?>
+
+  say = (spokenItem)<~> {
+    filePath = spokenItem.filePath<?>[?!!]
+    audioElement = makeAudio(filePath)
+
+    if &activePromise<?> && &activeElement<?>.paused != false {
+      &activePromise<~>[~]
+    }
+
+    &activeElement = audioElement
+
+    &activePromise<~> = makePromise((resolve) {
+      endListener = ()<~> {
+        &activeElement.removeEventListener("ended", endListener)
+        &activeElement<?> = null
+        &activePromise<?> = null
+        &status = .cleared
+        resolve()
+      }
+      activeElement.addEventListener("ended", endListener)
+    })<~>
+
+    &status = .playing
+    &activeElement.play()
+
+    * activePromise<~>
+  }
+
+  clear = () {
+    if !&activeElement<?> : * ;
+    &activeElement.pause()
+    &activeElement<?> = null
+    &activePromise<?> = null
+    &status = .cleared
+  }
+
+  pause = () {
+    if !&activeElement<?> : * ;
+    &activeElement.pause()
+    &status = .paused
+  }
+
+  play = () {
+    if !&activeElement<?> : * ;
+    &activeElement.play()
+    &status = .playing
+  }
+
+  * [getPermissions:, say:, clear:, pause:, play:]
+}

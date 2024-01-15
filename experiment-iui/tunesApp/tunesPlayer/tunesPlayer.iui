@@ -1,8 +1,9 @@
 * (playlists:, otherVideos:) {
+  [Element:] = import("core:reconciler")
   [navigator:, document:] = import("core:web")
   
-  &videoPlayerPlay<?%> = &[%](() {})<?>
-  &audioDescriptionUi<?%>
+  &videoPlayerPlay<?%>[%](() {})<?>
+  &audioDescriptionUi<?%>[%](Element)<?>
   &audioDescriptionIsPrerecorded = false
 
   [
@@ -22,7 +23,7 @@
   ]
 
   voiceSynthesized = import("./voiceSynthesized.iui")(isIOS:, isAndroid:)
-  voicePrerecorded = import("./voicePrerecorded.iui")() // TODO
+  voicePrerecorded = import("./voicePrerecorded.iui")()
 
   [firstInteractionInterceptor:, applyFirstInteractionHandlers:] = import("./firstInteraction.iui")()
 
@@ -42,7 +43,7 @@
   rootUi = import("./rootUi.iui")(
     playlists:,
     videoPlayerUi:,
-    audioDescriptionUi<?%>:,
+    audioDescriptionUi<?>: &audioDescriptionUi<?>[&]<?>,
     activeVideo:,
     playContent:
     firstInteractionInterceptor:
