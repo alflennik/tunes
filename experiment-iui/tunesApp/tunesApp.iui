@@ -36,5 +36,5 @@
     })
   }
   
-  import("./tunesPlayer/tunesPlayer.iui")(playlists:, otherVideos:)<~>[~...]
+  import("./tunesPlayer/tunesPlayer.iui")(playlists:, otherVideos:)[~...]
 })

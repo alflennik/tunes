@@ -89,7 +89,7 @@
         })
         .items(
           interactionInterceptor(
-            items: element("button").text("Play ${video.titleSentence}"),
+            items: element("button").text("Play \(video.titleSentence)"),
           ),
           videoPlayerUi
         ),

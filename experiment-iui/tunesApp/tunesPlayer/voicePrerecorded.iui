@@ -1,27 +1,25 @@
 * () {
   [makeAudio:, Audio:] = import("core:web")
 
-  &status[%](.cleared, .playing, .paused) = .cleared
+  &status[%]([.cleared, .playing, .paused]) = .cleared
 
   getPermissions = ()<~> {
     * makePromise((resolve) {
       audioElement = makeAudio("./audio/none.mp3")
-      audioElement.addEventListener("ended", () {
-        resolve()
-      })
+      audioElement.addEventListener("ended", () : resolve() ;)
       audioElement.play()
-    })
+    })[~]
   }
 
-  &activePromise<?%>[%](~())<?>
-  &activeElement<?%>[%](Audio)<?>
+  &activePromise[%](~())<?>
+  &activeElement[%](Audio)<?>
 
   say = (spokenItem)<~> {
-    filePath = spokenItem.filePath<?>[?!!]
+    filePath = spokenItem.filePath[?!!]
     audioElement = makeAudio(filePath)
 
     if &activePromise<?> && &activeElement<?>.paused != false {
-      &activePromise<~>[~]
+      &activePromise[~]
     }
 
     &activeElement = audioElement
@@ -35,12 +33,12 @@
         resolve()
       }
       activeElement.addEventListener("ended", endListener)
-    })<~>[~...]
+    })[~...]<~>
 
     &status = .playing
     &activeElement.play()
 
-    * activePromise<~>[~...]
+    * activePromise[~]
   }
 
   clear = () {

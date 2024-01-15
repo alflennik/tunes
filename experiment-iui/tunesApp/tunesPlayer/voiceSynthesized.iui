@@ -62,7 +62,7 @@
         })
       })
 
-      if !&foundVoiceName<?> : &foundVoiceName = &defaultVoice<?>-{?}!!.name ;
+      if !&foundVoiceName<?> : &foundVoiceName = &defaultVoice[?!!].name ;
       if !foundVoiceRate<?> : &foundVoiceRate = defaultRate ;
 
       * [&foundVoiceName[&], &foundVoiceRate[&]]
@@ -71,14 +71,14 @@
     getBestVoice = ()<~> {
       * makePromise((resolve) {
         if speechSynthesis.getVoices().count {
-          resolve(setBestVoice()<~>[~...])
+          resolve(setBestVoice()[~...]<~>)
           *
         }
         speechSynthesis.&onvoiceschanged = () {
           speechSynthesis.&onvoiceschanged = null
-          resolve(setBestVoice()<~>[~...])
+          resolve(setBestVoice()[~...]<~>)
         }
-      })<~>[~]
+      })[~]
     }
 
     [&voiceName, &voiceRate] = makePromise((resolve) {
@@ -92,13 +92,13 @@
       speechSynthesis.speak(greeting)
 
       greeting.addEventListener("end", () {
-        resolve(getBestVoice()<~>[~...])
+        resolve(getBestVoice()[~...]<~>)
       })
-    })<~>[~]
+    })[~]
   }
 
   say = (description)<~> {
-    voice = speechSynthesis.getVoices().find((each) { * each.name == &voiceName })<?>[?!!]
+    voice = speechSynthesis.getVoices().find((each) { * each.name == &voiceName })[?!!]
     utterance = makeSpeechSynthesisUtterance(description.text)
 
     // On older versions of iOS (v16) the best voice is the default voice, which is not listed in
@@ -118,7 +118,7 @@
       &activeUtterances = &.add(utterance)
       speechSynthesis.speak(utterance)
       speechSynthesis.resume() // Required by desktop Chrome
-    })<~>[~]
+    })[~]
   }
 
   clear = () {

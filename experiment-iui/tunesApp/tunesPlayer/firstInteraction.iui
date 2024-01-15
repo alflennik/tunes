@@ -13,11 +13,11 @@
     listenForFirstInteraction = (event) {
       isKeyDown = event.type == "keydown"
 
-      interactionInterceptor = document.querySelector(".interaction-interceptor")<?>[?!!]
+      interactionInterceptor = document.querySelector(".interaction-interceptor")[?!!]
       isVideoPlayerInteraction = 
         event.target == interactionInterceptor || interactionInterceptor.contains(event.target)
 
-      onFirstInteraction(isKeyDown:, isVideoPlayerInteraction:)<~>[~]
+      onFirstInteraction(isKeyDown:, isVideoPlayerInteraction:)[~]
 
       interactionInterceptor.style.&display = "none"
       &firstInteractionComplete = true

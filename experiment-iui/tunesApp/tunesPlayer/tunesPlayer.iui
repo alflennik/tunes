@@ -1,9 +1,9 @@
 * (playlists:, otherVideos:) {
   [Element:] = import("core:reconciler")
   [navigator:, document:] = import("core:web")
-  
-  &videoPlayerPlay<?%>[%](() {})<?>
-  &audioDescriptionUi<?%>[%](Element)<?>
+
+  &videoPlayerPlay[%](() {})<?>
+  &audioDescriptionUi[%](Element)<?>
   &audioDescriptionIsPrerecorded = false
 
   [
@@ -14,7 +14,7 @@
   ] = import("./activeVideo.iui")(
     playlists:,
     otherVideos:,
-    videoPlayerPlay<?>: &videoPlayerPlay<?>[&]<?>
+    videoPlayerPlay<?>: &videoPlayerPlay[&]<?>
   )
 
   [isIOS, isAndroid] = [
@@ -43,7 +43,7 @@
   rootUi = import("./rootUi.iui")(
     playlists:,
     videoPlayerUi:,
-    audioDescriptionUi<?>: &audioDescriptionUi<?>[&]<?>,
+    audioDescriptionUi<?>: &audioDescriptionUi[&]<?>,
     activeVideo:,
     playContent:
     firstInteractionInterceptor:
@@ -51,7 +51,7 @@
 
   document.body.appendChild(rootUi.element)
 
-  videoPlayer = getVideoPlayer()<~>[~]
+  videoPlayer = getVideoPlayer()[~]
   &videoPlayerPlay = videoPlayer.play
 
   audioDescription = import("./audioDescription.iui")(activeVideo:, videoPlayer:, voice<?>:)
@@ -62,9 +62,9 @@
 
   applyFirstInteractionHandlers(onFirstInteraction: (isKeyDown:, isVideoPlayerInteraction:)<~> {
     concurrent(
-      voiceSynthesized.getPermissions()<~>,
-      voicePrerecorded.getPermissions()<~>,
-    )<~>[~]
+      voiceSynthesized.getPermissions()[~...]<~>,
+      voicePrerecorded.getPermissions()[~...]<~>,
+    )[~]
     &areVoicesReady = true
     if !isKeyDown && isVideoPlayerInteraction : videoPlayer.play() ;
   })

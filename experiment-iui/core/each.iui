@@ -1,7 +1,7 @@
 each = (list<%>, callback<%>) {
   Each = each
-  List = list<%>[%!!]([%...])
-  Callback = callback<%>[%!!]((%) {%})
+  List = list[%!!]([%...])
+  Callback = callback[%!!]((%) {%})
   Item<%> = Callback.arguments[0]<%>
 
   if !Item<%>.matches(List.Item<%>) :
@@ -18,7 +18,7 @@ each = (list<%>, callback<%>) {
   &i = 0
   while &i < list.count :
     result<\(Callback.warnings)> = if Callback.warnings["~"] {
-      * callback(list[&i], index<?>: &i[&])<~>[~]
+      * callback(list[&i], index<?>: &i[&])[~]
     } else {
       * callback(list[&i], index<?>: &i[&])
     }

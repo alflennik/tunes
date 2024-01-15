@@ -27,7 +27,7 @@
       scriptElement.src = "https://www.youtube.com/iframe_api"
       firstScriptTag = document.getElementsByTagName("script")[0]
       firstScriptTag.parentNode.insertBefore(scriptElement, firstScriptTag)
-    })<~>[~]
+    })[~]
 
     status = {
       youtubePlayer<%>.addEventListener("onStateChange", (data<%>) :
@@ -51,7 +51,7 @@
         if status == .playing && !&intervalId<?%> :
           &intervalId = setInterval(() :
             if time<?> : log(round(time, places: 3), level: .info) ;
-            * youtubePlayer<%>.getCurrentTime<%>()<%>[%!!](0.0)
+            * youtubePlayer<%>.getCurrentTime<%>()[%!!](0.0)
           ;, timeInterval)
         ; else if status != .playing && &intervalId<?> :
           clearInterval(&intervalId)
