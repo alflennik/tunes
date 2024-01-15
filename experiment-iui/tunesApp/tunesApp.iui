@@ -1,5 +1,8 @@
  app(()<~> {
-  web = import("core:web")
+  [document:] = import("core:web")
+  
+  tunesDocument = readTextFile("./tunes.html")
+  document.write(tunesDocument)
   
   VideoType = [.musicVideo]
   
@@ -24,8 +27,6 @@
     videos: [Video...],
   ]
 
-  // TODO: how to create index.html
-
   otherVideos = import("../../videos/videos.iui")
 
   playlists = {
@@ -35,5 +36,5 @@
     })
   }
   
-  import("./tunesPlayer/tunesPlayer.iui")(playlists:, otherVideos:)<~>
+  import("./tunesPlayer/tunesPlayer.iui")(playlists:, otherVideos:)<~>[~...]
 })

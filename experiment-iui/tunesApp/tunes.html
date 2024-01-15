@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>Tunes</title>
+    <style>
+      body {
+        font-family: system-ui;
+        margin: 0;
+        background: rgb(20, 19, 19);
+        color: white;
+      }
+      .content-container {
+        padding: 24px;
+        padding: calc(env(safe-area-inset-top) + 24px) calc(env(safe-area-inset-right) + 24px) 24px
+          calc(env(safe-area-inset-left) + 24px);
+      }
+      h1 {
+        margin: 0;
+        font-size: 73px;
+        font-weight: 900;
+        background: #fffa93;
+        background: linear-gradient(177deg, #fffa93 34%, #fbdc4c 50%);
+        background-clip: text;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        font-family: system-ui;
+      }
+      tunes-player {
+        --description-padding: 15px;
+        --description-font-size: 1.7vw;
+        --description-line-height: 1.1;
+        --description-lines-showing: 4;
+        --description-text-height: calc(
+          var(--description-font-size) * var(--description-line-height) *
+            var(--description-lines-showing)
+        );
+        --description-total-height: calc(
+          calc(var(--description-padding) * 2) + var(--description-text-height)
+        );
+        height: 100dvh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        background: black;
+        padding: 0 env(safe-area-inset-right) 0 env(safe-area-inset-left);
+      }
+      @media (max-width: 767px) {
+        tunes-player {
+          --description-font-size: 1em;
+        }
+      }
+      /* All the media queries add a lot of noise but it's needed to give as much space as 
+      possible to the video player, increasing the immersion. */
+      @media (max-width: 610px) {
+        tunes-player {
+          --description-lines-showing: 5;
+        }
+      }
+      @media (max-width: 510px) {
+        tunes-player {
+          --description-lines-showing: 6;
+        }
+      }
+      @media (max-width: 430px) {
+        tunes-player {
+          --description-lines-showing: 7;
+        }
+      }
+      @media (max-width: 380px) {
+        tunes-player {
+          --description-lines-showing: 8;
+        }
+      }
+      video-player {
+        position: relative;
+        display: block;
+        --aspect-ratio: calc(var(--video-width) / var(--video-height));
+        aspect-ratio: var(--aspect-ratio);
+        --max-height: calc(100dvh - var(--description-total-height));
+        --full-width: calc(100vw - var(--scrollbar-width));
+        --height: min(var(--max-height), calc(var(--full-width) / var(--aspect-ratio)));
+        height: var(--height);
+        width: calc(var(--height) * var(--aspect-ratio));
+      }
+      .interaction-interceptor {
+        position: absolute;
+        cursor: pointer;
+        inset: 0;
+      }
+      .interaction-interceptor * {
+        opacity: 0;
+      }
+      iframe {
+        height: 100%;
+        width: 100%;
+        display: block;
+      }
+      audio-description {
+        text-align: center;
+        background: black;
+        display: block;
+      }
+      audio-description .wrapping-box {
+        padding: var(--description-padding) 10px;
+        font-size: var(--description-font-size);
+        line-height: var(--description-line-height);
+        max-width: 40em;
+        margin: 0 auto;
+        height: var(--description-text-height);
+      }
+      audio-description .wrapping-box > div {
+        text-align: center;
+      }
+      content-browser a {
+        color: white;
+      }
+      content-browser a[aria-current] {
+        font-weight: bold;
+        color: #fffa93;
+      }
+      .content-container > h2:last-child {
+        margin-bottom: 0;
+        /* for focus */
+        display: inline-block;
+        padding: 3px;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-MNGWCMB6VJ"></script>
+    <script>
+      window.dataLayer = window.dataLayer || []
+      function gtag() {
+        dataLayer.push(arguments)
+      }
+      gtag("js", new Date())
+      gtag("config", "G-MNGWCMB6VJ")
+    </script>
+  </body>
+</html>
