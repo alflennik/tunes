@@ -1,7 +1,7 @@
- app(()<~> {
+ app(() {
   [document:] = import("core:web")
   
-  tunesDocument = readTextFile("./tunes.html")
+  tunesDocument = importTextFile("./tunes.html")
   document.write(tunesDocument)
   
   VideoType = [.musicVideo]

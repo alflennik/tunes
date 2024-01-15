@@ -54,7 +54,7 @@
   videoPlayer = getVideoPlayer()[~]
   &videoPlayerPlay = videoPlayer.play
 
-  audioDescription = import("./audioDescription.iui")(activeVideo:, videoPlayer:, voice<?>:)
+  audioDescription = import("./audioDescription.iui")(activeVideo:, videoPlayer:, voice<?>:)[~]
   &audioDescriptionIsPrerecorded = audioDescription.isPrerecorded
   &audioDescriptionUi = audioDescription.ui
 
