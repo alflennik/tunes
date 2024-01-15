@@ -35,12 +35,12 @@
         resolve()
       }
       activeElement.addEventListener("ended", endListener)
-    })<~>
+    })<~>[~...]
 
     &status = .playing
     &activeElement.play()
 
-    * activePromise<~>
+    * activePromise<~>[~...]
   }
 
   clear = () {

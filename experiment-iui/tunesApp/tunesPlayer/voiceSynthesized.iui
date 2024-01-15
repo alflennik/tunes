@@ -65,20 +65,20 @@
       if !&foundVoiceName<?> : &foundVoiceName = &defaultVoice<?>-{?}!!.name ;
       if !foundVoiceRate<?> : &foundVoiceRate = defaultRate ;
 
-      * [&foundVoiceName-{&}, &foundVoiceRate-{&}]
+      * [&foundVoiceName[&], &foundVoiceRate[&]]
     }
 
     getBestVoice = ()<~> {
       * makePromise((resolve) {
         if speechSynthesis.getVoices().count {
-          resolve(setBestVoice()<~>)
+          resolve(setBestVoice()<~>[~...])
           *
         }
-        speechSynthesis.onvoiceschanged = () {
-          speechSynthesis.onvoiceschanged = null
-          resolve(setBestVoice()<~>)
+        speechSynthesis.&onvoiceschanged = () {
+          speechSynthesis.&onvoiceschanged = null
+          resolve(setBestVoice()<~>[~...])
         }
-      })
+      })<~>[~...]
     }
 
     [&voiceName, &voiceRate] = makePromise((resolve) {
@@ -92,7 +92,7 @@
       speechSynthesis.speak(greeting)
 
       greeting.addEventListener("end", () {
-        resolve(getBestVoice()<~>)
+        resolve(getBestVoice()<~>[~...])
       })
     })<~>[~]
   }
@@ -118,7 +118,7 @@
       &activeUtterances = &.add(utterance)
       speechSynthesis.speak(utterance)
       speechSynthesis.resume() // Required by desktop Chrome
-    })<~>
+    })<~>[~...]
   }
 
   clear = () {
