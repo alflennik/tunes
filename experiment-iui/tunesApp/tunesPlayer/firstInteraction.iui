@@ -1,4 +1,4 @@
-* (onFirstInteraction:) {
+* () {
   [element:] = import("core:reconcile")
   
   &firstInteractionComplete = false
@@ -9,7 +9,7 @@
       .items(items<%>)
   }
 
-  onUiComplete () {
+  applyFirstInteractionHandlers = (onFirstInteraction:) {
     listenForFirstInteraction = (event) {
       isKeyDown = event.type == "keydown"
 
@@ -17,7 +17,7 @@
       isVideoPlayerInteraction = 
         event.target == interactionInterceptor || interactionInterceptor.contains(event.target)
 
-      await onFirstInteraction(isKeyDown:, isVideoPlayerInteraction:)<~>[~]
+      onFirstInteraction(isKeyDown:, isVideoPlayerInteraction:)<~>[~]
 
       interactionInterceptor.style.&display = "none"
       &firstInteractionComplete = true
@@ -32,6 +32,6 @@
   * [
     firstInteractionInterceptor:,
     firstInteractionComplete: &firstInteractionComplete[&],
-    onUiComplete:,
+    applyFirstInteractionHandlers:,
   ]
 }

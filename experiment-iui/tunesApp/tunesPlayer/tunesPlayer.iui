@@ -1,11 +1,16 @@
 * (playlists:, otherVideos:) {
-  [navigator:,document:] = import("core:web")
+  [navigator:, document:] = import("core:web")
   
-  &videoPlayer<?%>
-  &videoPlayerPlay<?%>[%](() {})<?>
+  &videoPlayerPlay<?%> = &[%](() {})<?>
+  &audioDescriptionUi<?%>
   &audioDescriptionIsPrerecorded = false
 
-  [video:, playlist:, playContent:, onUiComplete: onUiComplete1] = import("./video.iui")(
+  [
+    activeVideo:, 
+    // activePlaylist:, 
+    playContent:, 
+    focusPreselectedVideo:
+  ] = import("./activeVideo.iui")(
     playlists:,
     otherVideos:,
     videoPlayerPlay<?>: &videoPlayerPlay<?>[&]<?>
@@ -13,25 +18,15 @@
 
   [isIOS, isAndroid] = [
     regex("iPhone|iPod|iPad").matches(navigator.platform),
-    regex("android").modes("i").matches(navigator.userAgent)
+    regex("android").modes("i").matches(navigator.userAgent),
   ]
 
-  voiceSynthesized = import("./voiceSynthesized")(isIOS:, isAndroid:)
-  voicePrerecorded = import("./voicePrerecorded")() // TODO
+  voiceSynthesized = import("./voiceSynthesized.iui")(isIOS:, isAndroid:)
+  voicePrerecorded = import("./voicePrerecorded.iui")() // TODO
+
+  [firstInteractionInterceptor:, applyFirstInteractionHandlers:] = import("./firstInteraction.iui")()
 
   &areVoicesReady = false
-  [firstInteractionInterceptor, onUiComplete: onUiComplete2] = import("./permissions")(
-    onFirstInteraction: (isKeyDown:, isVideoPlayerInteraction:)<~> {
-      concurrent(
-        voiceSynthesized.getPermissions()<~>,
-        voicePrerecorded.getPermissions()<~>,
-      )<~>[~]
-      &areVoicesReady = true
-      if !isKeyDown && isVideoPlayerInteraction && &videoPlayerPlay<?> : 
-        &videoPlayerPlay()
-      ;
-    }
-  )
 
   voice<?> = watch [isIOS, &audioDescriptionIsPrerecorded] {
     if !&areVoicesReady : * null ;
@@ -39,33 +34,37 @@
     if &audioDescriptionIsPrerecorded : * voicePrerecorded ; else : * voiceSynthesized ;
   }
 
-  audioDescription = import("./audioDescription")(
-    video:,
-    videoPlayer<?>: &videoPlayer<?>[&]<?>,
-    voice<?>:
-  )
-  &audioDescriptionIsPrerecorded = audioDescription.isPrerecorded
-
-  [ui: videoPlayerUi, onUiAttached: getVideoPlayer] = import("./videoPlayer")(
-    youtubeId: video.youtubeId,
+  [ui: videoPlayerUi, onUiAttached: getVideoPlayer] = import("./videoPlayer.iui")(
+    youtubeId: activeVideo.youtubeId,
     timeInterval: 400
   )
 
   rootUi = import("./rootUi.iui")(
     playlists:,
     videoPlayerUi:,
-    audioDescription:,
-    video:,
+    audioDescriptionUi<?%>:,
+    activeVideo:,
     playContent:
     firstInteractionInterceptor:
   )
 
   document.body.appendChild(rootUi.element)
 
-  videoPlayer = getVideoPlayer()
-  &videoPlayer = videoPlayer
-  &videoPlayerPlay<?> = videoPlayer.play
+  videoPlayer = getVideoPlayer()<~>[~]
+  &videoPlayerPlay = videoPlayer.play
 
-  onUiComplete1()
-  onUiComplete2()
+  audioDescription = import("./audioDescription.iui")(activeVideo:, videoPlayer:, voice<?>:)
+  &audioDescriptionIsPrerecorded = audioDescription.isPrerecorded
+  &audioDescriptionUi = audioDescription.ui
+
+  focusPreselectedVideo()
+
+  applyFirstInteractionHandlers(onFirstInteraction: (isKeyDown:, isVideoPlayerInteraction:)<~> {
+    concurrent(
+      voiceSynthesized.getPermissions()<~>,
+      voicePrerecorded.getPermissions()<~>,
+    )<~>[~]
+    &areVoicesReady = true
+    if !isKeyDown && isVideoPlayerInteraction : videoPlayer.play() ;
+  })
 }

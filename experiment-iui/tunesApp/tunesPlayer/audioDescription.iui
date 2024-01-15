@@ -1,42 +1,41 @@
-* (video:, videoPlayer<?>:, voice<?>:)<~> {
+* (activeVideo:, videoPlayer:, voice<?>:)<~> {
   [dynamicImport:] = import("core:web")
+  [element:] = import("core:reconcile")
 
   SpokenItem = [text: "", filePath<?>: ""]
   Description = [...SpokenItem, time: 0.0]
 
-  [descriptions, analysis<?>] = watch [video.descriptionPath<?>] {
-    module<%> = dynamicImport(video.descriptionPath)<~>[~]<?!%>[?!!]<!%>[!!!]<%>
+  [descriptions, analysis<?>] = watch [activeVideo.descriptionPath<?>] {
+    module<%> = dynamicImport(activeVideo.descriptionPath)<~>[~]<?!%>[?!!]<!%>[!!!]<%>
     descriptions = module<%>.descriptions<%>[%!!]([Description...])
     analysis<?> = module<%>.analysis<%>[%?](SpokenItem)<?>
     * [descriptions, analysis<?>]
   }
 
-  isPrerecorded = watch [descriptions] { * toBoolean(descriptions[0]<?>.filePath<?>) }
+  isPrerecorded = watch [descriptions] { * descriptions[0]<?>.filePath<?>.toBoolean() }
 
-  description<?> = watch [videoPlayer<?>.time<?>, descriptions] {
-    if videoPlayer<?>.time<?> :
-      * descriptions.findLast((each) { * videoPlayer.time < each.time })<?>
+  description<?> = watch [videoPlayer.time<?>, descriptions] {
+    if videoPlayer.time<?> :
+      * descriptions.findLast((description) { * videoPlayer.time < description.time })<?>
     ;
   }
 
   spokenItem<?> = watch [videoPlayer<?>.status] {
-    if videoPlayer<?>.status == .cleared && analysis<?> : 
+    if videoPlayer.status == .cleared && analysis<?> : 
       * analysis[%!!](SpokenItem)
     ;
     * description<?>[%!!](SpokenItem)<?>
   }
 
   status = {
-    watch [videoPlayer<?>.status] :
-      if videoPlayer<?> : 
-        given videoPlayer.status :
-          .cleared : * .cleared ;
-          .playing : * .playing ;
-          .paused, .buffering : * .paused ;
-          .cleared :
-            if !analysis : * .cleared ;
-            * .playing
-          ;
+    watch [videoPlayer.status] :
+      given videoPlayer.status :
+        .cleared : * .cleared ;
+        .playing : * .playing ;
+        .paused, .buffering : * .paused ;
+        .cleared :
+          if !analysis<?> : * .cleared ;
+          * .playing
         ;
       ;
     ;
@@ -55,9 +54,9 @@
   }
 
   section "voice" {
-    isTimeSeek = watch [videoPlayer<?>.time] {
-      lastTime<?> = lastValue(videoPlayer<?>.time<?>)<?>
-      if videoPlayer<?>.time<?> && lastTime<?> :
+    isTimeSeek = watch [videoPlayer.time] {
+      lastTime<?> = lastValue(videoPlayer.time<?>)<?>
+      if videoPlayer.time<?> && lastTime<?> :
         * absoluteValue(videoPlayer.time - lastTime) > 1
       ;
       * false
@@ -74,8 +73,8 @@
       }
     }
 
-    watch [videoPlayer<?>.status] {
-      if voice<?> && videoPlayer<?> {
+    watch [videoPlayer.status] {
+      if voice<?> {
         given videoPlayer.status {
           .playing : voice.play() ;
           .paused : voice.play() ;
@@ -85,5 +84,13 @@
     }
   }
 
-  * [isPrerecorded:, status:]
+  ui = element("audio-description").items(
+    element("div").attributes(class: "wrapping-box").items(
+      element("div").text(
+        watch [spokenItem<?>] { if spokenItem<?> : * spokenItem.text ; else : * "" ; }
+      )
+    )
+  )
+
+  * [isPrerecorded:, status:, ui:]
 }

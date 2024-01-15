@@ -1,6 +1,6 @@
 * (youtubeId:, timeInterval:) {
   [element:] = import("core:reconcile")
-  [document, location, windowGlobals, setInterval, clearInterval] = import("core:web")
+  [document:, location:, windowGlobals:, setInterval:, clearInterval:] = import("core:web")
   
   ui = element("div").attributes(id: "player")
 
@@ -51,7 +51,7 @@
         if status == .playing && !&intervalId<?%> :
           &intervalId = setInterval(() :
             if time<?> : log(round(time, places: 3), level: .info) ;
-            * youtubePlayer<%>.getCurrentTime()<%>[%!!](0.0)
+            * youtubePlayer<%>.getCurrentTime<%>()<%>[%!!](0.0)
           ;, timeInterval)
         ; else if status != .playing && &intervalId<?> :
           clearInterval(&intervalId)
@@ -66,9 +66,9 @@
       youtubePlayer<%>.loadVideoById(videoId: youtubeId)<%>
     }
 
-    play = () : youtubePlayer<%>.playVideo()<%> ;
+    play = () : youtubePlayer<%>.playVideo<%>()<%> ;
 
-    pause = () : youtubePlayer<%>.pauseVideo()<%> ;
+    pause = () : youtubePlayer<%>.pauseVideo<%>()<%> ;
 
     setVolume = {
       &intervalId<?%>

@@ -2,7 +2,7 @@
   playlists:,
   otherVideos:
   videoPlayerUi:,
-  audioDescription.ui:,
+  audioDescriptionUi<?%>:,
   activeVideo:,
   playContent:,
   interactionInterceptor:
@@ -93,7 +93,7 @@
           ),
           videoPlayerUi
         ),
-      audioDescription.ui
+      audioDescriptionUi<?%>
     )
   )
 }

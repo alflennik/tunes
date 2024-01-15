@@ -1,12 +1,12 @@
 * (playlists:, otherVideos:, videoPlayerPlay<?>:) {
   [document:, location:, window:] = import("core:web")
   
-  &video<?%>
-  &playlist<?%>
-  &onUiComplete = () {}
+  &activeVideo<?%>
+  &activePlaylist<?%>
+  &focusPreselectedVideo = () {}
   
   if location.hash {
-    &onUiComplete = () {
+    &focusPreselectedVideo = () {
       document.querySelector("#player-h2")<?>.focus(preventScroll: true)
       document
         .querySelector("tunes-player")<?>
@@ -17,15 +17,15 @@
 
     otherVideo<?> = otherVideos.find((video) { * video.id == videoId })<?>
     if otherVideo<?> :
-      &video = otherVideo
+      &activeVideo = otherVideo
       *
     ;
 
-    playlists.each((eachPlaylist) :
-      eachPlaylist.videos.each((eachVideo) :
-        if eachVideo.id == videoId :
-          &video = eachVideo
-          &playlist = eachPlaylist
+    playlists.each((playlist) :
+      playlist.videos.each((video) :
+        if video.id == videoId :
+          &activeVideo = video
+          &activePlaylist = playlist
           *
         ;
       ;)
@@ -33,22 +33,22 @@
   } else {
     // Cannot show a playlist with a content advisory by default because it would bypass the
     // permission dialog
-    &playlist<?> = playlists.find((playlist) { * !playlist.needsContentAdvisory })<?>
-    &video = playlist.videos[0]<?>[?!!]
+    &activePlaylist<?> = playlists.find((playlist) { * !playlist.needsContentAdvisory })<?>
+    &activeVideo = playlist.videos[0]<?>[?!!]
   }
 
-  playContent = (newVideo<?>:, newPlaylist<?>:) {
-    if newPlaylist<?>.needsContentAdvisory && !window.confirm(
+  playContent = (video<?>:, playlist<?>:) {
+    if playlist<?>.needsContentAdvisory && !window.confirm(
       "This playlist contains content some viewers might find disturbing, are you sure you want \
         to continue?"
     ) : * ;
 
-    &playlist<?> = newPlaylist<?>
+    &activePlaylist<?> = playlist<?>
 
-    &video = if !newVideo<?> {
-      * &playlist.videos[0]<?>[?!!]
+    &activeVideo = if !video<?> {
+      * &activePlaylist.videos[0]<?>[?!!]
     } else {
-      * newVideo<?>[?!!]
+      * video<?>[?!!]
     }
 
     document.querySelector("#player-h2")<?>.focus(preventScroll: true)
@@ -59,9 +59,9 @@
   }
 
   * [
-    video: &video[&],
-    playlist<?>: &playlist<?>[&]<?>,
+    activeVideo: &activeVideo[&],
+    activePlaylist<?>: &activePlaylist<?>[&]<?>,
     playContent:,
-    onUiComplete: &onUiComplete[&],
+    focusPreselectedVideo: &focusPreselectedVideo[&],
   ]
 }

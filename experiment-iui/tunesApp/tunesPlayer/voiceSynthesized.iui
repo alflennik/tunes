@@ -4,7 +4,7 @@
   // A reference needs to be kept for active utterances, or they might be garbage collected!
   // See https://stackoverflow.com/a/35935851/3888572
   // See https://bugs.chromium.org/p/chromium/issues/detail?id=509488
-  activeUtterances = makeSet()
+  &activeUtterances = makeSet()
 
   &voiceName<?%>
   &voiceRate<?%>
@@ -110,19 +110,19 @@
       utterance.rate = 1.1
     }
     utterance.lang = "en-US"
-    * makePromise(async (resolve) {
-      utterance.addEventListener("end", async () {
-        activeUtterances.delete(utterance)
+    * makePromise((resolve)<~> {
+      utterance.addEventListener("end", ()<~> {
+        &activeUtterances = &.delete(utterance)
         resolve()
       })
-      activeUtterances.add(utterance)
+      &activeUtterances = &.add(utterance)
       speechSynthesis.speak(utterance)
       speechSynthesis.resume() // Required by desktop Chrome
     })<~>
   }
 
   clear = () {
-    activeUtterances.clear()
+    &activeUtterances = &.clear()
     speechSynthesis.cancel()
   }
 
@@ -137,8 +137,8 @@
   }
   
   // TODO: consider that these web APIs wouldn't support reactivity natively
-  status = watch [activeUtterances.size, speechSynthesis.paused] {
-    if activeUtterances.size == 0 : * .ended ;
+  status = watch [&activeUtterances.size, speechSynthesis.paused] {
+    if &activeUtterances.size == 0 : * .ended ;
     if speechSynthesis.paused : * .paused ; else : * .playing ;
   }
 
