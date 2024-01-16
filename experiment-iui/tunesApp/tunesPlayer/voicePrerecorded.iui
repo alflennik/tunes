@@ -3,29 +3,29 @@
 
   &status[%]([.cleared, .playing, .paused]) = .cleared
 
-  getPermissions = ()<~> {
+  getPermissions = async () {
     * makePromise((resolve) {
       audioElement = makeAudio("./audio/none.mp3")
       audioElement.addEventListener("ended", () : resolve() ;)
       audioElement.play()
-    })[~]
+    }).await
   }
 
-  &activePromise[%](~())<?>
+  &activePromise[%](Promise())<?>
   &activeElement[%](Audio)<?>
 
-  say = (spokenItem)<~> {
+  say = async (spokenItem) {
     filePath = spokenItem.filePath[?!!]
     audioElement = makeAudio(filePath)
 
     if &activePromise<?> && &activeElement<?>.paused != false {
-      &activePromise[~]
+      &activePromise.await
     }
 
     &activeElement = audioElement
 
-    &activePromise<~> = makePromise((resolve) {
-      endListener = ()<~> {
+    &activePromise = makePromise((resolve) {
+      endListener = () {
         &activeElement.removeEventListener("ended", endListener)
         &activeElement<?> = null
         &activePromise<?> = null
@@ -33,12 +33,12 @@
         resolve()
       }
       activeElement.addEventListener("ended", endListener)
-    })[~...]<~>
+    }).unawait
 
     &status = .playing
     &activeElement.play()
 
-    * activePromise[~]
+    * activePromise.await
   }
 
   clear = () {

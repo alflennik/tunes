@@ -1,4 +1,4 @@
-* (playlists:, otherVideos:) {
+* async (playlists:, otherVideos:) {
   [Element:] = import("core:reconciler")
   [navigator:, document:] = import("core:web")
 
@@ -51,20 +51,20 @@
 
   document.body.appendChild(rootUi.element)
 
-  videoPlayer = getVideoPlayer()[~]
+  videoPlayer = getVideoPlayer().await
   &videoPlayerPlay = videoPlayer.play
 
-  audioDescription = import("./audioDescription.iui")(activeVideo:, videoPlayer:, voice<?>:)[~]
+  audioDescription = import("./audioDescription.iui")(activeVideo:, videoPlayer:, voice<?>:).await
   &audioDescriptionIsPrerecorded = audioDescription.isPrerecorded
   &audioDescriptionUi = audioDescription.ui
 
   focusPreselectedVideo()
 
-  applyFirstInteractionHandlers(onFirstInteraction: (isKeyDown:, isVideoPlayerInteraction:)<~> {
+  applyFirstInteractionHandlers(onFirstInteraction: async (isKeyDown:, isVideoPlayerInteraction:) {
     concurrent(
-      voiceSynthesized.getPermissions()[~...]<~>,
-      voicePrerecorded.getPermissions()[~...]<~>,
-    )[~]
+      voiceSynthesized.getPermissions().unawait,
+      voicePrerecorded.getPermissions().unawait,
+    ).await
     &areVoicesReady = true
     if !isKeyDown && isVideoPlayerInteraction : videoPlayer.play() ;
   })

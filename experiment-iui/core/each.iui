@@ -11,14 +11,14 @@ each = (list<%>, callback<%>) {
     )
   ;
 
-  Each.warnings["~"] = Callback.warnings["~"]
+  Each.isAsync = Callback.isAsync
 
   &newList = [Item<%>...]
 
   &i = 0
   while &i < list.count :
-    result<\(Callback.warnings)> = if Callback.warnings["~"] {
-      * callback(list[&i], index<?>: &i[&])[~]
+    result<\(Callback.warnings)> = if Callback.isAsync {
+      * callback(list[&i], index<?>: &i[&]).await
     } else {
       * callback(list[&i], index<?>: &i[&])
     }

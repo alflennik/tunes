@@ -1,4 +1,4 @@
-* () {
+* async () {
   [element:] = import("core:reconcile")
   
   &firstInteractionComplete = false
@@ -17,7 +17,7 @@
       isVideoPlayerInteraction = 
         event.target == interactionInterceptor || interactionInterceptor.contains(event.target)
 
-      onFirstInteraction(isKeyDown:, isVideoPlayerInteraction:)[~]
+      onFirstInteraction(isKeyDown:, isVideoPlayerInteraction:).await
 
       interactionInterceptor.style.&display = "none"
       &firstInteractionComplete = true

@@ -4,7 +4,7 @@
   
   ui = element("div").attributes(id: "player")
 
-  onUiAttached = ()<~> {
+  onUiAttached = async () {
     youtubePlayer<%> = makePromise((resolve) {
       window.onYouTubeIframeAPIReady = () {
         youtubePlayer<%> = windowGlobals<%>["YT"]<%>["Player"]<%>("player", [
@@ -27,7 +27,7 @@
       scriptElement.src = "https://www.youtube.com/iframe_api"
       firstScriptTag = document.getElementsByTagName("script")[0]
       firstScriptTag.parentNode.insertBefore(scriptElement, firstScriptTag)
-    })[~]
+    }).await
 
     status = {
       youtubePlayer<%>.addEventListener("onStateChange", (data<%>) :
