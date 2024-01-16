@@ -51,20 +51,20 @@
 
   document.body.appendChild(rootUi.element)
 
-  videoPlayer = getVideoPlayer().await
+  videoPlayer = await getVideoPlayer()
   &videoPlayerPlay = videoPlayer.play
 
-  audioDescription = import("./audioDescription.iui")(activeVideo:, videoPlayer:, voice<?>:).await
+  audioDescription = await import("./audioDescription.iui")(activeVideo:, videoPlayer:, voice<?>:)
   &audioDescriptionIsPrerecorded = audioDescription.isPrerecorded
   &audioDescriptionUi = audioDescription.ui
 
   focusPreselectedVideo()
 
   applyFirstInteractionHandlers(onFirstInteraction: async (isKeyDown:, isVideoPlayerInteraction:) {
-    concurrent(
-      voiceSynthesized.getPermissions().unawait,
-      voicePrerecorded.getPermissions().unawait,
-    ).await
+    await concurrent(
+      unresolved voiceSynthesized.getPermissions(),
+      unresolved voicePrerecorded.getPermissions(),
+    )
     &areVoicesReady = true
     if !isKeyDown && isVideoPlayerInteraction : videoPlayer.play() ;
   })

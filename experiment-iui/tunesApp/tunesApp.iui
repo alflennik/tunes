@@ -36,5 +36,5 @@
     })
   }
   
-  import("./tunesPlayer/tunesPlayer.iui")(playlists:, otherVideos:).await
+  await import("./tunesPlayer/tunesPlayer.iui")(playlists:, otherVideos:)
 })

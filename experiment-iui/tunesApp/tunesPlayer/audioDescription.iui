@@ -6,7 +6,7 @@
   Description = [...SpokenItem, time: 0.0]
 
   [descriptions, analysis<?>] = watch [activeVideo.descriptionPath<?>] {
-    module<%> = dynamicImport(activeVideo.descriptionPath)[await][?!!][!!!]<%>
+    module<%> = dynamicImport(activeVideo.descriptionPath).await[?!!][!!!]<%>
     descriptions = module<%>.descriptions[%!!]([Description...])
     analysis<?> = module<%>.analysis[%?](SpokenItem)<?>
     * [descriptions, analysis<?>]
@@ -66,7 +66,7 @@
       if voice<?> && spokenItem<?> {
         if isTimeSeek {
           voice.play()
-          voice.say(spokenItem).unawait
+          unresolved voice.say(spokenItem)
         } else {
           voice.clear()
         }

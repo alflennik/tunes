@@ -4,11 +4,11 @@
   &status[%]([.cleared, .playing, .paused]) = .cleared
 
   getPermissions = async () {
-    * makePromise((resolve) {
+    * await makePromise((resolve) {
       audioElement = makeAudio("./audio/none.mp3")
       audioElement.addEventListener("ended", () : resolve() ;)
       audioElement.play()
-    }).await
+    })
   }
 
   &activePromise[%](Promise())<?>
@@ -19,12 +19,12 @@
     audioElement = makeAudio(filePath)
 
     if &activePromise<?> && &activeElement<?>.paused != false {
-      &activePromise.await
+      await &activePromise
     }
 
     &activeElement = audioElement
 
-    &activePromise = makePromise((resolve) {
+    &activePromise = unresolved makePromise((resolve) {
       endListener = () {
         &activeElement.removeEventListener("ended", endListener)
         &activeElement<?> = null
@@ -33,12 +33,12 @@
         resolve()
       }
       activeElement.addEventListener("ended", endListener)
-    }).unawait
+    })
 
     &status = .playing
     &activeElement.play()
 
-    * activePromise.await
+    * await activePromise
   }
 
   clear = () {

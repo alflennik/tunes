@@ -18,7 +18,7 @@ each = (list<%>, callback<%>) {
   &i = 0
   while &i < list.count :
     result<\(Callback.warnings)> = if Callback.isAsync {
-      * callback(list[&i], index<?>: &i[&]).await
+      * await callback(list[&i], index<?>: &i[&])
     } else {
       * callback(list[&i], index<?>: &i[&])
     }

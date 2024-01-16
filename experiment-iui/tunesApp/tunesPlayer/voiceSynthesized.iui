@@ -69,19 +69,19 @@
     }
 
     getBestVoice = async () {
-      * makePromise((resolve) {
+      * await makePromise((resolve) {
         if speechSynthesis.getVoices().count {
-          resolve(setBestVoice().await)
+          resolve(await setBestVoice())
           *
         }
         speechSynthesis.&onvoiceschanged = () {
           speechSynthesis.&onvoiceschanged = null
-          resolve(setBestVoice().await)
+          resolve(await setBestVoice())
         }
-      }).await
+      })
     }
 
-    [&voiceName, &voiceRate] = makePromise((resolve) {
+    [&voiceName, &voiceRate] = await makePromise((resolve) {
       // Thanks AblePlayer!
       // https://github.com/ableplayer/ableplayer/blob/main/scripts/description.js
       greeting = makeSpeechSynthesisUtterance("Hi!")
@@ -92,9 +92,9 @@
       speechSynthesis.speak(greeting)
 
       greeting.addEventListener("end", () {
-        resolve(getBestVoice().unawait)
+        resolve(await getBestVoice())
       })
-    }).await
+    })
   }
 
   say = async (description) {
@@ -110,7 +110,7 @@
       utterance.rate = 1.1
     }
     utterance.lang = "en-US"
-    * makePromise(async (resolve) {
+    * await makePromise(async (resolve) {
       utterance.addEventListener("end", () {
         &activeUtterances = &.delete(utterance)
         resolve()
@@ -118,7 +118,7 @@
       &activeUtterances = &.add(utterance)
       speechSynthesis.speak(utterance)
       speechSynthesis.resume() // Required by desktop Chrome
-    }).await
+    })
   }
 
   clear = () {

@@ -17,7 +17,7 @@
       isVideoPlayerInteraction = 
         event.target == interactionInterceptor || interactionInterceptor.contains(event.target)
 
-      onFirstInteraction(isKeyDown:, isVideoPlayerInteraction:).await
+      await onFirstInteraction(isKeyDown:, isVideoPlayerInteraction:)
 
       interactionInterceptor.style.&display = "none"
       &firstInteractionComplete = true
