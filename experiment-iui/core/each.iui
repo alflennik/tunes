@@ -1,6 +1,6 @@
 each = (list<%>, callback<%>) {
   Each = each
-  List = list[%!!]([%...])
+  List = list.typeCheck([%...])
   Item<%> = Callback.arguments[0]<%>
 
   if !Item<%>.matches(List.Item<%>) :
@@ -19,13 +19,13 @@ each = (list<%>, callback<%>) {
   &i = 0
   while &i < list.count :
     result<\(Warnings)> = if isAsync {
-      * callback(list[&i], index<?>: &i[&]).await
+      * callback(list[&i], index<?>: &i.lock()).await
     } else {
-      * callback(list[&i], index<?>: &i[&])
+      * callback(list[&i], index<?>: &i.lock())
     }
     &newList = &.append(result<\(Warnings)>)
     &i += 1
   ;
 
-  * &newList[&]
+  * &newList.lock()
 }

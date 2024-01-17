@@ -51,7 +51,7 @@
         if status == .playing && !&intervalId<?%> :
           &intervalId = setInterval(() :
             if time<?> : log(round(time, places: 3), level: .info) ;
-            * youtubePlayer<%>.getCurrentTime<%>()[%!!](0.0)
+            * youtubePlayer<%>.getCurrentTime<%>()<%>.typeCheck(0.0)
           ;, timeInterval)
         ; else if status != .playing && &intervalId<?> :
           clearInterval(&intervalId)

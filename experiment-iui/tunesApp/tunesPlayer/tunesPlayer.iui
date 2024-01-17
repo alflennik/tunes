@@ -2,8 +2,8 @@
   [Element:] = import("core:reconciler")
   [navigator:, document:] = import("core:web")
 
-  &videoPlayerPlay[%](() {})<?>
-  &audioDescriptionUi[%](Element)<?>
+  &videoPlayerPlay.type(() {})<?>
+  &audioDescriptionUi.type(Element)<?>
   &audioDescriptionIsPrerecorded = false
 
   [
@@ -14,7 +14,7 @@
   ] = import("./activeVideo.iui")(
     playlists:,
     otherVideos:,
-    videoPlayerPlay<?>: &videoPlayerPlay[&]<?>
+    videoPlayerPlay<?>: &videoPlayerPlay.lock()<?>
   )
 
   [isIOS, isAndroid] = [
@@ -43,7 +43,7 @@
   rootUi = import("./rootUi.iui")(
     playlists:,
     videoPlayerUi:,
-    audioDescriptionUi<?>: &audioDescriptionUi[&]<?>,
+    audioDescriptionUi<?>: &audioDescriptionUi.lock()<?>,
     activeVideo:,
     playContent:
     firstInteractionInterceptor:

@@ -6,9 +6,16 @@
   Description = [...SpokenItem, time: 0.0]
 
   [descriptions, analysis<?>] = watch [activeVideo.descriptionPath<?>] {
-    module<%> = dynamicImport(activeVideo.descriptionPath).await[?!!][!!!]<%>
-    descriptions = module<%>.descriptions[%!!]([Description...])
-    analysis<?> = module<%>.analysis[%?](SpokenItem)<?>
+    module<%> = 
+      dynamicImport(activeVideo.descriptionPath)
+        .await<?!%>
+        .forceValue()<!%>
+        .forceError()<%>
+  
+    descriptions = module<%>.descriptions.typeCheck([Description...])
+    
+    analysis<?> = module<%>.analysis.tryType(SpokenItem)<?>
+
     * [descriptions, analysis<?>]
   }
 
@@ -22,9 +29,9 @@
 
   spokenItem<?> = watch [videoPlayer<?>.status] {
     if videoPlayer.status == .cleared && analysis<?> : 
-      * analysis[%!!](SpokenItem)
+      * analysis.typeCheck(SpokenItem)
     ;
-    * description[%!!](SpokenItem)<?>
+    * description<?>.typeCheck(SpokenItem)<?>
   }
 
   status = {

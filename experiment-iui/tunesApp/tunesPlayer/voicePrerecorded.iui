@@ -1,7 +1,7 @@
 * () {
   [makeAudio:, Audio:] = import("core:web")
 
-  &status[%]([.cleared, .playing, .paused]) = .cleared
+  &status.type([.cleared, .playing, .paused]) = .cleared
 
   getPermissions = async () {
     * await makePromise((resolve) {
@@ -11,11 +11,11 @@
     })
   }
 
-  &activePromise[%](Promise())<?>
-  &activeElement[%](Audio)<?>
+  &activePromise.type(Promise())<?>
+  &activeElement.type(Audio)<?>
 
   say = async (spokenItem) {
-    filePath = spokenItem.filePath[?!!]
+    filePath = spokenItem.filePath<?>.forceValue()
     audioElement = makeAudio(filePath)
 
     if &activePromise<?> && &activeElement<?>.paused != false {

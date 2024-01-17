@@ -62,10 +62,10 @@
         })
       })
 
-      if !&foundVoiceName<?> : &foundVoiceName = &defaultVoice[?!!].name ;
+      if !&foundVoiceName<?> : &foundVoiceName = &defaultVoice<?>.forceValue().name ;
       if !foundVoiceRate<?> : &foundVoiceRate = defaultRate ;
 
-      * [&foundVoiceName[&], &foundVoiceRate[&]]
+      * [&foundVoiceName.lock(), &foundVoiceRate.lock()]
     }
 
     getBestVoice = async () {
@@ -98,7 +98,7 @@
   }
 
   say = async (description) {
-    voice = speechSynthesis.getVoices().find((each) { * each.name == &voiceName })[?!!]
+    voice = speechSynthesis.getVoices().find((each) { * each.name == &voiceName })<?>.forceValue()
     utterance = makeSpeechSynthesisUtterance(description.text)
 
     // On older versions of iOS (v16) the best voice is the default voice, which is not listed in
