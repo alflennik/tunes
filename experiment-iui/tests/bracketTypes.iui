@@ -1,0 +1,117 @@
+test("there are five types expressible with square brackets", () {
+  Fieldset = [specificField1: "", anotherField2: ""]
+  TupleWithoutFields = ["", "", true]
+  TupleWithFields = ["", true, plusFields: true]
+  List = [0, ...]
+  FieldList = [&: true, ...]
+  Enum = [.hungry, .hangry, .full, .stuffed]
+  EnumBranching = [.featuredArtist: "", .featuredArtists: ["", ...]]
+
+  actualFieldset = [specificField1: "specific", anotherField2: "another"]
+  actualTupleWithoutFields = ["bazinga", "abracadabra", false]
+  actualTupleWithFields = ["where art thou", false, plusFields: true]
+  actualList = [99, 100, 101, 102, ...]
+  actualFieldList = [alaska: true, alabama: false, antartica: false, ...]
+  actualEnum.type(Enum) = .hangry
+  actualEnumBranching.type(EnumBranching) = [.featuredArtist: "Izzy Bizu"]
+
+  expect(Fieldset.typeMatch(actualFieldset)).toEqual(true)
+  expect(TupleWithoutFields.typeMatch(actualTupleWithoutFields)).toEqual(true)
+  expect(TupleWithFields.typeMatch(actualTupleWithFields)).toEqual(true)
+  expect(List.typeMatch(actualList)).toEqual(true)
+  expect(FieldList.typeMatch(actualFieldList)).toEqual(true)
+  expect(Enum.typeMatch(actualEnum))
+})
+
+test("Fieldsets support access APIs", () {
+  myFieldset = [state: "New York", population: 20_000_000]
+
+  expect(myFieldset.state).toEqual("New York")
+  expect(myFieldset.population).toEqual(20_000_000)
+
+  [state:, population:] = myFieldset
+
+  expect(state).toEqual("New York")
+  expect(population).toEqual(20_000_000)
+
+  myStringFieldset = ["abc": 123, "TWO-LETTER-CODE": "NY"]
+  ["TWO-LETTER-CODE": twoLetterCode] = myFieldset
+
+  expect(myFieldset["TWO-LETTER-CODE"]).toEqual("NY")
+  expect(myFieldset["abc"]).toEqual(123)
+  expect(twoLetterCode).toEqual("NY")
+})
+
+test("Enums can be used as keys, with associated values", () {
+  languagePronouns = [.english: true, .spanish: true, .mandarin: false]
+
+  expect(languagePronouns[.english]).toEqual(true)
+  expect(languagePronouns[.mandarin]).toEqual(false)
+
+  fruit.type([.grape, .mandarin]) = .mandarin
+
+  expect(languagePronouns[.mandarin]).toEqual(false)
+})
+
+test("Fieldsets can also support rich types as keys", () {
+  user1 = [username: "elephantman2006"]
+  user2 = [username: "cantcantilever"]
+
+  passwords = [[user1]: "iloveelephants", [user2]: "actuallyicanilever"]
+
+  expect(passwords[user1]).toEqual("iloveelephants")
+  expect(passwords[user2]).toEqual("actuallyican")
+
+  equivalentToUser2 = [username: "cantcantilever"]
+  expect(passwords[equivalentToUser2]).toEqual("actuallyicanilever")
+
+  otherTypeFieldset = [
+    [true]: "booleans",
+    [0]: "numbers, but don't think of lists",
+    [0.000001]: "floats",
+    [[username: "elisalphabet"]]: "user"
+  ]
+
+  expect(otherTypeFieldset[true]).toEqual("booleans")
+  expect(otherTypeFieldset[0]).toEqual("numbers, but don't think of lists")
+  expect(otherTypeFieldset[0.000001]).toEqual("floats")
+  expect(otherTypeFieldset[[username: "elibababet"]]).toEqual("user")
+})
+
+test("Tuples support access APIs", () {
+  myTuple = ["Polarity", true, "Rhythm", 99, "Cause and Effect", 7.77]
+
+  expect(myTuple[0]).toEqual("Polarity")
+  expect(myTuple[2]).toEqual("Rhythm")
+
+  [principle1, isAwesome] = myTuple
+
+  expect(principle1).toEqual("Polarity")
+  expect(isAwesome).toEqual(true)
+
+  [_, _, principle2] = myTuple
+
+  expect(principle2).toEqual("Rhythm")
+})
+
+test("Tuples support access APIs", () {
+  myMixedTuple = ["listItem1", 999, keyValue1: "value1"]
+
+  expect(myTuple[0]).toEqual("listItem1")
+  expect(myTuple[1]).toEqual(999)
+  expect(myTuple.keyValue1).toEqual("value1")
+})
+
+test("Lists support access APIs", () {
+  myList = [99, 100, 101, 102, ...]
+
+  expect(myList[0]<?>).toEqual(99)
+  expect(myList[3]<?>).toEqual(102)
+  expect(myList[99_999]<?>).toEqual(null)
+})
+
+"changing them"
+
+"how nulls effect it"
+
+"untyped lists"
