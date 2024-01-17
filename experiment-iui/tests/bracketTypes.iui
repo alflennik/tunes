@@ -4,23 +4,18 @@ test("there are five types expressible with square brackets", () {
   TupleWithFields = ["", true, plusFields: true]
   List = [0, ...]
   FieldList = [&: true, ...]
-  Enum = [.hungry, .hangry, .full, .stuffed]
-  EnumBranching = [.featuredArtist: "", .featuredArtists: ["", ...]]
 
   actualFieldset = [specificField1: "specific", anotherField2: "another"]
   actualTupleWithoutFields = ["bazinga", "abracadabra", false]
   actualTupleWithFields = ["where art thou", false, plusFields: true]
   actualList = [99, 100, 101, 102, ...]
   actualFieldList = [alaska: true, alabama: false, antartica: false, ...]
-  actualEnum.type(Enum) = .hangry
-  actualEnumBranching.type(EnumBranching) = [.featuredArtist: "Izzy Bizu"]
 
   expect(Fieldset.typeMatch(actualFieldset)).toEqual(true)
   expect(TupleWithoutFields.typeMatch(actualTupleWithoutFields)).toEqual(true)
   expect(TupleWithFields.typeMatch(actualTupleWithFields)).toEqual(true)
   expect(List.typeMatch(actualList)).toEqual(true)
   expect(FieldList.typeMatch(actualFieldList)).toEqual(true)
-  expect(Enum.typeMatch(actualEnum))
 })
 
 test("Fieldsets support access APIs", () {
@@ -42,16 +37,6 @@ test("Fieldsets support access APIs", () {
   expect(twoLetterCode).toEqual("NY")
 })
 
-test("Enums can be used as keys, with associated values", () {
-  languagePronouns = [.english: true, .spanish: true, .mandarin: false]
-
-  expect(languagePronouns[.english]).toEqual(true)
-  expect(languagePronouns[.mandarin]).toEqual(false)
-
-  fruit.type([.grape, .mandarin]) = .mandarin
-
-  expect(languagePronouns[.mandarin]).toEqual(false)
-})
 
 test("Fieldsets can also support rich types as keys", () {
   user1 = [username: "elephantman2006"]
