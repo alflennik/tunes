@@ -24,7 +24,7 @@
 
     &activeElement = audioElement
 
-    &activePromise = unresolved makePromise((resolve) {
+    &activePromise = unawait makePromise((resolve) {
       endListener = () {
         &activeElement.removeEventListener("ended", endListener)
         &activeElement<?> = null

@@ -62,8 +62,8 @@
 
   applyFirstInteractionHandlers(onFirstInteraction: async (isKeyDown:, isVideoPlayerInteraction:) {
     await concurrent(
-      unresolved voiceSynthesized.getPermissions(),
-      unresolved voicePrerecorded.getPermissions(),
+      unwait voiceSynthesized.getPermissions(),
+      unwait voicePrerecorded.getPermissions(),
     )
     &areVoicesReady = true
     if !isKeyDown && isVideoPlayerInteraction : videoPlayer.play() ;
