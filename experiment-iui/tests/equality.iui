@@ -1,0 +1,49 @@
+test("Test equality", () {
+  stringA = "hello"
+  stringB = "hello"
+  expect(stringA == stringB).toEqual(true)
+  
+  listA = [%...]
+  listB = [%...]
+  expect(listA == listB).toEqual(true)
+
+  stringListA = [""...]
+  stringListB = [""...]
+  expect(stringListA == stringListB).toEqual(true)
+
+  functionA = () { * 1 + 1 }
+  functionB = () { * 1 + 1 }
+  expect(functionA == functionB).toEqual(true)
+
+  functionC = () { * 1 + 1 }
+  functionDDifferentFormat = () {
+    * 1 + 1 
+  }
+  expect(functionC == functionDDifferentFormat).toEqual(true)
+
+  functionE = () {
+    * 1 + 1
+  }
+  functionE = () {
+    * 1 + 1 // Comment 
+  }
+  expect(functionC == functionDDifferentFormat).toEqual(false)
+
+  tupleA = [0, true, [99, () { * "Oh wow" }]]
+  tupleB = [0, true, [99, () { * "Oh wow" }]]
+  expect(tupleA == tupleB).toEqual(true)
+
+  TypeA = [a: 0, b: 0, c: 0]
+  TypeB = [a: 0, b: 0, c: 0]
+  expect(TypeA == TypeB).toEqual(true)
+})
+
+specialForm("==", (left<%>, right<%>) {
+  Left = left[<%>]
+  Right = right[<%>]
+  if !Left.matches(Right) {
+    * error("This comparison is not needed because it will always return false")
+  }
+  if pointsToSameMemory(left<%>, right<%>) : * true ;
+  * deepCompare(left<%>, right<%>)
+})

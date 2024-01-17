@@ -1,28 +1,29 @@
 each = (list<%>, callback<%>) {
   Each = each
   List = list[%!!]([%...])
-  Callback = callback[%!!]((%) {%})
   Item<%> = Callback.arguments[0]<%>
 
   if !Item<%>.matches(List.Item<%>) :
-    * error(
+    * typeError(
       "Failed to match the items from the list with the first argument of the provided callback \
         function"
     )
   ;
 
-  Each.isAsync = Callback.isAsync
+  [isAsync, Result<Warnings>] = Callback
+
+  Each.&isAsync = isAsync
 
   &newList = [Item<%>...]
 
   &i = 0
   while &i < list.count :
-    result<\(Callback.warnings)> = if Callback.isAsync {
-      * await callback(list[&i], index<?>: &i[&])
+    result<\(Warnings)> = if isAsync {
+      * callback(list[&i], index<?>: &i[&]).await
     } else {
       * callback(list[&i], index<?>: &i[&])
     }
-    &newList = &.append(result)
+    &newList = &.append(result<\(Warnings)>)
     &i += 1
   ;
 

@@ -1,0 +1,180 @@
+test("functions must be used", () {
+  expect(() {
+    addOne = (implicitlyNumber) { * 1 + implicitlyNumber }
+  }).toErrorWithMessageContaining("Function was not used")
+})
+
+test("functions error when arguments are missing", () {
+  addOne = (a) { * 1 + a }
+  addTwo = (a, b) { * a + b }
+  addThree = (a, b, c:) { * a + b + c }
+
+  expect(() {
+    addOne()
+  }).toErrorWithMessageContaining("Function requires an argument")
+
+  expect(() {
+    addTwo()
+  }).toErrorWithMessageContaining("Function requires two arguments")
+
+  expect(() {
+    addTwo(a)
+  }).toErrorWithMessageContaining("Function requires one more argument")
+
+  expect(() {
+    addThree()
+  }).toErrorWithMessageContaining("Function requires two arguments and a \"c\" field")
+
+  expect(() {
+    addThree(a)
+  }).toErrorWithMessageContaining("Function requires one more argument and a \"c\" field")
+
+  expect(() {
+    addThree(c: 0)
+  }).toErrorWithMessageContaining("Function requires two more arguments")
+
+  expect(() {
+    addThree(d: 0)
+  }).toErrorWithMessageContaining("Function does not accept a \"d\" field")
+})
+
+test("functions error when results are implicitly discarded", () {
+  getOne = () { * 1 }
+  expect(() {
+    getOne()
+  }).toErrorWithMessageContaining("Function returns a result which was not assigned to a variable")
+
+  result = getOne()
+  expect(result).toEqual(1)
+
+  expect(() {
+    _ = getOne()
+  }).not.toError()
+})
+
+test("functions throw type errors", () {
+  expect(() {
+    addOne = (implicitlyNumber) { * 1 + implicitlyNumber }
+    addOne("1")
+  }).toErrorWithMessageContaining("Cannot add a number to a string")
+
+  addOne = (implicitlyNumber) { * 1 + implicitlyNumber }
+  result = addOne(1)
+  expect(result).toEqual(2)
+})
+
+test("functions can safely destructure arguments", () {
+  addOneToA = ([a:]) { * a + 1 }
+  result = addOneToA([a: 1, b: 0])
+  expect(result).toEqual(2)
+})
+
+test("functions can fail to destructure arguments", () {
+  addOneToA = ([a:]) { * a + 1 }
+  expect(() {
+    result = addOneToA([b: 0])
+  }).toErrorWithMessageContaining(
+    "Function requires the first argument to be an object containing an \"a\" field"
+  )
+})
+
+test("functions must only receive one type by default", () {
+  myFunction = (a) { * a }
+
+  _ = myFunction("type will be string")
+
+  expect(() {
+    myFunction(true)
+  }).toErrorWithMessageContaining(
+    "The type of the first argument clashes with the type provided other times the function \
+      was used"
+  )
+})
+
+test("functions can use destructuring to become generic", () {
+  quickGenericFunction = ([a:]) { * a + 1 }
+
+  dataTypeA = [a: 9, b: 0]
+  dataTypeB = [a: 19, newMexico: 0, california: 0]
+  
+  resultA = quickGenericFunction(dataTypeA)
+  resultB = quickGenericFunction(dataTypeB)
+
+  expect([resultA, resultB]).toEqual([10, 20])
+})
+
+test("functions with destructured arguments still require matching types", () {
+  quickGenericFunction = ([a:]) { * a }
+
+  dataTypeA = [a: 9, b: 0]
+  dataTypeB = [a: "Florida"]
+  
+  resultA = quickGenericFunction(dataTypeA)
+
+  expect(() {
+    resultB = quickGenericFunction(dataTypeB)
+  }).toErrorWithMessageContaining("Failed to determine the type of the first argument")
+})
+
+test("functions can be fully generic using <%>", () {
+  addOrConcatenate = (integerOrString<%>) {
+    if integerOrString[%?](0)<?> : * integerOrString + 1 ;
+    * integerOrString[%!!]("") + "1"
+  }
+
+  integerVersion = addOrConcatenate(1)
+  stringVersion = addOrConcatenate("1")
+
+  expect(integerVersion).toEqual(2)
+  expect(stringVersion).toEqual("11")
+
+  expect(() {
+    addOrConcatenate(true)
+  }).toErrorWithMessageContaining("First argument must be an integer or string")
+})
+
+test("functions preserve provided types even when returning a generic value", () {
+  justReturnIt = (a<%>) { * a<%> }
+  
+  myUntyped<?%>
+  myInteger = 0
+
+  expect(() {
+    resultUntyped<?%> = justReturnIt(myUntyped<?%>)
+    resultInteger = justReturnIt(myInteger)
+  }).not.toError()
+})
+
+
+test("functions can return generic values using <%>", () {
+  addOneToA = ([a:, ...rest<%>]) {
+    * [a: a + 1, ...rest<%>]
+  }
+
+  equivalentVersion = (generic<%>) {
+    [a:, ...rest<%>] = generic<%>
+    * [a: a + 1, ...rest<%>]
+  }
+
+  dataTypeA = [a: 99, bankAccount: -3.21]
+  dataTypeB = [a: 99, countryOfResidence: "Albania"]
+
+  resultA = addOneToA(dataTypeA)
+  resultB = addOneToA(dataTypeB)
+  resultC = equivalentVersion(dataTypeA)
+  resultD = equivalentVersion(dataTypeB)
+
+  expect(resultA).toEqual([a: 100, bankAccount: -3.21])
+  expect(resultC).toEqual([a: 100, bankAccount: -3.21])
+  expect(resultB).toEqual([a: 100, countryOfResidence: "Albania"])
+  expect(resultD).toEqual([a: 100, countryOfResidence: "Albania"])
+})
+
+test("users cannot abuse functions' type inference to avoid needing <%>", () {
+  pleaseInferType = (a<?>) { * a<?> }
+
+  expect(() {
+    untyped<?%>
+    nowTyped = pleaseInferType(untyped<?%>)
+  }).toErrorWithMessageContaining("The first argument cannot have <%>")
+})

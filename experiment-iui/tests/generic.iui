@@ -1,0 +1,9 @@
+moveLeft([x:, y:, ...rest<%>]) {
+  * [x: x - 100, y:, ...rest<%>]
+}
+
+&chair = makeChair(chairStyle: .armchair, x: 8771, y: 8817)
+&chair = &.moveLeft()
+
+&lamp = makeLamp(brightness: 99, x: 7166, y: 1102)
+&lamp = &.moveLeft()

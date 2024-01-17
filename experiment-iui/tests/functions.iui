@@ -1,0 +1,27 @@
+test("simplest function", () {
+  myFunction = () { * 123 }
+  result = myFunction()
+  expect(result).toEqual(123)
+})
+
+test("function type", () {
+  myFunction = () { * 123 }
+  expect(myFunction.Type).toEqualType(() {0})
+})
+
+section "async functions" {
+  myFunction = async () {
+    setTimeout(() :
+      * 123
+    ;, 2)
+  }
+
+  test("call async function", () {
+    result = await myFunction()
+    expect(result).toEqual(123)
+  })
+
+  test("async function type", () {
+    expect(myFunction.Type).toEqualType(() { Promise(0) })
+  })
+}
