@@ -1522,7 +1522,7 @@
       channel: "Wintergatan",
       title: "Wintergatan - Marble Machine (music instrument using 2000 marbles)",
     },
-    videoType: "livePerformance",
+    videoType: "sessionVideo",
     providedVideoTypeLabel: "unlabeled",
     titleAddendum: "music instrument using 2000 marbles",
     song: {

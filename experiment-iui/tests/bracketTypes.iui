@@ -1,4 +1,4 @@
-test("there are five types expressible with square brackets", () {
+test("there are several types expressible with square brackets", () {
   Fieldset = [specificField1: "", anotherField2: ""]
   TupleWithoutFields = ["", "", true]
   TupleWithFields = ["", true, plusFields: true]
@@ -37,7 +37,6 @@ test("Fieldsets support access APIs", () {
   expect(twoLetterCode).toEqual("NY")
 })
 
-
 test("Fieldsets can also support rich types as keys", () {
   user1 = [username: "elephantman2006"]
   user2 = [username: "cantcantilever"]
@@ -45,7 +44,7 @@ test("Fieldsets can also support rich types as keys", () {
   passwords = [[user1]: "iloveelephants", [user2]: "actuallyicanilever"]
 
   expect(passwords[user1]).toEqual("iloveelephants")
-  expect(passwords[user2]).toEqual("actuallyican")
+  expect(passwords[user2]).toEqual("actuallyicanilever")
 
   equivalentToUser2 = [username: "cantcantilever"]
   expect(passwords[equivalentToUser2]).toEqual("actuallyicanilever")
