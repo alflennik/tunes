@@ -1,5 +1,18 @@
 export default [
   {
+    id: "maye-tu",
+    artist: "maye",
+    title: "Tú",
+    date: "2019-09-13",
+    videoType: "musicVideo",
+    thumbnailSrc: "https://img.youtube.com/vi/jhQ4WVJwz7w/maxresdefault.jpg",
+    thumbnailAlt: "TODO",
+    youtubeId: "jhQ4WVJwz7w",
+    youtubeWidth: 3840,
+    youtubeHeight: 2160,
+    descriptionPath: "/videos/maye-tu.js",
+  },
+  {
     id: "the-chemical-brothers-skipping-like-a-stone",
     artist: "The Chemical Brothers",
     featuredArtist: "Beck",
