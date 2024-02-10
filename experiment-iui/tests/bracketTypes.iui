@@ -1,43 +1,62 @@
 test("there are several types expressible with square brackets", () {
-  Fieldset = [specificField1: "", anotherField2: ""]
   TupleWithoutFields = ["", "", true]
   TupleWithFields = ["", true, plusFields: true]
+  TupleOnlyFields = [specificField1: "", anotherField2: ""]
   List = [0, ...]
   FieldList = [&: true, ...]
 
-  actualFieldset = [specificField1: "specific", anotherField2: "another"]
   actualTupleWithoutFields = ["bazinga", "abracadabra", false]
   actualTupleWithFields = ["where art thou", false, plusFields: true]
+  actualTupleOnlyFields = [specificField1: "specific", anotherField2: "another"]
   actualList = [99, 100, 101, 102, ...]
   actualFieldList = [alaska: true, alabama: false, antartica: false, ...]
 
-  expect(Fieldset.typeMatch(actualFieldset)).toEqual(true)
   expect(TupleWithoutFields.typeMatch(actualTupleWithoutFields)).toEqual(true)
   expect(TupleWithFields.typeMatch(actualTupleWithFields)).toEqual(true)
+  expect(TupleOnlyFields.typeMatch(actualTupleOnlyFields)).toEqual(true)
   expect(List.typeMatch(actualList)).toEqual(true)
   expect(FieldList.typeMatch(actualFieldList)).toEqual(true)
 })
 
-test("Fieldsets support access APIs", () {
-  myFieldset = [state: "New York", population: 20_000_000]
+test("Tuples support positional APIs", () {
+  myTuple = ["Polarity", true, "Rhythm", 99, "Cause and Effect", 7.77]
 
-  expect(myFieldset.state).toEqual("New York")
-  expect(myFieldset.population).toEqual(20_000_000)
+  expect(myTuple[0]).toEqual("Polarity")
+  expect(myTuple[2]).toEqual("Rhythm")
 
-  [state:, population:] = myFieldset
+  [principle1, isAwesome] = myTuple
+
+  expect(principle1).toEqual("Polarity")
+  expect(isAwesome).toEqual(true)
+
+  [_, _, principle2] = myTuple
+
+  expect(principle2).toEqual("Rhythm")
+})
+
+test("Tuple fields support access APIs", () {
+  myTupleFields = [state: "New York", population: 20_000_000]
+
+  expect(myTupleFields.state).toEqual("New York")
+  expect(myTupleFields.population).toEqual(20_000_000)
+
+  [state:, population:] = myTupleFields
 
   expect(state).toEqual("New York")
   expect(population).toEqual(20_000_000)
+})
 
-  myStringFieldset = ["abc": 123, "TWO-LETTER-CODE": "NY"]
-  ["TWO-LETTER-CODE": twoLetterCode] = myFieldset
+test("Tuple fields can use strings as keys", () {
+  myStringTuple = [["abc"]: 123, ["TWO-LETTER-CODE"]: "NY"]
+  
+  [["TWO-LETTER-CODE"]: twoLetterCode] = myStringTuple
 
-  expect(myFieldset["TWO-LETTER-CODE"]).toEqual("NY")
-  expect(myFieldset["abc"]).toEqual(123)
+  expect(myTupleFields["TWO-LETTER-CODE"]).toEqual("NY")
+  expect(myTupleFields["abc"]).toEqual(123)
   expect(twoLetterCode).toEqual("NY")
 })
 
-test("Fieldsets can also support rich types as keys", () {
+test("Tuple fields can also support rich types as keys", () {
   user1 = [username: "elephantman2006"]
   user2 = [username: "cantcantilever"]
 
@@ -45,6 +64,11 @@ test("Fieldsets can also support rich types as keys", () {
 
   expect(passwords[user1]).toEqual("iloveelephants")
   expect(passwords[user2]).toEqual("actuallyicanilever")
+
+  [[user1]: user1Password, [user2]: user2Password] = passwords
+
+  expect(user1Password).toEqual(passwords[user1])
+  expect(user2Password).toEqual(passwords[user2])
 
   equivalentToUser2 = [username: "cantcantilever"]
   expect(passwords[equivalentToUser2]).toEqual("actuallyicanilever")
@@ -62,23 +86,8 @@ test("Fieldsets can also support rich types as keys", () {
   expect(otherTypeFieldset[[username: "elibababet"]]).toEqual("user")
 })
 
-test("Tuples support access APIs", () {
-  myTuple = ["Polarity", true, "Rhythm", 99, "Cause and Effect", 7.77]
 
-  expect(myTuple[0]).toEqual("Polarity")
-  expect(myTuple[2]).toEqual("Rhythm")
-
-  [principle1, isAwesome] = myTuple
-
-  expect(principle1).toEqual("Polarity")
-  expect(isAwesome).toEqual(true)
-
-  [_, _, principle2] = myTuple
-
-  expect(principle2).toEqual("Rhythm")
-})
-
-test("Tuples support access APIs", () {
+test("Tuples support simultaneous field and positional APIs", () {
   myMixedTuple = ["listItem1", 999, keyValue1: "value1"]
 
   expect(myTuple[0]).toEqual("listItem1")

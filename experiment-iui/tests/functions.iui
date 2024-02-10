@@ -6,7 +6,7 @@ test("simplest function", () {
 
 test("function type", () {
   myFunction = () { * 123 }
-  expect(myFunction.Type).toEqualType(() {0})
+  expect(myFunction.Type).toEqualType(() { 0 })
 })
 
 section "async functions" {

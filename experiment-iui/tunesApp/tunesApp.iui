@@ -1,35 +1,13 @@
  app(async () {
   [document:] = import("core:web")
+  [TunesPlaylist:, TunesVideo:] = import("./tunesVideos")
   
-  tunesDocument = importTextFile("./tunes.html")
-  document.write(tunesDocument)
-  
-  VideoType = [.musicVideo]
-  
-  Video = [
-    id: "",
-    artist<?>: "",
-    title<?>: "",
-    date: DateTime,
-    videoType: VideoType,
-    videoTypeCustomLabel<?>: "",
-    thumbnailSrc: "",
-    thumbnailAlt: "",
-    youtubeId: "",
-    youtubeWidth: 0,
-    youtubeHeight: 0,
-    descriptionPath<?>: "",
-  ]
+  mainHtml = importTextFile("./tunes.html")
+  document.write(mainHtml)
 
-  Playlist = [
-    id: "",
-    title: "",
-    videos: [Video...],
-  ]
+  otherVideos.type([TunesVideo, ...]) = import("../../videos/videos.iui")
 
-  otherVideos = import("../../videos/videos.iui")
-
-  playlists = {
+  playlists.type([TunesPlaylist, ...]) = {
     playlistList = import("../../playlists/playlist-list.iui")
     * playlistList.each((playlistPath) {
       * import("../../playlists/\(playlistPath)/contents.iui")

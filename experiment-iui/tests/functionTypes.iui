@@ -31,7 +31,7 @@ test("functions error when arguments are missing", () {
 
   expect(() {
     addThree(c: 0)
-  }).toErrorWithMessageContaining("Function requires two more arguments")
+  }).toErrorWithMessageContaining("Function requires two positional arguments")
 
   expect(() {
     addThree(d: 0)
@@ -49,6 +49,12 @@ test("functions error when results are implicitly discarded", () {
 
   expect(() {
     _ = getOne()
+  }).not.toError()
+
+  maybePossiblyGetOne = () { *<?> 1 }
+
+  expect(() {
+    maybePossiblyGetOne()
   }).not.toError()
 })
 
@@ -74,7 +80,7 @@ test("functions can fail to destructure arguments", () {
   expect(() {
     result = addOneToA([b: 0])
   }).toErrorWithMessageContaining(
-    "Function requires the first argument to be an object containing an \"a\" field"
+    "Function requires the first argument to be a tuple containing an \"a\" field"
   )
 })
 

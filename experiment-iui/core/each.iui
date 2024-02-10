@@ -1,31 +1,34 @@
 each = (list<%>, callback<%>) {
   Each = each
-  List = list.typeCheck([%...])
+  List = list<%>.typeCheck([%, ...])
+  Callback = callback<%>.typeCheck((%) { % })
   Item<%> = Callback.arguments[0]<%>
 
-  if !Item<%>.matches(List.Item<%>) :
-    * typeError(
-      "Failed to match the items from the list with the first argument of the provided callback \
-        function"
+  if !Item<%>.typeMatch(List.Item<%>) :
+    * makeError(
+      "Failed to match the type of the items in the list with the first argument of the provided \
+        callback function"
     )
   ;
 
-  [isAsync, Result<Warnings>] = Callback
+  [isAsync, Result<[Warnings]>] = Callback
 
   Each.&isAsync = isAsync
 
-  &newList = [Item<%>...]
+  &newList = [Item<%>, ...]
 
   &i = 0
-  while &i < list.count :
-    result<\(Warnings)> = if isAsync {
-      * callback(list[&i], index<?>: &i.lock()).await
+  i = &i.lock()
+  
+  while i < list.count :
+    result<[Warnings]> = if isAsync {
+      * callback(list[i], index<?>: i).await
     } else {
-      * callback(list[&i], index<?>: &i.lock())
+      * callback(list[i], index<?>: i)
     }
-    &newList = &.append(result<\(Warnings)>)
+    &newList = &.append(result<[Warnings]>)
     &i += 1
   ;
 
-  * &newList.lock()
+  *<?> &newList.lock()
 }
