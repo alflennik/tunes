@@ -34,7 +34,7 @@
     // Cannot show a playlist with a content advisory by default because it would bypass the
     // permission dialog
     &activePlaylist<?> = playlists.find((playlist) { * !playlist.needsContentAdvisory })<?>
-    &activeVideo = playlist.videos[0]<?>.forceValue()
+    &activeVideo = playlist.videos[0]<?>.forceOption()
   }
 
   playContent = (video<?>:, playlist<?>:) {
@@ -46,9 +46,9 @@
     &activePlaylist<?> = playlist<?>
 
     &activeVideo = if !video<?> {
-      * &activePlaylist.videos[0]<?>.forceValue()
+      * &activePlaylist.videos[0]<?>.forceOption()
     } else {
-      * video<?>.forceValue()
+      * video<?>.forceOption()
     }
 
     document.querySelector("#player-h2")<?>.focus(preventScroll: true)
@@ -59,9 +59,9 @@
   }
 
   * [
-    activeVideo: &activeVideo.lock(),
-    activePlaylist<?>: &activePlaylist.lock()<?>,
+    activeVideo: ^&activeVideo,
+    activePlaylist<?>: ^&activePlaylist<?>,
     playContent:,
-    focusPreselectedVideo: &focusPreselectedVideo.lock(),
+    focusPreselectedVideo: ^&focusPreselectedVideo,
   ]
 }

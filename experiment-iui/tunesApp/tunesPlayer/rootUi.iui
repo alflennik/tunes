@@ -8,92 +8,87 @@
   interactionInterceptor:
 ) {
   [element:, fragment:] = import("core:reconcile")
-  
-  * element("root-element").items(
-    element("div")
-      .attributes(class: "content-container")
-      .items(
-        element("h1").items("Tunes"),
-        element("p").items(
-          "The Tunes project implements audio descriptions for music videos, which are written \
-            by some guy named Alex."
-        ),
-        element("content-browser").items(
-          element("h2").items("Playlists"),
-          ...playlists.each((playlist) {
-            * fragment(
-              element("h3").items(
-                element("a")
-                  .attributes(href: "*")
-                  .listeners(
-                    click: (event) {
-                      event.preventDefault()
-                      playContent(playlist:)
-                    },
-                  )
-                  .items(playlist.title)
+
+  * getCustomElement(name: "root-element", [
+    getDiv(class: "content-container", [
+      getH1(["Tunes"]),
+      getP([
+        "The Tunes project implements audio descriptions for music videos, which are written \
+          by some guy named Alex."
+      ])
+      getCustomElement(name: "content-browser", [
+        getH2(["Playlists"]),
+        ...playlists.each(flattenBy: 1, (playlist) {
+          * [
+            getH3([
+              getA(
+                href: "*",
+                listeners: [
+                  click: (event) {
+                    event.preventDefault()
+                    playContent(playlist:)
+                  },
+                ],
+                [playlist.title],
               ),
-              element("ul").items(
-                ...playlist.videos.each((video) {
-                  isActive = watch [activeVideo] { * video.id == activeVideo.id }
-                  * element("li").items(
-                    element("a")
-                      .attributes(
-                        href: "*", 
-                        "aria-current": watch [isActive] { if isActive : * true ; else : * null ; }
-                      )
-                      .listeners(
-                        click: (event) {
-                          event.preventDefault()
-                          playContent(playlist:, video:)
-                        },
-                      )
-                      .text(video.titleSentence)
-                  )
-                })
-              )
-            )
-          }),
-          element("h2").text("Other Songs"),
-          element("ul").items(
-            ...otherVideos.each((video) {
-              isActive = watch [activeVideo] { * video.id == activeVideo.id }
-              * element("li").items(
-                element("a")
-                  .attributes(
+            ]),
+            getUl(
+              ...playlist.videos.each((video) {
+                isActive = watch activeVideo { * video.id == activeVideo.id }
+                * getLi([
+                  getA(
                     href: "*",
-                    "aria-current": watch [isActive] { if isActive : * true ; else : * null ; }
-                  )
-                  .listeners(
-                    click: (event) {
-                      event.preventDefault()
-                      playContent(video:)
-                    },
-                  )
-                  .items(video.titleSentence)
-              )
-            })
-          )
-        ),
-        element("h2").attributes(id: "player-h2", tabindex: "-1").items("Player")
-      ),
-    element("tunes-player").items(
-      element("video-player")
-        .styles(
-          "--scrollbar-width": "\(getScrollBarWidth())px",
-          "--video-width": activeVideo.youtubeWidth,
-          "--video-height": activeVideo.youtubeHeight,
-        )
-        .attributes("aria-hidden": watch [firstInteractionComplete] { 
+                    "aria-current": watch isActive { if isActive : * true ; else : * null ; },
+                    listeners: [
+                      click: (event) {
+                        event.preventDefault()
+                        playContent(playlist:, video:)
+                      },
+                    ],
+                    [video.titleSentence],
+                  ),
+                ])
+              })
+            ),
+          ]
+        }),
+        getH2(["Other Songs"]),
+        getUl(otherVideos.each((video) {
+          isActive = watch activeVideo { * video.id == activeVideo.id }
+          * getLi([
+            getA(
+              href: "*",
+              "aria-current": watch isActive { if isActive : * true ; else : * null ; },
+              listeners: [
+                click: (event) {
+                  event.preventDefault()
+                  playContent(video:)
+                }
+              ],
+              [video.titleSentence],
+            ),
+          ])
+        })),
+      ]),
+      getH2(id: "player-h2", tabindex: "-1", ["Player"])
+    ]),
+    getCustomElement(name: "tunes-player", [
+      getCustomElement(
+        name: "video-player",
+        styles: [
+            "--scrollbar-width": "\(getScrollBarWidth())px",
+            "--video-width": activeVideo.youtubeWidth,
+            "--video-height": activeVideo.youtubeHeight,
+        ],
+        "aria-hidden": watch firstInteractionComplete { 
           if firstInteractionComplete : * null ; else : * true ; 
-        })
-        .items(
-          interactionInterceptor(
-            items: element("button").text("Play \(video.titleSentence)"),
-          ),
-          videoPlayerUi
-        ),
-      audioDescriptionUi<?>
-    )
-  )
+        },
+        [
+          getInteractionInterceptor([getButton(["Play \(video.titleSentence)"])]),
+          videoPlayerUi,
+        ],
+      ),
+      audioDescriptionUi<?>,
+    ]),
+  ])
 }

@@ -124,8 +124,8 @@ test("functions with destructured arguments still require matching types", () {
 
 test("functions can be fully generic using <%>", () {
   addOrConcatenate = (integerOrString<%>) {
-    if integerOrString<%>.tryType(0)<?> : * integerOrString + 1 ;
-    integerOrString<%>.typeCheck("") + "1"
+    if integerOrString<%>.checkType(0)<?> : * integerOrString + 1 ;
+    integerOrString<%>.forceType("") + "1"
   }
 
   integerVersion = addOrConcatenate(1)
@@ -159,7 +159,7 @@ test("functions can return generic values using <%>", () {
 
   equivalentVersion = (generic<%>) {
     [a<%>:, ...rest<%>] = generic<%>
-    a<%>.typeCheck(0)
+    a<%>.forceType(0)
     * [a: a + 1, ...rest<%>]
   }
 

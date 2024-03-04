@@ -1,0 +1,70 @@
+getSomeHtml = () {
+  * customElement [name: "root-element", styles: rootElementStyles] {
+    headline [level: 1] { "Tunes" }
+    paragraph {
+      "The Tunes project implements audio descriptions for music videos, which are written by \
+        some guy named "
+      link [href: "./about"] { "Alex" }
+      "."
+    }
+  }
+
+  * getCustomElement(name: "root-element", styles: rootElementStyles, [
+    getHeadline(level: 1, ["Tunes"]),
+    getParagraph([
+      "The Tunes project implements audio descriptions for music videos, which are written by \
+        some guy named ",
+      getLink(href: "./about", ["Alex"]),
+      ".",
+    ]),
+  ])
+  
+  * customElement(name: "root-element", styles: rootElementStyles)(
+    headline(level: 1)("Tunes"),
+    paragraph()(
+      "The Tunes project implements audio descriptions for music videos, which are written by \
+        some guy named ",
+      link(href: "./about")("Alex"),
+      ".",
+    ),
+    input(type: "text")(),
+  )
+
+  * <root-element class="root-element-styles">
+    <h1>Tunes</h1>
+    <p>
+      The Tunes project implements audio descriptions for music videos, which are written by
+      some guy named <a href="./about">Alex</a>.
+    </p>
+  </root-element>
+}
+
+getSomeCss = () {
+  * html {
+    iframe {
+      height: .percent(100),
+      width: .percent(100),
+      display: .block,
+    },
+    audioDescription {
+      textAlign: .center,
+      background: .black,
+      display: .block,
+    }
+  }
+
+  * [
+    html: [
+      iframe: [
+        height: .percent(100),
+        width: .percent(100),
+        display: .block,
+      ],
+      "audio-description": [
+        textAlign: .center,
+        background: .black,
+        display: .block,
+      ]
+    ]
+  ]
+}

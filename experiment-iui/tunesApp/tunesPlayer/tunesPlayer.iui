@@ -14,12 +14,12 @@
   ] = import("./activeVideo.iui")(
     playlists:,
     otherVideos:,
-    videoPlayerPlay<?>: &videoPlayerPlay.lock()<?>
+    videoPlayerPlay<?>: ^&videoPlayerPlay<?>
   )
 
   [isIOS, isAndroid] = [
     regex("iPhone|iPod|iPad").matches(navigator.platform),
-    regex("android").modes("i").matches(navigator.userAgent),
+    regex("android").modes(.caseInsensitive).matches(navigator.userAgent),
   ]
 
   voiceSynthesized = import("./voiceSynthesized.iui")(isIOS:, isAndroid:)
@@ -43,7 +43,7 @@
   rootUi = import("./rootUi.iui")(
     playlists:,
     videoPlayerUi:,
-    audioDescriptionUi<?>: &audioDescriptionUi.lock()<?>,
+    audioDescriptionUi<?>: ^&audioDescriptionUi<?>,
     activeVideo:,
     playContent:
     firstInteractionInterceptor:

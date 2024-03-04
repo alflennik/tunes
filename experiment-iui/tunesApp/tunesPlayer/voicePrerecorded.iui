@@ -1,22 +1,24 @@
 * () {
-  [makeAudio:, Audio:] = import("core:web")
+  [getAudio:] = import("core:web")
+
+  Audio = Type(getAudio).Result
 
   &status.type([.cleared, .playing, .paused]) = .cleared
 
   getPermissions = async () {
-    * await makePromise((resolve) {
-      audioElement = makeAudio("./audio/none.mp3")
-      audioElement.addEventListener("ended", () : resolve() ;)
+    * await getPromise((resolve) {
+      audioElement = getAudio("./audio/none.mp3")
+      audioElement.addEventListener("ended", resolve)
       audioElement.play()
     })
   }
 
-  &activePromise.type(Promise())<?>
+  &activePromise.type(Promise(null))<?>
   &activeElement.type(Audio)<?>
 
   say = async (spokenItem) {
     filePath = spokenItem.filePath<?>.forceValue()
-    audioElement = makeAudio(filePath)
+    audioElement = getAudio(filePath)
 
     if &activePromise<?> && &activeElement<?>.paused != false {
       await &activePromise
@@ -24,7 +26,7 @@
 
     &activeElement = audioElement
 
-    &activePromise = unawait makePromise((resolve) {
+    &activePromise = unawait getPromise((resolve) {
       endListener = () {
         &activeElement.removeEventListener("ended", endListener)
         &activeElement<?> = null
@@ -38,7 +40,7 @@
     &status = .playing
     &activeElement.play()
 
-    * await activePromise
+    * await ^&activePromise
   }
 
   clear = () {

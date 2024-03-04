@@ -1,11 +1,11 @@
 each = (list<%>, callback<%>) {
   Each = each
-  List = list<%>.typeCheck([%, ...])
-  Callback = callback<%>.typeCheck((%) { % })
+  List = list<%>.forceType([%, ...])
+  Callback = callback<%>.forceType((%) { % })
   Item<%> = Callback.arguments[0]<%>
 
   if !Item<%>.typeMatch(List.Item<%>) :
-    * makeError(
+    * getError(
       "Failed to match the type of the items in the list with the first argument of the provided \
         callback function"
     )
@@ -18,7 +18,7 @@ each = (list<%>, callback<%>) {
   &newList = [Item<%>, ...]
 
   &i = 0
-  i = &i.lock()
+  i = ^&i
   
   while i < list.count :
     result<[Warnings]> = if isAsync {
@@ -30,5 +30,5 @@ each = (list<%>, callback<%>) {
     &i += 1
   ;
 
-  *<?> &newList.lock()
+  * ^&newList.allowDiscard()
 }

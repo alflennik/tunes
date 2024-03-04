@@ -31,7 +31,7 @@
 
   * [
     firstInteractionInterceptor:,
-    firstInteractionComplete: &firstInteractionComplete.lock(),
+    firstInteractionComplete: ^&firstInteractionComplete,
     applyFirstInteractionHandlers:,
   ]
 }

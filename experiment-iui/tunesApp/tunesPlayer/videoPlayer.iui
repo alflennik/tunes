@@ -5,7 +5,7 @@
   ui = element("div").attributes(id: "player")
 
   onUiAttached = async () {
-    youtubePlayer<%> = await makePromise((resolve) {
+    youtubePlayer<%> = await getPromise((resolve) {
       window.onYouTubeIframeAPIReady = () {
         youtubePlayer<%> = windowGlobals<%>["YT"]<%>["Player"]<%>("player", [
           height: "315",
@@ -51,7 +51,7 @@
         if status == .playing && !&intervalId<?%> :
           &intervalId = setInterval(() :
             if time<?> : log(round(time, places: 3), level: .info) ;
-            * youtubePlayer<%>.getCurrentTime<%>()<%>.typeCheck(0.0)
+            * youtubePlayer<%>.getCurrentTime<%>()<%>.forceType(0.0)
           ;, timeInterval)
         ; else if status != .playing && &intervalId<?> :
           clearInterval(&intervalId)

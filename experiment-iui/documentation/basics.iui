@@ -1,0 +1,122 @@
+# Basics for Beginners
+
+## Hello World
+
+Shall we start with a hello?
+
+Without getting too much into what it means, the following script will log "Hello world!"
+
+```groovy
+log("Hello world!")
+```
+
+<!--
+```groovy
+test("logs hello world", () {
+  evaluatePreviousCodeBlock()<%>
+  lastMessage<?> = log.getLastMessage()<?>
+  expect(lastMessage<?>).toEqual("Hello world!")
+})
+```
+-->
+
+Let's get this running.
+
+Type the command with exactly the same letters just below and then click run.
+
+```
+>
+```
+
+Did you see the text "Hello world!" pop up?
+
+The first thing to understand about logging is that it's not meant as a tool for showing content to the user. Actually its primary purpose is to give information to you, the programmer.
+
+As you create more and more sophisticated programs, cases will pop up where your code's behavior doesn't make sense. To debug the code you will need to figure out what is happening on each step. Logging allows you to quickly find the line of code that produces unexpected behavior.
+
+It's a small amount of code, but already there is quite a bit to discuss.
+
+Let's consider the `"Hello world!"` part. In IUI, all text must be enclosed in quotation marks. The technical term for such text is a **string**. These strings of characters are not executed as code. The code above would behave the same no matter what was contained within the quotes, take the following for example:
+
+```groovy
+log("Enjoy coding you boss 💪")
+```
+
+There is no behavioral difference between these two examples. Well, except for the text which will be logged.
+
+Next, let's discuss the `log()` part. In IUI, as in many programming languages, a name followed by parentheses is a function call.
+
+Functions are the primary means of doing almost anything in IUI. Functions are often likened to "verbs" and in fact, traditionally functions are given names which start with a verb. Here are some examples:
+
+```groovy
+startTheCar()
+exitTheGarage()
+driveToTheLight()
+turnRight()
+```
+
+Of course, despite the code above being fairly easy to understand, the complexities of the real world conspire against such simplicity.
+
+For example, let's imagine that the garage has two cars in it. There would be no way for the code above to guess which car to start.
+
+This takes us to **arguments**. Functions can accept additional information which will be contained within the parentheses.
+
+```groovy
+startTheCar("toyota")
+```
+
+In this hypothetical example, `"toyota"` would be some additional information supplied to the `startTheCar()` function, meant to resolve the question of which car to start.
+
+It probably goes without saying that a lot of detail is missing from this example. Nothing is said about car keys, backing up the car, changing from reverse to drive, etc. The curse and joy of programming is the constant challenge of breaking down tasks into the huge number of component parts that our minds would be perfectly happy to gloss over. It's a fact that cars - even without self-driving capabilities - include literally millions of lines of code to do their thing. We'll get there. One line at a time.
+
+## Basic UIs
+
+When you interact with an app, a website, or anything else on a computer, you are interacting with a user interface. As you might guess from the name, IUI, more than anything else, focuses on and specializes in UIs.
+
+Let's build a simple UI.
+
+```groovy
+* getPage([
+    getHeadline(["Start Somewhere"])
+    getParagraph(["So far, relatively doable."])
+])
+```
+
+In contrast to the example above, the headline and text given here are intended to be shown to users.
+
+<!--
+test("basic document", () {
+  [Document, Headline, Text] = import(core:ui)
+
+  result<%> = evaluatePreviousCodeBlock()<%>
+
+  expect(() {
+    result<%>.typeCheck(Document)
+    result.items[0]<?>.typeCheck(Headline)
+    result.items[0].items[0]<%>.typeCheck("")
+    result.items[1]<?>.typeCheck(Text)
+    result.items[1].items[0]<%>.typeCheck("")
+  }).not.toCrash()
+
+  expect(result.items[0].items[0]).toEqual("Start Somewhere")
+  expect(result.items[1].items[0]).toEqual("So far, relatively doable")
+})
+-->
+
+Write the code exactly as written above.
+
+```
+>
+```
+
+There is a good amount of text here, but once you get it running, you will see a nicely formatted headline followed by a sentence.
+
+## Functions
+
+Try triggering the button. You might have noticed that nothing happens. Let's change that.
+
+We are going to add
+
+```groovy
+* getButton(["Click Me!"])
+```

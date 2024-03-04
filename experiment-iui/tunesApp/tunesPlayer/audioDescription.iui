@@ -3,18 +3,15 @@
   [element:] = import("core:reconcile")
 
   SpokenItem = [text: "", filePath<?>: ""]
-  Description = [...SpokenItem, time: 0.0]
+  Description = [...SpokenItem, time: 0]
 
   [descriptions, analysis<?>] = watch [activeVideo.descriptionPath<?>] {
     module<%> = 
-      dynamicImport(activeVideo.descriptionPath)
-        .await<?!%>
-        .forceValue()<!%>
-        .forceError()<%>
+      dynamicImport(activeVideo.descriptionPath).await<?!%>.forceOption()<!%>.forceResult()<%>
   
-    descriptions = module<%>.descriptions.typeCheck([Description...])
+    descriptions = module<%>.descriptions<%>.forceType([Description...])
     
-    analysis<?> = module<%>.analysis.tryType(SpokenItem)<?>
+    analysis<?> = module<%>.analysis<%>.checkType(SpokenItem)<?>
 
     * [descriptions, analysis<?>]
   }
@@ -29,9 +26,9 @@
 
   spokenItem<?> = watch [videoPlayer<?>.status] {
     if videoPlayer.status == .cleared && analysis<?> : 
-      * analysis.typeCheck(SpokenItem)
+      * analysis.forceType(SpokenItem)
     ;
-    * description<?>.typeCheck(SpokenItem)<?>
+    * description<?>.forceType(SpokenItem)<?>
   }
 
   status = {
