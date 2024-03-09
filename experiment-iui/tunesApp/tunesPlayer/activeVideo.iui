@@ -37,7 +37,7 @@
     &activeVideo = playlist.videos[0]<?>.forceOption()
   }
 
-  playContent = (video<?>:, playlist<?>:) {
+  playContent = (_ video<?>:, _ playlist<?>:) {
     if playlist<?>.needsContentAdvisory && !window.confirm(
       "This playlist contains content some viewers might find disturbing, are you sure you want \
         to continue?"
@@ -59,9 +59,9 @@
   }
 
   * [
-    activeVideo: ^&activeVideo,
-    activePlaylist<?>: ^&activePlaylist<?>,
+    activeVideo: lock &activeVideo,
+    activePlaylist<?>: lock &activePlaylist<?>,
     playContent:,
-    focusPreselectedVideo: ^&focusPreselectedVideo,
+    focusPreselectedVideo: lock &focusPreselectedVideo,
   ]
 }

@@ -2,7 +2,7 @@
   [dynamicImport:] = import("core:web")
   [element:] = import("core:reconcile")
 
-  SpokenItem = [text: "", filePath<?>: ""]
+  SpokenItem = [text: "", _ filePath<?>: ""]
   Description = [...SpokenItem, time: 0]
 
   [descriptions, analysis<?>] = watch [activeVideo.descriptionPath<?>] {

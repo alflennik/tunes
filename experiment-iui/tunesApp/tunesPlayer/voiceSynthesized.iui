@@ -65,7 +65,7 @@
       if !&foundVoiceName<?> : &foundVoiceName = &defaultVoice<?>.forceValue().name ;
       if !foundVoiceRate<?> : &foundVoiceRate = defaultRate ;
 
-      * [^&foundVoiceName, ^&foundVoiceRate]
+      * [lock &foundVoiceName, lock &foundVoiceRate]
     }
 
     getBestVoice = async () {

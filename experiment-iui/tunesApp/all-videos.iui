@@ -14,13 +14,13 @@ TitleContent = {
   Song = [
     by: [.artist: Artist, .artists: [Artist, ...]],
     title: "",
-    featuring<?>: [
+    _ featuring: [
       .artist: Artist,
       .artists: [Artist, ...],
       .other: OtherContributor,
       .others: [[.artist: Artist, .contributor: OtherContributor], ...],
     ],
-    covering<?>: [
+    _ covering: [
       coveringType: [.cover, .remix],
       by: [.artist: Artist, .artists: [Artist, ...]]
     ]
@@ -53,7 +53,7 @@ TitleContent = {
   OneVideoOneSong = [
     providedContentType: ProvidedContentType,
     song: Song,
-    titleAddendum<?>: TitleAddendum,
+    _ titleAddendum: TitleAddendum,
   ]
 
   FreeformContent = {
@@ -83,8 +83,8 @@ TitleContent = {
         .song: Song,
         .songs: [Song, ...],
       ],
-      place<?>: [[.venue: "", .other: ""]]
-      series<?>: [""]
+      _ place: [[.venue: "", .other: ""]]
+      _ series: [""]
     ]
 
     StandardLiveContent = [
@@ -99,16 +99,16 @@ TitleContent = {
           ]
         ]
       ],
-      place<?>: [
+      _ place: [
         ...SpecialLiveContent.place,
         delimitedBy: [.at, .on, .from]
       ],
-      series<?>: [
+      _ series: [
         ...SpecialLiveContent.series,
         delimitedBy: [.at, .on, .from],
       ],
-      liveAddendum<?>: ["", delimitedBy: [.space, .comma]],
-      titleAddendum<?>: TitleAddendum,
+      _ liveAddendum: ["", delimitedBy: [.space, .comma]],
+      _ titleAddendum: TitleAddendum,
     ]
     
     * [

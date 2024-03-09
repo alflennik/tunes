@@ -18,17 +18,17 @@ each = (list<%>, callback<%>) {
   &newList = [Item<%>, ...]
 
   &i = 0
-  i = ^&i
+  i = lock &i
   
   while i < list.count :
     result<[Warnings]> = if isAsync {
-      * callback(list[i], index<?>: i).await
+      * callback(list[i], index: i).await
     } else {
-      * callback(list[i], index<?>: i)
+      * callback(list[i], index: i)
     }
     &newList = &.append(result<[Warnings]>)
     &i += 1
   ;
 
-  * ^&newList.allowDiscard()
+  * _ lock &newList
 }

@@ -35,15 +35,15 @@ test("Tuples support positional APIs", () {
 })
 
 test("Tuple fields support access APIs", () {
-  myTupleFields = [state: "New York", population: 20_000_000]
+  myTupleFields = [state: "New York", population: 20,000,000]
 
   expect(myTupleFields.state).toEqual("New York")
-  expect(myTupleFields.population).toEqual(20_000_000)
+  expect(myTupleFields.population).toEqual(20,000,000)
 
   [state:, population:] = myTupleFields
 
   expect(state).toEqual("New York")
-  expect(population).toEqual(20_000_000)
+  expect(population).toEqual(20,000,000)
 })
 
 test("Tuple fields can use strings as keys", () {

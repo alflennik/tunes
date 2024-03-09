@@ -1,7 +1,7 @@
 * () {
   [getAudio:] = import("core:web")
 
-  Audio = Type(getAudio).Result
+  Audio = Type(getAudio).Returns
 
   &status.type([.cleared, .playing, .paused]) = .cleared
 
@@ -40,7 +40,7 @@
     &status = .playing
     &activeElement.play()
 
-    * await ^&activePromise
+    * await lock &activePromise
   }
 
   clear = () {
