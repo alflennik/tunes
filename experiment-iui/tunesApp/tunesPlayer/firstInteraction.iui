@@ -3,10 +3,8 @@
   
   &firstInteractionComplete = false
   
-  firstInteractionInterceptor = (items<%>:) {
-    * element("div")
-      .attributes(class: "interaction-interceptor", "tab-index": 0)
-      .items(items<%>)
+  getFirstInteractionInterceptor = (items<%>) {
+    * getDiv(class: "interaction-interceptor", "tab-index": 0, items<%>)
   }
 
   applyFirstInteractionHandlers = (onFirstInteraction:) {
@@ -30,7 +28,7 @@
   }
 
   * [
-    firstInteractionInterceptor:,
+    getFirstInteractionInterceptor:,
     firstInteractionComplete: lock &firstInteractionComplete,
     applyFirstInteractionHandlers:,
   ]

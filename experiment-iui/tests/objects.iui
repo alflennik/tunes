@@ -11,14 +11,14 @@ test("there are several types expressible with square brackets", () {
   actualList = [99, 100, 101, 102, ...]
   actualFieldList = [alaska: true, alabama: false, antartica: false, ...]
 
-  expect(TupleWithoutFields.typeMatch(actualTupleWithoutFields)).toEqual(true)
-  expect(TupleWithFields.typeMatch(actualTupleWithFields)).toEqual(true)
-  expect(TupleOnlyFields.typeMatch(actualTupleOnlyFields)).toEqual(true)
-  expect(List.typeMatch(actualList)).toEqual(true)
-  expect(FieldList.typeMatch(actualFieldList)).toEqual(true)
+  expect(TupleWithoutFields.matchesType(actualTupleWithoutFields)).toEqual(true)
+  expect(TupleWithFields.matchesType(actualTupleWithFields)).toEqual(true)
+  expect(TupleOnlyFields.matchesType(actualTupleOnlyFields)).toEqual(true)
+  expect(List.matchesType(actualList)).toEqual(true)
+  expect(FieldList.matchesType(actualFieldList)).toEqual(true)
 })
 
-test("Tuples support positional APIs", () {
+test("tuples support positional APIs", () {
   myTuple = ["Polarity", true, "Rhythm", 99, "Cause and Effect", 7.77]
 
   expect(myTuple[0]).toEqual("Polarity")
@@ -34,7 +34,7 @@ test("Tuples support positional APIs", () {
   expect(principle2).toEqual("Rhythm")
 })
 
-test("Tuple fields support access APIs", () {
+test("tuple fields support access APIs", () {
   myTupleFields = [state: "New York", population: 20,000,000]
 
   expect(myTupleFields.state).toEqual("New York")
@@ -100,7 +100,7 @@ test("Lists support access APIs", () {
 
   expect(myList[0]<?>).toEqual(99)
   expect(myList[3]<?>).toEqual(102)
-  expect(myList[99_999]<?>).toEqual(null)
+  expect(myList[99,999]<?>).toEqual(null)
 })
 
 "changing them"

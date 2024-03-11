@@ -5,7 +5,7 @@
   audioDescriptionUi<?>:,
   activeVideo:,
   playContent:,
-  interactionInterceptor:
+  getFirstInteractionInterceptor:
 ) {
   [element:, fragment:] = import("core:reconcile")
 
@@ -84,7 +84,7 @@
           if firstInteractionComplete : * null ; else : * true ; 
         },
         [
-          getInteractionInterceptor([getButton(["Play \(video.titleSentence)"])]),
+          getFirstInteractionInterceptor([getButton(["Play \(video.titleSentence)"])]),
           videoPlayerUi,
         ],
       ),

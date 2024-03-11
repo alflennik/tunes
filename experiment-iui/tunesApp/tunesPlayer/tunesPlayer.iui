@@ -25,7 +25,7 @@
   voiceSynthesized = import("./voiceSynthesized.iui")(isIOS:, isAndroid:)
   voicePrerecorded = import("./voicePrerecorded.iui")()
 
-  [firstInteractionInterceptor:, applyFirstInteractionHandlers:] = import("./firstInteraction.iui")()
+  [getFirstInteractionInterceptor:, applyFirstInteractionHandlers:] = import("./firstInteraction.iui")()
 
   &areVoicesReady = false
 
@@ -46,7 +46,7 @@
     audioDescriptionUi<?>: lock &audioDescriptionUi<?>,
     activeVideo:,
     playContent:
-    firstInteractionInterceptor:
+    getFirstInteractionInterceptor:
   )
 
   document.body.appendChild(rootUi.element)

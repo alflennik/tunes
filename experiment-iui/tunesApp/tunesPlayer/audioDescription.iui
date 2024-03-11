@@ -16,7 +16,7 @@
     * [descriptions, analysis<?>]
   }
 
-  isPrerecorded = watch [descriptions] { * descriptions[0]<?>.filePath<?>.toBoolean() }
+  isPrerecorded = watch descriptions { * descriptions[0]<?>.filePath<?>.toBoolean() }
 
   description<?> = watch [videoPlayer.time<?>, descriptions] {
     if videoPlayer.time<?> :
@@ -24,7 +24,7 @@
     ;
   }
 
-  spokenItem<?> = watch [videoPlayer<?>.status] {
+  spokenItem<?> = watch videoPlayer<?>.status {
     if videoPlayer.status == .cleared && analysis<?> : 
       * analysis.forceType(SpokenItem)
     ;
@@ -32,7 +32,7 @@
   }
 
   status = {
-    watch [videoPlayer.status] :
+    watch videoPlayer.status :
       given videoPlayer.status :
         .cleared : * .cleared ;
         .playing : * .playing ;
@@ -44,7 +44,7 @@
       ;
     ;
     
-    watch [voice<?>.status] :
+    watch voice<?>.status :
       if 
         voice<?>.status == .cleared &&
         spokenItem<?> &&
@@ -58,7 +58,7 @@
   }
 
   section "voice" {
-    isTimeSeek = watch [videoPlayer.time] {
+    isTimeSeek = watch videoPlayer.time {
       lastTime<?> = lastValue(videoPlayer.time<?>)<?>
       if videoPlayer.time<?> && lastTime<?> :
         * absoluteValue(videoPlayer.time - lastTime) > 1
@@ -66,7 +66,7 @@
       * false
     }
     
-    watch [spokenItem<?>] {
+    watch spokenItem<?> {
       if voice<?> && spokenItem<?> {
         if isTimeSeek {
           voice.play()
@@ -77,7 +77,7 @@
       }
     }
 
-    watch [videoPlayer.status] {
+    watch videoPlayer.status {
       if voice<?> {
         given videoPlayer.status {
           .playing : voice.play() ;
@@ -91,7 +91,7 @@
   ui = element("audio-description").items(
     element("div").attributes(class: "wrapping-box").items(
       element("div").items(
-        watch [spokenItem<?>] { if spokenItem<?> : * spokenItem.text ; else : * "" ; }
+        watch spokenItem<?> { if spokenItem<?> : * spokenItem.text ; else : * "" ; }
       )
     )
   )
