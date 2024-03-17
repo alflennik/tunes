@@ -95,7 +95,7 @@ TitleContent = {
           ...SpecialLiveContent.performing.performance,
           title: [
             .providedAs: "",
-            .generated: null,
+            .generated: _,
           ]
         ]
       ],
@@ -205,9 +205,12 @@ videos.type([TunesVideo, ...]) = [
   ],
 ]
 
-firstContentType<?> = clearErrors(
-  videos[0]<?>.titleContent.musicVideo<!>.providedContentType.commonTerm<!>
-)<?>
+firstContentType<?> = 
+  videos[0]<?>
+    .titleContent
+    .checkCase(.musicVideo)<?>
+    .providedContentType
+    .checkCase(.commonTerm)<?>
 
 videos = {
   &videos = [%, ...]
@@ -217,13 +220,13 @@ videos = {
   })
 
   duplicates = &videos.findDuplicates()
-  if duplicates : crash("Found duplicated videos, which is not allowed. \(duplicates)")
+  if duplicates : forceError("Found duplicated videos, which is not allowed. \[duplicates]")
 
-  * &videos
+  * lock &videos
 }
 
 songs = {
-  &songs = [%, ...]
+  &songs.type([%, ...]) = []
 
   addSong = (song) { &songs = &.append(song) }
   addSongs = (songs) { songs.each((song) { addSong(song) }) }
@@ -251,5 +254,5 @@ songs = {
 
   &songs = &.removeDuplicates()
 
-  * &songs
+  * lock &songs
 }

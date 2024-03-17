@@ -1,8 +1,8 @@
 * (youtubeId:, timeInterval:) {
-  [element:] = import("core:reconcile")
+  [getDiv:] = import("core:reconciler")
   [document:, location:, windowGlobals:, setInterval:, clearInterval:] = import("core:web")
   
-  ui = element("div").attributes(id: "player")
+  ui = getDiv(id: "player", [])
 
   onUiAttached = async () {
     youtubePlayer<%> = await getPromise((resolve) {

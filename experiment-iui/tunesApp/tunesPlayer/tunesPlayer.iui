@@ -8,9 +8,9 @@
 
   [
     activeVideo:, 
-    activePlaylist: _, 
+    activePlaylist: _,
     playContent:, 
-    focusPreselectedVideo:
+    focusPreselectedVideo:,
   ] = import("./activeVideo.iui")(
     playlists:,
     otherVideos:,
@@ -25,7 +25,10 @@
   voiceSynthesized = import("./voiceSynthesized.iui")(isIOS:, isAndroid:)
   voicePrerecorded = import("./voicePrerecorded.iui")()
 
-  [getFirstInteractionInterceptor:, applyFirstInteractionHandlers:] = import("./firstInteraction.iui")()
+  [
+    getFirstInteractionInterceptor:,
+    applyFirstInteractionHandlers:
+  ] = import("./firstInteraction.iui")()
 
   &areVoicesReady = false
 
@@ -62,8 +65,8 @@
 
   applyFirstInteractionHandlers(onFirstInteraction: async (isKeyDown:, isVideoPlayerInteraction:) {
     await concurrent(
-      unwait voiceSynthesized.getPermissions(),
-      unwait voicePrerecorded.getPermissions(),
+      unawait voiceSynthesized.getPermissions(),
+      unawait voicePrerecorded.getPermissions(),
     )
     &areVoicesReady = true
     if !isKeyDown && isVideoPlayerInteraction : videoPlayer.play() ;

@@ -51,7 +51,7 @@ test("functions error when results are implicitly discarded", () {
     _ = getOne()
   }).not.toError()
 
-  maybePossiblyGetOne = () { *<?> 1 }
+  maybePossiblyGetOne = () { * _ 1 }
 
   expect(() {
     maybePossiblyGetOne()

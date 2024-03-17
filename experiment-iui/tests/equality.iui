@@ -42,7 +42,7 @@ specialForm("==", (left<%>, right<%>) {
   Left = left[<%>]
   Right = right[<%>]
   if !Left.matches(Right) {
-    * error("This comparison is not needed because it will always return false")
+    * getError("This comparison is not needed because it will always return false")
   }
   if pointsToSameMemory(left<%>, right<%>) : * true ;
   * deepCompare(left<%>, right<%>)

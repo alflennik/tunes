@@ -1,7 +1,5 @@
 * () {
-  [getAudio:] = import("core:web")
-
-  Audio = Type(getAudio).Returns
+  [getAudio:, Audio] = import("core:web")
 
   &status.type([.cleared, .playing, .paused]) = .cleared
 
@@ -17,7 +15,7 @@
   &activeElement.type(Audio)<?>
 
   say = async (spokenItem) {
-    filePath = spokenItem.filePath<?>.forceValue()
+    filePath = spokenItem.filePath<?>.forceOption()
     audioElement = getAudio(filePath)
 
     if &activePromise<?> && &activeElement<?>.paused != false {
