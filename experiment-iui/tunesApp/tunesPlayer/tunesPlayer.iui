@@ -1,6 +1,6 @@
 * async (playlists:, otherVideos:) {
-  [Element:] = import("core:reconciler")
-  [navigator:, document:] = import("core:web")
+  [Element:, ...] = import("core:reconciler")
+  [navigator:, document:, ...] = import("core:web")
 
   &videoPlayerPlay.type(() {})<?>
   &audioDescriptionUi.type(Element)<?>
@@ -27,7 +27,7 @@
 
   [
     getFirstInteractionInterceptor:,
-    applyFirstInteractionHandlers:
+    applyFirstInteractionHandlers:,
   ] = import("./firstInteraction.iui")()
 
   &areVoicesReady = false

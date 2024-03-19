@@ -1,5 +1,5 @@
 * () {
-  [getAudio:, Audio] = import("core:web")
+  [getAudio:, Audio, ...] = import("core:web")
 
   &status.type([.cleared, .playing, .paused]) = .cleared
 

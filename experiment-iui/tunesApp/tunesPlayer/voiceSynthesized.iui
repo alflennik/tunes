@@ -1,5 +1,5 @@
 * (isIOS:, isAndroid:) {
-  [speechSynthesis:, navigator:, getSet:] = import("core:web")
+  [speechSynthesis:, navigator:, getSet:, ...] = import("core:web")
   
   // A reference needs to be kept for active utterances, or they might be garbage collected!
   // See https://stackoverflow.com/a/35935851/3888572

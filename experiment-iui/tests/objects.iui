@@ -24,12 +24,12 @@ test("tuples support positional APIs", () {
   expect(myTuple[0]).toEqual("Polarity")
   expect(myTuple[2]).toEqual("Rhythm")
 
-  [principle1, isAwesome] = myTuple
+  [principle1, isAwesome, ...] = myTuple
 
   expect(principle1).toEqual("Polarity")
   expect(isAwesome).toEqual(true)
 
-  [_, _, principle2] = myTuple
+  [_, _, principle2, ...] = myTuple
 
   expect(principle2).toEqual("Rhythm")
 })
@@ -42,14 +42,18 @@ test("tuple fields support access APIs", () {
 
   [state:, population:] = myTupleFields
 
+  // Rename a variable
+  [state: justTheState, ...] = myTupleFields
+
   expect(state).toEqual("New York")
+  expect(justTheState).toEqual("New York")
   expect(population).toEqual(20,000,000)
 })
 
 test("Tuple fields can use strings as keys", () {
   myStringTuple = [["abc"]: 123, ["TWO-LETTER-CODE"]: "NY"]
   
-  [["TWO-LETTER-CODE"]: twoLetterCode] = myStringTuple
+  [["TWO-LETTER-CODE"]: twoLetterCode, ...] = myStringTuple
 
   expect(myTupleFields["TWO-LETTER-CODE"]).toEqual("NY")
   expect(myTupleFields["abc"]).toEqual(123)

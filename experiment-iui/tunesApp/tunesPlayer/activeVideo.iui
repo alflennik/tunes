@@ -1,5 +1,5 @@
 * (playlists:, otherVideos:, videoPlayerPlay<?>:) {
-  [document:, location:, window:] = import("core:web")
+  [document:, location:, window:, ...] = import("core:web")
   
   &activeVideo<?%>
   &activePlaylist<?%>

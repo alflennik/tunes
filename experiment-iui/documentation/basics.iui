@@ -86,7 +86,7 @@ In contrast to the example above, the headline and text given here are intended 
 
 <!--
 test("basic document", () {
-  [Document, Headline, Text] = import(core:ui)
+  [Document, Headline, Text, ...] = import(core:ui)
 
   result<%> = evaluatePreviousCodeBlock()<%>
 

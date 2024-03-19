@@ -1,6 +1,6 @@
 * (youtubeId:, timeInterval:) {
-  [getDiv:] = import("core:reconciler")
-  [document:, location:, windowGlobals:, setInterval:, clearInterval:] = import("core:web")
+  [getDiv:, ...] = import("core:reconciler")
+  [document:, location:, windowGlobals:, setInterval:, clearInterval:, ...] = import("core:web")
   
   ui = getDiv(id: "player", [])
 

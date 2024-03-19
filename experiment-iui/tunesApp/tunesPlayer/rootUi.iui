@@ -7,7 +7,7 @@
   playContent:,
   getFirstInteractionInterceptor:
 ) {
-  [element:, fragment:] = import("core:reconciler")
+  [element:, fragment:, ...] = import("core:reconciler")
 
   * getCustomElement(name: "root-element", [
     getDiv(class: "content-container", [

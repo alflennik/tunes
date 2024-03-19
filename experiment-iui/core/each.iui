@@ -11,7 +11,7 @@ each = (list<%>, callback<%>) {
     )
   ;
 
-  [isAsync, Result<[Warnings]>] = Callback
+  [isAsync:, Return<[Warnings]>:, ...] = Callback
 
   Each.&isAsync = isAsync
 
@@ -21,11 +21,7 @@ each = (list<%>, callback<%>) {
   i = lock &i
   
   while i < list.count :
-    result<[Warnings]> = if isAsync {
-      * callback(list[i], index: i).await
-    } else {
-      * callback(list[i], index: i)
-    }
+    result<[Warnings]> = callback(list[i], index: i).awaitIfAsync
     &newList = &.append(result<[Warnings]>)
     &i += 1
   ;
