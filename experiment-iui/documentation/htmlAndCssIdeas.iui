@@ -60,7 +60,7 @@ getSomeCss = () {
         width: .percent(100),
         display: .block,
       ],
-      "audio-description": [
+      ["audio-description"]: [
         textAlign: .center,
         background: .black,
         display: .block,

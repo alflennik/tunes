@@ -77,8 +77,8 @@ Let's build a simple UI.
 
 ```groovy
 * getPage([
-    getHeadline(["Start Somewhere"])
-    getParagraph(["So far, relatively doable."])
+    getHeadline(["Start Somewhere"]),
+    getParagraph(["So far, relatively doable."]),
 ])
 ```
 

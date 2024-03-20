@@ -3,12 +3,12 @@ test("Test equality", () {
   stringB = "hello"
   expect(stringA == stringB).toEqual(true)
   
-  listA = [%, ...]
-  listB = [%, ...]
+  listA.type([%, ...]) = []
+  listB.type([%, ...]) = []
   expect(listA == listB).toEqual(true)
 
-  stringListA = ["", ...]
-  stringListB = ["", ...]
+  stringListA.type(["", ...]) = []
+  stringListB.type(["", ...]) = []
   expect(stringListA == stringListB).toEqual(true)
 
   functionA = () { * 1 + 1 }

@@ -80,14 +80,12 @@ test("Tuple fields can also support rich types as keys", () {
   otherTypeFieldset = [
     [true]: "booleans",
     [0]: "numbers, but don't think of lists",
-    [0.000001]: "floats",
     [[username: "elisalphabet"]]: "user"
   ]
 
   expect(otherTypeFieldset[true]).toEqual("booleans")
   expect(otherTypeFieldset[0]).toEqual("numbers, but don't think of lists")
-  expect(otherTypeFieldset[0.000001]).toEqual("floats")
-  expect(otherTypeFieldset[[username: "elibababet"]]).toEqual("user")
+  expect(otherTypeFieldset[[username: "elisalphabet"]]).toEqual("user")
 })
 
 

@@ -1,5 +1,5 @@
  app(async () {
-  [document:] = import("core:web")
+  [document:, ...] = import("core:web")
   [TunesPlaylist:, TunesVideo:, ...] = import("./tunesVideos")
   
   mainHtml = importTextFile("./tunes.html")

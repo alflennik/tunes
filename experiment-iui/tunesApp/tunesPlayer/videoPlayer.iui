@@ -45,24 +45,30 @@
     }
 
     time<?> = {
-      &intervalId<?%>
+      getCurrentTime = () { * youtubePlayer<%>.getCurrentTime<%>()<%>.forceType(0) }
+      
+      &interval<?%>
 
-      watch [status] :
-        if status == .playing && !&intervalId<?%> :
-          &intervalId = setInterval(() :
-            if time<?> : log(round(time, places: 3), level: .info) ;
-            * youtubePlayer<%>.getCurrentTime<%>()<%>.forceType(0.0)
-          ;, timeInterval)
-        ; else if status != .playing && &intervalId<?> :
-          clearInterval(&intervalId)
-          &intervalId<?> = null
+      watch status :
+        if status == .playing && !&interval<?%> :
+          &interval = startInterval(timeInterval, () :
+            if time<?> : 
+              logInfo(time.round(places: 3))
+            ;
+            * getCurrentTime()
+          ;)
+        ;
+
+        if status != .playing && &interval<?> :
+          &interval.stop()
+          &interval = null
         ;
       ;
 
-      watch [youtubeId] : * null ;
+      watch youtubeId : * null ;
     }
 
-    watch [youtubeId] {
+    watch youtubeId {
       youtubePlayer<%>.loadVideoById(videoId: youtubeId)<%>
     }
 
@@ -71,26 +77,26 @@
     pause = () : youtubePlayer<%>.pauseVideo<%>()<%> ;
 
     setVolume = {
-      &intervalId<?%>
+      &interval<?%>
       &transitionVolume = 1.0
       &volume = 1.0
       youtubePlayer<%>.setVolume(100)<%>
 
       * (number) {
-        if &intervalId<?%> : clearInterval(&intervalId<%>) ;
+        if &interval<?%> : &interval<%>.stop() ;
 
-        &intervalId = setInterval(() {
+        &interval = startInterval(25, () {
           if &transitionVolume < &volume {
             &transitionVolume += 0.025
             youtubePlayer<%>.setVolume(&transitionVolume * 100)<%>
-            if &transitionVolume > &volume : clearInterval(&intervalId) ;
+            if &transitionVolume > &volume : &interval.stop() ;
           }
           if &transitionVolume > &volume {
             &transitionVolume -= 0.025
             youtubePlayer<%>.setVolume(&transitionVolume * 100)<%>
-            if &transitionVolume < &volume : clearInterval(&intervalId) ;
+            if &transitionVolume < &volume : &interval.stop() ;
           }
-        }, 25)
+        })
 
         &volume = number
       }

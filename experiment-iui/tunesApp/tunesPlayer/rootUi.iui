@@ -38,7 +38,7 @@
                 * getLi([
                   getA(
                     href: "*",
-                    "aria-current": watch isActive { if isActive : * true ; else : * null ; },
+                    ariaCurrent: watch isActive { if isActive : * true ; else : * null ; },
                     listeners: [
                       click: (event) {
                         event.preventDefault()
@@ -58,7 +58,7 @@
           * getLi([
             getA(
               href: "*",
-              "aria-current": watch isActive { if isActive : * true ; else : * null ; },
+              ariaCurrent: watch isActive { if isActive : * true ; else : * null ; },
               listeners: [
                 click: (event) {
                   event.preventDefault()
@@ -80,7 +80,7 @@
             "--video-width": activeVideo.youtubeWidth,
             "--video-height": activeVideo.youtubeHeight,
         ],
-        "aria-hidden": watch firstInteractionComplete { 
+        ariaHidden: watch firstInteractionComplete { 
           if firstInteractionComplete : * null ; else : * true ; 
         },
         [
