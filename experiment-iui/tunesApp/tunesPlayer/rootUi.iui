@@ -13,7 +13,7 @@
     getDiv(class: "content-container", [
       getH1(["Tunes"]),
       getP([
-        "The Tunes project implements audio descriptions for music videos, which are written \
+        "The Tunes project implements audio descriptions for music videos, which are written
           by some guy named Alex."
       ])
       getCustomElement(name: "content-browser", [
@@ -76,7 +76,7 @@
       getCustomElement(
         name: "video-player",
         styles: [
-            "--scrollbar-width": "\(getScrollBarWidth())px",
+            "--scrollbar-width": "{getScrollBarWidth()}px",
             "--video-width": activeVideo.youtubeWidth,
             "--video-height": activeVideo.youtubeHeight,
         ],
@@ -84,7 +84,7 @@
           if firstInteractionComplete : * null ; else : * true ; 
         },
         [
-          getFirstInteractionInterceptor([getButton(["Play \(video.titleSentence)"])]),
+          getFirstInteractionInterceptor([getButton(["Play {video.titleSentence}"])]),
           videoPlayerUi,
         ],
       ),

@@ -10,7 +10,7 @@
   playlists.type([TunesPlaylist, ...]) = {
     playlistList = import("../../playlists/playlist-list.iui")
     * playlistList.each((playlistPath) {
-      * import("../../playlists/\(playlistPath)/contents.iui")
+      * import("../../playlists/{playlistPath}/contents.iui")
     })
   }
   

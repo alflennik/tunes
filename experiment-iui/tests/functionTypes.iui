@@ -23,11 +23,11 @@ test("functions error when arguments are missing", () {
 
   expect(() {
     addThree()
-  }).toErrorWithMessageContaining("Function requires two arguments and a \"c\" field")
+  }).toErrorWithMessageContaining(_"Function requires two arguments and a "c" field"_)
 
   expect(() {
     addThree(a)
-  }).toErrorWithMessageContaining("Function requires one more argument and a \"c\" field")
+  }).toErrorWithMessageContaining(_"Function requires one more argument and a "c" field"_)
 
   expect(() {
     addThree(c: 0)
@@ -35,7 +35,7 @@ test("functions error when arguments are missing", () {
 
   expect(() {
     addThree(d: 0)
-  }).toErrorWithMessageContaining("Function does not accept a \"d\" field")
+  }).toErrorWithMessageContaining(_"Function does not accept a "d" field"_)
 })
 
 test("functions error when results are implicitly discarded", () {
@@ -80,19 +80,19 @@ test("functions can fail to destructure arguments", () {
   expect(() {
     result = addOneToA([b: 0])
   }).toErrorWithMessageContaining(
-    "Function requires the first argument to be a tuple containing an \"a\" field"
+    _"Function requires the first argument to be a tuple containing an "a" field"_
   )
 })
 
 test("functions must only receive one type by default", () {
-  myFunction = (a) { * a }
+  myFunction = (a) { * _ }
 
-  _ = myFunction("type will be string")
+  myFunction("type will be string")
 
   expect(() {
     myFunction(true)
   }).toErrorWithMessageContaining(
-    "The type of the first argument clashes with the type provided other times the function \
+    "The type of the first argument clashes with the type provided other times the function
       was used"
   )
 })

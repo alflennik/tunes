@@ -6,7 +6,7 @@ each = (list<%>, callback<%>) {
 
   if !Item<%>.typeMatch(List.Item<%>) :
     * getError(
-      "Failed to match the type of the items in the list with the first argument of the provided \
+      "Failed to match the type of the items in the list with the first argument of the provided
         callback function"
     )
   ;

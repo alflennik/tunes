@@ -39,7 +39,7 @@
 
   playContent = (_ video<?>:, _ playlist<?>:) {
     if playlist<?>.needsContentAdvisory && !window.confirm(
-      "This playlist contains content some viewers might find disturbing, are you sure you want \
+      "This playlist contains content some viewers might find disturbing, are you sure you want
         to continue?"
     ) : * ;
 

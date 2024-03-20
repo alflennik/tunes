@@ -159,11 +159,11 @@ TitleContent = {
     .sessionVideo: FreeformContent,
     .livePerformance: LivePerformanceContent,
     .fanVideo: FreeformContent,
-    .musicTrailer: null // TODO: fill this out
-    .promotionalVideo: null, // TODO: fill this out
-    .foundFootage: null,
-    .documentary: null,
-    .shortFilm: null,
+    .musicTrailer: _ // TODO: fill this out
+    .promotionalVideo: _, // TODO: fill this out
+    .foundFootage: _,
+    .documentary: _,
+    .shortFilm: _,
   ]
 }
 
@@ -213,14 +213,14 @@ firstContentType<?> =
     .checkCase(.commonTerm)<?>
 
 videos = {
-  &videos = [%, ...]
+  &videos.type([%, ...]) = []
 
   playlists.each((playlist) { 
     playlist.videos.each((video) { &videos = &.append(video) })
   })
 
   duplicates = &videos.findDuplicates()
-  if duplicates : forceError("Found duplicated videos, which is not allowed. \[duplicates]")
+  if duplicates : forceError("Found duplicated videos, which is not allowed. {duplicates}")
 
   * lock &videos
 }
