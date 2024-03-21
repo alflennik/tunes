@@ -14,7 +14,7 @@
   ] = import("./activeVideo.iui")(
     playlists:,
     otherVideos:,
-    videoPlayerPlay<?>: lock &videoPlayerPlay<?>
+    videoPlayerPlay<?>: >< &videoPlayerPlay<?>
   )
 
   [isIOS, isAndroid] = [
@@ -46,7 +46,7 @@
   rootUi = import("./rootUi.iui")(
     playlists:,
     videoPlayerUi:,
-    audioDescriptionUi<?>: lock &audioDescriptionUi<?>,
+    audioDescriptionUi<?>: >< &audioDescriptionUi<?>,
     activeVideo:,
     playContent:
     getFirstInteractionInterceptor:

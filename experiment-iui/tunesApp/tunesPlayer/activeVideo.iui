@@ -59,9 +59,9 @@
   }
 
   * [
-    activeVideo: lock &activeVideo,
-    activePlaylist<?>: lock &activePlaylist<?>,
+    activeVideo: >< &activeVideo,
+    activePlaylist<?>: >< &activePlaylist<?>,
     playContent:,
-    focusPreselectedVideo: lock &focusPreselectedVideo,
+    focusPreselectedVideo: >< &focusPreselectedVideo,
   ]
 }

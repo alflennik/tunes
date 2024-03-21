@@ -29,7 +29,7 @@
 
   * [
     getFirstInteractionInterceptor:,
-    firstInteractionComplete: lock &firstInteractionComplete,
+    firstInteractionComplete: >< &firstInteractionComplete,
     applyFirstInteractionHandlers:,
   ]
 }

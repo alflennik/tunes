@@ -18,7 +18,7 @@ each = (list<%>, callback<%>) {
   &newList = [Item<%>, ...]
 
   &i = 0
-  i = lock &i
+  i = >< &i
   
   while i < list.count :
     result<[Warnings]> = callback(list[i], index: i).awaitIfAsync
@@ -26,5 +26,5 @@ each = (list<%>, callback<%>) {
     &i += 1
   ;
 
-  * _ lock &newList
+  * _ >< &newList
 }

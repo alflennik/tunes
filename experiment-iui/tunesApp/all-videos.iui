@@ -222,7 +222,7 @@ videos = {
   duplicates = &videos.findDuplicates()
   if duplicates : forceError("Found duplicated videos, which is not allowed. {duplicates}")
 
-  * lock &videos
+  * >< &videos
 }
 
 songs = {
@@ -254,5 +254,5 @@ songs = {
 
   &songs = &.removeDuplicates()
 
-  * lock &songs
+  * >< &songs
 }

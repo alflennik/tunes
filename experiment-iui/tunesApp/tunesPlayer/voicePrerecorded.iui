@@ -38,7 +38,7 @@
     &status = .playing
     &activeElement.play()
 
-    * await lock &activePromise
+    * await >< &activePromise
   }
 
   clear = () {
