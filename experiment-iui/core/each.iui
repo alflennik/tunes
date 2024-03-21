@@ -4,7 +4,7 @@ each = (list<%>, callback<%>) {
   Callback = callback<%>.forceType((%) { % })
   Item<%> = Callback.arguments[0]<%>
 
-  if !Item<%>.typeMatch(List.Item<%>) :
+  if !Item<%>.matchesType(List.Item<%>) :
     * getError(
       "Failed to match the type of the items in the list with the first argument of the provided
         callback function"
@@ -21,8 +21,8 @@ each = (list<%>, callback<%>) {
   i = >< &i
   
   while i < list.count :
-    result<[Warnings]> = callback(list[i], index: i).awaitIfAsync
-    &newList = &.append(result<[Warnings]>)
+    result<[Warnings]> = awaitIfAsync callback(list[i], index: i)
+    &newList = &.add(result<[Warnings]>)
     &i += 1
   ;
 

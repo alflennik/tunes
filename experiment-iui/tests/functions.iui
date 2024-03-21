@@ -22,6 +22,6 @@ section "async functions" {
   })
 
   test("async function type", () {
-    expect(myFunction.Type).toEqualType(() { Promise(0) })
+    expect(myFunction.Type).toEqual(() { GetPromise(0) })
   })
 }

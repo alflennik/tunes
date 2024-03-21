@@ -11,7 +11,7 @@
     listenForFirstInteraction = (event) {
       isKeyDown = event.type == "keydown"
 
-      interactionInterceptor = document.querySelector(".interaction-interceptor")<?>.forceValue()
+      interactionInterceptor = document.querySelector(".interaction-interceptor")<?>.forceOption()
       isVideoPlayerInteraction = 
         event.target == interactionInterceptor || interactionInterceptor.contains(event.target)
 

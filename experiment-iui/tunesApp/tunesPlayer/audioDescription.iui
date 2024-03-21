@@ -89,11 +89,13 @@
   }
 
   ui = element("audio-description").items(
-    element("div").attributes(class: "wrapping-box").items(
-      element("div").items(
-        watch spokenItem<?> { if spokenItem<?> : * spokenItem.text ; else : * "" ; }
-      )
-    )
+    getDiv(class: "wrapping-box", [
+      getDiv([
+        watch spokenItem<?> { 
+          if spokenItem<?> : * spokenItem.text ; else : * "" ; 
+        }
+      ])
+    ])
   )
 
   * [isPrerecorded:, status:, ui:]

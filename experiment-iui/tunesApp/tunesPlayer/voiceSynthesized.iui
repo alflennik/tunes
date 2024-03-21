@@ -1,10 +1,10 @@
 * (isIOS:, isAndroid:) {
-  [speechSynthesis:, navigator:, getSet:, ...] = import("core:web")
+  [speechSynthesis:, navigator:, getUniqueSet:, ...] = import("core:web")
   
   // A reference needs to be kept for active utterances, or they might be garbage collected!
   // See https://stackoverflow.com/a/35935851/3888572
   // See https://bugs.chromium.org/p/chromium/issues/detail?id=509488
-  &activeUtterances = getSet()
+  &activeUtterances = getUniqueSet()
 
   &voiceName<?%>
   &voiceRate<?%>
@@ -62,10 +62,10 @@
         })
       })
 
-      if !&foundVoiceName<?> : &foundVoiceName = &defaultVoice<?>.forceValue().name ;
+      if !&foundVoiceName<?> : &foundVoiceName = &defaultVoice<?>.forceOption().name ;
       if !foundVoiceRate<?> : &foundVoiceRate = defaultRate ;
 
-      * [lock &foundVoiceName, lock &foundVoiceRate]
+      * [>< &foundVoiceName, >< &foundVoiceRate]
     }
 
     getBestVoice = async () {
@@ -98,7 +98,7 @@
   }
 
   say = async (description) {
-    voice = speechSynthesis.getVoices().find((each) { * each.name == &voiceName })<?>.forceValue()
+    voice = speechSynthesis.getVoices().find((each) { * each.name == &voiceName })<?>.forceOption()
     utterance = makeSpeechSynthesisUtterance(description.text)
 
     // On older versions of iOS (v16) the best voice is the default voice, which is not listed in

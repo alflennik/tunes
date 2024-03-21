@@ -216,7 +216,7 @@ videos = {
   &videos.type([%, ...]) = []
 
   playlists.each((playlist) { 
-    playlist.videos.each((video) { &videos = &.append(video) })
+    playlist.videos.each((video) { &videos = &.add(video) })
   })
 
   duplicates = &videos.findDuplicates()
@@ -228,7 +228,7 @@ videos = {
 songs = {
   &songs.type([%, ...]) = []
 
-  addSong = (song) { &songs = &.append(song) }
+  addSong = (song) { &songs = &.add(song) }
   addSongs = (songs) { songs.each((song) { addSong(song) }) }
 
   videos.each((video) {
