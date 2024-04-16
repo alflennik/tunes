@@ -4,7 +4,7 @@
   // A reference needs to be kept for active utterances, or they might be garbage collected!
   // See https://stackoverflow.com/a/35935851/3888572
   // See https://bugs.chromium.org/p/chromium/issues/detail?id=509488
-  &activeUtterances = getUniqueSet()
+  activeUtterances = getUniqueSet()
 
   &voiceName<?%>
   &voiceRate<?%>
@@ -85,8 +85,8 @@
       // Thanks AblePlayer!
       // https://github.com/ableplayer/ableplayer/blob/main/scripts/description.js
       greeting = makeSpeechSynthesisUtterance("Hi!")
-      greeting.volume = 0 // silent
-      greeting.rate = 10 // fastest speed supported by the API
+      greeting.&volume = 0 // silent
+      greeting.&rate = 10 // fastest speed supported by the API
       // Wow, thanks to this answer: https://stackoverflow.com/a/58775876/3888572
       speechSynthesis.cancel()
       speechSynthesis.speak(greeting)
@@ -104,25 +104,25 @@
     // On older versions of iOS (v16) the best voice is the default voice, which is not listed in
     // the voice list
     if !isIOS {
-      utterance.voice = voice
-      utterance.rate = &voiceRate
+      utterance.&voice = voice
+      utterance.&rate = &voiceRate
     } else {
-      utterance.rate = 1.1
+      utterance.&rate = 1.1
     }
-    utterance.lang = "en-US"
+    utterance.&lang = "en-US"
     * await getPromise(async (resolve) {
       utterance.addEventListener("end", () {
-        &activeUtterances = &.delete(utterance)
+        activeUtterances.remove(utterance)
         resolve()
       })
-      &activeUtterances = &.add(utterance)
+      activeUtterances.add(utterance)
       speechSynthesis.speak(utterance)
       speechSynthesis.resume() // Required by desktop Chrome
     })
   }
 
   clear = () {
-    &activeUtterances = &.clear()
+    activeUtterances.clear()
     speechSynthesis.cancel()
   }
 
@@ -137,8 +137,8 @@
   }
   
   // TODO: consider that these web APIs wouldn't support reactivity natively
-  status = watch [&activeUtterances.size, speechSynthesis.paused] {
-    if &activeUtterances.size == 0 : * .ended ;
+  status = watch [activeUtterances.count, speechSynthesis.paused] {
+    if activeUtterances.count == 0 : * .ended ;
     if speechSynthesis.paused : * .paused ; else : * .playing ;
   }
 

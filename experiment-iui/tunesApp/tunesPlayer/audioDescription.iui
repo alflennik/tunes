@@ -5,7 +5,7 @@
   SpokenItem = [text: "", _ filePath<?>: ""]
   Description = [...SpokenItem, time: 0]
 
-  [descriptions, analysis<?>] = watch [activeVideo.descriptionPath<?>] {
+  [descriptions, analysis<?>] = async watch activeVideo.descriptionPath<?> {
     module<%> = 
       dynamicImport(activeVideo.descriptionPath).await<?!%>.forceOption()<!%>.forceResult()<%>
   
@@ -88,7 +88,7 @@
     }
   }
 
-  ui = element("audio-description").items(
+  ui = getCustomElement(name: "audio-description", [
     getDiv(class: "wrapping-box", [
       getDiv([
         watch spokenItem<?> { 
@@ -96,7 +96,7 @@
         }
       ])
     ])
-  )
+  ])
 
   * [isPrerecorded:, status:, ui:]
 }

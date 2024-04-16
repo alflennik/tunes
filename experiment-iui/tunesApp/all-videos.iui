@@ -213,23 +213,22 @@ firstContentType<?> =
     .checkCase(.commonTerm)<?>
 
 videos = {
-  &videos.type([%, ...]) = []
+  videoList.type([%, ...]) = []
 
   playlists.each((playlist) { 
-    playlist.videos.each((video) { &videos = &.add(video) })
+    playlist.videos.each((video) { videoList.add(video) })
   })
 
-  duplicates = &videos.findDuplicates()
+  duplicates = videoList.findDuplicates()
   if duplicates : forceError("Found duplicated videos, which is not allowed. {duplicates}")
 
-  * >< &videos
+  * videoList
 }
 
 songs = {
-  &songs.type([%, ...]) = []
+  songList.type([%, ...]) = []
 
-  addSong = (song) { &songs = &.add(song) }
-  addSongs = (songs) { songs.each((song) { addSong(song) }) }
+  addSongs = (songs) { songs.each((song) { songList.add(song) }) }
 
   videos.each((video) {
     given video.titleContent {
@@ -238,12 +237,12 @@ songs = {
       }
       .visual, .sessionVideo, .fanVideo as content {
         given content.music {
-          .song as song { addSong(song) },
+          .song as song { songList.add(song) },
           .songs as songs { addSongs(songs) } },
       },
       .livePerformance as content {
         given content.performing {
-          .song as song { addSong(song) },
+          .song as song { songList.add(song) },
           .songs as songs { addSongs(songs) },
           .performance {}
         }
@@ -252,7 +251,7 @@ songs = {
     }
   })
 
-  &songs = &.removeDuplicates()
+  songList.removeDuplicates()
 
-  * >< &songs
+  * songList
 }

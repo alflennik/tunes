@@ -1,5 +1,5 @@
 * async () {
-  [element:, ...] = import("core:reconcile")
+  [element:, ...] = import("core:reconciler")
   
   &firstInteractionComplete = false
   

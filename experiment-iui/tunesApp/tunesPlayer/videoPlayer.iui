@@ -53,7 +53,7 @@
         if status == .playing && !&interval<?%> :
           &interval = startInterval(timeInterval, () :
             if time<?> : 
-              logInfo(time.round(places: 3))
+              log.info(time.round(places: 3))
             ;
             * getCurrentTime()
           ;)
