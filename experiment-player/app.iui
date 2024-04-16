@@ -1,0 +1,22 @@
+[getApp, getSite, getDialog, icons, ...] = import(.core: .ui)
+[getYoutubePlayer, getAvPermissions, isAvReady, ...] = import(.package: "youtubePlayer")
+[videos, ...] = import(.file: "./videos.iui")
+[getChannels, ...] = import(.file: "./channels.iui")
+
+getApp(theme: .dark, [{
+  watch isAvReady :
+    if !isAvReady :
+      * getDialog(
+        buttons: [
+          getButton(action: getAvPermissions, ["Yes"])
+          getButton(action: () { navigateToUrl("https://wikipedia.org") }, ["No"])
+        ],
+        ["Permission to play music?"]
+      )
+    ;
+
+    channels = getChannels(videos:)
+
+    * getPlayer(videos:, channels:)
+  ;
+}])

@@ -1,0 +1,37 @@
+getPlayer = (videos:, channels:) {
+  [video:, startSeconds:, onEnd:] = {
+    &videoIndex = channels.videoIndex
+    
+    onEnd = () :
+      if videos[&videoIndex + 1]<?> {
+        &videoIndex += 1
+      } else {
+        &videoIndex = 0
+      }
+
+      * [video: videos[&videoIndex], startSeconds: 0, onEnd:]
+    ;
+    
+    watch channels.video :
+      &videoIndex = channels.videoIndex
+      * [video: channels.video, startSeconds: channels.startSeconds, onEnd:]
+    ;
+  }
+
+  youtubePlayer = getYoutubePlayer(video:, startSeconds:, onEnd:)
+  
+  * getContainer(
+    style: [
+      borderTop: [.pixels(1), .solid, .themeColor(.line)],
+      borderBottom: [.pixels(1), .solid, .themeColor(.line)],
+      borderRadius: .pixels(4),
+    ],
+    [
+      youtubePlayer.ui,
+      getButtonGroup([
+        getButton(action: channels.channelUp, icon: icons.upChevron, ["Channel Up"]),
+        getButton(action: channels.channelDown, icon: icons.downChevron, ["Channel Down"]),
+      ]),
+    ],
+  )
+}

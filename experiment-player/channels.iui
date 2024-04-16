@@ -1,0 +1,98 @@
+/**
+ * Divide a set of videos into twenty "channels," MTV style, which are all playing apparently 
+ * simultaneously. All channels are equally spaced apart in their "schedule" and will ultimately 
+ * loop over all the video content.
+*/
+* (videos:) {
+  [totalSeconds, getVideoIndexAtSeconds] = {
+    &totalSeconds = 0
+    indexBySeconds.type([0: 0, ...]) = []
+
+    videos.each((video, index:) {
+      secondsByVideoIndex[index] = &totalSeconds
+      &totalSeconds += video.durationSeconds 
+    })
+
+    getVideoIndexAtSeconds = (seconds) {
+      &startItem = 0
+      &endItem = secondsByVideoIndex.entryCount - 1
+
+      while true :
+        middleItem = round(&startItem + &endItem / 2)
+
+        [middleVideoIndex, middleVideoSeconds] = 
+          secondsByVideoIndex.getEntryAtIndex(middleItem)<?>.forceOption()
+
+        nextVideoSeconds<?> = secondsByVideoIndex.getEntryAtIndex(middleItem + 1)<?>[1]
+
+        if (middleVideoSeconds < seconds && (!nextVideoSeconds<?> || nextVideoSeconds > seconds)) :
+          * [middleVideoIndex, middleVideoSeconds]
+        ; else if middleVideoSeconds < seconds {
+          &startItem = middleItem
+        } else {
+          &endItem = middleItem
+        }
+      ;
+    }
+
+    * [>< &totalSeconds, getVideoIndexAtSeconds]
+  }
+
+  [video:, videoIndex:, startSeconds:, channelUp:, channelDown:] = {
+    channelCount = 20
+
+    &currentChannel = 0
+
+    channelSecondsApart = totalSeconds / channelCount
+
+    channelSeconds.type([0, ...]) = []
+
+    updateSeconds = () {
+      &seconds = getUnixEpochSeconds().remainder(totalSeconds)
+
+      &i = 0
+      while &i < channelCount {
+        channelSeconds.add(&seconds)
+
+        if &seconds + channelSecondsApart > totalSeconds {
+          &seconds = &seconds + channelSecondsApart - totalSeconds
+        } else {
+          &seconds = &seconds + channelSecondsApart
+        }
+        
+        &i += 1
+      }
+    }
+
+    updateSeconds()
+
+    channelUp = () {
+      if (&currentChannel + 1 >= channelCount) {
+        &channelCount = 0
+      } else {
+        &currentChannel += 1
+      }
+      updateSeconds()
+    }
+
+    channelDown = () {
+      if (&currentChannel - 1 < 0) {
+        &channelCount = channelCount - 1
+      } else {
+        &currentChannel += 1
+      }
+      updateSeconds()
+    }
+
+    [video:, videoIndex:, startSeconds:] = watch channelSeconds {
+      [videoIndex, videoOverallSeconds] = getVideoIndexAtSeconds(channelSeconds[&currentChannel])
+      startSeconds = channelSeconds - videoOverallSeconds
+      video = videos[videoIndex]
+      * [video:, videoIndex:, startSeconds:]
+    }
+
+    * [video:, videoIndex:, startSeconds:, channelUp:, channelDown:]
+  }
+  
+  * [video:, videoIndex:, startSeconds:, channelUp:, channelDown:]
+}
