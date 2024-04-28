@@ -1,3 +1,4 @@
 node_modules
 .DS_Store
 site-hosting/public
+full-content/apiKey.txt
