@@ -61,6 +61,12 @@ const getFullContent = async () => {
     return seconds
   }
 
+  const removeConsecutiveSpaces = string => {
+    // A surprising number of videos have extra spaces in the title, but due to HTML whitespace
+    // rules they were never shown to the artists' teams and therefore were never fixed
+    return string.replace(/ +/g, " ")
+  }
+
   const videos = []
 
   for (let i = 0; i < videoIds.length; i += 50) {
@@ -74,7 +80,8 @@ const getFullContent = async () => {
         durationSeconds: getDuration(video.contentDetails.duration),
         aspectRatio: Number(video.player.embedWidth) / Number(video.player.embedHeight),
         channel: video.snippet.channelTitle,
-        title: video.snippet.title,
+        title: removeConsecutiveSpaces(video.localizations?.en?.title || video.snippet.title),
+        // Order of size
         thumbnailSrc: (
           video.snippet.thumbnails.maxres ||
           video.snippet.thumbnails.standard ||
