@@ -68,7 +68,7 @@
 
     channelUp = () {
       if (&currentChannel + 1 >= channelCount) {
-        &channelCount = 0
+        &currentChannel = 0
       } else {
         &currentChannel += 1
       }
@@ -77,7 +77,7 @@
 
     channelDown = () {
       if (&currentChannel - 1 < 0) {
-        &channelCount = channelCount - 1
+        &currentChannel = channelCount - 1
       } else {
         &currentChannel += 1
       }

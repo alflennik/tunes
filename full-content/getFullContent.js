@@ -1,3 +1,5 @@
+// TODO: check for and remove videos where embedding is disabled
+
 const fs = require("node:fs/promises")
 const path = require("node:path")
 const fetch = require("node-fetch")
