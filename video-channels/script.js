@@ -79,13 +79,11 @@ const getChannels = ({ videos }) => {
 
   const channelSecondsApart = totalSeconds / channelCount
 
-  const callbacks = []
+  const changeListeners = []
 
-  const onChange = callback => {
-    callbacks.push(callback)
+  const onChange = changeListener => {
+    changeListeners.push(changeListener)
   }
-
-  channelSeconds = []
 
   const getUnixEpochSeconds = () => {
     return Math.round(Number(new Date()) / 1000)
@@ -96,7 +94,10 @@ const getChannels = ({ videos }) => {
   let startSeconds
 
   const updateVideo = () => {
+    const channelSeconds = []
+
     let seconds = getUnixEpochSeconds() % totalSeconds
+
     for (let i = 0; i < channelCount; i += 1) {
       channelSeconds.push(seconds)
 
@@ -114,8 +115,8 @@ const getChannels = ({ videos }) => {
     startSeconds = channelSeconds[currentChannel] - videoOverallSeconds
     video = videos[videoIndex]
 
-    callbacks.forEach(callback => {
-      callback({ video, videoIndex, startSeconds })
+    changeListeners.forEach(changeListener => {
+      changeListener()
     })
   }
 
@@ -140,7 +141,7 @@ const getChannels = ({ videos }) => {
   }
 
   return {
-    video,
+    getVideo: () => video,
     getVideoIndex: () => videoIndex,
     getStartSeconds: () => startSeconds,
     channelUp,
@@ -150,28 +151,38 @@ const getChannels = ({ videos }) => {
 }
 
 const getPlayer = async ({ videos, channels }) => {
+  let video = channels.getVideo()
+  let videoIndex = channels.getVideoIndex()
+  let startSeconds = channels.getStartSeconds()
+
   const changeListeners = []
-  const listenForChanges = changeListener => {
+  const onChange = changeListener => {
     changeListeners.push(changeListener)
   }
 
   const onYouTubeEnd = () => {
-    let videoIndex = channels.getVideoIndex()
-
     if (videos[videoIndex + 1]) {
       videoIndex += 1
     } else {
       videoIndex = 0
     }
 
+    video = videos[videoIndex]
+
+    startSeconds = 0
+
     changeListeners.forEach(changeListener => {
-      changeListener({ video: videos[videoIndex], startSeconds: 0 })
+      changeListener()
     })
   }
 
-  channels.onChange(({ video, startSeconds }) => {
+  channels.onChange(() => {
+    video = channels.getVideo()
+    videoIndex = channels.getVideoIndex()
+    startSeconds = channels.getStartSeconds()
+
     changeListeners.forEach(changeListener => {
-      changeListener({ video, startSeconds })
+      changeListener()
     })
   })
 
@@ -196,9 +207,11 @@ const getPlayer = async ({ videos, channels }) => {
   `
 
   await getYouTubePlayer({
-    video: videos[channels.getVideoIndex()],
-    startSeconds: channels.getStartSeconds(),
-    listenForChanges,
+    player: {
+      getVideo: () => video,
+      getStartSeconds: () => startSeconds,
+      onChange,
+    },
     onEnd: onYouTubeEnd,
   })
 
@@ -224,17 +237,16 @@ const getAvPermissions = () => {
 /**
  * <div id="youtube-player"></div> must be on the page.
  */
-const getYouTubePlayer = async ({ video, startSeconds, listenForChanges, onEnd }) => {
+const getYouTubePlayer = async ({ player, onEnd }) => {
   const youtubePlayer = await new Promise(async resolve => {
     window.onYouTubeIframeAPIReady = () => {
       const youtubePlayer = new YT.Player("youtube-player", {
         height: "315",
         width: "560",
-        videoId: video.id,
+        videoId: player.getVideo().id,
         playerVars: {
           autoplay: 1,
-          start: startSeconds,
-          iv_load_policy: 3, // Do not show annotations
+          start: player.getStartSeconds(),
           playsinline: 1, // Instead of immediately going full screen.
           color: "white", // Instead of youtube red.
           rel: 0, // Recommend videos from the same channel after it ends.
@@ -252,8 +264,11 @@ const getYouTubePlayer = async ({ video, startSeconds, listenForChanges, onEnd }
     firstScriptTag.parentNode.insertBefore(scriptElement, firstScriptTag)
   })
 
-  listenForChanges(({ video, startSeconds }) => {
-    youtubePlayer.loadVideoById({ videoId: video.id, startSeconds })
+  player.onChange(() => {
+    youtubePlayer.loadVideoById({
+      videoId: player.getVideo().id,
+      startSeconds: player.getStartSeconds(),
+    })
   })
 
   youtubePlayer.addEventListener("onStateChange", ({ data }) => {

@@ -12,7 +12,6 @@
           width: "560",
           videoId: youtubeId,
           playerVars: [
-            iv_load_policy: 3, // Do not show annotations
             playsinline: 1, // Instead of immediately going full screen.
             color: "white", // Instead of youtube red.
             rel: 0, // Recommend videos from the same channel after it ends.
