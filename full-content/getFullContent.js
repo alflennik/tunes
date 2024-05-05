@@ -83,6 +83,11 @@ const getFullContent = async () => {
         aspectRatio: Number(video.player.embedWidth) / Number(video.player.embedHeight),
         channel: video.snippet.channelTitle,
         title: removeConsecutiveSpaces(video.localizations?.en?.title || video.snippet.title),
+        hasCaptions:
+          video.contentDetails.caption === true || video.contentDetails.caption === "true",
+        defaultLanguage: video.snippet.defaultLanguage ?? null,
+        defaultAudioLanguage: video.snippet.defaultAudioLanguage ?? null,
+        supportsEmbedding: video.status.embeddable,
         // Order of size
         thumbnailSrc: (
           video.snippet.thumbnails.maxres ||
@@ -97,6 +102,7 @@ const getFullContent = async () => {
             viewCount: video.statistics.viewCount,
           },
         ],
+        tags: video.snippet.tags,
       }))
     )
   }
