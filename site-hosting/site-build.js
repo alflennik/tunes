@@ -5,10 +5,13 @@ const { exec, spawn } = require("child_process")
 const nonAssetLocations = [
   ".git",
   "experiment-application-mode",
+  "experiment-iui",
   "experiment-multigraph",
+  "experiment-player",
   "experiment-playlist-modeling",
   "experiment-shoelace-style",
   "experiment-tree",
+  "full-content",
   "site-hosting",
 ]
 
@@ -18,6 +21,7 @@ const assetLocations = [
   "playlists",
   "units",
   "utilities",
+  "video-channels",
   "videos",
   "tunes.html",
   "tunes.js",
