@@ -30,7 +30,7 @@ define("voiceSynthesized", {
             // ["Eddy (English (US))", 1.3],
             // ["Evan (Enhanced)", 1], // Must be explicitly downloaded
             // ["Alex", 1], // Must be explicitly downloaded
-            ["Samantha", isSafari ? 1.1 : 1],
+            ["Samantha", isChrome ? 1.5 : isSafari ? 1.15 : 1.1],
 
             // Windows
             ["Microsoft Steffan Online (Natural) - English (United States)", 1.7], // Edge only
