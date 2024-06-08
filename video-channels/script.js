@@ -14,17 +14,19 @@ const getApp = async () => {
     }
     button, .button-link {
       background: black;
-      border: 2px solid white;
+      border: none;
       border-radius: 4px;
       color: white;
       padding: 4px 8px;
       cursor: pointer;
+      transition: background 200ms;
+      font-family: monospace;
     }
     button:hover, .button-link:hover {
-      background: #222;
+      background: #444;
     }
     button:active, .button-link:active {
-      background: #333;
+      background: #555;
     }
     button svg, .button-link svg {
       width: 14px;
@@ -54,20 +56,48 @@ const getApp = async () => {
         height: 100%;
         align-items: center;
         justify-content: center;
+        perspective: 1000px;
       }
       .dialog {
-        border: 2px solid white;
-        border-radius: 12px;
+        background: #2c2c2c;
+        border: 12px solid #1e1e1e;
+        border-radius: 20px;
         margin: 8px;
+        transform-origin: 100px -300px -300px;
+        font-family: monospace;
+        font-weight: bold;
+        color: #f1f1f1;
+      }
+      .dialog.offscreen {
+        opacity: 0;
+        transform: rotate3d(0.2, 1, 0.4, 80deg);
+      }
+      .dialog:not(.offscreen) {
+        opacity: 1;
+        transition: transform cubic-bezier(0, 0.47, 0, 1) 800ms, opacity 100ms;
       }
       .dialog-body {
         padding: 24px;
       }
       .dialog-buttons {
-        border-top: 2px solid white;
-        padding: 12px 24px;
+        border-top: 4px solid #1e1e1e;
+        padding: 10px;
         display: flex;
         justify-content: right;
+      }
+      .dialog-buttons button {
+        font-weight: bold;
+        padding: 8px 50px;
+        background: #2d52ce;
+        border: none;
+        font-family: monospace;
+        transition: background 200ms;
+      }
+      .dialog-buttons button:hover {
+        background: #1b40bf;
+      }
+      .dialog-buttons button:active {
+        background: #1b3695;
       }
     </style>
     <div class="dialog-wrap">
@@ -75,8 +105,7 @@ const getApp = async () => {
         <div class="dialog-body">
           Permission to play music?<br>
           <br>
-          Please note that users may find some content disturbing.<br>
-          <a class="sr-only" href="../tunes.html">Also check out the audio description page.</a>
+          Please note that users may find some content disturbing.
         </div>
         <div class="dialog-buttons">
           <button okay-button type="button">Okay</button>
@@ -84,6 +113,11 @@ const getApp = async () => {
       </div>
     </div>
   `
+
+  document.querySelector(".dialog").classList.add("offscreen")
+  setTimeout(() => {
+    document.querySelector(".dialog").classList.remove("offscreen")
+  }, 1)
 
   const videosPromise = fetch("videos.json").then(response => response.json())
 
