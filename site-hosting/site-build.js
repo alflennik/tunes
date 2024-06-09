@@ -23,7 +23,7 @@ const assetLocations = [
   "utilities",
   "video-channels",
   "videos",
-  "tunes.html",
+  "index.html",
   "tunes.js",
 ]
 
