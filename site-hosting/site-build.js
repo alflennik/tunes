@@ -27,7 +27,9 @@ const assetLocations = [
   "tunes.js",
 ]
 
-const renameAssets = [["tunes.html", "index.html"]]
+const renameAssets = [
+  // ["tunes.html", "index.html"]
+]
 
 const siteBuildScript = async ({ environment }) => {
   if (environment !== "staging" && environment !== "production") {
