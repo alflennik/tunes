@@ -63,14 +63,14 @@ const getApp = async () => {
         border: 12px solid #1e1e1e;
         border-radius: 20px;
         margin: 8px;
-        transform-origin: 100px -300px -300px;
+        transform-origin: -100px -300px -150px;
         font-family: monospace;
         font-weight: bold;
         color: #f1f1f1;
       }
       .dialog.offscreen {
         opacity: 0;
-        transform: rotate3d(0.2, 1, 0.4, 80deg);
+        transform: rotate3d(0.3, 1, -0.2, 100deg);
       }
       .dialog:not(.offscreen) {
         opacity: 1;
