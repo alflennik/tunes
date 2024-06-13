@@ -48,7 +48,7 @@ const getApp = async () => {
   `
   document.body.appendChild(style)
 
-  document.querySelector("#root").innerHTML = `
+  document.querySelector("#root").innerHTML = /* HTML */ `
     <style>
       .dialog-wrap {
         display: flex;
@@ -63,18 +63,26 @@ const getApp = async () => {
         border: 12px solid #1e1e1e;
         border-radius: 20px;
         margin: 8px;
-        transform-origin: -100px -300px -150px;
         font-family: monospace;
         font-weight: bold;
         color: #f1f1f1;
+        transform-origin: -100px -300px -150px;
       }
-      .dialog.offscreen {
+      .dialog.before-showing {
         opacity: 0;
         transform: rotate3d(0.3, 1, -0.2, 100deg);
       }
-      .dialog:not(.offscreen) {
-        opacity: 1;
+      .dialog.showing {
         transition: transform cubic-bezier(0, 0.47, 0, 1) 800ms, opacity 100ms;
+        opacity: 1;
+      }
+      .dialog.before-hiding {
+        transition: 400ms cubic-bezier(0.86, 0, 1, 1), opacity 300ms linear 100ms;
+        opacity: 1;
+      }
+      .dialog.hiding {
+        opacity: 0;
+        transform: rotate3d(-0.8, -1, 0.1, 30deg);
       }
       .dialog-body {
         padding: 24px;
@@ -103,8 +111,8 @@ const getApp = async () => {
     <div class="dialog-wrap">
       <div class="dialog">
         <div class="dialog-body">
-          Permission to play music?<br>
-          <br>
+          Permission to play music?<br />
+          <br />
           Please note that users may find some content disturbing.
         </div>
         <div class="dialog-buttons">
@@ -114,9 +122,14 @@ const getApp = async () => {
     </div>
   `
 
-  document.querySelector(".dialog").classList.add("offscreen")
+  const dialog = document.querySelector(".dialog")
+  dialog.classList.add("before-showing")
   setTimeout(() => {
-    document.querySelector(".dialog").classList.remove("offscreen")
+    dialog.classList.add("showing")
+    dialog.classList.remove("before-showing")
+    setTimeout(() => {
+      dialog.classList.remove("showing")
+    }, 2000)
   }, 1)
 
   const videosPromise = fetch("videos.json").then(response => response.json())
@@ -128,7 +141,12 @@ const getApp = async () => {
       durationSeconds,
     }))
 
-    await getAvPermissions()
+    dialog.classList.add("before-hiding")
+    setTimeout(() => {
+      dialog.classList.add("hiding")
+    }, 1)
+
+    await Promise.all([getAvPermissions(), new Promise(resolve => setTimeout(resolve, 1000))])
 
     document.querySelector("#root").innerHTML = `
       <div id="player"></div>
