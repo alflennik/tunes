@@ -1,0 +1,51 @@
+const getAvPermissions = () => {
+  return new Promise(resolve => {
+    const audioElement = new Audio("none.mp3")
+    audioElement.addEventListener("ended", () => {
+      resolve()
+    })
+    audioElement.play()
+  })
+}
+
+/**
+ * <div id="youtube-player"></div> must be on the page.
+ */
+const getYouTubePlayer = async ({ player, onEnd }) => {
+  const youtubePlayer = await new Promise(async resolve => {
+    window.onYouTubeIframeAPIReady = () => {
+      const youtubePlayer = new YT.Player("youtube-player", {
+        height: "315",
+        width: "560",
+        videoId: player.getVideo().id,
+        playerVars: {
+          autoplay: 1,
+          start: player.getStartSeconds(),
+          playsinline: 1, // Instead of immediately going full screen.
+          color: "white", // Instead of youtube red.
+          rel: 0, // Recommend videos from the same channel after it ends.
+        },
+      })
+
+      youtubePlayer.addEventListener("onReady", () => {
+        resolve(youtubePlayer)
+      })
+    }
+
+    const scriptElement = document.createElement("script")
+    scriptElement.src = "https://www.youtube.com/iframe_api"
+    const firstScriptTag = document.getElementsByTagName("script")[0]
+    firstScriptTag.parentNode.insertBefore(scriptElement, firstScriptTag)
+  })
+
+  player.onChange(() => {
+    youtubePlayer.loadVideoById({
+      videoId: player.getVideo().id,
+      startSeconds: player.getStartSeconds(),
+    })
+  })
+
+  youtubePlayer.addEventListener("onStateChange", ({ data }) => {
+    if (data === YT.PlayerState.ENDED) onEnd()
+  })
+}
