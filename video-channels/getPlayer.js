@@ -1,4 +1,4 @@
-const getPlayer = async ({ videos, channels }) => {
+const getPlayer = async ({ videos, channels, startsMuted }) => {
   let video = channels.getVideo()
   let videoIndex = channels.getVideoIndex()
   let startSeconds = channels.getStartSeconds()
@@ -187,6 +187,7 @@ const getPlayer = async ({ videos, channels }) => {
   })
 
   await getYouTubePlayer({
+    startsMuted,
     player: {
       getVideo: () => video,
       getStartSeconds: () => startSeconds,

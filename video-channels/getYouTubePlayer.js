@@ -11,7 +11,7 @@ const getAvPermissions = () => {
 /**
  * <div id="youtube-player"></div> must be on the page.
  */
-const getYouTubePlayer = async ({ player, onEnd }) => {
+const getYouTubePlayer = async ({ startsMuted, player, onEnd }) => {
   const youtubePlayer = await new Promise(async resolve => {
     window.onYouTubeIframeAPIReady = () => {
       const youtubePlayer = new YT.Player("youtube-player", {
@@ -44,6 +44,14 @@ const getYouTubePlayer = async ({ player, onEnd }) => {
       startSeconds: player.getStartSeconds(),
     })
   })
+
+  youtubePlayer.setVolume(100)
+
+  if (startsMuted) {
+    youtubePlayer.mute()
+  } else {
+    youtubePlayer.unMute()
+  }
 
   document.addEventListener("keydown", event => {
     if (event.key === "m") {
