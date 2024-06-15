@@ -45,6 +45,24 @@ const getYouTubePlayer = async ({ player, onEnd }) => {
     })
   })
 
+  document.addEventListener("keydown", event => {
+    if (event.key === "m") {
+      if (youtubePlayer.isMuted()) {
+        youtubePlayer.unMute()
+      } else {
+        youtubePlayer.mute()
+      }
+    }
+
+    if (event.key === "k") {
+      if (youtubePlayer.getPlayerState() === YT.PlayerState.PLAYING) {
+        youtubePlayer.pauseVideo()
+      } else if (youtubePlayer.getPlayerState() === YT.PlayerState.PAUSED) {
+        youtubePlayer.playVideo()
+      }
+    }
+  })
+
   youtubePlayer.addEventListener("onStateChange", ({ data }) => {
     if (data === YT.PlayerState.ENDED) onEnd()
   })
