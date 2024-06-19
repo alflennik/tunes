@@ -57,6 +57,7 @@ const getApp = async () => {
         align-items: center;
         justify-content: center;
         perspective: 1000px;
+        overflow: hidden;
       }
       .dialog {
         background: #2c2c2c;
