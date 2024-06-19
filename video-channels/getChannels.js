@@ -23,9 +23,20 @@ const getChannels = ({ videos }) => {
         const middleIndex = Math.round((startIndex + endIndex) / 2)
         const middleSeconds = secondsList[middleIndex]
 
+        const previousSeconds = secondsList[middleIndex - 1]
         const followingSeconds = secondsList[middleIndex + 1]
 
-        if (middleSeconds < seconds && (!followingSeconds || followingSeconds > seconds)) {
+        const matchedOnlyVideo = previousSeconds === undefined && followingSeconds === undefined
+        const matchedFirstVideo = previousSeconds < seconds && middleSeconds > seconds
+        const matchedLastVideo = middleSeconds < seconds && followingSeconds === undefined
+        const matchedVideo = middleSeconds < seconds && followingSeconds > seconds
+
+        if (matchedFirstVideo) {
+          result = [middleIndex - 1, previousSeconds]
+          break
+        }
+
+        if (matchedOnlyVideo || matchedLastVideo || matchedVideo) {
           result = [middleIndex, middleSeconds]
           break
         }
