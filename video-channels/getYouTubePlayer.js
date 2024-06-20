@@ -8,19 +8,23 @@ const getAvPermissions = () => {
   })
 }
 
-/**
- * <div id="youtube-player"></div> must be on the page.
- */
-const getYouTubePlayer = async ({ startsMuted, player, onEnd }) => {
+const getYouTubePlayer = async ({
+  youtubePlayerId,
+  startsMuted = false,
+  getStartSeconds = () => undefined,
+  getVideoId,
+  listenForChange = null,
+  onEnd,
+}) => {
   const youtubePlayer = await new Promise(async resolve => {
     window.onYouTubeIframeAPIReady = () => {
-      const youtubePlayer = new YT.Player("youtube-player", {
+      const youtubePlayer = new YT.Player(youtubePlayerId, {
         height: "315",
         width: "560",
-        videoId: player.getVideo().id,
+        videoId: getVideoId(),
         playerVars: {
           autoplay: 1,
-          start: player.getStartSeconds(),
+          start: getStartSeconds(),
           playsinline: 1, // Instead of immediately going full screen.
           color: "white", // Instead of youtube red.
           rel: 0, // Recommend videos from the same channel after it ends.
@@ -38,10 +42,10 @@ const getYouTubePlayer = async ({ startsMuted, player, onEnd }) => {
     firstScriptTag.parentNode.insertBefore(scriptElement, firstScriptTag)
   })
 
-  player.onChange(() => {
+  listenForChange(() => {
     youtubePlayer.loadVideoById({
-      videoId: player.getVideo().id,
-      startSeconds: player.getStartSeconds(),
+      videoId: getVideoId(),
+      startSeconds: getStartSeconds(),
     })
   })
 

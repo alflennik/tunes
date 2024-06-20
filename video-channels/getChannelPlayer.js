@@ -1,10 +1,10 @@
-const getPlayer = async ({ videos, channels, startsMuted }) => {
+const getChannelPlayer = async ({ node, videos, channels, startsMuted }) => {
   let video = channels.getVideo()
   let videoIndex = channels.getVideoIndex()
   let startSeconds = channels.getStartSeconds()
 
   const changeListeners = []
-  const onChange = changeListener => {
+  const listenForChange = changeListener => {
     changeListeners.push(changeListener)
   }
 
@@ -18,7 +18,7 @@ const getPlayer = async ({ videos, channels, startsMuted }) => {
     })
   })
 
-  const onYouTubeEnd = () => {
+  const onVideoEnd = () => {
     if (videos[videoIndex + 1]) {
       videoIndex += 1
     } else {
@@ -34,7 +34,7 @@ const getPlayer = async ({ videos, channels, startsMuted }) => {
     })
   }
 
-  document.body.querySelector("#player").innerHTML = /* HTML */ `
+  node.innerHTML = /* HTML */ `
     <style>
       .player-container {
         height: 100%;
@@ -43,9 +43,12 @@ const getPlayer = async ({ videos, channels, startsMuted }) => {
         border-bottom: 1px solid black;
         border-radius: 4px;
       }
+      [video-player-node] {
+        height: calc(100% - 40px);
+      }
       #youtube-player {
         width: 100%;
-        height: calc(100% - 40px);
+        height: 100%;
       }
       .player-buttons {
         font-family: monospace;
@@ -113,7 +116,7 @@ const getPlayer = async ({ videos, channels, startsMuted }) => {
     </style>
 
     <div class="player-container">
-      <div id="youtube-player"></div>
+      <div video-player-node></div>
       <div class="player-buttons">
         <span class="channel-label">Channel</span>
         <span channel-indicator class="channel-indicator"></span>
@@ -180,7 +183,7 @@ const getPlayer = async ({ videos, channels, startsMuted }) => {
     </div>
   `
 
-  const descriptionsButton = document.querySelector(".descriptions-button")
+  const descriptionsButton = node.querySelector(".descriptions-button")
   const toggleDescriptionsButton = () => {
     if (descriptionsButton.classList.contains("off")) {
       descriptionsButton.classList.add("on")
@@ -199,7 +202,7 @@ const getPlayer = async ({ videos, channels, startsMuted }) => {
     toggleDescriptionsButton()
   })
 
-  const descriptionsStatus = document.querySelector(".descriptions-status")
+  const descriptionsStatus = node.querySelector(".descriptions-status")
   const toggleDescriptionsStatus = () => {
     if (descriptionsStatus.classList.contains("unavailable")) {
       descriptionsStatus.classList.add("available")
@@ -235,20 +238,20 @@ const getPlayer = async ({ videos, channels, startsMuted }) => {
     if (channels.getCurrentChannel() < 9) return `0${channels.getCurrentChannel() + 1}`
     return channels.getCurrentChannel() + 1
   }
-  document.body.querySelector("[channel-indicator]").innerHTML = formatChannel()
+  node.querySelector("[channel-indicator]").innerHTML = formatChannel()
   channels.onChange(() => {
-    document.body.querySelector("[channel-indicator]").innerHTML = formatChannel()
+    node.querySelector("[channel-indicator]").innerHTML = formatChannel()
   })
 
-  document.body.querySelector("[channel-up]").addEventListener("click", () => {
+  node.querySelector("[channel-up]").addEventListener("click", () => {
     channels.channelUp()
   })
 
-  document.body.querySelector("[channel-down]").addEventListener("click", () => {
+  node.querySelector("[channel-down]").addEventListener("click", () => {
     channels.channelDown()
   })
 
-  document.body.querySelector("[restart]").addEventListener("click", () => {
+  node.querySelector("[restart]").addEventListener("click", () => {
     startSeconds = 0
 
     changeListeners.forEach(changeListener => {
@@ -256,7 +259,7 @@ const getPlayer = async ({ videos, channels, startsMuted }) => {
     })
   })
 
-  document.body.querySelector("[previous]").addEventListener("click", () => {
+  node.querySelector("[previous]").addEventListener("click", () => {
     if (videos[videoIndex - 1]) {
       videoIndex -= 1
     } else {
@@ -272,7 +275,7 @@ const getPlayer = async ({ videos, channels, startsMuted }) => {
     })
   })
 
-  document.body.querySelector("[next]").addEventListener("click", () => {
+  node.querySelector("[next]").addEventListener("click", () => {
     if (videos[videoIndex + 1]) {
       videoIndex += 1
     } else {
@@ -288,13 +291,12 @@ const getPlayer = async ({ videos, channels, startsMuted }) => {
     })
   })
 
-  await getYouTubePlayer({
+  await getVideoPlayer({
+    node: node.querySelector("[video-player-node]"),
     startsMuted,
-    player: {
-      getVideo: () => video,
-      getStartSeconds: () => startSeconds,
-      onChange,
-    },
-    onEnd: onYouTubeEnd,
+    getVideo: () => video,
+    getStartSeconds: () => startSeconds,
+    listenForChange,
+    onEnd: onVideoEnd,
   })
 }

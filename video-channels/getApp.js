@@ -1,54 +1,70 @@
 const getApp = async () => {
-  const style = document.createElement("style")
-  style.innerHTML = `
-    html, body {
-      margin: 0;
-    }
-    html, body, #root, #player {
-      height: 100%;
-    }
-    body {
-      background: black;
-      color: white;
-      font-family: sans-serif;
-    }
-    button, .button-link {
-      background: black;
-      border: none;
-      border-radius: 4px;
-      color: white;
-      padding: 4px 8px;
-      cursor: pointer;
-      transition: background 200ms;
-      font-family: monospace;
-    }
-    button:hover, .button-link:hover {
-      background: #444;
-    }
-    button:active, .button-link:active {
-      background: #555;
-    }
-    button svg, .button-link svg {
-      width: 14px;
-      height: 14px;
-      fill: white;
-      position: relative;
-      top: 2px;
-    }
-    .sr-only {
-      position: absolute !important;
-      width: 1px !important;
-      height: 1px !important;
-      padding: 0 !important;
-      margin: -1px !important;
-      overflow: hidden !important;
-      clip: rect(0, 0, 0, 0) !important;
-      border: 0 !important;
-    }
-  `
-  document.body.appendChild(style)
+  const root = document.querySelector("#root")
 
-  document.querySelector("#root").innerHTML = /* HTML */ `
+  root.innerHTML = /* HTML */ `
+    <style>
+      html,
+      body {
+        margin: 0;
+      }
+      html,
+      body,
+      #root,
+      [app-node],
+      [player-node],
+      .player-container,
+      [video-player-node] {
+        height: 100%;
+      }
+      body {
+        background: black;
+        color: white;
+        font-family: sans-serif;
+      }
+      button,
+      .button-link {
+        background: black;
+        border: none;
+        border-radius: 4px;
+        color: white;
+        padding: 4px 8px;
+        cursor: pointer;
+        transition: background 200ms;
+        font-family: monospace;
+      }
+      button:hover,
+      .button-link:hover {
+        background: #444;
+      }
+      button:active,
+      .button-link:active {
+        background: #555;
+      }
+      button svg,
+      .button-link svg {
+        width: 14px;
+        height: 14px;
+        fill: white;
+        position: relative;
+        top: 2px;
+      }
+      .sr-only {
+        position: absolute !important;
+        width: 1px !important;
+        height: 1px !important;
+        padding: 0 !important;
+        margin: -1px !important;
+        overflow: hidden !important;
+        clip: rect(0, 0, 0, 0) !important;
+        border: 0 !important;
+      }
+    </style>
+    <div app-node></div>
+  `
+
+  const appNode = root.querySelector("[app-node]")
+
+  appNode.innerHTML = /* HTML */ `
     <style>
       .dialog-wrap {
         display: flex;
@@ -133,7 +149,7 @@ const getApp = async () => {
     </div>
   `
 
-  const volumeButton = document.querySelector("[volume-button]")
+  const volumeButton = appNode.querySelector("[volume-button]")
   const toggleVolume = () => {
     if (volumeButton.classList.contains("on")) {
       volumeButton.classList.remove("on")
@@ -164,7 +180,7 @@ const getApp = async () => {
   toggleVolume()
   volumeButton.addEventListener("click", toggleVolume)
 
-  const dialog = document.querySelector(".dialog")
+  const dialog = appNode.querySelector(".dialog")
   dialog.classList.add("before-showing")
   setTimeout(() => {
     dialog.classList.add("showing")
@@ -176,7 +192,7 @@ const getApp = async () => {
 
   const videosPromise = fetch("videos.json").then(response => response.json())
 
-  document.querySelector("[okay-button]").addEventListener("click", async () => {
+  appNode.querySelector("[okay-button]").addEventListener("click", async () => {
     const videoObject = await videosPromise
     const videos = Object.entries(videoObject).map(([id, durationSeconds]) => ({
       id,
@@ -190,14 +206,16 @@ const getApp = async () => {
 
     await Promise.all([getAvPermissions(), new Promise(resolve => setTimeout(resolve, 1000))])
 
-    document.querySelector("#root").innerHTML = `
-      <div id="player"></div>
+    appNode.innerHTML = `
+      <div player-node></div>
     `
 
     const channels = getChannels({ videos })
 
+    const channelPlayerNode = appNode.querySelector("[player-node]")
+
     const startsMuted = !volumeButton.classList.contains("on")
 
-    await getPlayer({ videos, channels, startsMuted })
+    await getChannelPlayer({ node: channelPlayerNode, videos, channels, startsMuted })
   })
 }
