@@ -10,10 +10,10 @@ const getAvPermissions = () => {
 
 const getYouTubePlayer = async ({
   youtubePlayerId,
-  startsMuted = false,
-  getStartSeconds = () => undefined,
+  startsMuted,
+  getStartSeconds,
   getVideoId,
-  listenForChange = null,
+  listenForChange,
   onEnd,
 }) => {
   const youtubePlayer = await new Promise(async resolve => {
@@ -42,12 +42,14 @@ const getYouTubePlayer = async ({
     firstScriptTag.parentNode.insertBefore(scriptElement, firstScriptTag)
   })
 
-  listenForChange(() => {
-    youtubePlayer.loadVideoById({
-      videoId: getVideoId(),
-      startSeconds: getStartSeconds(),
+  if (listenForChange) {
+    listenForChange(() => {
+      youtubePlayer.loadVideoById({
+        videoId: getVideoId(),
+        startSeconds: getStartSeconds(),
+      })
     })
-  })
+  }
 
   youtubePlayer.setVolume(100)
 
@@ -76,6 +78,6 @@ const getYouTubePlayer = async ({
   })
 
   youtubePlayer.addEventListener("onStateChange", ({ data }) => {
-    if (data === YT.PlayerState.ENDED) onEnd()
+    if (data === YT.PlayerState.ENDED && onEnd) onEnd()
   })
 }

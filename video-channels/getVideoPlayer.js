@@ -1,12 +1,17 @@
 const getVideoPlayer = ({
   node,
-  startsMuted,
+  startsMuted = false,
   getVideo,
-  getStartSeconds,
-  onEnd,
+  getStartSeconds = () => undefined,
+  onEnd = null,
   listenForChange = null,
 }) => {
-  node.innerHTML = /* HTML */ ` <div id="youtube-player"></div> `
+  node.innerHTML = /* HTML */ `<style>
+      #youtube-player {
+        width: 100%;
+      }
+    </style>
+    <div id="youtube-player"></div> `
 
   getYouTubePlayer({
     youtubePlayerId: "youtube-player",
