@@ -32,9 +32,11 @@ const editDescriptions = () => {
 
     createDescription: ({ time }) => {
       addToHistory()
-      descriptions.push({ id: getId(), time, text: "", ssml: null })
+      const id = getId()
+      descriptions.push({ id, time, text: "", ssml: null })
       sortDescriptions()
       notifyListeners()
+      return { id }
     },
 
     updateDescription: ({ id, time, text, ssml }) => {
@@ -43,7 +45,7 @@ const editDescriptions = () => {
       const newDescription = cloneData(descriptions[index])
       if (time != null) newDescription.time = time
       if (text != null) newDescription.text = text
-      if (ssml != null) newDescription.ssml = ssml
+      if (ssml !== undefined) newDescription.ssml = ssml
       descriptions[index] = newDescription
       sortDescriptions()
       notifyListeners()
@@ -52,8 +54,10 @@ const editDescriptions = () => {
     deleteDescription: id => {
       addToHistory()
       const index = descriptions.findIndex(description => description.id === id)
-      descriptions = descriptions.splice(index, 1)
+      descriptions.splice(index, 1)
+      const previousId = descriptions[index - 1] ? descriptions[index - 1].id : null
       notifyListeners()
+      return previousId
     },
   }
 }

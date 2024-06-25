@@ -62,6 +62,7 @@ const getDescriptionGap = ({ styleNode, node, time, createDescription }) => {
   `
 
   node.querySelector("[add-description]").addEventListener("click", () => {
-    createDescription({ time })
+    const { id: newId } = createDescription({ time })
+    document.querySelector(`#${newId} textarea`).focus()
   })
 }

@@ -3,8 +3,10 @@ const getDescription = ({
   node,
   id,
   getDescriptions,
+  deleteDescription,
   updateDescription,
   onDescriptionsChange,
+  firstGapId,
 }) => {
   if (!styleNode.hasChildNodes()) {
     styleNode.innerHTML = /* HTML */ `
@@ -128,7 +130,7 @@ const getDescription = ({
             <span class="sr-only">Move Later</span>
           </button>
         </div>
-        <button class="description-delete" type="button" title="Delete">
+        <button description-delete class="description-delete" type="button" title="Delete">
           <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
             <!--!Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
             <path
@@ -140,33 +142,140 @@ const getDescription = ({
       </div>
       <textarea text></textarea>
       <label class="description-provide-ssml"
-        ><input type="checkbox" checked="" /> Provide SSML</label
+        ><input provide-ssml type="checkbox" /> Provide SSML</label
       >
-      <textarea>
-&lt;prosody rate="+40%"&gt;Smoke rises from the chimney of a sad little hovel ... in a place that is ... definitely ...&lt;/prosody&gt; &lt;prosody rate="+30%"&gt;not America.&lt;/prosody&gt;</textarea
-      >
+      <div provide-ssml-text></div>
     </div>
   `
 
-  let description = getDescriptions().find(description => description.id === id)
+  const getDescription = () => getDescriptions().find(description => description.id === id)
 
   const textTextarea = node.querySelector("[text]")
   textTextarea.addEventListener("input", () => {
     updateDescription({ id, text: textTextarea.value })
   })
 
+  const ssmlCheckbox = node.querySelector("[provide-ssml]")
+
   const handleChange = () => {
-    description = getDescriptions().find(description => description.id === id)
+    if (!node.isConnected) return
+
+    description = getDescription()
 
     node.querySelector("[time]").value = description.time
 
-    const textSelectionStart = textTextarea.selectionStart
-    const textSelectionEnd = textTextarea.selectionEnd
+    ssmlCheckbox.checked = description.ssml !== null
+
     textTextarea.value = description.text
-    textTextarea.focus()
-    textTextarea.setSelectionRange(textSelectionStart, textSelectionEnd)
+    if (textTextarea === document.activeElement) {
+      const textSelectionStart = textTextarea.selectionStart
+      const textSelectionEnd = textTextarea.selectionEnd
+      textTextarea.focus()
+      textTextarea.setSelectionRange(textSelectionStart, textSelectionEnd)
+    }
+
+    let ssmlTextarea = node.querySelector("[provide-ssml-text]")
+    if (description.ssml == null && ssmlTextarea.tagName === "TEXTAREA") {
+      ssmlTextarea.outerHTML = "<div provide-ssml-text></div>"
+      node.querySelector("[provide-ssml]").focus()
+    } else if (description.ssml != null && ssmlTextarea.tagName === "DIV") {
+      ssmlTextarea.outerHTML = "<textarea provide-ssml-text></textarea>"
+
+      ssmlTextarea = node.querySelector("[provide-ssml-text]")
+
+      ssmlTextarea.value = description.ssml
+
+      ssmlTextarea.addEventListener("input", () => {
+        updateDescription({ id, ssml: ssmlTextarea.value })
+      })
+
+      ssmlTextarea.focus()
+    } else if (description.ssml != null && ssmlTextarea.tagName === "TEXTAREA") {
+      ssmlTextarea.value = description.ssml
+
+      // if (ssmlTextarea === focusedElement) {
+      if (ssmlTextarea === document.activeElement) {
+        console.log("focusedElement found to be ssml", id)
+        const textSelectionStart = ssmlTextarea.selectionStart
+        const textSelectionEnd = ssmlTextarea.selectionEnd
+        ssmlTextarea.focus()
+        ssmlTextarea.setSelectionRange(textSelectionStart, textSelectionEnd)
+      }
+    }
   }
 
   onDescriptionsChange(handleChange)
   handleChange()
+
+  const getDefaultSsml = () => {
+    const description = getDescription()
+    return `<prosody rate="+40%">${description.text}</prosody>`
+  }
+
+  ssmlCheckbox.addEventListener("change", event => {
+    const description = getDescription()
+
+    if (event.target.checked) {
+      updateDescription({ id, ssml: getDefaultSsml() })
+    } else {
+      const removeSsml = () => {
+        // Need to show an "are you sure" dialog
+        updateDescription({ id, ssml: null })
+      }
+
+      if (description.ssml !== getDefaultSsml()) {
+        getModal({
+          title: "Are you sure?",
+          body: "Are you sure you want to remove your changes to the SSML?",
+          actions: [
+            {
+              text: "Okay",
+              action: () => {
+                removeSsml()
+                ssmlCheckbox.focus()
+                ssmlCheckbox.removeAttribute("checked")
+              },
+            },
+            {
+              text: "Cancel",
+              action: () => {
+                ssmlCheckbox.focus()
+                ssmlCheckbox.checked = true
+              },
+            },
+          ],
+        })
+      } else {
+        removeSsml()
+        ssmlCheckbox.focus()
+      }
+    }
+  })
+
+  const deleteButton = node.querySelector("[description-delete]")
+  deleteButton.addEventListener("click", () => {
+    getModal({
+      title: "Are you sure?",
+      body: "Are you sure you want to delete this description?",
+      actions: [
+        {
+          text: "Okay",
+          action: () => {
+            const previousId = deleteDescription(id)
+            if (previousId) {
+              document.querySelector(`#gap${previousId} [add-description]`).focus()
+            } else {
+              document.querySelector(`#${firstGapId} [add-description]`).focus()
+            }
+          },
+        },
+        {
+          text: "Cancel",
+          action: () => {
+            deleteButton.focus()
+          },
+        },
+      ],
+    })
+  })
 }

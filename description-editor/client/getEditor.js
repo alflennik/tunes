@@ -1,4 +1,6 @@
 const getEditor = ({ node }) => {
+  const getId = () => `id${Math.random().toString().substr(2, 9)}`
+
   node.innerHTML = /* HTML */ `
     <style>
       #editor {
@@ -82,6 +84,8 @@ const getEditor = ({ node }) => {
     deleteDescription,
   } = editDescriptions()
 
+  let firstGapId
+
   const handleDescriptionsChange = () => {
     const createGapElement = ({ time }) => {
       const gapNode = document.createElement("div")
@@ -96,6 +100,8 @@ const getEditor = ({ node }) => {
 
     if (!descriptionsElement.firstElementChild) {
       const gapElement = createGapElement({ time: 0 })
+      firstGapId = `gap${getId()}`
+      gapElement.setAttribute("id", firstGapId)
       descriptionsElement.insertBefore(gapElement, descriptionsElement.firstElementChild)
     }
 
@@ -122,7 +128,9 @@ const getEditor = ({ node }) => {
           id: description.id,
           getDescriptions,
           updateDescription,
+          deleteDescription,
           onDescriptionsChange,
+          firstGapId,
         })
       }
 
@@ -135,16 +143,29 @@ const getEditor = ({ node }) => {
         gapNode.setAttribute("id", `gap${description.id}`)
       }
 
+      let elementRequiringFocus
+      if (node.contains(document.activeElement)) {
+        elementRequiringFocus = document.activeElement
+      }
+
       descriptionsElement.insertBefore(node, nextElement)
       descriptionsElement.insertBefore(gapNode, node.nextElementSibling)
+
+      if (elementRequiringFocus) {
+        elementRequiringFocus.focus()
+      }
     })
 
+    let lastElement
     const id = descriptions[descriptions.length - 1] && descriptions[descriptions.length - 1].id
     if (id) {
-      const lastElement = descriptionsElement.querySelector(`#gap${id}`)
-      while (lastElement.nextElementSibling) {
-        lastElement.nextElementSibling.remove()
-      }
+      lastElement = node.querySelector(`#gap${id}`)
+    } else {
+      lastElement = node.querySelector(`#${firstGapId}`)
+    }
+
+    while (lastElement.nextElementSibling) {
+      lastElement.nextElementSibling.remove()
     }
   }
 
