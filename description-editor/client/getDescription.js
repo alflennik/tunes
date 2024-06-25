@@ -42,28 +42,6 @@ const getDescription = ({
           width: 14px;
           height: 14px;
         }
-        .description-time {
-          flex-grow: 1;
-          display: flex;
-          gap: 7px;
-          justify-content: center;
-          height: 22px;
-        }
-        .description-time button {
-          padding: 4px 5px;
-          background: #2d52ce;
-          border-radius: 4px;
-        }
-        .description-time input {
-          width: 60px;
-          text-align: center;
-          background: white;
-          color: black;
-          border: none;
-          font-family: monospace;
-          border-radius: 4px;
-          display: block;
-        }
         .description-actions > button {
           padding: 4px 18px;
           background: #313131;
@@ -91,45 +69,7 @@ const getDescription = ({
           </svg>
           <span class="sr-only">Play From Here</span>
         </button>
-        <div class="description-time">
-          <button type="button" title="Move Earlier">
-            <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-              <!--!Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
-              <path
-                d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160zm352-160l-160 160c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L301.3 256 438.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0z"
-              ></path>
-            </svg>
-            <span class="sr-only">Move Earlier</span>
-          </button>
-          <button type="button" title="Nudge Earlier">
-            <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
-              <!--!Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
-              <path
-                d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"
-              ></path>
-            </svg>
-            <span class="sr-only">Nudge Earlier</span>
-          </button>
-          <input time type="text" value="0:01.1" />
-          <button type="button" title="Nudge Later">
-            <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
-              <!--!Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
-              <path
-                d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"
-              ></path>
-            </svg>
-            <span class="sr-only">Nudge Later</span>
-          </button>
-          <button type="button" title="Move Later">
-            <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-              <!--!Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
-              <path
-                d="M470.6 278.6c12.5-12.5 12.5-32.8 0-45.3l-160-160c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L402.7 256 265.4 393.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l160-160zm-352 160l160-160c12.5-12.5 12.5-32.8 0-45.3l-160-160c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L210.7 256 73.4 393.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0z"
-              ></path>
-            </svg>
-            <span class="sr-only">Move Later</span>
-          </button>
-        </div>
+        <div description-time class="description-time"></div>
         <button description-delete class="description-delete" type="button" title="Delete">
           <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
             <!--!Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
@@ -150,6 +90,15 @@ const getDescription = ({
 
   const getDescription = () => getDescriptions().find(description => description.id === id)
 
+  getDescriptionTime({
+    node: node.querySelector("[description-time]"),
+    styleNode,
+    id,
+    getDescription,
+    updateDescription,
+    onDescriptionsChange,
+  })
+
   const textTextarea = node.querySelector("[text]")
   textTextarea.addEventListener("input", () => {
     updateDescription({ id, text: textTextarea.value })
@@ -158,11 +107,9 @@ const getDescription = ({
   const ssmlCheckbox = node.querySelector("[provide-ssml]")
 
   const handleChange = () => {
-    if (!node.isConnected) return
-
     description = getDescription()
 
-    node.querySelector("[time]").value = description.time
+    if (!description) return // It was deleted
 
     ssmlCheckbox.checked = description.ssml !== null
 
@@ -193,9 +140,7 @@ const getDescription = ({
     } else if (description.ssml != null && ssmlTextarea.tagName === "TEXTAREA") {
       ssmlTextarea.value = description.ssml
 
-      // if (ssmlTextarea === focusedElement) {
       if (ssmlTextarea === document.activeElement) {
-        console.log("focusedElement found to be ssml", id)
         const textSelectionStart = ssmlTextarea.selectionStart
         const textSelectionEnd = ssmlTextarea.selectionEnd
         ssmlTextarea.focus()

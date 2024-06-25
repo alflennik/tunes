@@ -87,12 +87,14 @@ const getEditor = ({ node }) => {
   let firstGapId
 
   const handleDescriptionsChange = () => {
-    const createGapElement = ({ time }) => {
+    const createGapElement = ({ descriptionId = null, time = null }) => {
       const gapNode = document.createElement("div")
       getDescriptionGap({
         styleNode: descriptionGapStyleNode,
         node: gapNode,
+        descriptionId,
         time,
+        getDescriptions,
         createDescription,
       })
       return gapNode
@@ -139,13 +141,17 @@ const getEditor = ({ node }) => {
       if (existingGapNode) {
         gapNode = existingGapNode
       } else {
-        gapNode = createGapElement({ time: description.time + 1 })
+        gapNode = createGapElement({ descriptionId: description.id })
         gapNode.setAttribute("id", `gap${description.id}`)
       }
 
       let elementRequiringFocus
+      let selectionStart
+      let selectionEnd
       if (node.contains(document.activeElement)) {
         elementRequiringFocus = document.activeElement
+        selectionStart = document.activeElement.selectionStart
+        selectionEnd = document.activeElement.selectionEnd
       }
 
       descriptionsElement.insertBefore(node, nextElement)
@@ -153,6 +159,9 @@ const getEditor = ({ node }) => {
 
       if (elementRequiringFocus) {
         elementRequiringFocus.focus()
+        if (selectionStart) {
+          elementRequiringFocus.setSelectionRange(selectionStart, selectionEnd)
+        }
       }
     })
 

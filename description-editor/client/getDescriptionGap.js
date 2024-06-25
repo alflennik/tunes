@@ -1,4 +1,11 @@
-const getDescriptionGap = ({ styleNode, node, time, createDescription }) => {
+const getDescriptionGap = ({
+  styleNode,
+  node,
+  descriptionId = null,
+  time = null,
+  getDescriptions,
+  createDescription,
+}) => {
   if (!styleNode.hasChildNodes()) {
     styleNode.innerHTML = /* HTML */ `
       <style>
@@ -62,7 +69,13 @@ const getDescriptionGap = ({ styleNode, node, time, createDescription }) => {
   `
 
   node.querySelector("[add-description]").addEventListener("click", () => {
-    const { id: newId } = createDescription({ time })
+    let newTime
+    if (descriptionId) {
+      newTime = getDescriptions().find(description => description.id === descriptionId).time + 1
+    } else {
+      newTime = time
+    }
+    const { id: newId } = createDescription({ time: newTime })
     document.querySelector(`#${newId} textarea`).focus()
   })
 }
