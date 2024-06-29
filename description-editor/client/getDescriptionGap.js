@@ -5,6 +5,7 @@ const getDescriptionGap = ({
   time = null,
   getDescriptions,
   createDescription,
+  seekTo,
 }) => {
   if (!styleNode.hasChildNodes()) {
     styleNode.innerHTML = /* HTML */ `
@@ -47,7 +48,7 @@ const getDescriptionGap = ({
 
   node.innerHTML = /* HTML */ `
     <div class="description-gap">
-      <button type="button" title="Play From Here">
+      <button play-from-here type="button" title="Play From Here">
         <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512">
           <!--!Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
           <path
@@ -68,13 +69,22 @@ const getDescriptionGap = ({
     </div>
   `
 
-  node.querySelector("[add-description]").addEventListener("click", () => {
+  const getTime = () => {
     let newTime
     if (descriptionId) {
       newTime = getDescriptions().find(description => description.id === descriptionId).time + 1
     } else {
       newTime = time
     }
+    return newTime
+  }
+
+  node.querySelector("[play-from-here]").addEventListener("click", () => {
+    seekTo(getTime())
+  })
+
+  node.querySelector("[add-description]").addEventListener("click", () => {
+    let newTime = getTime()
     const { id: newId } = createDescription({ time: newTime })
     document.querySelector(`#${newId} textarea`).focus()
   })

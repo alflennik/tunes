@@ -25,7 +25,7 @@ const getDescriptionTime = ({
           border-radius: 4px;
         }
         .description-time input {
-          width: 60px;
+          width: 95px;
           text-align: center;
           background: white;
           color: black;
@@ -99,11 +99,11 @@ const getDescriptionTime = ({
     const formattedMinutes = padNumber(minutes, 2)
     const formattedSeconds = padNumber(remainingSeconds, 2)
 
-    return `${formattedMinutes}:${formattedSeconds}.${decimal}`
+    return `${formattedMinutes}:${formattedSeconds}.${decimal}0`
   }
 
   function decodeTime(timeString) {
-    const timeFormat = /^\d{2}:[0-5]\d\.\d$/
+    const timeFormat = /^\d{2}:[0-5]\d\.\d{2}$/
 
     if (!timeString.match(timeFormat)) {
       return null

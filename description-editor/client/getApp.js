@@ -1,4 +1,4 @@
-const getApp = () => {
+const getApp = async () => {
   const root = document.querySelector("#root")
   root.innerHTML = /* HTML */ `
     <style>
@@ -46,13 +46,16 @@ const getApp = () => {
     </div>
   `
 
-  getEditor({ node: root.querySelector("#editor-container") })
-
   // getStartupDialog({ node: root.querySelector("[startup-dialog-node]") })
 
-  getVideoPlayer({
-    node: root.querySelector("#video-player"),
-    getVideo: () => ({ id: "fr8zIVQOrEc" }),
-    listenForChange: () => {},
-  })
+  const [{ seekTo }] = await Promise.all([
+    getVideoPlayer({
+      node: root.querySelector("#video-player"),
+      getVideo: () => ({ id: "fr8zIVQOrEc" }),
+      listenForChange: () => {},
+    }),
+    getFfmpeg(),
+  ])
+
+  getEditor({ node: root.querySelector("#editor-container"), seekTo })
 }

@@ -80,4 +80,11 @@ const getYouTubePlayer = async ({
   youtubePlayer.addEventListener("onStateChange", ({ data }) => {
     if (data === YT.PlayerState.ENDED && onEnd) onEnd()
   })
+
+  const seekTo = seconds => {
+    youtubePlayer.seekTo(seconds, true)
+    youtubePlayer.playVideo()
+  }
+
+  return { seekTo }
 }

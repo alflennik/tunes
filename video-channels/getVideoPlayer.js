@@ -1,4 +1,4 @@
-const getVideoPlayer = ({
+const getVideoPlayer = async ({
   node,
   startsMuted = false,
   getVideo,
@@ -13,7 +13,7 @@ const getVideoPlayer = ({
     </style>
     <div id="youtube-player"></div> `
 
-  getYouTubePlayer({
+  const { seekTo } = await getYouTubePlayer({
     youtubePlayerId: "youtube-player",
     startsMuted,
     getVideoId: () => getVideo().id,
@@ -21,4 +21,6 @@ const getVideoPlayer = ({
     listenForChange,
     onEnd,
   })
+
+  return { seekTo }
 }

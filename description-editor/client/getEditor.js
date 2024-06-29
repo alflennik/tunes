@@ -1,4 +1,4 @@
-const getEditor = ({ node }) => {
+const getEditor = ({ node, seekTo }) => {
   const getId = () => `id${Math.random().toString().substr(2, 9)}`
 
   node.innerHTML = /* HTML */ `
@@ -96,6 +96,7 @@ const getEditor = ({ node }) => {
         time,
         getDescriptions,
         createDescription,
+        seekTo,
       })
       return gapNode
     }
@@ -133,6 +134,7 @@ const getEditor = ({ node }) => {
           deleteDescription,
           onDescriptionsChange,
           firstGapId,
+          seekTo,
         })
       }
 

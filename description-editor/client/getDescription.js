@@ -7,6 +7,7 @@ const getDescription = ({
   updateDescription,
   onDescriptionsChange,
   firstGapId,
+  seekTo,
 }) => {
   if (!styleNode.hasChildNodes()) {
     styleNode.innerHTML = /* HTML */ `
@@ -60,7 +61,7 @@ const getDescription = ({
   node.innerHTML = /* HTML */ `
     <div class="description">
       <div class="description-actions">
-        <button type="button" title="Play From Here">
+        <button play-from-description type="button" title="Play From Here">
           <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512">
             <!--!Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
             <path
@@ -152,6 +153,39 @@ const getDescription = ({
   onDescriptionsChange(handleChange)
   handleChange()
 
+  const playButton = node.querySelector("[play-from-description]")
+  playButton.addEventListener("click", () => {
+    const description = getDescription()
+    seekTo(description.time)
+  })
+
+  const deleteButton = node.querySelector("[description-delete]")
+  deleteButton.addEventListener("click", () => {
+    getModal({
+      title: "Are you sure?",
+      body: "Are you sure you want to delete this description?",
+      actions: [
+        {
+          text: "Okay",
+          action: () => {
+            const previousId = deleteDescription(id)
+            if (previousId) {
+              document.querySelector(`#gap${previousId} [add-description]`).focus()
+            } else {
+              document.querySelector(`#${firstGapId} [add-description]`).focus()
+            }
+          },
+        },
+        {
+          text: "Cancel",
+          action: () => {
+            deleteButton.focus()
+          },
+        },
+      ],
+    })
+  })
+
   const getDefaultSsml = () => {
     const description = getDescription()
     return `<prosody rate="+40%">${description.text}</prosody>`
@@ -195,32 +229,5 @@ const getDescription = ({
         ssmlCheckbox.focus()
       }
     }
-  })
-
-  const deleteButton = node.querySelector("[description-delete]")
-  deleteButton.addEventListener("click", () => {
-    getModal({
-      title: "Are you sure?",
-      body: "Are you sure you want to delete this description?",
-      actions: [
-        {
-          text: "Okay",
-          action: () => {
-            const previousId = deleteDescription(id)
-            if (previousId) {
-              document.querySelector(`#gap${previousId} [add-description]`).focus()
-            } else {
-              document.querySelector(`#${firstGapId} [add-description]`).focus()
-            }
-          },
-        },
-        {
-          text: "Cancel",
-          action: () => {
-            deleteButton.focus()
-          },
-        },
-      ],
-    })
   })
 }

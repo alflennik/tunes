@@ -1,1 +1,0 @@
-const getDescriptions = (req, res) => 
