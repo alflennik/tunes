@@ -13,7 +13,7 @@ const transcode = async ({ target: { files } }) => {
       message.innerHTML = `${progress * 100} %, time: ${time / 1000000} s`
     })
     await ffmpeg.load({
-      coreURL: "/ffmpeg/assets/core/package/dist/umd/ffmpeg-core.js",
+      coreURL: "/ffmpeg/assets/ffmpeg-core.js",
     })
   }
   const { name } = files[0]
