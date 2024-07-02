@@ -190,4 +190,6 @@ const getEditor = ({ node, seekTo }) => {
   }
 
   window.addEventListener("beforeunload", preventLeave)
+
+  return { getDescriptions, onDescriptionsChange }
 }

@@ -20,7 +20,7 @@ const getVoiceClip = async (req, res) => {
     {
       method: "POST",
       headers: {
-        "X-Microsoft-OutputFormat": "audio-24khz-48kbitrate-mono-mp3",
+        "X-Microsoft-OutputFormat": "riff-24khz-16bit-mono-pcm",
         "Content-Type": "application/ssml+xml",
         "Ocp-Apim-Subscription-Key": subscriptionKey,
       },

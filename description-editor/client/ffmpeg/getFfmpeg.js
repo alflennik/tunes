@@ -1,69 +1,46 @@
-const { fetchFile } = FFmpegUtil
-const { FFmpeg } = FFmpegWASM
-let ffmpeg = null
+const getFFmpeg = async () => {
+  const firstScriptTag = document.getElementsByTagName("script")[0]
+  const ffmpegScript = document.createElement("script")
+  const utilScript = document.createElement("script")
+  ffmpegScript.src = "ffmpeg/assets/ffmpeg.js"
+  utilScript.src = "ffmpeg/assets/index.js"
+  firstScriptTag.parentNode.insertBefore(ffmpegScript, firstScriptTag)
+  firstScriptTag.parentNode.insertBefore(utilScript, firstScriptTag)
 
-const transcode = async ({ target: { files } }) => {
-  const message = document.getElementById("message")
-  if (ffmpeg === null) {
-    ffmpeg = new FFmpeg()
-    ffmpeg.on("log", ({ message }) => {
-      console.log(message)
-    })
-    ffmpeg.on("progress", ({ progress, time }) => {
-      message.innerHTML = `${progress * 100} %, time: ${time / 1000000} s`
-    })
-    await ffmpeg.load({
-      coreURL: "/ffmpeg/assets/ffmpeg-core.js",
-    })
-  }
-  const { name } = files[0]
-  await ffmpeg.writeFile(name, await fetchFile(files[0]))
-  message.innerHTML = "Start transcoding"
-  console.time("exec")
-  await ffmpeg.exec(["-i", name, "output.mp4"])
-  console.timeEnd("exec")
-  message.innerHTML = "Complete transcoding"
-  const data = await ffmpeg.readFile("output.mp4")
+  await new Promise(resolve => {
+    let loadCount = 0
+    const handleLoad = () => {
+      loadCount += 1
+      if (loadCount > 1) resolve()
+    }
+    ffmpegScript.addEventListener("load", handleLoad)
+    utilScript.addEventListener("load", handleLoad)
+  })
 
-  const video = document.getElementById("output-video")
-  video.src = URL.createObjectURL(new Blob([data.buffer], { type: "video/mp4" }))
-}
-const elm = document.getElementById("uploader")
-elm.addEventListener("change", transcode)
+  const { fetchFile } = FFmpegUtil
+  const { FFmpeg } = FFmpegWASM
 
-const getFfmpeg = async () => {
-  // const firstScriptTag = document.getElementsByTagName("script")[0]
-  // const ffmpegScript = document.createElement("script")
-  // const utilScript = document.createElement("script")
-  // ffmpegScript.src = "ffmpeg/assets/ffmpeg.js"
-  // utilScript.src = "ffmpeg/assets/ffmpeg-utils.js"
-  // firstScriptTag.parentNode.insertBefore(ffmpegScript, firstScriptTag)
-  // firstScriptTag.parentNode.insertBefore(utilScript, firstScriptTag)
-  // const { fetchFile } = FFmpegUtil
-  // const { FFmpeg } = FFmpegWASM
-  // let ffmpeg = new FFmpeg()
-  // await ffmpeg.load({
-  //   coreURL: "ffmpeg/assets/ffmpeg-core.js",
-  // })
-  // ffmpeg.on("log", ({ message }) => {
-  //   console.log(message)
-  // })
-  // ffmpeg.on("progress", ({ progress, time }) => {
-  //   message.innerHTML = `${progress * 100} %, time: ${time / 1000000} s`
-  // })
-  // const transcode = async ({ target: { files } }) => {
-  //   const message = document.getElementById("message")
-  //   const { name } = files[0]
-  //   await ffmpeg.writeFile(name, await fetchFile(files[0]))
-  //   message.innerHTML = "Start transcoding"
-  //   console.time("exec")
-  //   await ffmpeg.exec(["-i", name, "output.mp4"])
-  //   console.timeEnd("exec")
-  //   message.innerHTML = "Complete transcoding"
-  //   const data = await ffmpeg.readFile("output.mp4")
-  //   const video = document.getElementById("output-video")
-  //   video.src = URL.createObjectURL(new Blob([data.buffer], { type: "video/mp4" }))
-  // }
-  // const elm = document.getElementById("uploader")
-  // elm.addEventListener("change", transcode)
+  const ffmpeg = new FFmpeg()
+
+  await ffmpeg.load({
+    coreURL: "/ffmpeg/assets/ffmpeg-core.js",
+  })
+
+  let mostRecentDurationSeconds
+  ffmpeg.on("log", ({ message }) => {
+    const mentionedDuration = message.match(/Duration: (\d{2}):(\d{2}):(\d{2}\.\d{2})/)
+    if (mentionedDuration) {
+      mostRecentDurationSeconds =
+        Number(mentionedDuration[1]) * 60 * 60 +
+        Number(mentionedDuration[2]) * 60 +
+        Number(mentionedDuration[3])
+    }
+    // console.log(message)
+  })
+
+  ffmpeg.on("progress", ({ progress, time }) => {
+    // console.info(progress, time)
+  })
+
+  return { ffmpeg, fetchFile, getMostRecentDurationSeconds: () => mostRecentDurationSeconds }
 }

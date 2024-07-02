@@ -48,14 +48,25 @@ const getApp = async () => {
 
   // getStartupDialog({ node: root.querySelector("[startup-dialog-node]") })
 
-  const [{ seekTo }] = await Promise.all([
+  const [{ seekTo }, { ffmpeg, fetchFile, getMostRecentDurationSeconds }] = await Promise.all([
     getVideoPlayer({
       node: root.querySelector("#video-player"),
-      getVideo: () => ({ id: "fr8zIVQOrEc" }),
+      getVideo: () => ({ id: "2e4oRKhilhA" }),
       listenForChange: () => {},
     }),
-    getFfmpeg(),
+    getFFmpeg(),
   ])
 
-  getEditor({ node: root.querySelector("#editor-container"), seekTo })
+  const { getDescriptions, onDescriptionsChange } = getEditor({
+    node: root.querySelector("#editor-container"),
+    seekTo,
+  })
+
+  getAudio({
+    ffmpeg,
+    fetchFile,
+    getMostRecentDurationSeconds,
+    getDescriptions,
+    onDescriptionsChange,
+  })
 }
