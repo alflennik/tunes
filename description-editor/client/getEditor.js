@@ -1,4 +1,4 @@
-const getEditor = ({ node, seekTo }) => {
+const getEditor = ({ node, seekTo, renderAudioRef }) => {
   const getId = () => `id${Math.random().toString().substr(2, 9)}`
 
   node.innerHTML = /* HTML */ `
@@ -66,7 +66,7 @@ const getEditor = ({ node, seekTo }) => {
       <div id="descriptions"></div>
 
       <div id="actions">
-        <button type="button" class="save-and-render">Save and Render</button>
+        <button save-and-render type="button" class="save-and-render">Save and Render</button>
         <button type="button" class="publish-button">Unpublished</button>
       </div>
     </div>
@@ -83,6 +83,10 @@ const getEditor = ({ node, seekTo }) => {
     updateDescription,
     deleteDescription,
   } = editDescriptions()
+
+  const getDefaultSsml = description => {
+    return `<prosody rate="+40%">${description.text}</prosody>`
+  }
 
   let firstGapId
 
@@ -133,6 +137,7 @@ const getEditor = ({ node, seekTo }) => {
           updateDescription,
           deleteDescription,
           onDescriptionsChange,
+          getDefaultSsml,
           firstGapId,
           seekTo,
         })
@@ -189,7 +194,11 @@ const getEditor = ({ node, seekTo }) => {
     event.returnValue = true
   }
 
+  node.querySelector("[save-and-render]").addEventListener("click", () => {
+    renderAudioRef.current()
+  })
+
   window.addEventListener("beforeunload", preventLeave)
 
-  return { getDescriptions, onDescriptionsChange }
+  return { getDescriptions, onDescriptionsChange, getDefaultSsml }
 }

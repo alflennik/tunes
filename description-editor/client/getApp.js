@@ -57,16 +57,22 @@ const getApp = async () => {
     getFFmpeg(),
   ])
 
-  const { getDescriptions, onDescriptionsChange } = getEditor({
+  let renderAudioRef = {}
+
+  const { getDescriptions, onDescriptionsChange, getDefaultSsml } = getEditor({
     node: root.querySelector("#editor-container"),
     seekTo,
+    renderAudioRef,
   })
 
-  getAudio({
+  const { renderAudio } = getAudio({
     ffmpeg,
     fetchFile,
     getMostRecentDurationSeconds,
+    getDefaultSsml,
     getDescriptions,
     onDescriptionsChange,
   })
+
+  renderAudioRef.current = renderAudio
 }

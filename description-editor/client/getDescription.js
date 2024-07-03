@@ -6,6 +6,7 @@ const getDescription = ({
   deleteDescription,
   updateDescription,
   onDescriptionsChange,
+  getDefaultSsml,
   firstGapId,
   seekTo,
 }) => {
@@ -186,23 +187,18 @@ const getDescription = ({
     })
   })
 
-  const getDefaultSsml = () => {
-    const description = getDescription()
-    return `<prosody rate="+40%">${description.text}</prosody>`
-  }
-
   ssmlCheckbox.addEventListener("change", event => {
     const description = getDescription()
 
     if (event.target.checked) {
-      updateDescription({ id, ssml: getDefaultSsml() })
+      updateDescription({ id, ssml: getDefaultSsml(description) })
     } else {
       const removeSsml = () => {
         // Need to show an "are you sure" dialog
         updateDescription({ id, ssml: null })
       }
 
-      if (description.ssml !== getDefaultSsml()) {
+      if (description.ssml !== getDefaultSsml(description)) {
         getModal({
           title: "Are you sure?",
           body: "Are you sure you want to remove your changes to the SSML?",

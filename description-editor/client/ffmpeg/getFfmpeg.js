@@ -35,11 +35,11 @@ const getFFmpeg = async () => {
         Number(mentionedDuration[2]) * 60 +
         Number(mentionedDuration[3])
     }
-    // console.log(message)
+    console.log(message)
   })
 
   ffmpeg.on("progress", ({ progress, time }) => {
-    // console.info(progress, time)
+    console.info(progress, time)
   })
 
   return { ffmpeg, fetchFile, getMostRecentDurationSeconds: () => mostRecentDurationSeconds }
