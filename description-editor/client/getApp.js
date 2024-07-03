@@ -59,7 +59,7 @@ const getApp = async () => {
 
   let renderAudioRef = {}
 
-  const { getDescriptions, onDescriptionsChange, getDefaultSsml } = getEditor({
+  const { getDescriptions, getDefaultSsml } = getEditor({
     node: root.querySelector("#editor-container"),
     seekTo,
     renderAudioRef,
@@ -71,7 +71,6 @@ const getApp = async () => {
     getMostRecentDurationSeconds,
     getDefaultSsml,
     getDescriptions,
-    onDescriptionsChange,
   })
 
   renderAudioRef.current = renderAudio

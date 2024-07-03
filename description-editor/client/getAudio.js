@@ -3,87 +3,123 @@ const getAudio = ({
   fetchFile,
   getMostRecentDurationSeconds,
   getDescriptions,
-  onDescriptionsChange,
   getDefaultSsml,
 }) => {
+  const getSemaphore = () => {
+    let isActive = false
+    let queue = []
+
+    return async callback => {
+      await new Promise(resolve => {
+        if (isActive === false) {
+          isActive = true
+          resolve()
+        } else {
+          queue.push(resolve)
+        }
+      })
+
+      await callback()
+
+      if (queue.length > 0) {
+        const next = queue.shift()
+        next()
+      } else {
+        isActive = false
+      }
+    }
+  }
+
   let currentAudioData
   const audioDataById = {}
 
   const renderAudio = async () => {
     const descriptions = getDescriptions()
 
-    for (description of descriptions) {
-      const ssml = description.ssml != null ? description.ssml : getDefaultSsml(description)
+    const renderAudioSemaphore = getSemaphore()
 
-      const audioData = audioDataById[description.id]
+    await Promise.all(
+      descriptions.map(async description => {
+        const ssml = description.ssml != null ? description.ssml : getDefaultSsml(description)
 
-      if (audioData) {
-        if (audioData.ssml === ssml) {
-          continue
+        const audioData = audioDataById[description.id]
+
+        if (audioData) {
+          if (audioData.ssml === ssml) {
+            return
+          }
+
+          await ffmpeg.deleteFile(audioData.fileName)
+
+          delete audioDataById[description.id]
         }
 
-        await ffmpeg.deleteFile(audioData.fileName)
-
-        delete audioDataById[description.id]
-      }
-
-      const voiceResponse = await fetch("/api/voice", {
-        method: "POST",
-        body: `
+        const voiceResponse = await fetch("/api/voice", {
+          method: "POST",
+          body: `
           <speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis" xml:lang="en-US">
             <voice name="en-US-SteffanNeural">
               ${ssml}
             </voice>
           </speak>
         `,
+        })
+
+        const voiceClip = await voiceResponse.blob()
+
+        const unprocessedFileName = `${description.id}-unprocessed.wav`
+        const fileName = `${description.id}.wav`
+
+        await ffmpeg.writeFile(unprocessedFileName, await fetchFile(voiceClip))
+
+        let durationSeconds
+
+        // Can only run one at a time because of the way I have to get the audio duration
+        await renderAudioSemaphore(async () => {
+          // Increase volume with limiter
+          await ffmpeg.exec([
+            "-i",
+            unprocessedFileName,
+            "-af",
+            "alimiter=level=false:level_in=15dB:limit=0dB",
+            "-ar",
+            "24000",
+            "-ac",
+            "1",
+            "-acodec",
+            "pcm_s16le",
+            fileName,
+          ])
+
+          durationSeconds = getMostRecentDurationSeconds()
+        })
+
+        await ffmpeg.deleteFile(unprocessedFileName)
+
+        audioDataById[description.id] = { ssml, fileName, durationSeconds }
       })
-
-      const voiceClip = await voiceResponse.blob()
-
-      const unprocessedFileName = `${description.id}-unprocessed.wav`
-      const fileName = `${description.id}.wav`
-
-      await ffmpeg.writeFile(unprocessedFileName, await fetchFile(voiceClip))
-
-      // Increase volume with limiter
-      await ffmpeg.exec([
-        "-i",
-        unprocessedFileName,
-        "-af",
-        "alimiter=level=false:level_in=15dB:limit=0dB",
-        "-ar",
-        "24000",
-        "-ac",
-        "1",
-        "-acodec",
-        "pcm_s16le",
-        fileName,
-      ])
-
-      const durationSeconds = getMostRecentDurationSeconds()
-
-      await ffmpeg.deleteFile(unprocessedFileName)
-
-      audioDataById[description.id] = { ssml, fileName, durationSeconds }
-    }
+    )
 
     const allSilentClips = []
 
     let currentTime = 0
 
     descriptions.forEach(description => {
-      const silenceNeeded = Math.round((description.time - currentTime) * 10) / 10
+      const duration = audioDataById[description.id].durationSeconds
 
-      currentTime = description.time + audioDataById[description.id].durationSeconds
-
-      if (silenceNeeded <= 0) {
+      const previousDescriptionOvershot = description.time <= currentTime
+      if (previousDescriptionOvershot) {
+        currentTime = currentTime + duration
         delete audioDataById[description.id].preceedingSilence
         return
       }
 
-      allSilentClips.push(silenceNeeded)
-
+      // Fix floating point by rounding to one decimal place
+      const silenceNeeded = Math.round((description.time - currentTime) * 10) / 10
+      console.log("silenceNeeded", silenceNeeded)
+      currentTime = description.time + duration
       audioDataById[description.id].preceedingSilence = silenceNeeded
+      allSilentClips.push(silenceNeeded)
     })
 
     const silentClipsThatExist = []
@@ -93,6 +129,8 @@ const getAudio = ({
     const allFiles = await ffmpeg.listDir("/")
     allFiles.forEach(fileReference => {
       if (!fileReference.name.startsWith("silence")) return
+
+      console.log(fileReference.name)
 
       const time = Number(fileReference.name.match(/^silence-(\d+\.\d)+/)[1])
 

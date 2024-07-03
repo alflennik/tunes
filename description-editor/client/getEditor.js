@@ -200,5 +200,5 @@ const getEditor = ({ node, seekTo, renderAudioRef }) => {
 
   window.addEventListener("beforeunload", preventLeave)
 
-  return { getDescriptions, onDescriptionsChange, getDefaultSsml }
+  return { getDescriptions, getDefaultSsml }
 }

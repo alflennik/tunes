@@ -22,7 +22,7 @@ export default {
     },
     {
       time: 43.081,
-      text: "Sitting sadly outside, a green slip of paper wafts by on the wind, smacking his face. ",
+      text: "Sitting sadly outside, a green slip of paper wafts by on the wind, smacking his face.",
     },
     {
       time: 50.333,
