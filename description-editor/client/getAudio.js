@@ -4,7 +4,12 @@ const getAudio = ({
   getMostRecentDurationSeconds,
   getDescriptions,
   getDefaultSsml,
+  onAudioElementChange,
 }) => {
+  let audioElement
+  let currentAudioData
+  const audioDataById = {}
+
   const getSemaphore = () => {
     let isActive = false
     let queue = []
@@ -29,9 +34,6 @@ const getAudio = ({
       }
     }
   }
-
-  let currentAudioData
-  const audioDataById = {}
 
   const renderAudio = async () => {
     const descriptions = getDescriptions()
@@ -116,7 +118,6 @@ const getAudio = ({
 
       // Fix floating point by rounding to one decimal place
       const silenceNeeded = Math.round((description.time - currentTime) * 10) / 10
-      console.log("silenceNeeded", silenceNeeded)
       currentTime = description.time + duration
       audioDataById[description.id].preceedingSilence = silenceNeeded
       allSilentClips.push(silenceNeeded)
@@ -129,8 +130,6 @@ const getAudio = ({
     const allFiles = await ffmpeg.listDir("/")
     allFiles.forEach(fileReference => {
       if (!fileReference.name.startsWith("silence")) return
-
-      console.log(fileReference.name)
 
       const time = Number(fileReference.name.match(/^silence-(\d+\.\d)+/)[1])
 
@@ -215,21 +214,27 @@ const getAudio = ({
 
     const data = await ffmpeg.readFile("description.mp3")
 
-    const audio = document.querySelector("[ffmpeg-audio]")
+    const newAudioElement = new Audio()
 
-    if (currentAudioData) {
-      URL.revokeObjectURL(currentAudioData)
+    const previousAudioData = currentAudioData
+
+    currentAudioData = URL.createObjectURL(new Blob([data.buffer], { type: "audio/mpeg" }))
+
+    newAudioElement.src = currentAudioData
+
+    audioElement = newAudioElement
+
+    await new Promise(resolve => {
+      console.log("loaded")
+      audioElement.addEventListener("loadedmetadata", resolve)
+    })
+
+    onAudioElementChange()
+
+    if (previousAudioData) {
+      URL.revokeObjectURL(previousAudioData)
     }
-    currentAudioData = URL.createObjectURL(new Blob([data.buffer], { type: "audio/wav" }))
-
-    audio.src = currentAudioData
   }
 
-  const div = document.createElement("div")
-
-  div.innerHTML = /* HTML */ `<audio ffmpeg-audio controls></audio>`
-
-  document.body.insertAdjacentElement("afterbegin", div)
-
-  return { renderAudio }
+  return { renderAudio, getAudioElement: () => audioElement }
 }

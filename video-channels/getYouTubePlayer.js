@@ -14,6 +14,9 @@ const getYouTubePlayer = async ({
   getStartSeconds,
   getVideoId,
   listenForChange,
+  onPlay,
+  onPause,
+  onSeek,
   onEnd,
 }) => {
   const youtubePlayer = await new Promise(async resolve => {
@@ -42,12 +45,19 @@ const getYouTubePlayer = async ({
     firstScriptTag.parentNode.insertBefore(scriptElement, firstScriptTag)
   })
 
+  let previousVideoId = getVideoId()
+  let previousStartSeconds = getStartSeconds()
+
   if (listenForChange) {
     listenForChange(() => {
-      youtubePlayer.loadVideoById({
-        videoId: getVideoId(),
-        startSeconds: getStartSeconds(),
-      })
+      if (previousVideoId !== getVideoId() || previousStartSeconds !== getStartSeconds()) {
+        youtubePlayer.loadVideoById({
+          videoId: getVideoId(),
+          startSeconds: getStartSeconds(),
+        })
+        previousVideoId = getVideoId()
+        previousStartSeconds = getStartSeconds()
+      }
     })
   }
 
@@ -78,13 +88,27 @@ const getYouTubePlayer = async ({
   })
 
   youtubePlayer.addEventListener("onStateChange", ({ data }) => {
+    if (data === YT.PlayerState.PLAYING && onPlay) onPlay()
+    if ((data === YT.PlayerState.PAUSED || data === YT.PlayerState.BUFFERING) && onPause) onPause()
     if (data === YT.PlayerState.ENDED && onEnd) onEnd()
   })
+
+  // Detect seeking
+  let previousTime = youtubePlayer.getCurrentTime()
+  setInterval(() => {
+    const currentTime = youtubePlayer.getCurrentTime()
+
+    if (previousTime != null && currentTime != null && Math.abs(currentTime - previousTime) > 0.5) {
+      onSeek()
+    }
+
+    previousTime = currentTime
+  }, 250)
 
   const seekTo = seconds => {
     youtubePlayer.seekTo(seconds, true)
     youtubePlayer.playVideo()
   }
 
-  return { seekTo }
+  return { seekTo, getCurrentTime: () => youtubePlayer.getCurrentTime() }
 }

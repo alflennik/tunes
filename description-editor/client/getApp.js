@@ -48,16 +48,26 @@ const getApp = async () => {
 
   // getStartupDialog({ node: root.querySelector("[startup-dialog-node]") })
 
+  let renderAudioRef = { current: null }
+  let getAudioElementRef = { current: null }
+
+  const getAudioElementWhenAvailable = () => {
+    if (getAudioElementRef.current) return getAudioElementRef.current()
+  }
+
+  const audioElementListeners = []
+
   const [{ seekTo }, { ffmpeg, fetchFile, getMostRecentDurationSeconds }] = await Promise.all([
     getVideoPlayer({
       node: root.querySelector("#video-player"),
       getVideo: () => ({ id: "2e4oRKhilhA" }),
-      listenForChange: () => {},
+      getAudioElement: getAudioElementWhenAvailable,
+      listenForChange: callback => {
+        audioElementListeners.push(callback)
+      },
     }),
     getFFmpeg(),
   ])
-
-  let renderAudioRef = {}
 
   const { getDescriptions, getDefaultSsml } = getEditor({
     node: root.querySelector("#editor-container"),
@@ -65,13 +75,17 @@ const getApp = async () => {
     renderAudioRef,
   })
 
-  const { renderAudio } = getAudio({
+  const { renderAudio, getAudioElement } = getAudio({
     ffmpeg,
     fetchFile,
     getMostRecentDurationSeconds,
     getDefaultSsml,
     getDescriptions,
+    onAudioElementChange: () => {
+      audioElementListeners.forEach(callback => callback())
+    },
   })
 
   renderAudioRef.current = renderAudio
+  getAudioElementRef.current = getAudioElement
 }
