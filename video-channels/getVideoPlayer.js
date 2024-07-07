@@ -10,17 +10,60 @@ const getVideoPlayer = async ({
   listenForChange = null,
 }) => {
   node.innerHTML = /* HTML */ `<style>
-      #youtube-player {
+      .youtube-player-wrap {
         width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      #youtube-player {
       }
     </style>
-    <div id="youtube-player"></div> `
+    <div class="youtube-player-wrap">
+      <div id="youtube-player"></div>
+    </div>`
+
+  const refreshVideoDimensions = () => {
+    const youtubeContainer = node.querySelector("#youtube-player")
+
+    const { width: availableWidth, height: availableHeight } = node.getBoundingClientRect()
+    console.log("availableWidth", availableWidth, "availableHeight", availableHeight)
+    const availableRatio = availableWidth / availableHeight
+
+    const { aspectRatio } = getVideo()
+
+    let width
+    let height
+
+    const widthIsDominant = aspectRatio > availableRatio
+    if (widthIsDominant) {
+      width = availableWidth
+      height = availableWidth / aspectRatio
+    } else {
+      height = availableHeight
+      width = availableHeight * aspectRatio
+    }
+
+    console.log("width", width, "height", height)
+
+    youtubeContainer.style.width = `${width}px`
+    youtubeContainer.style.height = `${height}px`
+  }
+
+  window.addEventListener("resize", () => {
+    refreshVideoDimensions()
+  })
+
+  refreshVideoDimensions()
 
   let audioElement = getAudioElement()
   let duckingTimes = getDuckingTimes()
   // let audioCaptions = getAudioCaptions()
 
   listenForChange(() => {
+    refreshVideoDimensions()
+
     if (audioElement !== getAudioElement()) {
       if (audioElement) audioElement.pause() // Old audio element should not play
       audioElement = getAudioElement()
@@ -74,7 +117,7 @@ const getVideoPlayer = async ({
   setInterval(() => {
     const currentTime = getCurrentTime()
 
-    if (!(currentTime || duckingTimes)) return
+    if (!(currentTime && duckingTimes)) return
 
     const isDucking = duckingTimes.some(
       ({ time, timeEnd }) => currentTime >= time && currentTime <= timeEnd

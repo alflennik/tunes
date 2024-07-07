@@ -1,8 +1,15 @@
 const getVoiceClip = require("./getVoiceClip")
+const getVideoData = require("./getVideoData")
 
 const routeRequest = (req, res) => {
-  if (req.url === "/api/voice") {
+  const url = req.url.split("?")[0]
+
+  if (url === "/api/voice") {
     return getVoiceClip(req, res)
+  }
+
+  if (url === "/api/video-data") {
+    return getVideoData(req, res)
   }
 
   res.statusCode = 404

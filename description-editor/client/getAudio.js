@@ -135,7 +135,7 @@ const getAudio = ({
     allFiles.forEach(fileReference => {
       if (!fileReference.name.startsWith("silence")) return
 
-      const time = Number(fileReference.name.match(/^silence-(\d+\.\d)+/)[1])
+      const time = Number(fileReference.name.match(/^silence-(\d+(\.\d)?)+/)[1])
 
       if (allSilentClips.includes(time)) {
         silentClipsThatExist.push(time)
@@ -240,8 +240,8 @@ const getAudio = ({
     }
   }
 
-  // new Audio would be cleaner but there was a bug where audioElement.currentTime = 123 would
-  // always set the audio to 0. Having an audio element on the page fixes this.
+  // `new Audio()` would be cleaner but there was a bug where audioElement.currentTime = 123 would
+  // incorrectly set the audio.currentTime to 0 (??!) Using an audio element on the page fixes this.
   const div = document.createElement("div")
   div.innerHTML = /* HTML */ `<audio />`
   audioElement = div.querySelector("audio")

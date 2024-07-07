@@ -194,9 +194,10 @@ const getApp = async () => {
 
   appNode.querySelector("[okay-button]").addEventListener("click", async () => {
     const videoObject = await videosPromise
-    const videos = Object.entries(videoObject).map(([id, durationSeconds]) => ({
+    const videos = Object.entries(videoObject).map(([id, [durationSeconds, aspectRatio]]) => ({
       id,
       durationSeconds,
+      aspectRatio,
     }))
 
     dialog.classList.add("before-hiding")

@@ -2,8 +2,8 @@ const fetch = require("node-fetch")
 const fs = require("node:fs/promises")
 const path = require("node:path")
 
-const subscriptionKeyPromise = fs
-  .readFile(path.resolve(__dirname, "subscriptionKey.txt"), { encoding: "utf8" })
+const secretAzureKeyPromise = fs
+  .readFile(path.resolve(__dirname, "secretAzureKey.txt"), { encoding: "utf8" })
   .then(key => key.trim())
 
 const getVoiceClip = async (req, res) => {
@@ -13,7 +13,7 @@ const getVoiceClip = async (req, res) => {
     return
   }
 
-  const subscriptionKey = await subscriptionKeyPromise
+  const secretAzureKey = await secretAzureKeyPromise
 
   const fetchResponse = await fetch(
     "https://eastus.tts.speech.microsoft.com/cognitiveservices/v1",
@@ -22,7 +22,7 @@ const getVoiceClip = async (req, res) => {
       headers: {
         "X-Microsoft-OutputFormat": "riff-24khz-16bit-mono-pcm",
         "Content-Type": "application/ssml+xml",
-        "Ocp-Apim-Subscription-Key": subscriptionKey,
+        "Ocp-Apim-Subscription-Key": secretAzureKey,
       },
       body: req.rawBody,
     }

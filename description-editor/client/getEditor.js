@@ -4,7 +4,7 @@ const getEditor = ({ node, seekTo, renderAudio }) => {
   node.innerHTML = /* HTML */ `
     <style>
       #editor {
-        width: 440px;
+        width: 100%;
         background: #242424;
         display: flex;
         flex-direction: column;

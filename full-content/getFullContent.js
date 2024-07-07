@@ -6,7 +6,7 @@ const fetch = require("node-fetch")
 
 const getFullContent = async () => {
   const apiKey = await (
-    await fs.readFile(path.resolve(__dirname, "apiKey.txt"), { encoding: "utf-8" })
+    await fs.readFile(path.resolve(__dirname, "secretYouTubeKey.txt"), { encoding: "utf-8" })
   ).trim()
 
   const playlistQuery =

@@ -1,5 +1,5 @@
 node_modules
 .DS_Store
 site-hosting/public
-full-content/apiKey.txt
-subscriptionKey.txt
+secretYouTubeKey.txt
+secretAzureKey.txt
