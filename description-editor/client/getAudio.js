@@ -7,6 +7,9 @@ const getAudio = ({
   onAudioElementChange,
 }) => {
   let audioElement
+  let captions
+  let duckingTimes
+
   let currentAudioData
   const audioDataById = {}
 
@@ -111,8 +114,9 @@ const getAudio = ({
 
       const previousDescriptionOvershot = description.time <= currentTime
       if (previousDescriptionOvershot) {
-        currentTime = currentTime + duration
+        audioDataById[description.id].correctedTime = currentTime
         delete audioDataById[description.id].preceedingSilence
+        currentTime = currentTime + duration
         return
       }
 
@@ -214,20 +218,20 @@ const getAudio = ({
 
     const data = await ffmpeg.readFile("description.mp3")
 
-    const newAudioElement = new Audio()
+    captions = []
+    descriptions.forEach(description => {
+      const { correctedTime, durationSeconds } = audioDataById[description.id]
+      const time = correctedTime ?? description.time
+      const timeEnd = time + durationSeconds
+
+      captions.push({ text: description.text, time, timeEnd })
+    })
+
+    duckingTimes = captions.map(({ time, timeEnd }) => ({ time, timeEnd }))
 
     const previousAudioData = currentAudioData
-
     currentAudioData = URL.createObjectURL(new Blob([data.buffer], { type: "audio/mpeg" }))
-
-    newAudioElement.src = currentAudioData
-
-    audioElement = newAudioElement
-
-    await new Promise(resolve => {
-      console.log("loaded")
-      audioElement.addEventListener("loadedmetadata", resolve)
-    })
+    audioElement.src = currentAudioData
 
     onAudioElementChange()
 
@@ -236,5 +240,17 @@ const getAudio = ({
     }
   }
 
-  return { renderAudio, getAudioElement: () => audioElement }
+  // new Audio would be cleaner but there was a bug where audioElement.currentTime = 123 would
+  // always set the audio to 0. Having an audio element on the page fixes this.
+  const div = document.createElement("div")
+  div.innerHTML = /* HTML */ `<audio />`
+  audioElement = div.querySelector("audio")
+  document.body.insertAdjacentElement("afterbegin", div)
+
+  return {
+    renderAudio,
+    getAudioElement: () => audioElement,
+    getAudioCaptions: () => captions,
+    getDuckingTimes: () => duckingTimes,
+  }
 }

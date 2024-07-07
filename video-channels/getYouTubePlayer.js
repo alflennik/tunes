@@ -98,17 +98,21 @@ const getYouTubePlayer = async ({
   setInterval(() => {
     const currentTime = youtubePlayer.getCurrentTime()
 
-    if (previousTime != null && currentTime != null && Math.abs(currentTime - previousTime) > 0.5) {
+    if (previousTime != null && currentTime != null && Math.abs(currentTime - previousTime) > 0.2) {
       onSeek()
     }
 
     previousTime = currentTime
-  }, 250)
+  }, 100)
 
   const seekTo = seconds => {
     youtubePlayer.seekTo(seconds, true)
     youtubePlayer.playVideo()
   }
 
-  return { seekTo, getCurrentTime: () => youtubePlayer.getCurrentTime() }
+  const setVolume = number => {
+    youtubePlayer.setVolume(number * 100)
+  }
+
+  return { seekTo, getCurrentTime: () => youtubePlayer.getCurrentTime(), setVolume }
 }

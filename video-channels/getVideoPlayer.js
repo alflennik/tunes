@@ -5,6 +5,8 @@ const getVideoPlayer = async ({
   getStartSeconds = () => undefined,
   onEnd = null,
   getAudioElement,
+  // getAudioCaptions,
+  getDuckingTimes,
   listenForChange = null,
 }) => {
   node.innerHTML = /* HTML */ `<style>
@@ -15,11 +17,16 @@ const getVideoPlayer = async ({
     <div id="youtube-player"></div> `
 
   let audioElement = getAudioElement()
+  let duckingTimes = getDuckingTimes()
+  // let audioCaptions = getAudioCaptions()
 
   listenForChange(() => {
     if (audioElement !== getAudioElement()) {
-      if (audioElement) audioElement.pause()
+      if (audioElement) audioElement.pause() // Old audio element should not play
       audioElement = getAudioElement()
+      duckingTimes = getDuckingTimes()
+      // audioCaptions = getAudioCaptions()
+
       // Note that this will not work on iOS. But since iOS also does not support audio ducking,
       // the volume will actually need to be 1 (maximum) to overpower the music.
       audioElement.volume = 0.25
@@ -41,18 +48,16 @@ const getVideoPlayer = async ({
   let getCurrentTimeRef = { current: null }
 
   const onSeek = () => {
-    console.log("seeking", getCurrentTimeRef.current(), audioElement.duration)
     if (getCurrentTimeRef.current && audioElement) {
-      if (getCurrentTimeRef.current() <= audioElement.duration) {
+      if (getCurrentTimeRef.current() >= audioElement.duration) {
         audioElement.currentTime = audioElement.duration
       } else {
         audioElement.currentTime = getCurrentTimeRef.current()
-        console.log(audioElement.currentTime)
       }
     }
   }
 
-  const { seekTo, getCurrentTime } = await getYouTubePlayer({
+  const { seekTo, getCurrentTime, setVolume } = await getYouTubePlayer({
     youtubePlayerId: "youtube-player",
     startsMuted,
     getVideoId: () => getVideo().id,
@@ -63,6 +68,24 @@ const getVideoPlayer = async ({
     onPause,
     onSeek,
   })
+
+  const setVolumeGradually = setVolume // TODO
+
+  setInterval(() => {
+    const currentTime = getCurrentTime()
+
+    if (!(currentTime || duckingTimes)) return
+
+    const isDucking = duckingTimes.some(
+      ({ time, timeEnd }) => currentTime >= time && currentTime <= timeEnd
+    )
+
+    if (isDucking) {
+      setVolumeGradually(0.5)
+    } else {
+      setVolumeGradually(1)
+    }
+  }, 100)
 
   getCurrentTimeRef.current = getCurrentTime
 

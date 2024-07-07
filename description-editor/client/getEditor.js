@@ -1,4 +1,4 @@
-const getEditor = ({ node, seekTo, renderAudioRef }) => {
+const getEditor = ({ node, seekTo, renderAudio }) => {
   const getId = () => `id${Math.random().toString().substr(2, 9)}`
 
   node.innerHTML = /* HTML */ `
@@ -195,7 +195,7 @@ const getEditor = ({ node, seekTo, renderAudioRef }) => {
   }
 
   node.querySelector("[save-and-render]").addEventListener("click", () => {
-    renderAudioRef.current()
+    renderAudio()
   })
 
   window.addEventListener("beforeunload", preventLeave)

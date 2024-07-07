@@ -48,11 +48,22 @@ const getApp = async () => {
 
   // getStartupDialog({ node: root.querySelector("[startup-dialog-node]") })
 
-  let renderAudioRef = { current: null }
-  let getAudioElementRef = { current: null }
+  let audioRef = { current: null }
 
   const getAudioElementWhenAvailable = () => {
-    if (getAudioElementRef.current) return getAudioElementRef.current()
+    if (audioRef.current) return audioRef.current.getAudioElement()
+  }
+
+  const getAudioCaptionsWhenAvailable = () => {
+    if (audioRef.current) return audioRef.current.getDuckingTimes()
+  }
+
+  const getDuckingTimesWhenAvailable = () => {
+    if (audioRef.current) return audioRef.current.getAudioCaptions()
+  }
+
+  const renderAudioWhenAvailable = () => {
+    if (audioRef.current) return audioRef.current.renderAudio()
   }
 
   const audioElementListeners = []
@@ -62,6 +73,8 @@ const getApp = async () => {
       node: root.querySelector("#video-player"),
       getVideo: () => ({ id: "2e4oRKhilhA" }),
       getAudioElement: getAudioElementWhenAvailable,
+      getAudioCaptions: getAudioCaptionsWhenAvailable,
+      getDuckingTimes: getDuckingTimesWhenAvailable,
       listenForChange: callback => {
         audioElementListeners.push(callback)
       },
@@ -72,10 +85,10 @@ const getApp = async () => {
   const { getDescriptions, getDefaultSsml } = getEditor({
     node: root.querySelector("#editor-container"),
     seekTo,
-    renderAudioRef,
+    renderAudio: renderAudioWhenAvailable,
   })
 
-  const { renderAudio, getAudioElement } = getAudio({
+  const { renderAudio, getAudioElement, getAudioCaptions, getDuckingTimes } = getAudio({
     ffmpeg,
     fetchFile,
     getMostRecentDurationSeconds,
@@ -86,6 +99,5 @@ const getApp = async () => {
     },
   })
 
-  renderAudioRef.current = renderAudio
-  getAudioElementRef.current = getAudioElement
+  audioRef.current = { renderAudio, getAudioElement, getAudioCaptions, getDuckingTimes }
 }
