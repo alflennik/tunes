@@ -35,7 +35,7 @@ const getFFmpeg = async () => {
         Number(mentionedDuration[2]) * 60 +
         Number(mentionedDuration[3])
     }
-    console.log(message)
+    console.info(message)
   })
 
   ffmpeg.on("progress", ({ progress, time }) => {

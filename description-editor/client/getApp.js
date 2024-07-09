@@ -63,11 +63,11 @@ const getApp = async () => {
   }
 
   const getAudioCaptionsWhenAvailable = () => {
-    if (audioRef.current) return audioRef.current.getDuckingTimes()
+    if (audioRef.current) return audioRef.current.getAudioCaptions()
   }
 
   const getDuckingTimesWhenAvailable = () => {
-    if (audioRef.current) return audioRef.current.getAudioCaptions()
+    if (audioRef.current) return audioRef.current.getDuckingTimes()
   }
 
   const renderAudioWhenAvailable = () => {
@@ -81,7 +81,7 @@ const getApp = async () => {
       node: root.querySelector("#video-player"),
       getVideo: () => videoData,
       getAudioElement: getAudioElementWhenAvailable,
-      getAudioCaptions: getAudioCaptionsWhenAvailable,
+      getCaptions: getAudioCaptionsWhenAvailable,
       getDuckingTimes: getDuckingTimesWhenAvailable,
       listenForChange: callback => {
         audioElementListeners.push(callback)

@@ -39,6 +39,8 @@ const getAudio = ({
   }
 
   const renderAudio = async () => {
+    console.groupCollapsed("Rendering audio")
+
     const descriptions = getDescriptions()
 
     const renderAudioSemaphore = getSemaphore()
@@ -122,8 +124,10 @@ const getAudio = ({
 
       // Fix floating point by rounding to one decimal place
       const silenceNeeded = Math.round((description.time - currentTime) * 10) / 10
-      currentTime = description.time + duration
       audioDataById[description.id].preceedingSilence = silenceNeeded
+      delete audioDataById[description.id].correctedTime
+      currentTime = description.time + duration
+
       allSilentClips.push(silenceNeeded)
     })
 
@@ -135,7 +139,8 @@ const getAudio = ({
     allFiles.forEach(fileReference => {
       if (!fileReference.name.startsWith("silence")) return
 
-      const time = Number(fileReference.name.match(/^silence-(\d+(\.\d)?)+/)[1])
+      const timeMs = Number(fileReference.name.match(/^silence-(\d+)/)[1])
+      const time = timeMs / 1000
 
       if (allSilentClips.includes(time)) {
         silentClipsThatExist.push(time)
@@ -150,10 +155,14 @@ const getAudio = ({
       silentClipsToCreate.push(time)
     })
 
+    const formatTimeAsMs = time => {
+      return Math.round(time * 1000).toString()
+    }
+
     await Promise.all([
       Promise.all(
         silentClipsToDelete.map(time => {
-          ffmpeg.deleteFile(`silence-${time}`)
+          ffmpeg.deleteFile(`silence-${formatTimeAsMs(time)}.wav`)
         })
       ),
       Promise.all(
@@ -171,7 +180,7 @@ const getAudio = ({
             "24000",
             "-ac",
             "1",
-            `silence-${time}.wav`,
+            `silence-${formatTimeAsMs(time)}.wav`,
           ])
         })
       ),
@@ -181,12 +190,31 @@ const getAudio = ({
     descriptions.forEach(description => {
       const { preceedingSilence } = audioDataById[description.id]
       if (preceedingSilence) {
-        audioClipList += `file 'silence-${preceedingSilence}.wav'\n`
+        audioClipList += `file 'silence-${formatTimeAsMs(preceedingSilence)}.wav'\n`
       }
       audioClipList += `file '${description.id}.wav'\n`
     })
 
-    if (!audioClipList.length) return
+    captions = []
+    descriptions.forEach(description => {
+      const { correctedTime, durationSeconds } = audioDataById[description.id]
+      const time = correctedTime ?? description.time
+      const timeEnd = time + durationSeconds
+
+      captions.push({ text: description.text, time, timeEnd })
+    })
+
+    duckingTimes = captions.map(({ time, timeEnd }) => ({ time, timeEnd }))
+
+    if (!audioClipList.length) {
+      console.groupEnd()
+
+      audioElement.src = "/video-channels/none.mp3"
+
+      onAudioElementChange()
+
+      return
+    }
 
     await ffmpeg.writeFile("list.txt", audioClipList)
 
@@ -216,21 +244,10 @@ const getAudio = ({
 
     await ffmpeg.deleteFile("description.wav")
 
-    const data = await ffmpeg.readFile("description.mp3")
-
-    captions = []
-    descriptions.forEach(description => {
-      const { correctedTime, durationSeconds } = audioDataById[description.id]
-      const time = correctedTime ?? description.time
-      const timeEnd = time + durationSeconds
-
-      captions.push({ text: description.text, time, timeEnd })
-    })
-
-    duckingTimes = captions.map(({ time, timeEnd }) => ({ time, timeEnd }))
+    const mp3Data = await ffmpeg.readFile("description.mp3")
 
     const previousAudioData = currentAudioData
-    currentAudioData = URL.createObjectURL(new Blob([data.buffer], { type: "audio/mpeg" }))
+    currentAudioData = URL.createObjectURL(new Blob([mp3Data.buffer], { type: "audio/mpeg" }))
     audioElement.src = currentAudioData
 
     onAudioElementChange()
@@ -238,6 +255,8 @@ const getAudio = ({
     if (previousAudioData) {
       URL.revokeObjectURL(previousAudioData)
     }
+
+    console.groupEnd()
   }
 
   // `new Audio()` would be cleaner but there was a bug where audioElement.currentTime = 123 would

@@ -300,6 +300,7 @@ const getChannelPlayer = async ({ node, videos, channels, startsMuted }) => {
     // Eventually descriptions will come through here
     getAudioElement: () => null,
     getDuckingTimes: () => null,
+    getCaptions: () => null,
 
     listenForChange,
     onEnd: onVideoEnd,

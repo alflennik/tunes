@@ -11,9 +11,11 @@ const fullContent = /* <paste in the full content> */
 copy(
   JSON.stringify(
     Object.fromEntries(
-      fullContent.map(({ id, durationSeconds, aspectRatio }) => {
-        return [id, [durationSeconds, aspectRatio]]
-      })
+      fullContent
+        .filter(({ supportsEmbedding }) => supportsEmbedding)
+        .map(({ id, durationSeconds, aspectRatio }) => {
+          return [id, [durationSeconds, aspectRatio]]
+        })
     )
   )
 )

@@ -5,30 +5,53 @@ const getVideoPlayer = async ({
   getStartSeconds = () => undefined,
   onEnd = null,
   getAudioElement,
-  // getAudioCaptions,
+  getCaptions,
   getDuckingTimes,
   listenForChange = null,
 }) => {
   node.innerHTML = /* HTML */ `<style>
-      .youtube-player-wrap {
-        width: 100%;
+      .caption-container {
         height: 100%;
         display: flex;
-        align-items: center;
+        flex-direction: column;
         justify-content: center;
+        align-items: center;
+      }
+      .youtube-player-wrap {
+        font-size: 16px;
+      }
+      .active-caption {
+        line-height: 1.25em;
+        height: 4.4em;
+        padding: 0.5em 3em 0.25em;
+        overflow: hidden;
+        text-align: center;
+        font-size: 16px;
+        box-sizing: border-box;
       }
       #youtube-player {
+        display: block;
       }
     </style>
-    <div class="youtube-player-wrap">
-      <div id="youtube-player"></div>
+    <div class="caption-container">
+      <div class="youtube-player-wrap">
+        <div id="youtube-player"></div>
+      </div>
+      <div class="active-caption" active-caption></div>
     </div>`
+
+  const activeCaption = node.querySelector("[active-caption]")
 
   const refreshVideoDimensions = () => {
     const youtubeContainer = node.querySelector("#youtube-player")
 
-    const { width: availableWidth, height: availableHeight } = node.getBoundingClientRect()
-    console.log("availableWidth", availableWidth, "availableHeight", availableHeight)
+    const { width: availableWidth, height: availableHeightBeforeCaptions } =
+      node.getBoundingClientRect()
+
+    const captionsHeight = activeCaption.getBoundingClientRect().height
+
+    const availableHeight = availableHeightBeforeCaptions - captionsHeight
+
     const availableRatio = availableWidth / availableHeight
 
     const { aspectRatio } = getVideo()
@@ -45,8 +68,6 @@ const getVideoPlayer = async ({
       width = availableHeight * aspectRatio
     }
 
-    console.log("width", width, "height", height)
-
     youtubeContainer.style.width = `${width}px`
     youtubeContainer.style.height = `${height}px`
   }
@@ -57,24 +78,34 @@ const getVideoPlayer = async ({
 
   refreshVideoDimensions()
 
-  let audioElement = getAudioElement()
-  let duckingTimes = getDuckingTimes()
-  // let audioCaptions = getAudioCaptions()
+  let audioElement
+  let duckingTimes
+  let captions
 
-  listenForChange(() => {
+  const handleChange = () => {
     refreshVideoDimensions()
 
-    if (audioElement !== getAudioElement()) {
-      if (audioElement) audioElement.pause() // Old audio element should not play
-      audioElement = getAudioElement()
-      duckingTimes = getDuckingTimes()
-      // audioCaptions = getAudioCaptions()
-
+    audioElement = getAudioElement()
+    if (audioElement) {
       // Note that this will not work on iOS. But since iOS also does not support audio ducking,
       // the volume will actually need to be 1 (maximum) to overpower the music.
       audioElement.volume = 0.25
     }
-  })
+    duckingTimes = getDuckingTimes()
+
+    captions = getCaptions()
+    const hasCaptions = captions && captions.length
+
+    if (hasCaptions && activeCaption.style.display === "none") {
+      activeCaption.style.display = "block"
+    } else if (!hasCaptions && activeCaption.style.display !== "none") {
+      activeCaption.style.display = "none"
+    }
+  }
+
+  listenForChange(handleChange)
+
+  handleChange()
 
   const onPlay = () => {
     if (audioElement && getCurrentTimeRef.current() < audioElement.duration) {
@@ -117,16 +148,30 @@ const getVideoPlayer = async ({
   setInterval(() => {
     const currentTime = getCurrentTime()
 
-    if (!(currentTime && duckingTimes)) return
+    if (currentTime && duckingTimes) {
+      const isDucking = duckingTimes.some(
+        ({ time, timeEnd }) => currentTime >= time && currentTime <= timeEnd
+      )
 
-    const isDucking = duckingTimes.some(
-      ({ time, timeEnd }) => currentTime >= time && currentTime <= timeEnd
-    )
+      if (isDucking) {
+        setVolumeGradually(0.5)
+      } else {
+        setVolumeGradually(1)
+      }
+    }
 
-    if (isDucking) {
-      setVolumeGradually(0.5)
-    } else {
-      setVolumeGradually(1)
+    if (currentTime && captions) {
+      const caption = captions.find(
+        ({ time, timeEnd }) => currentTime >= time && currentTime <= timeEnd
+      )
+
+      if (activeCaption.innerText !== (caption ? caption.text : "")) {
+        if (caption) {
+          activeCaption.innerText = caption.text
+        } else {
+          activeCaption.innerText = ""
+        }
+      }
     }
   }, 100)
 

@@ -49,11 +49,13 @@ const server = http.createServer(async (req, res) => {
   if (isClientFile) {
     const clientPath = getClientPath()
 
-    const isBinaryFile = clientPath.endsWith(".wasm")
+    const isBinaryFile = clientPath.endsWith(".wasm") || clientPath.endsWith(".mp3")
 
     if (isBinaryFile) {
       if (clientPath.endsWith(".wasm")) {
         res.setHeader("Content-Type", "application/wasm")
+      } else if (clientPath.endsWith(".mp3")) {
+        res.setHeader("Content-Type", "application/mpeg")
       }
       res.statusCode = 200
       const stream = createReadStream(clientPath)
