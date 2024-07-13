@@ -96,6 +96,14 @@ const getApp = async () => {
       },
     }),
     getFFmpeg(),
+    (async () => {
+      const response = await fetch("/api/user")
+      const user = await response.json()
+      if (user) {
+        window.user = user
+      }
+      window.userListeners = []
+    })(),
   ])
 
   const { getDescriptions, getDefaultSsml } = getEditor({

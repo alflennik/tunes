@@ -1,5 +1,5 @@
-const getSignInModal = () => {
-  return getModal({
+const getSignInModal = ({ callback } = {}) => {
+  getModal({
     title: "Please Sign In",
     getBody: parentNode => {
       parentNode.innerHTML = /* HTML */ `
@@ -58,24 +58,26 @@ const getSignInModal = () => {
       signInWithGitHubElement.addEventListener("click", () => {
         window.open("/?/sign-in-with-github")
 
-        getConfirmSignInModal()
+        getConfirmSignInModal({ callback })
       })
 
       alreadySignedInElement.addEventListener("click", () => {
-        getConfirmSignInModal()
+        getConfirmSignInModal({ callback })
       })
     },
 
     actions: [
       {
         text: "Cancel",
-        action: () => {},
+        action: () => {
+          callback()
+        },
       },
     ],
   })
 }
 
-const getConfirmSignInModal = () => {
+const getConfirmSignInModal = ({ callback } = {}) => {
   return getModal({
     replacesExistingModals: true,
     title: "Did you sign in?",
@@ -89,6 +91,8 @@ const getConfirmSignInModal = () => {
           const user = await response.json()
           if (user) {
             window.user = user
+            window.userListeners?.forEach(listener => listener())
+            callback()
             return
           }
           return false
@@ -97,7 +101,7 @@ const getConfirmSignInModal = () => {
       {
         text: "Back",
         action: () => {
-          getSignInModal()
+          getSignInModal({ callback })
         },
       },
     ],

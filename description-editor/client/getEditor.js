@@ -29,6 +29,9 @@ const getEditor = ({ node, seekTo, renderAudio }) => {
         padding: 9px 15px 6px;
         border-radius: 4px;
         cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 8px;
       }
       .action-button:hover {
         background: #1b40bf;
@@ -37,8 +40,8 @@ const getEditor = ({ node, seekTo, renderAudio }) => {
         background: #1b3695;
       }
       .action-button svg {
-        width: 14px;
-        height: 14px;
+        width: 9px;
+        height: 9px;
         fill: white;
       }
     </style>
@@ -49,11 +52,31 @@ const getEditor = ({ node, seekTo, renderAudio }) => {
 
       <div id="actions">
         <button render-button type="button" class="action-button">Render</button>
-        <button save-button type="button" class="action-button">Save</button>
-        <button publish-button type="button" class="action-button">Publish</button>
+        <button save-button type="button" class="action-button">
+          Save
+          <svg aria-hidden warning-icon xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+            <!--!Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
+            <path
+              d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zm0-352a96 96 0 1 1 0 192 96 96 0 1 1 0-192z"
+            />
+          </svg>
+        </button>
+        <button publish-button type="button" class="action-button">
+          Publish
+          <svg aria-hidden warning-icon xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+            <!--!Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
+            <path
+              d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zm0-352a96 96 0 1 1 0 192 96 96 0 1 1 0-192z"
+            />
+          </svg>
+        </button>
       </div>
     </div>
   `
+
+  const renderButton = node.querySelector("[render-button]")
+  const saveButton = node.querySelector("[save-button]")
+  const publishButton = node.querySelector("[publish-button]")
 
   const descriptionsElement = node.querySelector("#descriptions")
   const descriptionStyleNode = node.querySelector("[description-style-node]")
@@ -177,9 +200,37 @@ const getEditor = ({ node, seekTo, renderAudio }) => {
     event.returnValue = true
   }
 
-  node.querySelector("[render-button]").addEventListener("click", () => {
+  renderButton.addEventListener("click", () => {
     renderAudio()
   })
+
+  saveButton.addEventListener("click", async () => {
+    await renderAudio()
+    getSignInModal()
+  })
+
+  publishButton.addEventListener("click", async () => {
+    await renderAudio()
+    if (!window.user) {
+      await new Promise(resolve => {
+        getSignInModal({ callback: resolve })
+      })
+    }
+    if (window.user) {
+      getTermsModal()
+    }
+  })
+
+  const handleUserChange = () => {
+    if (window.user) {
+      saveButton.querySelector("[warning-icon]").style.display = "none"
+    } else {
+      saveButton.querySelector("[warning-icon]").style.display = "block"
+    }
+  }
+
+  window.userListeners.push(handleUserChange)
+  handleUserChange()
 
   window.addEventListener("beforeunload", preventLeave)
 
