@@ -30,7 +30,8 @@ const server = http.createServer(async (req, res) => {
   }
 
   const getClientPath = () => {
-    const url = req.url.endsWith("/") ? `${req.url}index.html` : req.url
+    const [pathPart] = req.url.split("?")
+    const url = pathPart.endsWith("/") ? `${pathPart}index.html` : pathPart
 
     if (url.startsWith("/video-channels/")) {
       return path.join(__dirname, "../video-channels", url.slice(16))

@@ -165,6 +165,7 @@ const getVideoPlayer = async ({
         ({ time, timeEnd }) => currentTime >= time && currentTime <= timeEnd
       )
 
+      // Must use innerText to prevent XSS
       if (activeCaption.innerText !== (caption ? caption.text : "")) {
         if (caption) {
           activeCaption.innerText = caption.text

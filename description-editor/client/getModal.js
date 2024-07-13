@@ -1,6 +1,6 @@
 let styleNode
 
-const getModal = ({ title, body, actions }) => {
+const getModal = ({ title, getBody, body, actions, replacesExistingModals = false }) => {
   const id = `id${Math.random().toString().substr(2, 9)}`
 
   if (!styleNode) {
@@ -34,6 +34,11 @@ const getModal = ({ title, body, actions }) => {
         .modal .body {
           padding: 0 24px 24px;
           border-bottom: 4px solid #1e1e1e;
+          font-size: 16px;
+          line-height: 1.25;
+        }
+        .modal .body a {
+          color: #6a8cff;
         }
         .modal .actions {
           padding: 10px 24px;
@@ -52,7 +57,7 @@ const getModal = ({ title, body, actions }) => {
           border-radius: 4px;
           background: #424242;
         }
-        .modal .actions button:first-of-type {
+        .modal .actions button.primary {
           background: #2d52ce;
         }
       </style>
@@ -62,22 +67,31 @@ const getModal = ({ title, body, actions }) => {
   const node = document.createElement("div")
 
   node.setAttribute("id", id)
+  node.setAttribute("modal-instance", "")
   node.setAttribute("class", "modal-shade")
   node.innerHTML = /* HTML */ `
     <div class="modal">
       <div class="title">
         <h1>${title}</h1>
       </div>
-      <div class="body">${body}</div>
+      <div modal-body class="body"></div>
       <div actions class="actions"></div>
     </div>
   `
 
   const actionsNode = node.querySelector("[actions]")
+  const modalBody = node.querySelector("[modal-body]")
 
-  actions.forEach(({ text, action }, index) => {
+  if (body) {
+    modalBody.innerHTML = body
+  } else if (getBody) {
+    getBody(modalBody)
+  }
+
+  actions.forEach(({ text, action, isPrimary }, index) => {
     const button = document.createElement("button")
-    button.setAttribute("type", "button")
+
+    if (isPrimary) button.classList.add("primary")
 
     const isFirst = index === 0
     if (isFirst) {
@@ -94,10 +108,21 @@ const getModal = ({ title, body, actions }) => {
     button.innerHTML = text
 
     button.addEventListener("click", async () => {
-      if (action) await action()
-      node.remove()
+      let shouldClose
+      if (action) {
+        shouldClose = await action()
+      }
+      if (shouldClose !== false) {
+        node.remove()
+      }
     })
   })
+
+  if (replacesExistingModals) {
+    Array.from(document.querySelectorAll("[modal-instance]")).forEach(element => {
+      element.remove()
+    })
+  }
 
   document.body.appendChild(node)
 

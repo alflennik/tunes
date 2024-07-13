@@ -21,7 +21,7 @@ const getEditor = ({ node, seekTo, renderAudio }) => {
         align-items: center;
         background: #323232;
       }
-      .save-and-render {
+      .action-button {
         background: #2d52ce;
         color: white;
         border: none;
@@ -30,34 +30,16 @@ const getEditor = ({ node, seekTo, renderAudio }) => {
         border-radius: 4px;
         cursor: pointer;
       }
-      .save-and-render:hover {
+      .action-button:hover {
         background: #1b40bf;
       }
-      .save-and-render:active {
+      .action-button:active {
         background: #1b3695;
       }
-      .save-and-render svg {
+      .action-button svg {
         width: 14px;
         height: 14px;
         fill: white;
-      }
-      .publish-button {
-        color: white;
-        background: #333;
-        border: none;
-        cursor: pointer;
-        padding: 6px 12px;
-        font-family: monospace;
-        border-radius: 4px;
-        border: 2px dashed #5b5b5b;
-        font-weight: bold;
-        transition: background 200ms;
-      }
-      .publish-button:hover {
-        background: #222;
-      }
-      .publish-button:active {
-        background: #111;
       }
     </style>
     <div description-gap-style-node></div>
@@ -66,8 +48,9 @@ const getEditor = ({ node, seekTo, renderAudio }) => {
       <div id="descriptions"></div>
 
       <div id="actions">
-        <button save-and-render type="button" class="save-and-render">Save and Render</button>
-        <button type="button" class="publish-button">Unpublished</button>
+        <button render-button type="button" class="action-button">Render</button>
+        <button save-button type="button" class="action-button">Save</button>
+        <button publish-button type="button" class="action-button">Publish</button>
       </div>
     </div>
   `
@@ -194,7 +177,7 @@ const getEditor = ({ node, seekTo, renderAudio }) => {
     event.returnValue = true
   }
 
-  node.querySelector("[save-and-render]").addEventListener("click", () => {
+  node.querySelector("[render-button]").addEventListener("click", () => {
     renderAudio()
   })
 

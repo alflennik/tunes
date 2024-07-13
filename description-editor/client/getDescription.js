@@ -168,6 +168,7 @@ const getDescription = ({
       actions: [
         {
           text: "Okay",
+          isPrimary: true,
           action: () => {
             const previousId = deleteDescription(id)
             if (previousId) {
@@ -205,6 +206,7 @@ const getDescription = ({
           actions: [
             {
               text: "Okay",
+              isPrimary: true,
               action: () => {
                 removeSsml()
                 ssmlCheckbox.focus()

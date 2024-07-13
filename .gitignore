@@ -3,3 +3,5 @@ node_modules
 site-hosting/public
 secretYouTubeKey.txt
 secretAzureKey.txt
+secretGithub.txt
+secretJwt.txt

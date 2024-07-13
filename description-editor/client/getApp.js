@@ -1,4 +1,12 @@
 const getApp = async () => {
+  if (location.href.endsWith("/?/sign-in-with-github")) {
+    getSignInPage()
+    return
+  } else if (location.href.endsWith("/?/signed-in-with-github")) {
+    getSignedInPage()
+    return
+  }
+
   const root = document.querySelector("#root")
   root.innerHTML = /* HTML */ `
     <style>
