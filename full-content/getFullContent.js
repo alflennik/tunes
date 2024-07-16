@@ -1,3 +1,5 @@
+// This can be run with node to populate the fullContent.json file
+
 // TODO: check for and remove videos where embedding is disabled
 
 const fs = require("node:fs/promises")
@@ -102,7 +104,7 @@ const getFullContent = async () => {
             viewCount: video.statistics.viewCount,
           },
         ],
-        tags: video.snippet.tags,
+        // tags: video.snippet.tags,
       }))
     )
   }
