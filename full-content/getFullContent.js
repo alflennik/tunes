@@ -89,7 +89,9 @@ const getFullContent = async () => {
           video.contentDetails.caption === true || video.contentDetails.caption === "true",
         defaultLanguage: video.snippet.defaultLanguage ?? null,
         defaultAudioLanguage: video.snippet.defaultAudioLanguage ?? null,
-        supportsEmbedding: video.status.embeddable,
+        supportsEmbedding:
+          video.status.embeddable &&
+          !(video.contentDetails?.contentRating?.ytRating === "ytAgeRestricted"),
         // Order of size
         thumbnailSrc: (
           video.snippet.thumbnails.maxres ||
