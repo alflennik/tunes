@@ -13,7 +13,7 @@ const getApp = async () => {
       [app-node],
       [player-node],
       .player-container,
-      [video-player-node] {
+      .video-player {
         height: 100%;
       }
       body {
@@ -23,7 +23,7 @@ const getApp = async () => {
       }
       button,
       .button-link {
-        background: black;
+        background: #545454;
         border: none;
         border-radius: 4px;
         color: white;

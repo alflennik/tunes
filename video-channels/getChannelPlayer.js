@@ -42,9 +42,14 @@ const getChannelPlayer = async ({ node, videos, channels, startsMuted }) => {
         border-top: 1px solid black;
         border-bottom: 1px solid black;
         border-radius: 4px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
       }
-      [video-player-node] {
-        height: calc(100% - 40px);
+      .video-player {
+        width: 100%;
+        height: calc(100% - 45px);
       }
       #youtube-player {
         width: 100%;
@@ -52,10 +57,32 @@ const getChannelPlayer = async ({ node, videos, channels, startsMuted }) => {
       }
       .player-buttons {
         font-family: monospace;
-        padding: 0 12px;
+        background: #393939;
+        padding: 5px 5px 5px 12px;
+        border-radius: 6px;
+        margin: 5px 0;
+        display: flex;
+        gap: 5px;
+        align-items: center;
       }
       .channel-label {
-        margin-right: 5px;
+        margin-right: 7px;
+      }
+      .player-buttons .divider {
+        width: 4px;
+        height: 100%;
+        position: relative;
+        margin: 0 5px;
+      }
+      .player-buttons .divider::before {
+        position: absolute;
+        content: "";
+        display: block;
+        top: -5px;
+        background: #2e2e2e;
+        bottom: -5px;
+        left: 0px;
+        right: 0px;
       }
       .channel-indicator {
         display: inline-block;
@@ -116,7 +143,7 @@ const getChannelPlayer = async ({ node, videos, channels, startsMuted }) => {
     </style>
 
     <div class="player-container">
-      <div video-player-node></div>
+      <div video-player-node class="video-player"></div>
       <div class="player-buttons">
         <span class="channel-label">Channel</span>
         <span channel-indicator class="channel-indicator"></span>
@@ -138,7 +165,7 @@ const getChannelPlayer = async ({ node, videos, channels, startsMuted }) => {
           </svg>
           <span class="sr-only">Channel Down</span>
         </button>
-        &nbsp;|&nbsp;
+        <div class="divider"></div>
         <button restart type="button" title="Restart">
           <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
             <!--!Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
