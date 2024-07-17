@@ -43,6 +43,10 @@ const getVideoPlayer = async ({
 
   const activeCaption = node.querySelector("[active-caption]")
 
+  let audioElement
+  let duckingTimes
+  let captions
+
   const refreshVideoDimensions = () => {
     const youtubeContainer = node.querySelector("#youtube-player")
 
@@ -77,12 +81,6 @@ const getVideoPlayer = async ({
     refreshVideoDimensions()
   })
 
-  refreshVideoDimensions()
-
-  let audioElement
-  let duckingTimes
-  let captions
-
   const handleChange = () => {
     refreshVideoDimensions()
 
@@ -107,6 +105,8 @@ const getVideoPlayer = async ({
   listenForChange(handleChange)
 
   handleChange()
+
+  refreshVideoDimensions()
 
   const onPlay = () => {
     if (audioElement && getCurrentTimeRef.current() < audioElement.duration) {
