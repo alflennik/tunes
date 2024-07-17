@@ -12,6 +12,7 @@ const nonAssetLocations = [
   "experiment-shoelace-style",
   "experiment-tree",
   "description-editor",
+  "descriptions",
   "full-content",
   "site-hosting",
 ]
