@@ -1,4 +1,4 @@
-const getEditor = ({ node, seekTo, renderAudio }) => {
+const getEditor = ({ node, seekTo, getVideo, renderAudio, getAudioCaptions, getDuckingTimes }) => {
   const getId = () => `id${Math.random().toString().substr(2, 9)}`
 
   node.innerHTML = /* HTML */ `
@@ -206,7 +206,22 @@ const getEditor = ({ node, seekTo, renderAudio }) => {
 
   saveButton.addEventListener("click", async () => {
     await renderAudio()
-    getSignInModal()
+
+    if (!window.user) {
+      await new Promise(resolve => {
+        getSignInModal({ callback: resolve })
+      })
+    }
+
+    await fetch("/api/save", {
+      method: "POST",
+      body: JSON.stringify({
+        videoId: getVideo().id,
+        descriptions: getDescriptions(),
+        captions: getAudioCaptions(),
+        duckingTimes: getDuckingTimes(),
+      }),
+    })
   })
 
   publishButton.addEventListener("click", async () => {

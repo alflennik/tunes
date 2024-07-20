@@ -70,7 +70,7 @@ const getSignInModal = ({ callback } = {}) => {
       {
         text: "Cancel",
         action: () => {
-          callback()
+          if (callback) callback()
         },
       },
     ],
@@ -92,7 +92,7 @@ const getConfirmSignInModal = ({ callback } = {}) => {
           if (user) {
             window.user = user
             window.userListeners?.forEach(listener => listener())
-            callback()
+            if (callback) callback()
             return
           }
           return false

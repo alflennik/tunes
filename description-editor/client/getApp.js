@@ -61,6 +61,7 @@ const getApp = async () => {
 
   const videoDataResponse = await fetch(`/api/video-data?videoId=${videoId}`)
   const videoData = await videoDataResponse.json()
+  const getVideo = () => videoData
 
   // getStartupDialog({ node: root.querySelector("[startup-dialog-node]") })
 
@@ -87,7 +88,7 @@ const getApp = async () => {
   const [{ seekTo }, { ffmpeg, fetchFile, getMostRecentDurationSeconds }] = await Promise.all([
     getVideoPlayer({
       node: root.querySelector("#video-player"),
-      getVideo: () => videoData,
+      getVideo,
       getAudioElement: getAudioElementWhenAvailable,
       getCaptions: getAudioCaptionsWhenAvailable,
       getDuckingTimes: getDuckingTimesWhenAvailable,
@@ -109,6 +110,9 @@ const getApp = async () => {
   const { getDescriptions, getDefaultSsml } = getEditor({
     node: root.querySelector("#editor-container"),
     seekTo,
+    getVideo,
+    getAudioCaptions: getAudioCaptionsWhenAvailable,
+    getDuckingTimes: getDuckingTimesWhenAvailable,
     renderAudio: renderAudioWhenAvailable,
   })
 

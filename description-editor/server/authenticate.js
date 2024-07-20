@@ -6,7 +6,7 @@ const path = require("node:path")
 const githubClientId = "Ov23liODge1a702eMeww"
 
 const githubSecretPromise = fs
-  .readFile(path.resolve(__dirname, "secretGithub.txt"), { encoding: "utf8" })
+  .readFile(path.resolve(__dirname, "secretGithubApp.txt"), { encoding: "utf8" })
   .then(key => key.trim())
 
 const jwtSecretPromise = fs
@@ -20,12 +20,6 @@ const githubPreAuthentication = (req, res) => {
       "&redirect_uri=http://localhost:8999/api/github-post-authentication",
   })
   res.end()
-}
-
-const getSetCookieHeader = ({ username, jwtSecret }) => {
-  const jwt = jsonWebToken.sign({ username }, jwtSecret)
-  const expireDate = new Date(Date.now() + 400 * 24 * 60 * 60 * 1000).toUTCString()
-  return `jwt=${jwt}; Expires=${expireDate}; SameSite=Strict; HttpOnly;`
 }
 
 const githubPostAuthentication = async (req, res) => {
@@ -59,17 +53,20 @@ const githubPostAuthentication = async (req, res) => {
 const getUser = async (req, res) => {
   const jwtSecret = await jwtSecretPromise
 
-  let rawJwt = req.headers.cookie?.match(/^jwt=(.+)$/)?.[1]
+  let error
 
-  let jwt
-  if (rawJwt) {
-    try {
-      jwt = jsonWebToken.verify(rawJwt, jwtSecret)
-    } catch (error) {
-      console.error(error)
-      res.statusCode = 401
-      res.end()
-    }
+  const jwt = readCookie({
+    cookie: req.headers.cookie,
+    jwtSecret,
+    onError: e => {
+      error = e
+    },
+  })
+
+  if (error) {
+    console.error(e)
+    res.statusCode = 401
+    res.end(JSON.stringify(null))
   }
 
   if (!jwt) {
@@ -85,4 +82,26 @@ const getUser = async (req, res) => {
   res.end(JSON.stringify(jwt))
 }
 
-module.exports = { githubPreAuthentication, githubPostAuthentication, getUser }
+const readCookie = ({ cookie, jwtSecret, onError }) => {
+  let rawJwt = cookie?.match(/^jwt=([\w-\.]+)/)?.[1]
+
+  let jwt
+  if (rawJwt) {
+    try {
+      jwt = jsonWebToken.verify(rawJwt, jwtSecret)
+    } catch (error) {
+      if (onError) onError(error)
+      return
+    }
+  }
+
+  return jwt
+}
+
+const getSetCookieHeader = ({ username, jwtSecret }) => {
+  const jwt = jsonWebToken.sign({ username }, jwtSecret)
+  const expireDate = new Date(Date.now() + 400 * 24 * 60 * 60 * 1000).toUTCString()
+  return `jwt=${jwt}; Expires=${expireDate}; SameSite=Strict; HttpOnly;`
+}
+
+module.exports = { githubPreAuthentication, githubPostAuthentication, getUser, readCookie }
