@@ -1,9 +1,12 @@
-const editDescriptions = () => {
+const editDescriptions = async ({ savedDescriptions }) => {
   const getId = () => `id${Math.random().toString().slice(2, 9)}`
 
   const cloneData = data => JSON.parse(JSON.stringify(data))
 
-  let descriptions = []
+  let descriptions = savedDescriptions ?? []
+
+  await loadObjectHash()
+  const getDescriptionsHash = () => objectHash(descriptions)
 
   const sortDescriptions = () => {
     descriptions.sort((a, b) => a.time - b.time)
@@ -12,7 +15,7 @@ const editDescriptions = () => {
   const history = []
 
   const addToHistory = () => {
-    history.push(cloneData(descriptions))
+    history.push({ hash: getDescriptionsHash(), descriptions: cloneData(descriptions) })
     if (history.length >= 200) {
       history.splice(0, 1)
     }
@@ -25,6 +28,8 @@ const editDescriptions = () => {
 
   return {
     getDescriptions: () => descriptions,
+
+    getDescriptionsHash,
 
     onDescriptionsChange: listener => {
       listeners.push(listener)
@@ -60,4 +65,21 @@ const editDescriptions = () => {
       return previousId
     },
   }
+}
+
+const loadObjectHash = async () => {
+  const scriptElement = document.createElement("script")
+  scriptElement.src = "/node_modules/object-hash/dist/object_hash.js"
+  const firstScriptTag = document.getElementsByTagName("script")[0]
+  firstScriptTag.parentNode.insertBefore(scriptElement, firstScriptTag)
+  // Waiting for the script's "load" event didn't work so polling is necessary instead
+  await new Promise(resolve => {
+    const intervalId = setInterval(() => {
+      if (typeof objectHash === "function") {
+        clearInterval(intervalId)
+        resolve()
+      }
+    }, 3)
+  })
+  // objectHash is now a global variable
 }

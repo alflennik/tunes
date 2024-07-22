@@ -5,6 +5,7 @@ const getAudio = ({
   getDescriptions,
   getDefaultSsml,
   onAudioElementChange,
+  onAudioStatusChange,
 }) => {
   let audioElement
   let captions
@@ -38,7 +39,19 @@ const getAudio = ({
     }
   }
 
+  let status
+
+  const updateStatus = newStatus => {
+    if (status !== newStatus) {
+      status = newStatus
+      onAudioStatusChange()
+    }
+  }
+
   const renderAudio = async () => {
+    if (status === "rendering") return
+    updateStatus("rendering")
+
     console.groupCollapsed("Rendering audio")
 
     const descriptions = getDescriptions()
@@ -213,6 +226,8 @@ const getAudio = ({
 
       onAudioElementChange()
 
+      updateStatus("done")
+
       return
     }
 
@@ -252,6 +267,8 @@ const getAudio = ({
 
     onAudioElementChange()
 
+    updateStatus("done")
+
     if (previousAudioData) {
       URL.revokeObjectURL(previousAudioData)
     }
@@ -268,6 +285,7 @@ const getAudio = ({
 
   return {
     renderAudio,
+    getAudioStatus: () => status,
     getAudioElement: () => audioElement,
     getAudioCaptions: () => captions,
     getDuckingTimes: () => duckingTimes,

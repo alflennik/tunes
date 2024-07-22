@@ -1,7 +1,7 @@
 const getVoiceClip = require("./getVoiceClip")
 const getVideoData = require("./getVideoData")
 const { githubPreAuthentication, githubPostAuthentication, getUser } = require("./authenticate")
-const { save } = require("./persist")
+const { save, load } = require("./persist")
 
 const routeRequest = (req, res) => {
   const url = req.url.split("?")[0]
@@ -28,6 +28,10 @@ const routeRequest = (req, res) => {
 
   if (url === "/api/save" && req.method === "POST") {
     return save(req, res)
+  }
+
+  if (url === "/api/load" && req.method === "GET") {
+    return load(req, res)
   }
 
   res.statusCode = 404

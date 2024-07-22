@@ -1,4 +1,14 @@
-const getEditor = ({ node, seekTo, getVideo, renderAudio, getAudioCaptions, getDuckingTimes }) => {
+const getEditor = async ({
+  node,
+  seekTo,
+  getVideo,
+  renderAudio,
+  getAudioCaptions,
+  getDuckingTimes,
+  getSavedContent,
+  getAudioStatus,
+  watchAudioStatus,
+}) => {
   const getId = () => `id${Math.random().toString().substr(2, 9)}`
 
   node.innerHTML = /* HTML */ `
@@ -14,69 +24,15 @@ const getEditor = ({ node, seekTo, getVideo, renderAudio, getAudioCaptions, getD
         overflow-y: scroll;
         padding: 7px 0;
       }
-      #actions {
-        padding: 20px;
-        display: flex;
-        gap: 10px;
-        align-items: center;
-        background: #323232;
-      }
-      .action-button {
-        background: #2d52ce;
-        color: white;
-        border: none;
-        font-family: monospace;
-        padding: 9px 15px 6px;
-        border-radius: 4px;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-      }
-      .action-button:hover {
-        background: #1b40bf;
-      }
-      .action-button:active {
-        background: #1b3695;
-      }
-      .action-button svg {
-        width: 9px;
-        height: 9px;
-        fill: white;
-      }
     </style>
     <div description-gap-style-node></div>
     <div description-style-node></div>
     <div id="editor">
       <div id="descriptions"></div>
 
-      <div id="actions">
-        <button render-button type="button" class="action-button">Render</button>
-        <button save-button type="button" class="action-button">
-          Save
-          <svg aria-hidden warning-icon xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-            <!--!Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
-            <path
-              d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zm0-352a96 96 0 1 1 0 192 96 96 0 1 1 0-192z"
-            />
-          </svg>
-        </button>
-        <button publish-button type="button" class="action-button">
-          Publish
-          <svg aria-hidden warning-icon xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-            <!--!Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
-            <path
-              d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zm0-352a96 96 0 1 1 0 192 96 96 0 1 1 0-192z"
-            />
-          </svg>
-        </button>
-      </div>
+      <div editor-controls-container></div>
     </div>
   `
-
-  const renderButton = node.querySelector("[render-button]")
-  const saveButton = node.querySelector("[save-button]")
-  const publishButton = node.querySelector("[publish-button]")
 
   const descriptionsElement = node.querySelector("#descriptions")
   const descriptionStyleNode = node.querySelector("[description-style-node]")
@@ -84,14 +40,30 @@ const getEditor = ({ node, seekTo, getVideo, renderAudio, getAudioCaptions, getD
 
   const {
     getDescriptions,
+    getDescriptionsHash,
     onDescriptionsChange,
     createDescription,
     updateDescription,
     deleteDescription,
-  } = editDescriptions()
+  } = await editDescriptions({ savedDescriptions: getSavedContent()?.descriptions })
+
+  const editorControlsContainer = node.querySelector("[editor-controls-container]")
+  getEditorControls({
+    node: editorControlsContainer,
+    renderAudio,
+    getAudioStatus,
+    watchAudioStatus,
+    getDescriptionsHash,
+    getSavedContent,
+    getVideo,
+    getDescriptions,
+    getAudioCaptions,
+    getDuckingTimes,
+    onDescriptionsChange,
+  })
 
   const getDefaultSsml = description => {
-    return `<prosody rate="+40%">${description.text}</prosody>`
+    return `<prosody rate="+40%">${description.text || "no content"}</prosody>`
   }
 
   let firstGapId
@@ -196,57 +168,11 @@ const getEditor = ({ node, seekTo, getVideo, renderAudio, getAudioCaptions, getD
   onDescriptionsChange(handleDescriptionsChange)
 
   const preventLeave = event => {
-    event.preventDefault()
-    event.returnValue = true
-  }
-
-  renderButton.addEventListener("click", () => {
-    renderAudio()
-  })
-
-  saveButton.addEventListener("click", async () => {
-    await renderAudio()
-
-    if (!window.user) {
-      await new Promise(resolve => {
-        getSignInModal({ callback: resolve })
-      })
-    }
-
-    await fetch("/api/save", {
-      method: "POST",
-      body: JSON.stringify({
-        videoId: getVideo().id,
-        descriptions: getDescriptions(),
-        captions: getAudioCaptions(),
-        duckingTimes: getDuckingTimes(),
-      }),
-    })
-  })
-
-  publishButton.addEventListener("click", async () => {
-    await renderAudio()
-    if (!window.user) {
-      await new Promise(resolve => {
-        getSignInModal({ callback: resolve })
-      })
-    }
-    if (window.user) {
-      getTermsModal()
-    }
-  })
-
-  const handleUserChange = () => {
-    if (window.user) {
-      saveButton.querySelector("[warning-icon]").style.display = "none"
-    } else {
-      saveButton.querySelector("[warning-icon]").style.display = "block"
+    if (currentSavedDescriptionsHash !== getDescriptionsHash() && !getSavedContent().isDemoVideo) {
+      event.preventDefault()
+      event.returnValue = true
     }
   }
-
-  window.userListeners.push(handleUserChange)
-  handleUserChange()
-
   window.addEventListener("beforeunload", preventLeave)
 
   return { getDescriptions, getDefaultSsml }

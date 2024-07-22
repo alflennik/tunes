@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "object-hash": "^3.0.0"
+  }
+}

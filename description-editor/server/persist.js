@@ -12,16 +12,8 @@ const jwtSecretPromise = fs
   .then(key => key.trim())
 
 const save = async (req, res) => {
-  const jwtSecret = await jwtSecretPromise
-
-  const jwt = readCookie({ cookie: req.headers.cookie, jwtSecret })
-
-  if (!jwt) {
-    res.statusCode = 401
-    res.end(JSON.stringify(null))
-  }
-
-  const { username } = jwt
+  const { username } = await ensureLogin(req, res)
+  if (!username) return
 
   await loadRepos()
 
@@ -29,6 +21,11 @@ const save = async (req, res) => {
     const repoPath = path.resolve(__dirname, "descriptionRepoPrivate")
 
     const { videoId, descriptions, captions, duckingTimes } = JSON.parse(req.rawBody)
+
+    if (videoId.match(/^[\w-]$/) || videoId.length > 15) {
+      res.statusCode = 400
+      res.end("null")
+    }
 
     await new Promise(resolve => exec("git pull", { cwd: repoPath }, resolve))
 
@@ -44,11 +41,6 @@ const save = async (req, res) => {
 
     await new Promise(resolve => exec("git add .", { cwd: repoPath }, resolve))
 
-    if (videoId.match(/^[\w-]$/)) {
-      res.statusCode = 400
-      res.end("null")
-    }
-
     const message = `${username} edited ${videoId}`
     await new Promise(resolve => exec(`git commit -m "${message}"`, { cwd: repoPath }, resolve))
 
@@ -57,6 +49,56 @@ const save = async (req, res) => {
 
   res.statusCode = 200
   res.end()
+}
+
+const load = async (req, res) => {
+  const repoPath = path.resolve(__dirname, "descriptionRepoPrivate")
+
+  const { username } = await ensureLogin(req, res)
+  if (!username) return
+
+  const videoId = req.url.match(/videoId=([\w-]+)/)?.[1]
+
+  await loadRepos()
+
+  const jsonPath = path.join(
+    repoPath,
+    getDescriptionDirectory({ videoId, username }),
+    "description.json"
+  )
+
+  let descriptionExists
+  try {
+    await fs.access(jsonPath, fs.constants.F_OK)
+    descriptionExists = true
+  } catch (error) {
+    descriptionExists = false
+  }
+
+  if (!descriptionExists) {
+    res.statusCode = 200
+    res.end("null")
+    return
+  }
+
+  const jsonText = await fs.readFile(jsonPath, { encoding: "utf8" })
+
+  res.statusCode = 200
+  res.end(jsonText)
+}
+
+const ensureLogin = async (req, res) => {
+  const jwtSecret = await jwtSecretPromise
+
+  const jwt = readCookie({ cookie: req.headers.cookie, jwtSecret })
+
+  if (!jwt) {
+    res.statusCode = 401
+    res.end(JSON.stringify(null))
+    return {}
+  }
+
+  return jwt
 }
 
 const loadRepos = async () => {
@@ -111,9 +153,11 @@ const getDescriptionDirectory = ({ videoId, username }) => {
 
   const iterations = Math.ceil(videoId.length / 2)
 
+  let charIndex = 0
   for (let i = 0; i < iterations; i += 1) {
-    const firstChar = videoId[i]
-    const secondChar = videoId[i + 1] ?? ""
+    const firstChar = videoId[charIndex]
+    const secondChar = videoId[charIndex + 1] ?? ""
+    charIndex += 2
     const segment = `${firstChar}${secondChar}/`.replace(/([A-Z])/g, "^$1").toLowerCase()
     path += segment
   }
@@ -123,4 +167,4 @@ const getDescriptionDirectory = ({ videoId, username }) => {
   return path
 }
 
-module.exports = { save }
+module.exports = { save, load }
