@@ -21,10 +21,10 @@ const getEditorControls = ({
         display: flex;
         gap: 10px;
         align-items: center;
-        background: #323232;
+        background: #333;
       }
       .editor-controls-button {
-        background: #2d52ce;
+        background: #4b4b4b;
         color: white;
         border: none;
         font-family: monospace;
@@ -35,12 +35,13 @@ const getEditorControls = ({
         align-items: center;
         gap: 12px;
         border: 2px solid transparent;
+        transition: background 200ms linear;
       }
       .editor-controls-button:hover {
-        background: #1b40bf;
+        background: #424242;
       }
       .editor-controls-button:active {
-        background: #1b3695;
+        background: #3b3b3b;
       }
       .editor-controls-button svg {
         width: 12px;
@@ -57,16 +58,38 @@ const getEditorControls = ({
         background: gray;
       }
       .editor-controls-button.done, .editor-controls-button.working {
-        background: #424242;
+        background: #383838;
         color: #f4f4f4;
-        border: 2px dashed #5a5a5a;
+        border: 2px dashed #444444;
         cursor: default;
       }
       .editor-controls-button.done:hover, .editor-controls-button.working:hover{
-        background: #424242;
+        background: #383838;
       }
       .editor-controls-button.done:active, .editor-controls-button.working:active {
-        background: #424242;
+        background: #383838;
+      }
+      .option-button-container {
+        flex-grow: 1;
+        display: flex;
+        justify-content: end;
+      }
+      .option-button {
+        background: #6f6f6f;
+        border: none;
+        height: 30px;
+        padding: 0 7px;
+        border-radius: 13px;
+        display: inline-block;
+        text-align: center;
+        cursor: pointer;
+        transition: background linear 200ms;
+      }
+      .option-button svg {
+        display: block;
+        fill: white;
+        width: 19px;
+        height: 19px;
       }
     `
     firstStyleNode.parentNode.insertBefore(styleElement, firstStyleNode)
@@ -95,12 +118,27 @@ const getEditorControls = ({
           ></path>
         </svg>
       </button>
+      <div option-button-container class="option-button-container"></div>
     </div>
   `
 
   const renderButton = node.querySelector("[render-button]")
   const saveButton = node.querySelector("[save-button]")
   const publishButton = node.querySelector("[publish-button]")
+
+  const optionButtonContainer = node.querySelector("[option-button-container]")
+  getDropdown({
+    node: optionButtonContainer,
+    button: /* HTML */ `<button type="button" title="Options" class="option-button">
+      <svg aria-hidden xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 512">
+        <!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
+        <path
+          d="M64 360a56 56 0 1 0 0 112 56 56 0 1 0 0-112zm0-160a56 56 0 1 0 0 112 56 56 0 1 0 0-112zM120 96A56 56 0 1 0 8 96a56 56 0 1 0 112 0z"
+        />
+      </svg>
+      <span class="sr-only">Options</span>
+    </button>`,
+  })
 
   let currentRenderedDescriptionHash
 
@@ -120,14 +158,34 @@ const getEditorControls = ({
     }
   })
 
-  onDescriptionsChange(() => {
+  const handleDescriptionChange = () => {
     if (currentRenderedDescriptionHash !== getDescriptionsHash()) {
       renderButton.querySelector("[label]").innerText = "Render"
       renderButton.classList.remove("working")
       renderButton.classList.add("ready")
       renderButton.classList.remove("done")
     }
-  })
+    const { isDemoVideo } = getSavedContent()
+    if (isDemoVideo) {
+      saveButton.querySelector("[warning-icon]").style.display = "none"
+      publishButton.querySelector("[warning-icon]").style.display = "none"
+    }
+  }
+
+  onDescriptionsChange(handleDescriptionChange)
+  handleDescriptionChange()
+
+  const handleUserChange = () => {
+    const { isDemoVideo } = getSavedContent()
+    if (window.user || isDemoVideo) {
+      saveButton.querySelector("[warning-icon]").style.display = "none"
+    } else {
+      saveButton.querySelector("[warning-icon]").style.display = "block"
+    }
+  }
+
+  window.userListeners.push(handleUserChange)
+  handleUserChange()
 
   renderButton.addEventListener("click", async () => {
     await renderAudio()
@@ -190,15 +248,4 @@ const getEditorControls = ({
       getTermsModal()
     }
   })
-
-  const handleUserChange = () => {
-    if (window.user) {
-      saveButton.querySelector("[warning-icon]").style.display = "none"
-    } else {
-      saveButton.querySelector("[warning-icon]").style.display = "block"
-    }
-  }
-
-  window.userListeners.push(handleUserChange)
-  handleUserChange()
 }
