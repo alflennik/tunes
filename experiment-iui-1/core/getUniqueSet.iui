@@ -1,0 +1,18 @@
+* () {
+  Item = GetDownstreamType()
+  
+  items.type([Item, ...]) = []
+
+  add = (item.type(Item)) { 
+    if !items.contains(item) : items.add(item) ;
+  }
+
+  remove = (item.type(Item)) {
+    index<?> = items.findIndex((eachItem) { * eachItem == item })<?>
+    if index<?> : items.remove(index) ;
+  }
+
+  empty = () { items.empty() }
+
+  * [add, remove, empty, count: items.count]
+}

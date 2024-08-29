@@ -1,0 +1,28 @@
+each = anyAsync (inputList.type([Any, ...]), callback.type(anyAsync (Any) {* Any })) [Any, ...] {
+  InputItem = inputList.Item
+  OutputItem = callback.Arguments[0]
+  
+  each.&isAsync = callback.isAsync
+  
+  outputList.type([OutputItem, ...]) = []
+
+  &index = 0
+  index = >< &index
+
+  while index < inputList.count :
+    rawResult = unawait callback(inputList[index], _ index:)
+
+    result = {
+      if (each.isAsync && rawResult.isPromise) : * await rawResult ;
+      else : * rawResult ;
+    }
+
+    outputList.add(result)
+
+    &index += 1
+  ;
+
+  * _ outputList
+}
+
+* each
