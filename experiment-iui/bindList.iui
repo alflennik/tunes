@@ -1,0 +1,71 @@
+getElement = () {
+  container = // ...
+  // ...
+
+  bindList = generic (items<[Generic]>, createElement<(Generic) { html`` }>)<none> {
+    forceTypesToMatch(<items.Item>, <[id = <Any>]>)
+    forceTypesToMatch(items.Item, callback.Parameters[0])
+
+    getId = (item) { <<* item!.id!.toString() }
+
+    watch items {
+      idsToElements<["": Element]> = [:]
+
+      container.each((element) {
+        elementId = element.getAttribute("id")
+        idsToElements[elementId] = element
+      })
+
+      itemIds<[""]> = items.each((item) { <<* item.id })
+
+      &index = 0
+      ***{ loop(() **{
+        element<?> = container.items[&index]
+        item<?> = items[&index]
+
+        if !item<?> {
+          // Since all required items have inserted any remaining elements should be removed.
+          if element<?> {
+            container.remove(&index)
+            <<**
+          }
+          <<***
+        }
+
+        id = getId(item)
+        elementId<?> = element<?>.getAttribute("id")
+        
+        // Correct location
+        if id == elementId<?> { 
+          &index += 1
+          <<**
+        }
+        
+        // Exists in wrong location
+        if idsToElements[id] {
+          container.insert(&index, element)
+          &index += 1
+          <<**
+        }
+
+        // Shouldn't exist
+        if elementId<?> && !itemIds.contains(elementId) {
+          container.remove(&index)
+          <<**
+        }
+
+        // Missing
+        if !idsToElements[id] {
+          correctElement = createElement(item)
+          container.insert(&index, correctElement)
+          &index += 1
+          <<**
+        }
+      })}
+    }
+  }
+}
+
+container.bindList(items, (item) {
+  <<* html`<div id="\{item.id}">\{item.name}</div>`
+})

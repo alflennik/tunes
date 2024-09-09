@@ -1,0 +1,28 @@
+* getUniqueSet = generic (Item<TypeSignature>) &Returns {
+  list<[Item]> = []
+  
+  add = (item<Item>)<none> {
+    if !list.contains(item) { list.add(item) }
+  }
+
+  remove = (item<Item>)<none> {
+    index = list.findIndex(item)
+    if index { list.remove(index) }
+  }
+
+  result = [add, remove, empty = list.empty, count = list.count]
+
+  &Returns = <result>
+
+  <<* result
+}
+
+uniqueArtists = getUniqueSet(<Artist>)
+songs.each((song) {
+  given song.by {
+    .artist (artist) { uniqueArtists.add(artist) }
+    .artists (artists) { artists.each((artist) { uniqueArtists.add(artist) }) }
+    default {}
+  }
+  uniqueArtists.add(song.artist)
+})
