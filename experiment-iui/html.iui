@@ -1,0 +1,170 @@
+content<[HtmlNode]> = [
+  .aside( 
+    width: .px(350),
+    display: .flex,
+    alignItems: .center,
+    
+    .div(
+      width: .percent(100), 
+      height: .px(2)
+    )
+  )
+]
+
+getHtml(
+  .div(class: "my-class", div())
+)
+
+getHtml(
+  .ul(class: "my-class", 
+    .li("Item 1"),
+    .li("Item 2"),
+  )
+)
+
+getHtml(
+  .button("play-from-here": "", type: "button", title: "Play From Here", 
+    html`
+      <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512">
+        <!--!Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
+        <path
+          d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"
+        ></path>
+      </svg>
+    `,
+    .span(class: "sr-only", "Play From Here")
+  )
+  .custom("my-element-name")
+)
+
+MarginValue = <[
+  .(0),
+  .px(<0>),
+]>
+
+[
+  margin?: [
+    .([MarginValue, MarginValue, MarginValue, MarginValue])
+    .([MarginValue, MarginValue, MarginValue])
+    .([MarginValue, MarginValue])
+    .(MarginValue)
+    .(none)
+  ]
+]
+
+Selector = <"">
+
+CssStyles = [
+  ...Rules,
+  Selector: CssStyles,
+]
+
+myRules<CssStyles> = [
+  margin: 0,
+  margin: [0, .px(25)],
+  margin: [0, .px(25), .px(5), .px(5)],
+]
+
+NoItemAttibutes = <[
+  id?: <""?>
+  class?: <""?>
+  <"">: <"">,
+]>
+
+&HtmlNode = Any // Specified for real below
+
+BaseAttributes = <[
+  ...NoItemAttibutes,
+  ...<[&HtmlNode]>,
+]>
+
+AElementAttributes = <[
+  ...BaseAttributes,
+  href: "",
+]>
+
+CustomElementAttributes = <[
+  elementName<"">,
+  ...BaseAttributes,
+]>
+
+getConstructor = (Attributes) { 
+  <<* <(...Attributes, ...<[HtmlElement]>) { Any }>
+}
+
+HtmlElement = [
+  .a: getConstructor(AAttributes),
+  .aside: getConstructor(BaseAttributes),
+  .br: getConstructor(NoItemAttibutes),
+  .canvas: getConstructor(BaseAttributes),
+  .custom: getConstructor(CustomElementAttributes)
+  .div: getConstructor(BaseAttributes),
+]
+
+HtmlNode = <[.(<"">), .(HtmlElement)]>
+&HtmlNode = HtmlNode
+
+getHtml = (...nodes<[HtmlNode]>) <Any> { 
+  // ...
+}
+
+document.body.add(
+  .div(class: "main-content",
+    .style(
+      .scope(".main-content", [
+        ".description-gap": [
+          position: .relative,
+          display: .flex,
+          justifyContent: .center,
+          margin: [.px(12), .px(20)],
+
+          "&::before": [
+            content: "",
+            display: .block,
+            height: .px(2),
+            width: .percent(100),
+            position: .absolute,
+            background: .hex(333333),
+          ],
+        ],
+      ]),
+    ),
+    .h1("Greetings"),
+    .p("Hello world!"),
+  )
+)
+
+getHtml = generic (...HtmlNode) &Result {
+}
+
+document.body.add(
+  .script(js`
+    (async () => {
+      const youtubePlayer = await new Promise(async resolve => {
+        window.onYouTubeIframeAPIReady = () => {
+          const youtubePlayer = new YT.Player(youtubePlayerId, {
+            height: "315",
+            width: "560",
+            videoId: getVideoId(),
+            playerVars: {
+              autoplay: 1,
+              start: getStartSeconds(),
+              playsinline: 1, // Instead of immediately going full screen.
+              color: "white", // Instead of youtube red.
+              rel: 0, // Recommend videos from the same channel after it ends.
+            },
+          })
+
+          youtubePlayer.addEventListener("onReady", () => {
+            resolve(youtubePlayer)
+          })
+        }
+
+        const scriptElement = document.createElement("script")
+        scriptElement.src = "https://www.youtube.com/iframe_api"
+        const firstScriptTag = document.getElementsByTagName("script")[0]
+        firstScriptTag.parentNode.insertBefore(scriptElement, firstScriptTag)
+      })
+    })()
+  `)
+)

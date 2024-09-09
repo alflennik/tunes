@@ -1,16 +1,16 @@
-* getUniqueSet = generic (Item<TypeSignature>) &Returns {
+getUniqueSet = generic (Item<TypeSignature>) &Returns {
   list<[Item]> = []
   
-  add = (item<Item>)<none> {
+  add = (item<Item>) <none> {
     if !list.contains(item) { list.add(item) }
   }
 
-  remove = (item<Item>)<none> {
+  remove = (item<Item>) <none> {
     index = list.findIndex(item)
     if index { list.remove(index) }
   }
 
-  result = [add, remove, empty = list.empty, count = list.count]
+  result = [add, remove, empty: list.empty, count: list.count]
 
   &Returns = <result>
 

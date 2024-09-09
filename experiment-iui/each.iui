@@ -1,7 +1,7 @@
 * each = generic (
   list<[Generic]>,
-  callback<(Generic, index?: 0) { Generic }>,
-  concurrent<?true> = ?? false,
+  callback<(Generic, index?: <0>) { Generic }>,
+  concurrent?: <true> ?? false,
 ) &Returns {
   forceMatchingType(list.Item, callback.Parameters[0])
 
@@ -9,28 +9,30 @@
 
   &Returns = **{
     if callback.Returns.isPromise() && concurrent {
-      <<** callback.Returns.ResolvesTo
+      <<** callback.Returns.Resolves
     } else {
       <<** callback.Returns
     }
   }
 
   &index = 0
-  index = &index.locked() 
+  index = &index.locked()
 
   outputList = []
 
-  while (list[index]) {
+  ***{ loop(() **{
+    if !list[index] { <<*** }
+
     result = callback(list[index], index:)
 
     if (result.isPromise() && concurrent) {
-      result.await()  
+      result.await()
     }
 
     outputList.add(result)
-    
-    &index += 1
-  }
 
-  << outputList
+    &index += 1
+  }) }
+
+  <<* outputList
 }

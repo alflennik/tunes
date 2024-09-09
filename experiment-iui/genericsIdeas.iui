@@ -1,0 +1,42 @@
+UnpopulatedVideo = <[id: <"">, name: <"">]>
+
+Video = <[...UnpopulatedVideo, height: <0>, width: <0>]>
+
+unpopulatedVideos<[UnpopulatedVideo]> = 
+  getVideos()
+    .await()
+    .forceFromJSON()
+    .forceType(<[UnpopulatedVideo]>)
+
+videos<[Video]> = 
+  unpopulatedVideos.each(
+    (video) {
+      dimensions = fetch("/api/video-dimensions?id=\{id}").await().forceType(
+        <[height: <0>, width: <0>]>
+      )
+
+      <<* [...video, ...dimensions]
+    }
+  ).awaitAll()
+
+--
+
+Character = <[addHealthPoints: (0) { None }]>
+
+Fruit = <[name: "", healthPoints: 0]>
+
+getCharacter = () &Result {
+  &healthPoints = 50
+
+  Food = <[.(Fruit) /* etc. */]>
+
+  eat = ([healthPoints: <0>]<Food>) <none> {
+    &healthPoints += healthPoints
+  }
+
+  result = [eat:]
+
+  &Result = <result>
+
+  <<* result
+}

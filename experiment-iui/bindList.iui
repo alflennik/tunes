@@ -2,14 +2,14 @@ getElement = () {
   container = // ...
   // ...
 
-  bindList = generic (items<[Generic]>, createElement<(Generic) { html`` }>)<none> {
-    forceTypesToMatch(<items.Item>, <[id = <Any>]>)
+  bindList = generic (items<[Generic]>, createElement<(Generic) { html`` }>) <none> {
+    forceTypesToMatch(items.Item, <[id: <Any>]>)
     forceTypesToMatch(items.Item, callback.Parameters[0])
 
     getId = (item) { <<* item!.id!.toString() }
 
     watch items {
-      idsToElements<["": Element]> = [:]
+      idsToElements<["": Element]> = []
 
       container.each((element) {
         elementId = element.getAttribute("id")
@@ -24,7 +24,7 @@ getElement = () {
         item<?> = items[&index]
 
         if !item<?> {
-          // Since all required items have inserted any remaining elements should be removed.
+          // Since all required items have been inserted any remaining elements should be removed.
           if element<?> {
             container.remove(&index)
             <<**

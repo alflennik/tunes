@@ -1,0 +1,15 @@
+buildingHeights<[<0>]> = [5, 7, 2, 1]
+
+answer<0> = **{
+  &largestHeightSoFar = 0
+
+  buildingHeights.reversed().each((height, index:) {
+    if height > &largestHeightSoFar {
+      &largestHeightSoFar = height
+    } else {
+      <<** buildingHeights.count - index - 1
+    }
+  })
+}
+
+log(answer)

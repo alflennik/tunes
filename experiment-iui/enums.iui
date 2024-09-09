@@ -1,0 +1,76 @@
+vals = [
+  "a",
+  "b",
+  myAttribute: true,
+  enums: [
+    .option1: 1,
+    .option2(2),
+    .option3.part2: 32,
+    .option4.part2(42),
+    .option5
+  ]
+]
+
+vals[0] // "a"
+vals[1] // "b"
+vals.myAttribute // "true"
+vals.enums[0] // [.option1: 1]
+vals.enums[0].checkCase(.option1) // 1
+vals.enums[1] // [.option2(2)]
+vals.enums[1].checkCase(.option2) // 2
+vals.enums[2] // [.option3: [.part2: 32]]
+vals.enums[3] // [.option4: [.part2(42)]]
+vals.enums[4] // [.option5]
+
+demonArguments = (a<0> ?? 0, b: <0> ?? 100) {}
+
+[a<0> ?? 0, b: <0> ?? 100] = demonObject
+
+v1 = [a: [b: [c:]]]
+
+readV1 = v1.a.b.c
+
+v2 = [.a: [.b: [.c:]]]
+
+readV2 = v2.checkCase(.a).checkCase(.b).checkCase(.c)
+
+isOfficialVideo = titleContent
+  .checkCase(.musicVideo)
+  .providedContentType
+  .checkCase(.commonTerm) == .officialVideo
+
+MinType = [
+  titleContent: [
+    .musicVideo: [
+      providedContentType: [
+        .commonTerm: [
+          .officialVideo
+        ]
+      ]
+    ]
+  ]
+]
+
+myVideo<MinType> = [
+  titleContent.musicVideo: [
+    providedContentType.commonTerm: .officialVideo
+  ]
+]
+
+myVideo<MinType> = [
+  titleContent: [
+    .musicVideo: [
+      providedContentType: [
+        .commonTerm: .officialVideo
+      ]
+    ]
+  ]
+]
+
+TypeComparison = <[
+  .enumWithFunctionLikeValue(<"">, <"">)
+  .enumWithObjectLikeValue: [<"">, <"">]
+]>
+
+v1<TypeComparison> = .enumWithFunctionLikeValue("a", "b")
+v2<TypeComparison> = .enumWithObjectLikeValue: ["c", "d"]

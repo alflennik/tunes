@@ -1,0 +1,57 @@
+someNumber = 1 + 1
+
+[
+  .statement: [
+    .assignment: [
+      .variable: "someNumber"
+      .expression: [
+        .addition: [1, 1]
+      ]
+    ]
+  ]
+]
+
+[
+  .statement.assignment: [
+    .variable: "someNumber",
+    .expression.plus: [1, 1],
+  ],
+]
+
+[
+  .statement(
+    .assignment(
+      .variable("someNumber")
+      .expression(.plus(1, 1))
+    )
+  )
+]
+
+[
+  .assign(.variable("someNumber"), .add(1, 1))
+]
+
+// Taking it a bit too far...
+[
+  .enum(
+    "assign",
+    .values(
+      format: .parenthetical,
+      .enum(
+        "variable",
+        .values(
+          format: .parenthetical,
+          "someNumber",
+        ),
+      ),
+      .enum(
+        "add",
+        .values(
+          format: .parenthetical,
+          1,
+          1,
+        ),
+      ),
+    ),
+  )
+]
