@@ -6,6 +6,7 @@ const nonAssetLocations = [
   ".git",
   "experiment-application-mode",
   "experiment-iui",
+  "experiment-iui-1",
   "experiment-multigraph",
   "experiment-player",
   "experiment-playlist-modeling",
