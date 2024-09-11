@@ -100,12 +100,13 @@ const getFullContent = async () => {
           video.snippet.thumbnails.medium ||
           video.snippet.thumbnails.default
         ).url,
-        viewCounts: [
-          {
-            collectedAt: new Date().toISOString(),
-            viewCount: video.statistics.viewCount,
-          },
-        ],
+        // Removed because it makes the diff too complex
+        // viewCounts: [
+        //   {
+        //     collectedAt: new Date().toISOString(),
+        //     viewCount: video.statistics.viewCount,
+        //   },
+        // ],
         // tags: video.snippet.tags,
       }))
     )
