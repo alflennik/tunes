@@ -70,7 +70,18 @@ myVideo<MinType> = [
 TypeComparison = <[
   .enumWithFunctionLikeValue(<"">, <"">)
   .enumWithObjectLikeValue: [<"">, <"">]
+  .enumWithBoth(<"">): <"">
 ]>
 
 v1<TypeComparison> = .enumWithFunctionLikeValue("a", "b")
-v2<TypeComparison> = .enumWithObjectLikeValue: ["c", "d"]
+v2<TypeComparison> = [.enumWithObjectLikeValue: ["c", "d"]]
+v2<TypeComparison> = [.enumWithBoth('e'): "f"]
+
+otherVals = [
+  // Both an "associated value" and a "nested value"
+  .interesting(code: "abc"): ["def", "efg"]
+]
+
+otherVals[0].checkCase(.interesting).associatedValues().code // "abc"
+otherVals[0].checkCase(.interesting)[0] // "def"
+otherVals[0].checkCase(.interesting)[1] // "efg"
