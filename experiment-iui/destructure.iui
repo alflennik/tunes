@@ -1,0 +1,146 @@
+myObject = [
+  a: 99<0?>
+]
+
+MyObject = <[
+  a: <0?>
+]>
+
+getMyObject(a: inputValue<0?>)
+
+[a: myA <0?>] = myObject
+
+[a: <0?>] = myObject
+
+[a: outputValue<0?> ?? 0] = [a: inputValue<0?> ?? 0]
+
+myObject = [
+  b: <| .option1, .option2 |>
+]
+
+[b:] = myObject
+
+MyObject = <[b: <| .option1, .option2, none |>]>
+
+[b: ?? .option1]<MyObject> = [b: inputValue]
+
+[c:] = [c:]
+
+[c: outputValue] = [c: inputValue]
+
+[c: ?? ""] = [c: ?? ""]
+
+[c: <""?>] = [c: <""?>]
+
+MyObject = [b.<|[.test1: <0>, .test2: <0>]|>]
+
+myObject<MyObject> = [b.test1: 99]
+
+[
+  b.|[
+    .test1: test1<?>, 
+    .test2: test2<?>,
+  ]|.
+] = myObject
+
+if test1<?> { log("see?") }
+
+// given myObject.b .|[
+//   .test1: test1<?> {
+//     log(test1)
+//   }
+//   .test2: test2<?> {
+//     log(test2)
+//   }
+// ]
+
+// myEnum.||
+//   .test1 {
+//     log("It's test 1")
+//   }
+//   .test2(abc) {
+//     log(abc)
+//   }
+//   .test3, .test4(abc) {
+//     log(abc)
+//   }
+//   .(<"">) {
+//     log(myEnum)
+//   }
+// ||.
+
+// myEnum.b.||[
+//   .test1: [first, second, third] {
+//     log(first, second, third)
+//   }
+//   .test2: [a:, b:] {
+//     log(a, b)
+//   }
+//   .test3: none {
+//     log("it's option 3")
+//   }
+//   else {
+//     log("none of the abovce")
+//   }
+// ]||.
+
+given myEnum.b {
+  .test1: [first, second, third] {
+    log(first, second, third)
+  }
+  .test2: [a:, b:] {
+    log(a, b)
+  }
+  .test3: none {
+    log("it's option 3")
+  }
+  .test4: none, 
+  .test5(abc): [a1, a2, a3] 
+  .test51(abc1): [a11, a21, a31] 
+  .test52(abc2): [a12, a22, a32] {
+    log(abc, a1, a2, a3, abc1, a11, a21, a31, abc2, a12, a22, a32)
+  }
+  .test6: test6 {
+    log(test6)
+  }
+  else {
+    log("none of the above")
+  }
+}
+
+given myEnum {
+  .("mail")
+  .("email") {
+    log("recognized message type")
+  }
+  .(<"">) {
+    log("secondary message type")
+  }
+  .(Any) {
+    log("complex message type")
+  }
+}
+
+StringEnum = <|
+  .("first")
+  .("second")
+  .(<"">)
+  .text(<"">)
+|>
+
+first<StringEnum> = "first"
+second<StringEnum> = "second"
+third<StringEnum> = "anything else"
+text<StringEnum> = .text("And some text")
+
+given first {
+  .("first"), .("second") {
+    log("recognized")
+  }
+  .(<"">) {
+    log("something else")
+  }
+  .text(text) {
+    log(text)
+  }
+}

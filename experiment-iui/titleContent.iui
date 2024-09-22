@@ -1,0 +1,256 @@
+TitleContent = {
+  Date = ""
+  
+  Artist = <|
+    <"">,
+    [<"">, disambiguationId: <"">]
+  |>
+
+  OtherContributor = <[
+    type: <| .artist: Artist, .other: <""> |>,
+    contributorType: <| .producedBy, .directedBy, .starring |>,
+  ]>
+
+  Song = <[
+    by: <| Artist, [Artist] |>,
+    title: <"">,
+    featuring?: <|
+      .artist: Artist,
+      .artists: <[Artist]>,
+      .other: OtherContributor,
+      .others: [<|[ .artist: Artist, .contributor: OtherContributor ]|>],
+    |>,
+    covering?: [
+      coveringType: [.cover, .remix],
+      by: <|Artist, [Artist]|>
+    ]
+  ]>
+
+  ProvidedContentType = <|[
+    .commonTerm: <|
+      .unlabeled
+      .officialVideo
+      .officialMusicVideo
+      .musicVideo
+      .mv
+      .officialMv
+      .officialLyricVideo
+      .officialAudio
+    |>,
+    .customTerm: <"">,
+    .misleading: [
+      reason: <"">,
+      provided: [
+        .commonTerm: ProvidedContentType.options.commonTerm,
+        .customTerm: ProvidedContentType.options.customTerm
+      ],
+    ]
+  ]|>
+
+  TitleAddendum = <[<"">, delimitedBy: <|.parentheses, .comma, .space|>]>,
+
+  OneVideoOneSong = <[
+    providedContentType.<|[...ProvidedContentType]|>,
+    song: Song,
+    titleAddendum?: <TitleAddendum?>,
+  ]>
+
+  FreeformContent = {
+    FlexibleTitleContent = <[
+      ...OneVideoOneSong.omit(.(song)),
+      music: <| Song, [Song] |>,
+    ]>
+
+    SpecialTitleContent = <[
+      specialTitle: <"">,
+      music: <| Song, [Song] |>,
+    ]>
+
+    <<* <|[
+      .standard: FlexibleTitleContent,
+      .special: SpecialTitleContent
+    ]|>
+  }
+
+  LivePerformanceContent = {
+    SpecialLiveContent = <[
+      customTitle: <"">,
+      performing.<|[
+        .performance: [
+          by: <| Artist, [Artists] |>,
+        ]
+        .song: Song,
+        .songs: [Song],
+      ]|>,
+      place?.<|[ .venue: <"">, .other: <""> ]|>
+      series?: <"">
+    ]>
+
+    StandardLiveContent = [
+      ...SpecialLiveContent.omit(.(customTitle)),
+      performing.<|[
+        ...SpecialLiveContent.performing.options,
+        .performance: [
+          ...SpecialLiveContent.performing.options.performance,
+          title.<|[
+            .providedAs: <"">,
+            .generated: none,
+          ]|>
+        ]
+      ]|>,
+      place?: [
+        ...SpecialLiveContent.place,
+        delimitedBy: <| .at, .on, .from |>
+      ],
+      series?: [
+        ...SpecialLiveContent.series,
+        delimitedBy: <| .at, .on, .from |>,
+      ],
+      liveAddendum?: ["", delimitedBy: <| .space, .comma |>],
+      titleAddendum?: TitleAddendum,
+    ]
+    
+    <<* <|[
+      .standard: StandardLiveContent,
+      .special: SpecialLiveContent,
+    ]|>
+
+    // Examples:
+    // Official title
+    // Normalized title if different
+    // 
+    // Olivia Dean - Messy (Live)
+    // 
+    // XG - LEFT RIGHT (XG SHOOTING STAR LIVE STAGE)
+    // XG - LEFT RIGHT (Live at XG SHOOTING STAR LIVE STAGE)
+    // 
+    // 蔡依林 Jolin Tsai X 茄子蛋 EggPlantEgg《浪流連 Waves Wandering》Official Live Video
+    // Jolin Tsai, EggPlantEgg - Waves Wandering (Live)
+    // 
+    // dodie - Hot Mess EP - full film, live from the attic
+    // dodie - Hot Mess EP (Live from the attic, full film)
+    // 
+    // The Yussef Dayes Experience - Live At Joshua Tree (Presented by Soulection)
+    //
+    // [LIVE] 문별 (마마무) _ G999 (Feat. 미란이) | The Booth | 더 부스 | 라이브 | 4K | Moon Byul | Mirani
+    // Moon Byul - G999 feat. Mirani (Live at The Booth)
+    // 
+    // [4K] MoonByul - “LUNATIC” Band LIVE Concert [it's Live] K-POP live music show
+    // Moon Byul - Lunatic (Live on [it's Live])
+    //
+    // Hans Zimmer Performs the Dune Soundtrack LIVE
+    // [Special title]
+    // 
+    // Jungle (live) - Passengers - ARTE Concert
+    // Jungle - Passengers (Live on ARTE Concert)
+    // 
+    // millennium parade - NEHAN, Fly with me (Live at TOKYO GARDEN THEATER)
+    // 
+    // CHANMINA - 美人 (BIJIN) (AREA OF DIAMOND @ Yokohama Arena)
+    // CHANMINA - BIJIN (Live at Yokohama Arena, AREA OF DIAMOND)
+  }
+  
+  * [
+    .musicVideo: OneVideoOneSong,
+    .lyricVideo: OneVideoOneSong,
+    .audioVideo: OneVideoOneSong,
+    .visual.<|[...FreeformContent]|>,
+    .sessionVideo.<|[...FreeformContent]|>,
+    .livePerformance.<|[...LivePerformanceContent]|>,
+    .fanVideo.<|[...FreeformContent]|>,
+    .musicTrailer: none // TODO: fill this out
+    .promotionalVideo: none, // TODO: fill this out
+    .foundFootage: none,
+    .documentary: none,
+    .shortFilm: none,
+  ]
+}
+
+TunesVideo = <[
+  youtubeVideo: [
+    id: <"">,
+    date: Date,
+    duration: <"">,
+    width: <0>,
+    height: <0>,
+    channel: <"">,
+    title: <"">,
+    thumbnailSrc: <"">,
+    viewCountHistory: [[count: <0>, date: Date]],
+  ],
+  titleContent: TitleContent,
+  id: <"">,
+  title: <"">,
+]>
+
+videos<[TunesVideo]> = [
+  [
+    youtubeVideo: [
+      id: "38bw_3hQK8o",
+      date: "2023-07-10",
+      duration: "4:15",
+      width: 3840,
+      height: 2160,
+      channel: "Tycho",
+      title: "Tycho - Time To Run (Official Video)",
+      thumbnailSrc: "https://img.youtube.com/vi/38bw_3hQK8o/maxresdefault.jpg",
+    ],
+    titleContent.musicVideo: [
+      providedContentType.commonTerm: .officialVideo,
+      song: [by.artist: "Tycho", title: "Time To Run"],
+    ],
+    id: autogeneratedDoNotEdit("tycho-time-to-run")
+    title: autogeneratedDoNotEdit("Tycho - Time To Run")
+  ],
+]
+
+firstContentType<?> =
+  videos[0]<?>
+    .titleContent
+    .checkCase(.musicVideo)<?>
+    .providedContentType
+    .checkCase(.commonTerm)<?>
+
+videos = {
+  videoList<[Video]> = []
+
+  playlists.each((playlist) { 
+    playlist.videos.each((video) { videoList.add(video) })
+  })
+
+  duplicates = videoList.findDuplicates()
+  if duplicates : forceError("Found duplicated videos, which is not allowed. \{duplicates}")
+
+  * videoList
+}
+
+songs = {
+  songList<[Song]> = []
+
+  addSongs = (songs) { songs.each((song) { songList.add(song) }) }
+
+  videos.each((video) {
+    given video.titleContent {
+      | .musicVideo, .lyricVideo, .audioVideo | (content) { 
+        addSong(content.song)
+      }
+      | .visual, .sessionVideo, .fanVideo | (content) {
+        given content.music {
+          | Song | (song) { songList.add(song) },
+          | [Song] | (songs) { addSongs(songs) } },
+      },
+      | .livePerformance | (content) {
+        given content.performing {
+          | .song | (song) { songList.add(song) },
+          | .songs | (songs) { addSongs(songs) },
+          | .performance | () {}
+        }
+      },
+      .musicTrailer, .promotionalVideo, .foundFootage, .documentary, .shortFilm {}
+    }
+  })
+
+  songList.removeDuplicates()
+
+  * songList
+}

@@ -39,17 +39,19 @@ isOfficialVideo = titleContent
   .providedContentType
   .checkCase(.commonTerm) == .officialVideo
 
-MinType = [
-  titleContent: [
-    .musicVideo: [
-      providedContentType: [
-        .commonTerm: [
+MinType = <[
+  titleContent.<|
+    .musicVideo: <[
+      providedContentType.<|[
+        .commonTerm: <|
           .officialVideo
-        ]
-      ]
-    ]
-  ]
-]
+          .officialMusicVideo
+        |>
+        .specialTerm: <"">
+      ]|>
+    ]>
+  |>
+]>
 
 myVideo<MinType> = [
   titleContent.musicVideo: [
@@ -57,31 +59,79 @@ myVideo<MinType> = [
   ]
 ]
 
-myVideo<MinType> = [
-  titleContent: [
-    .musicVideo: [
-      providedContentType: [
-        .commonTerm: .officialVideo
-      ]
-    ]
-  ]
-]
+TypeComparison = <|
+  .unnested
+  .associated(<"">, <"">)
+  .secondary.<|
+    .unnested
+    .associated(<"">)
+  |>
+|>
 
-TypeComparison = <[
-  .enumWithFunctionLikeValue(<"">, <"">)
-  .enumWithObjectLikeValue: [<"">, <"">]
-  .enumWithBoth(<"">): <"">
-]>
+v1<TypeComparison> = .unnested
+v2<TypeComparison> = .associated("a", "b")
+v5<TypeComparison> = .secondary.unnested
+v6<TypeComparison> = .secondary.associated("g")
 
-v1<TypeComparison> = .enumWithFunctionLikeValue("a", "b")
-v2<TypeComparison> = [.enumWithObjectLikeValue: ["c", "d"]]
-v2<TypeComparison> = [.enumWithBoth('e'): "f"]
+OtherVal = <|[
+  .interesting(code: <"">): [<"">, <"">]
+]|>
 
-otherVals = [
+otherVals<[OtherVal]> = [
   // Both an "associated value" and a "nested value"
   .interesting(code: "abc"): ["def", "efg"]
 ]
 
-otherVals[0].checkCase(.interesting).associatedValues().code // "abc"
+otherVals[0].checkCase(.interesting).associated.code // "abc"
 otherVals[0].checkCase(.interesting)[0] // "def"
 otherVals[0].checkCase(.interesting)[1] // "efg"
+
+myVideo<MinType> = [
+  titleContent<|[
+    given TitleContentType {
+      .musicVideo: () { 
+        <<* [
+          providedContentType.<|[
+            .commonTerm: <| .officialVideo |>
+            .customTerm: <"">
+          ]|>
+        ]
+      }
+      .livePerformance: () {
+
+      }
+      else: () { forceExit() }
+    }
+  ]|>
+]
+
+ElementContainer = [
+  name: <"">
+  elements: <| none, <0>, [<0>, <0>] |>
+]
+
+val1<ElementContainer> = [name: "Container", elements: none]
+val2<ElementContainer> = [name: "FirstDimension", elements: 10]
+val2<ElementContainer> = [name: "Grid", elements: [10, 12]]
+
+ElementContainer.elements // <| ... |>
+ElementContainer.elements.options[0] // none
+ElementContainer.elements.options[1] // <0>
+ElementContainer.elements.options[2] // [<0>, <0>]
+ElementContainer.elements.options[2][1] // <0>
+
+BaseAttributes.omit(.(elementName))
+
+Contributors = <[<|[ .artist: Artist, .contributor: OtherContributor ]|>]>
+
+contributors<Contributors> = [
+  [.artist: "Beck"],
+  [.contributor: [type: .producedBy, .artist: "DangerMouse"]],
+]
+
+Contributors2 = <[artist?: Artist, contributor?: OtherContributor]>
+
+contributors2<Contributors2> = [
+  artist: "Beck",
+  contributor: [type: .producedBy, .artist: "DangerMouse"]
+]

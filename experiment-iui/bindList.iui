@@ -3,7 +3,7 @@ getElement = () {
   // ...
 
   bindList = generic (items<[Generic]>, createElement<(Generic) { html`` }>) <none> {
-    forceTypesToMatch(items.Item, <[id: <Any>]>)
+    forceTypesToMatch(items.Item, <[id: Any]>)
     forceTypesToMatch(items.Item, callback.Parameters[0])
 
     getId = (item) { <<* item!.id!.toString() }

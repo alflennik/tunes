@@ -37,10 +37,10 @@ getHtml(
   .custom("my-element-name")
 )
 
-MarginValue = <[
+MarginValue = <|
   .(0),
   .px(<0>),
-]>
+|>
 
 [
   margin?: [
@@ -88,20 +88,16 @@ CustomElementAttributes = <[
   ...BaseAttributes,
 ]>
 
-getConstructor = (Attributes) { 
-  <<* <(...Attributes, ...<[HtmlElement]>) { Any }>
-}
+HtmlElement = <|
+  .a(...AAttributes, ...<[&HtmlNode]>),
+  .aside(...BaseAttributes, ...<[&HtmlNode]>),
+  .br(...NoItemAttibutes, ...<[&HtmlNode]>),
+  .canvas(...BaseAttributes, ...<[&HtmlNode]>),
+  .custom(...CustomElementAttributes, ...<[&HtmlNode]>)
+  .div(...BaseAttributes, ...<[&HtmlNode]>),
+|>
 
-HtmlElement = [
-  .a: getConstructor(AAttributes),
-  .aside: getConstructor(BaseAttributes),
-  .br: getConstructor(NoItemAttibutes),
-  .canvas: getConstructor(BaseAttributes),
-  .custom: getConstructor(CustomElementAttributes)
-  .div: getConstructor(BaseAttributes),
-]
-
-HtmlNode = <[.(<"">), .(HtmlElement)]>
+HtmlNode = <| .(<"">), .(HtmlElement) |>
 &HtmlNode = HtmlNode
 
 getHtml = (...nodes<[HtmlNode]>) <Any> { 
