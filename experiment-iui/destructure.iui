@@ -8,33 +8,33 @@ MyObject = <[
 
 getMyObject(a: inputValue<0?>)
 
-[a: myA <0?>] = myObject
+[ a: myA <0?> ] = myObject
 
-[a: <0?>] = myObject
+[ a: <0?> ] = myObject
 
-[a: outputValue<0?> ?? 0] = [a: inputValue<0?> ?? 0]
+[ a: outputValue<0?> ?? 0 ] = [ a: inputValue<0?> ?? 0 ]
 
 myObject = [
   b: <| .option1, .option2 |>
 ]
 
-[b:] = myObject
+[ b: ] = myObject
 
-MyObject = <[b: <| .option1, .option2, none |>]>
+MyObject = <[ b: <| .option1, .option2, none |> ]>
 
-[b: ?? .option1]<MyObject> = [b: inputValue]
+[ b: ?? .option1 ]<MyObject> = [ b: inputValue ]
 
-[c:] = [c:]
+[ c: ] = [ c: ]
 
-[c: outputValue] = [c: inputValue]
+[ c: outputValue ] = [ c: inputValue ]
 
-[c: ?? ""] = [c: ?? ""]
+[ c: ?? "" ] = [ c: ?? "" ]
 
-[c: <""?>] = [c: <""?>]
+[ c: <""?> ] = [ c: <""?> ]
 
-MyObject = [b.<|[.test1: <0>, .test2: <0>]|>]
+MyObject = [ b.<|[ .test1: <0>, .test2: <0> ]|> ]
 
-myObject<MyObject> = [b.test1: 99]
+myObject<MyObject> = [ b.test1: 99 ]
 
 [
   b.|[

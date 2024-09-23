@@ -40,7 +40,7 @@ isOfficialVideo = titleContent
   .checkCase(.commonTerm) == .officialVideo
 
 MinType = <[
-  titleContent.<|
+  titleContent.<|[
     .musicVideo: <[
       providedContentType.<|[
         .commonTerm: <|
@@ -50,7 +50,7 @@ MinType = <[
         .specialTerm: <"">
       ]|>
     ]>
-  |>
+  ]|>
 ]>
 
 myVideo<MinType> = [
@@ -87,20 +87,18 @@ otherVals[0].checkCase(.interesting)[0] // "def"
 otherVals[0].checkCase(.interesting)[1] // "efg"
 
 myVideo<MinType> = [
-  titleContent<|[
-    given TitleContentType {
-      .musicVideo: () { 
-        <<* [
-          providedContentType.<|[
-            .commonTerm: <| .officialVideo |>
-            .customTerm: <"">
-          ]|>
-        ]
+  titleContent.<|[
+    ...given TitleContentType {
+      .musicVideo: VideoType { 
+        <<* <|[
+          .commonTerm: <| .officialVideo |>
+          .customTerm: <"">
+        ]|>
       }
-      .livePerformance: () {
+      .livePerformance: VideoType {
 
       }
-      else: () { forceExit() }
+      else { forceExit() }
     }
   ]|>
 ]
@@ -129,9 +127,9 @@ contributors<Contributors> = [
   [.contributor: [type: .producedBy, .artist: "DangerMouse"]],
 ]
 
-Contributors2 = <[artist?: Artist, contributor?: OtherContributor]>
+// Contributors2 = <[artist?: Artist, contributor?: OtherContributor]>
 
-contributors2<Contributors2> = [
-  artist: "Beck",
-  contributor: [type: .producedBy, .artist: "DangerMouse"]
-]
+// contributors2<Contributors2> = [
+//   artist: "Beck",
+//   contributor: [type: .producedBy, .artist: "DangerMouse"]
+// ]

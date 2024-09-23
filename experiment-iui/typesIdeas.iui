@@ -1,19 +1,19 @@
-stringList<[<"">]> = ["a", "b"]
+stringList<[ <""> ]> = [ "a", "b" ]
 
-stringList = ["a", "b"]
+stringList = [ "a", "b" ]
 
-flexibleList<[<"">, <0>]> = ["a", 1]
+flexibleList<[ <"">, <0> ]> = [ "a", 1 ]
 
-flexibleList<[<0>, <0>, a: <0>, b: <0>, <0>]> = [123, 456, a: 999, b: 888, 321]
+flexibleList<[ <0>, <0>, a: <0>, b: <0>, <0> ]> = [ 123, 456, a: 999, b: 888, 321 ]
 
-flexibleListList<[[<"">, <0>]]> = [["a", 1], ["b", 2]]
+flexibleListList<[ [ <"">, <0> ] ]> = [ [ "a", 1 ], [ "b", 2 ] ]
 
-fieldSet<[position: <"">, salary: <0>]> = [position: "CEO", salary: 1]
+fieldSet<[ position: <"">, salary: <0> ]> = [ position: "CEO", salary: 1 ]
 
-fieldList<[<"">: <"">]> = [australia: "au", austria: "at"]
+fieldList<[ <"">: <""> ]> = [ australia: "au", austria: "at" ]
 
-withDefault<[name: ""]> = [name: ""]
+withDefault<[ name: "" ]> = [ name: "" ]
 
-extractName = ([name: <""> ?? "Unspecified"]) { <<* name }
+extractName = ([ name: <""> ?? "Unspecified" ]) { <<* name }
 
-[name: objectName<""> ?? "Unspecified"] = objectWithName<[name: <"">]>
+[ name: objectName<""> ?? "Unspecified" ] = objectWithName<[ name: <""> ]>

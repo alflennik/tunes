@@ -1,4 +1,4 @@
-buildingHeights<[<0>]> = [5, 7, 2, 1]
+buildingHeights<[ <0> ]> = [5, 7, 2, 1]
 
 answer<0> = **{
   &largestHeightSoFar = 0

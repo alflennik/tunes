@@ -1,5 +1,5 @@
-* each = generic (
-  list<[Generic]>,
+each = generic (
+  list<[ Generic ]>,
   callback<(Generic, index?: <0>) { Generic }>,
   concurrent?: <true> ?? false,
 ) &Returns {
@@ -20,7 +20,7 @@
 
   outputList = []
 
-  ***{ loop(() **{
+  loop **{ { 
     if !list[index] { <<*** }
 
     result = callback(list[index], index:)
@@ -32,7 +32,7 @@
     outputList.add(result)
 
     &index += 1
-  }) }
+  } }
 
   <<* outputList
 }

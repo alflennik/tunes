@@ -2,70 +2,67 @@ getElement = () {
   container = // ...
   // ...
 
-  bindList = generic (items<[Generic]>, createElement<(Generic) { html`` }>) <none> {
-    forceTypesToMatch(items.Item, <[id: Any]>)
+  bindList = generic (items<[ Generic ]>, createElement<(Generic) { HtmlElement }>) <none> {
+    forceTypesToMatch(items.Item, <[ id: <""> ]>)
     forceTypesToMatch(items.Item, callback.Parameters[0])
 
-    getId = (item) { <<* item!.id!.toString() }
-
     watch items {
-      idsToElements<["": Element]> = []
+      idsToElements<[ <"">: Element ]> = []
 
-      container.each((element) {
-        elementId = element.getAttribute("id")
+      container.elements.each((element) {
+        elementId = element.getAttribute("id")<?>.forceOption()
         idsToElements[elementId] = element
       })
 
-      itemIds<[""]> = items.each((item) { <<* item.id })
+      itemIds<[ <""> ]> = items.each((item) { <<* item.id })
 
       &index = 0
-      ***{ loop(() **{
-        element<?> = container.items[&index]
+      loop ***{ **{ 
+        element<?> = container.elements[&index]
         item<?> = items[&index]
 
         if !item<?> {
           // Since all required items have been inserted any remaining elements should be removed.
           if element<?> {
-            container.remove(&index)
+            container.elements.remove(&index)
             <<**
           }
           <<***
         }
 
-        id = getId(item)
         elementId<?> = element<?>.getAttribute("id")
         
         // Correct location
-        if id == elementId<?> { 
+        if item.id == elementId<?> { 
           &index += 1
           <<**
         }
-        
+
         // Exists in wrong location
-        if idsToElements[id] {
-          container.insert(&index, element)
+        if idsToElements[item.id] {
+          container.elements.insert(&index, element)
           &index += 1
           <<**
         }
 
         // Shouldn't exist
         if elementId<?> && !itemIds.contains(elementId) {
-          container.remove(&index)
+          container.elements.remove(&index)
           <<**
         }
 
         // Missing
-        if !idsToElements[id] {
+        if !idsToElements[item.id] {
           correctElement = createElement(item)
-          container.insert(&index, correctElement)
+          container.elements.insert(&index, correctElement)
           &index += 1
           <<**
         }
-      })}
+      } }
     }
   }
 }
 
 container.bindList(items, (item) {
-  <<* html`<div id="\{item.id}">\{item.name}</div>`
+  <<* getHtml(.div(id: "\{item.id}", item.name))
 })

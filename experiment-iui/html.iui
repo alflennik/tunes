@@ -12,7 +12,7 @@ content<[HtmlNode]> = [
 ]
 
 getHtml(
-  .div(class: "my-class", div())
+  .div(class: "my-class", .div())
 )
 
 getHtml(

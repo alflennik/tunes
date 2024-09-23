@@ -1,5 +1,5 @@
-getUniqueSet = generic (Item<TypeSignature>) &Returns {
-  list<[Item]> = []
+getUniqueSet = generic (Item<TypeSignature> ?? Any) &Returns {
+  list<[ Item ]> = []
   
   add = (item<Item>) <none> {
     if !list.contains(item) { list.add(item) }
@@ -10,7 +10,7 @@ getUniqueSet = generic (Item<TypeSignature>) &Returns {
     if index { list.remove(index) }
   }
 
-  result = [add, remove, empty: list.empty, count: list.count]
+  result = [ add, remove, empty: list.empty, count: list.count ]
 
   &Returns = <result>
 
@@ -20,9 +20,9 @@ getUniqueSet = generic (Item<TypeSignature>) &Returns {
 uniqueArtists = getUniqueSet(<Artist>)
 songs.each((song) {
   given song.by {
-    .artist (artist) { uniqueArtists.add(artist) }
-    .artists (artists) { artists.each((artist) { uniqueArtists.add(artist) }) }
-    default {}
+    .artist { uniqueArtists.add(song.by) }
+    .artists { song.by.each((artist) { uniqueArtists.add(artist) }) }
+    else {}
   }
   uniqueArtists.add(song.artist)
 })

@@ -32,26 +32,26 @@ someNumber = 1 + 1
 ]
 
 // Taking it a bit too far...
-[
-  .enum(
-    "assign",
-    .values(
-      format: .parenthetical,
-      .enum(
-        "variable",
-        .values(
-          format: .parenthetical,
-          "someNumber",
-        ),
-      ),
-      .enum(
-        "add",
-        .values(
-          format: .parenthetical,
-          1,
-          1,
-        ),
-      ),
-    ),
-  )
-]
+// [
+//   .enum(
+//     "assign",
+//     .values(
+//       format: .parenthetical,
+//       .enum(
+//         "variable",
+//         .values(
+//           format: .parenthetical,
+//           "someNumber",
+//         ),
+//       ),
+//       .enum(
+//         "add",
+//         .values(
+//           format: .parenthetical,
+//           1,
+//           1,
+//         ),
+//       ),
+//     ),
+//   )
+// ]
