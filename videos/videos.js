@@ -1,5 +1,18 @@
 export default [
   {
+    id: "bomba-estereo-internationales",
+    artist: "Bomba Estéreo",
+    title: "Internacionales",
+    date: "2017-10-05",
+    videoType: "musicVideo",
+    thumbnailSrc: "https://img.youtube.com/vi/NCEQX46L3KU/maxresdefault.jpg",
+    thumbnailAlt: "TODO",
+    youtubeId: "NCEQX46L3KU",
+    youtubeWidth: 1920,
+    youtubeHeight: 1080,
+    descriptionPath: "/videos/bomba-estereo-internationales.js",
+  },
+  {
     id: "maye-tu",
     artist: "maye",
     title: "Tú",
