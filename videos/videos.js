@@ -1,5 +1,18 @@
 export default [
   {
+    id: "lola-clocks-piano-version",
+    artist: "Lola",
+    title: "Clocks",
+    date: "2021-02-04",
+    videoType: "livePerformance",
+    thumbnailSrc: "https://img.youtube.com/vi/QPAXHk0qaXo/maxresdefault.jpg",
+    thumbnailAlt: "TODO",
+    youtubeId: "QPAXHk0qaXo",
+    youtubeWidth: 1920,
+    youtubeHeight: 1080,
+    descriptionPath: "/videos/lola-clocks-piano-version.js",
+  },
+  {
     id: "ludovico-einaudi-fly-visualizer",
     artist: "Ludovico Einaudi",
     title: "Fly",
