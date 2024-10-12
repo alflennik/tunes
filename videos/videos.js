@@ -1,5 +1,18 @@
 export default [
   {
+    id: "ludovico-einaudi-fly-visualizer",
+    artist: "Ludovico Einaudi",
+    title: "Fly",
+    date: "2021-02-04",
+    videoType: "visualizer",
+    thumbnailSrc: "https://img.youtube.com/vi/5LRwYKpV-6A/maxresdefault.jpg",
+    thumbnailAlt: "TODO",
+    youtubeId: "5LRwYKpV-6A",
+    youtubeWidth: 1920,
+    youtubeHeight: 1080,
+    descriptionPath: "/videos/ludovico-einaudi-fly-visualizer.js",
+  },
+  {
     id: "bomba-estereo-internationales",
     artist: "Bomba Estéreo",
     title: "Internacionales",
