@@ -34,7 +34,7 @@ export default {
     },
     {
       time: 141.593,
-      text: "I'm actually impressed how tight her waist is. This girl is, like, blessed genetically. Or she definitely breaks a sweat in the gym.",
+      text: "I'm actually impressed how tight her waist is. This gal is definitely blessed genetically. Or she definitely breaks a sweat in the gym.",
     },
     {
       time: 160.142,
