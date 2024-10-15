@@ -1,9 +1,22 @@
 export default [
   {
+    id: "deaths-dynamic-shroud-judgment-bolt",
+    artist: "death's dynamic shroud",
+    title: "Judgment Bolt",
+    date: "2022-01-18",
+    videoType: "musicVideo",
+    thumbnailSrc: "https://img.youtube.com/vi/4OgDmfPn0Zg/maxresdefault.jpg",
+    thumbnailAlt: "TODO",
+    youtubeId: "4OgDmfPn0Zg",
+    youtubeWidth: 3840,
+    youtubeHeight: 2160,
+    descriptionPath: "/videos/deaths-dynamic-shroud-judgment-bolt.js",
+  },
+  {
     id: "lola-clocks-piano-version",
     artist: "Lola",
     title: "Clocks",
-    date: "2021-02-04",
+    date: "2024-06-21",
     videoType: "livePerformance",
     thumbnailSrc: "https://img.youtube.com/vi/QPAXHk0qaXo/maxresdefault.jpg",
     thumbnailAlt: "TODO",
