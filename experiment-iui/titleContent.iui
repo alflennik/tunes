@@ -7,7 +7,7 @@ TitleContent = {
   |>
 
   OtherContributor = <[
-    type: <| .artist: Artist, .other: <""> |>,
+    type.<|[ .artist: Artist, .other: <""> ]|>,
     contributorType: <| .producedBy, .directedBy, .starring |>,
   ]>
 
@@ -41,8 +41,8 @@ TitleContent = {
     .misleading: <[
       reason: <"">,
       provided.<|[
-        .commonTerm: ProvidedContentType.options.commonTerm,
-        .customTerm: ProvidedContentType.options.customTerm
+        .commonTerm: ProvidedContentType.commonTerm,
+        .customTerm: ProvidedContentType.customTerm,
       ]|>,
     ]>
   ]|>
@@ -78,7 +78,7 @@ TitleContent = {
       performing.<|[
         .performance: [
           by: <| Artist, [ Artists ] |>,
-        ]
+        ],
         .song: Song,
         .songs: [ Song ],
       ]|>,
