@@ -14,7 +14,7 @@ export default {
     },
     {
       time: 40.343,
-      text: "A pair of cupcakes waiting by the windowsill, the girl drops her pants on the floor. In front of a mirror she sizes up her body. You can just tell. It is comfortable in her skin.",
+      text: "A pair of cupcakes waiting by the windowsill, the girl drops her pants on the floor. In front of a mirror she sizes up her body in nothing but her undies. You can just tell. It is comfortable in her skin.",
     },
     {
       time: 54.74,
@@ -26,7 +26,7 @@ export default {
     },
     {
       time: 83.115,
-      text: "No matter. She vacuums up the house, dancing with sparkling ease. She takes a dip in frothy water. She puts on makeup. She picks out a charming blouse. Does she expect a guest?",
+      text: "No matter. She vacuums up the house, dancing with sparkling ease. She takes a dip in frothy water. She puts on makeup and picks out a charming dress. Does she expect a guest?",
     },
     {
       time: 100.339,
@@ -38,11 +38,11 @@ export default {
     },
     {
       time: 133.535,
-      text: "In the light of a huge bonfire, the girl waits for her partner among the nighttime mountains, dances through the night.",
+      text: "In the heat of a huge bonfire, the girl waits for her partner among the nighttime mountains, dances through the night.",
     },
     {
       time: 157.935,
-      text: "The girl is still alone when she wakes up at dawn, but she still glows with the happiness of an insatiable searcher.",
+      text: "The girl is still alone when she wakes up at dawn, but she still glows with the hope of an insatiable searcher.",
     },
     {
       time: 167.725,
@@ -54,7 +54,7 @@ export default {
     },
     {
       time: 181.379,
-      text: "Maye can't keep a straight face and giggles devilishly, shrugging her shoulders.",
+      text: "Maye can't keep a straight face and giggles devilishly, shrugs her shoulders.",
     },
     {
       time: 185.508,
