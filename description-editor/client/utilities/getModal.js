@@ -1,48 +1,50 @@
 import addStyle from "./addStyle.js"
+import createElementHTML from "./createElementHTML.js"
+import getId from "./getId.js"
 
-const getModal = ({ title, getBody, body, actions, replacesExistingModals = false }) => {
-  const id = `id${Math.random().toString().substr(2, 9)}`
+const modalShadeClass = getId()
+const modalClass = getId()
 
-  addStyle(`
-    .modal-shade {
-      position: fixed;
-      inset: 0;
-      background: #000000a1;
-    }
-    .modal {
-      background: #2c2c2c;
-      border: 12px solid #1e1e1e;
-      width: 100%;
-      max-width: 500px;
-      margin: 170px auto;
-      border-radius: 15px;
-      font-family: monospace;
-    }
-    .modal .title {
+addStyle(`
+  .${modalShadeClass} {
+    position: fixed;
+    inset: 0;
+    background: #000000a1;
+  }
+  .${modalClass} {
+    background: #2c2c2c;
+    border: 12px solid #1e1e1e;
+    width: 100%;
+    max-width: 500px;
+    margin: 170px auto;
+    border-radius: 15px;
+    font-family: monospace;
+
+    .title {
       padding: 24px 24px 18px 24px;
     }
-    .modal .title h1 {
+    .title h1 {
       margin: 0;
       line-height: 1;
       font-size: 19px;
       display: inline-block;
     }
-    .modal .body {
+    .body {
       padding: 0 24px 24px;
       border-bottom: 4px solid #1e1e1e;
       font-size: 16px;
       line-height: 1.25;
     }
-    .modal .body a {
+    .body a {
       color: #6a8cff;
     }
-    .modal .actions {
+    .actions {
       padding: 10px 24px;
       display: flex;
       justify-content: end;
       gap: 10px;
     }
-    .modal .actions button {
+    .actions button {
       font-weight: bold;
       padding: 8px 50px;
       color: white;
@@ -53,28 +55,27 @@ const getModal = ({ title, getBody, body, actions, replacesExistingModals = fals
       border-radius: 4px;
       background: #424242;
     }
-    .modal .actions button.primary {
+    .actions button.primary {
       background: #2d52ce;
     }
+  }
+`)
+
+const getModal = ({ title, getBody, body, actions, replacesExistingModals = false }) => {
+  const node = createElementHTML(`
+    <div modal-instance class="${modalShadeClass}">
+      <div class="${modalClass}">
+        <div class="title">
+          <h1>${title}</h1>
+        </div>
+        <div class="body"></div>
+        <div class="actions"></div>
+      </div>
+    </div>
   `)
 
-  const node = document.createElement("div")
-
-  node.setAttribute("id", id)
-  node.setAttribute("modal-instance", "")
-  node.setAttribute("class", "modal-shade")
-  node.innerHTML = /* HTML */ `
-    <div class="modal">
-      <div class="title">
-        <h1>${title}</h1>
-      </div>
-      <div modal-body class="body"></div>
-      <div actions class="actions"></div>
-    </div>
-  `
-
-  const actionsNode = node.querySelector("[actions]")
-  const modalBody = node.querySelector("[modal-body]")
+  const modalBody = node.querySelector(".body")
+  const actionsNode = node.querySelector(".actions")
 
   if (body) {
     modalBody.innerHTML = body

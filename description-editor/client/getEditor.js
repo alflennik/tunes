@@ -3,6 +3,26 @@ import getEditorControls from "./getEditorControls.js"
 import getDescriptionGap from "./getDescriptionGap.js"
 import getDescription from "./getDescription.js"
 import addStyle from "./utilities/addStyle.js"
+import getId from "./utilities/getId.js"
+
+const editorClass = getId()
+
+addStyle(`
+  .${editorClass} {
+    width: 100%;
+    height: 100%;
+    background: #242424;
+    display: flex;
+    flex-direction: column;
+
+    .descriptions {
+      height: 100%;
+      flex-grow: 1;
+      overflow-y: scroll;
+      padding: 7px 0;
+    }
+  }
+`)
 
 const getEditor = async ({
   node,
@@ -17,35 +37,16 @@ const getEditor = async ({
   watchAudioStatus,
   loadVideoId,
 }) => {
-  addStyle(`
-    #editor {
-      width: 100%;
-      background: #242424;
-      display: flex;
-      flex-direction: column;
-    }
-    #descriptions {
-      flex-grow: 1;
-      overflow-y: scroll;
-      padding: 7px 0;
-    }
-  `)
-
   const getId = () => `id${Math.random().toString().substr(2, 9)}`
 
   node.innerHTML = /* HTML */ `
-    <div description-gap-style-node></div>
-    <div description-style-node></div>
-    <div id="editor">
-      <div id="descriptions"></div>
-
-      <div editor-controls-container></div>
+    <div class="${editorClass}">
+      <div class="descriptions"></div>
+      <div class="controls-container"></div>
     </div>
   `
 
-  const descriptionsElement = node.querySelector("#descriptions")
-  const descriptionStyleNode = node.querySelector("[description-style-node]")
-  const descriptionGapStyleNode = node.querySelector("[description-gap-style-node]")
+  const descriptionsElement = node.querySelector(".descriptions")
 
   const {
     getDescriptions,
@@ -59,7 +60,7 @@ const getEditor = async ({
     savedDescriptionsOnChange: onSavedContentChange,
   })
 
-  const editorControlsContainer = node.querySelector("[editor-controls-container]")
+  const editorControlsContainer = node.querySelector(".controls-container")
   getEditorControls({
     node: editorControlsContainer,
     renderAudio,
@@ -85,7 +86,6 @@ const getEditor = async ({
     const createGapElement = ({ descriptionId = null, time = null }) => {
       const gapNode = document.createElement("div")
       getDescriptionGap({
-        styleNode: descriptionGapStyleNode,
         node: gapNode,
         descriptionId,
         time,
@@ -121,7 +121,6 @@ const getEditor = async ({
         node.setAttribute("id", description.id)
         node.setAttribute("description-node", "")
         getDescription({
-          styleNode: descriptionStyleNode,
           node,
           id: description.id,
           getDescriptions,

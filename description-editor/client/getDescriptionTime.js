@@ -1,27 +1,22 @@
 import addStyle from "./utilities/addStyle.js"
+import getId from "./utilities/getId.js"
 
-const getDescriptionTime = ({
-  node,
-  styleNode,
-  id,
-  getDescription,
-  updateDescription,
-  onDescriptionsChange,
-}) => {
-  addStyle(`
-    .description-time {
-      flex-grow: 1;
-      display: flex;
-      gap: 7px;
-      justify-content: center;
-      height: 22px;
-    }
-    .description-time button {
+const descriptionTimeClass = getId()
+
+addStyle(`
+  .${descriptionTimeClass} {
+    flex-grow: 1;
+    display: flex;
+    gap: 7px;
+    justify-content: center;
+    height: 22px;
+
+    button {
       padding: 4px 5px;
       background: #2d52ce;
       border-radius: 4px;
     }
-    .description-time input {
+    input {
       width: 95px;
       text-align: center;
       background: white;
@@ -31,7 +26,17 @@ const getDescriptionTime = ({
       border-radius: 4px;
       display: block;
     }
-  `)
+  }
+`)
+
+const getDescriptionTime = ({
+  node,
+  id,
+  getDescription,
+  updateDescription,
+  onDescriptionsChange,
+}) => {
+  node.classList.add(descriptionTimeClass)
 
   node.innerHTML = /* HTML */ `
     <button move-earlier type="button" title="Move Earlier" tabindex="-1">

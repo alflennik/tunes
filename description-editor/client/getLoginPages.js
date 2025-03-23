@@ -1,30 +1,27 @@
 import addStyle from "./utilities/addStyle.js"
+import getId from "./utilities/getId.js"
 
-const getSignInPage = () => {
-  addStyle(`
-    body {
-      background: black;
-      color: white;
-      font-family: monospace;
-      font-size: 16px;
-    }
+const signInPageClass = getId()
+const signedInPageClass = getId()
+
+addStyle(`
+  body.${signInPageClass} {
+    background: black;
+    color: white;
+    font-family: monospace;
+    font-size: 16px;
+
     .redirecting {
       padding: 15px;
     }
-  `)
-  const root = document.querySelector("#root")
-  root.innerHTML = /* HTML */ ` <div class="redirecting">Redirecting to GitHub ...</div> `
-  location.href = "/api/github-pre-authentication"
-}
+  }
 
-const getSignedInPage = async () => {
-  addStyle(`
-    body {
-      background: black;
-      color: white;
-      font-family: monospace;
-      font-size: 16px;
-    }
+  body.${signedInPageClass} {
+    background: black;
+    color: white;
+    font-family: monospace;
+    font-size: 16px;
+
     .close-tab {
       background: #454545;
       border-radius: 4px;
@@ -52,7 +49,6 @@ const getSignedInPage = async () => {
       width: 20px;
       height: 20px;
     }
-
     .sr-only {
       position: absolute !important;
       width: 1px !important;
@@ -63,7 +59,20 @@ const getSignedInPage = async () => {
       clip: rect(0, 0, 0, 0) !important;
       border: 0 !important;
     }
-  `)
+  }
+`)
+
+const getSignInPage = () => {
+  document.body.classList.add(signInPageClass)
+
+  const root = document.querySelector("#root")
+  root.innerHTML = /* HTML */ ` <div class="redirecting">Redirecting to GitHub ...</div> `
+
+  location.href = "/api/github-pre-authentication"
+}
+
+const getSignedInPage = async () => {
+  document.body.classList.add(signedInPageClass)
 
   const root = document.querySelector("#root")
   root.innerHTML = /* HTML */ ` <div container></div> `

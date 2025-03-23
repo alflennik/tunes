@@ -1,23 +1,14 @@
 import getDescriptionTime from "./getDescriptionTime.js"
 import addStyle from "./utilities/addStyle.js"
+import getId from "./utilities/getId.js"
 
-const getDescription = ({
-  styleNode,
-  node,
-  id,
-  getDescriptions,
-  deleteDescription,
-  updateDescription,
-  onDescriptionsChange,
-  getDefaultSsml,
-  firstGapId,
-  seekTo,
-}) => {
-  addStyle(`
-    .description {
-      padding: 7px 20px;
-    }
-    .description textarea {
+const descriptionClass = getId()
+
+addStyle(`
+  .${descriptionClass} {
+    padding: 7px 20px;
+
+    textarea {
       width: 100% !important;
       background: #313131;
       border: none;
@@ -56,10 +47,22 @@ const getDescription = ({
       margin-bottom: 4px;
       display: block;
     }
-  `)
+  }
+`)
 
+const getDescription = ({
+  node,
+  id,
+  getDescriptions,
+  deleteDescription,
+  updateDescription,
+  onDescriptionsChange,
+  getDefaultSsml,
+  firstGapId,
+  seekTo,
+}) => {
   node.innerHTML = /* HTML */ `
-    <div class="description">
+    <div class="${descriptionClass}">
       <div class="description-actions">
         <button play-from-description type="button" title="Play From Here">
           <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512">
@@ -93,7 +96,6 @@ const getDescription = ({
 
   getDescriptionTime({
     node: node.querySelector("[description-time]"),
-    styleNode,
     id,
     getDescription,
     updateDescription,

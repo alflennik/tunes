@@ -3,6 +3,53 @@ import getEditor from "./getEditor.js"
 import getAudio from "./getAudio.js"
 import { getSignInPage, getSignedInPage } from "./getLoginPages.js"
 import addStyle from "./utilities/addStyle.js"
+import getId from "./utilities/getId.js"
+import createElementHTML from "./utilities/createElementHTML.js"
+
+const appClass = getId()
+
+addStyle(`
+  html,
+  body {
+    margin: 0;
+  }
+  body {
+    background: black;
+    color: white;
+    font-family: monospace;
+    overflow: hidden;
+  }
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+  .sr-only {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    padding: 0 !important;
+    margin: -1px !important;
+    overflow: hidden !important;
+    clip: rect(0, 0, 0, 0) !important;
+    border: 0 !important;
+  }
+  .${appClass} {
+    display: flex;
+    align-items: stretch;
+    height: 100%;
+    width: 100%;
+
+    .editor-container {
+      height: 100%;
+      width: 440px;
+    }
+    .video-player {
+      height: 100%;
+      width: calc(100% - 440px);
+    }
+  }
+`)
 
 const getApp = async () => {
   if (location.href.endsWith("/?/sign-in-with-github")) {
@@ -13,57 +60,19 @@ const getApp = async () => {
     return
   }
 
-  addStyle(`
-    html,
-    body {
-      margin: 0;
-    }
-    body {
-      background: black;
-      color: white;
-      font-family: monospace;
-      overflow: hidden;
-    }
-    html,
-    body,
-    #root,
-    #app,
-    #video-player,
-    #editor-container,
-    #editor {
-      height: 100%;
-    }
-    .sr-only {
-      position: absolute !important;
-      width: 1px !important;
-      height: 1px !important;
-      padding: 0 !important;
-      margin: -1px !important;
-      overflow: hidden !important;
-      clip: rect(0, 0, 0, 0) !important;
-      border: 0 !important;
-    }
-    #app {
-      display: flex;
-      align-items: stretch;
-      width: 100%;
-    }
-    #editor-container {
-      width: 440px;
-    }
-    #video-player {
-      width: calc(100% - 440px);
-    }
+  const root = document.querySelector("#root")
+
+  const node = createElementHTML(`
+    <div class="${appClass}">
+      <div class="video-player"></div>
+      <div class="editor-container"></div>
+    </div>
   `)
 
-  const root = document.querySelector("#root")
-  root.innerHTML = /* HTML */ `
-    <div startup-dialog-node></div>
-    <div id="app">
-      <div id="video-player"></div>
-      <div id="editor-container"></div>
-    </div>
-  `
+  root.appendChild(node)
+
+  const videoPlayerElement = node.querySelector(".video-player")
+  const editorContainerElement = node.querySelector(".editor-container")
 
   const demoVideoId = "pCh3Kp6qxo8"
   let videoId = location.href.match(/\?.*videoId=([^&]+)/)?.[1]
@@ -139,7 +148,7 @@ const getApp = async () => {
 
   const [{ seekTo }, { ffmpeg, fetchFile, getMostRecentDurationSeconds }] = await Promise.all([
     getVideoPlayer({
-      node: root.querySelector("#video-player"),
+      node: videoPlayerElement,
       getVideo,
       getAudioElement: getAudioElementWhenAvailable,
       getCaptions: getAudioCaptionsWhenAvailable,
@@ -161,7 +170,7 @@ const getApp = async () => {
   ])
 
   const { getDescriptions, getDefaultSsml } = await getEditor({
-    node: root.querySelector("#editor-container"),
+    node: editorContainerElement,
     seekTo,
     getVideo,
     onVideoChange,

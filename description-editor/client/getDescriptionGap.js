@@ -1,22 +1,16 @@
 import addStyle from "./utilities/addStyle.js"
+import getId from "./utilities/getId.js"
 
-const getDescriptionGap = ({
-  styleNode,
-  node,
-  descriptionId = null,
-  time = null,
-  getDescriptions,
-  createDescription,
-  seekTo,
-}) => {
-  addStyle(`
-    .description-gap {
-      position: relative;
-      display: flex;
-      justify-content: center;
-      margin: 12px 20px;
-    }
-    .description-gap::before {
+const descriptionGapClass = getId()
+
+addStyle(`
+  .${descriptionGapClass} {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    margin: 12px 20px;
+
+    &::before {
       content: "";
       display: block;
       height: 2px;
@@ -25,7 +19,7 @@ const getDescriptionGap = ({
       background: #333333;
       top: 50%;
     }
-    .description-gap button {
+    button {
       border-radius: 9px;
       align-items: center;
       display: flex;
@@ -37,15 +31,24 @@ const getDescriptionGap = ({
       position: relative;
       box-shadow: 0 0 0 6px #242424;
     }
-    .description-gap svg {
+    svg {
       fill: white;
       width: 15px;
       height: 15px;
     }
-  `)
+  }
+`)
 
+const getDescriptionGap = ({
+  node,
+  descriptionId = null,
+  time = null,
+  getDescriptions,
+  createDescription,
+  seekTo,
+}) => {
   node.innerHTML = /* HTML */ `
-    <div class="description-gap">
+    <div class="${descriptionGapClass}">
       <button play-from-here type="button" title="Play From Here">
         <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512">
           <!--!Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->

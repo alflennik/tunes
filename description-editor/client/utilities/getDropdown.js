@@ -1,11 +1,13 @@
 import addStyle from "./addStyle.js"
+import getId from "./getId.js"
 
-const getDropdown = ({ node, button, items }) => {
-  addStyle(`
-    .dropdown {
-      position: relative;
-    }
-    .dropdown.closed .dropdown-menu {
+const dropdownClass = getId()
+
+addStyle(`
+  .${dropdownClass} {
+    position: relative;
+
+    &.closed .dropdown-menu {
       display: none;
     }
     .dropdown-menu {
@@ -22,7 +24,7 @@ const getDropdown = ({ node, button, items }) => {
       color: white;
       box-shadow: 0 0 150px 0 black;
     }
-    .dropdown > button {
+    & > button {
       position: relative;
     }
     .dropdown-menu button {
@@ -45,8 +47,10 @@ const getDropdown = ({ node, button, items }) => {
     .dropdown-menu button:hover {
       background: #777777;
     }
-  `)
+  }
+`)
 
+const getDropdown = ({ node, button, items }) => {
   // const dropdownElement = createElementHTML(`<div></div>`)
 
   // const dropdownMenuElement = createElementHTML(`<ul></ul>`)
@@ -61,15 +65,15 @@ const getDropdown = ({ node, button, items }) => {
   // })
 
   node.innerHTML = /* HTML */ `
-    <div class="dropdown" dropdown>
-      <ul class="dropdown-menu" dropdown-menu></ul>
+    <div class="${dropdownClass}">
+      <ul class="dropdown-menu"></ul>
       ${button}
     </div>
   `
 
-  const dropdownElement = node.querySelector("[dropdown]")
-  const buttonElement = node.querySelector("[dropdown] > button")
-  const dropdownMenuElement = node.querySelector("[dropdown-menu]")
+  const dropdownElement = node.querySelector(`.${dropdownClass}`)
+  const buttonElement = node.querySelector(`.${dropdownClass} > button`)
+  const dropdownMenuElement = node.querySelector(".dropdown-menu")
 
   const openDropdown = () => {
     dropdownElement.classList.add("open")

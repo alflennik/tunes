@@ -2,6 +2,87 @@ import getDropdown from "./utilities/getDropdown.js"
 import getModal from "./utilities/getModal.js"
 import { getSignInModal, getTermsModal } from "./getLoginModals.js"
 import addStyle from "./utilities/addStyle.js"
+import getId from "./utilities/getId.js"
+
+const editorControlsClass = getId()
+
+addStyle(`
+  .${editorControlsClass} {
+    padding: 20px;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    background: #333;
+  }
+  .editor-controls-button {
+    background: #4b4b4b;
+    color: white;
+    border: none;
+    font-family: monospace;
+    padding: 6px 12px 4px;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border: 2px solid transparent;
+    transition: background 200ms linear;
+  }
+  .editor-controls-button:hover {
+    background: #424242;
+  }
+  .editor-controls-button:active {
+    background: #3b3b3b;
+  }
+  .editor-controls-button svg {
+    width: 12px;
+    height: 12px;
+    fill: white;
+  }
+  .editor-controls-button.working {
+    background: gray;
+  }
+  .editor-controls-button.working:hover {
+    background: gray;
+  }
+  .editor-controls-button.working:active {
+    background: gray;
+  }
+  .editor-controls-button.done, .editor-controls-button.working {
+    background: #383838;
+    color: #f4f4f4;
+    border: 2px dashed #444444;
+    cursor: default;
+  }
+  .editor-controls-button.done:hover, .editor-controls-button.working:hover{
+    background: #383838;
+  }
+  .editor-controls-button.done:active, .editor-controls-button.working:active {
+    background: #383838;
+  }
+  .option-button-container {
+    flex-grow: 1;
+    display: flex;
+    justify-content: end;
+  }
+  .option-button {
+    background: #6f6f6f;
+    border: none;
+    height: 30px;
+    padding: 0 7px;
+    border-radius: 13px;
+    display: inline-block;
+    text-align: center;
+    cursor: pointer;
+    transition: background linear 200ms;
+  }
+  .option-button svg {
+    display: block;
+    fill: white;
+    width: 19px;
+    height: 19px;
+  }
+`)
 
 const getEditorControls = ({
   node,
@@ -17,86 +98,8 @@ const getEditorControls = ({
   onDescriptionsChange,
   loadVideoId,
 }) => {
-  addStyle(`
-    .editor-controls {
-      padding: 20px;
-      display: flex;
-      gap: 10px;
-      align-items: center;
-      background: #333;
-    }
-    .editor-controls-button {
-      background: #4b4b4b;
-      color: white;
-      border: none;
-      font-family: monospace;
-      padding: 6px 12px 4px;
-      border-radius: 4px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      border: 2px solid transparent;
-      transition: background 200ms linear;
-    }
-    .editor-controls-button:hover {
-      background: #424242;
-    }
-    .editor-controls-button:active {
-      background: #3b3b3b;
-    }
-    .editor-controls-button svg {
-      width: 12px;
-      height: 12px;
-      fill: white;
-    }
-    .editor-controls-button.working {
-      background: gray;
-    }
-    .editor-controls-button.working:hover {
-      background: gray;
-    }
-    .editor-controls-button.working:active {
-      background: gray;
-    }
-    .editor-controls-button.done, .editor-controls-button.working {
-      background: #383838;
-      color: #f4f4f4;
-      border: 2px dashed #444444;
-      cursor: default;
-    }
-    .editor-controls-button.done:hover, .editor-controls-button.working:hover{
-      background: #383838;
-    }
-    .editor-controls-button.done:active, .editor-controls-button.working:active {
-      background: #383838;
-    }
-    .option-button-container {
-      flex-grow: 1;
-      display: flex;
-      justify-content: end;
-    }
-    .option-button {
-      background: #6f6f6f;
-      border: none;
-      height: 30px;
-      padding: 0 7px;
-      border-radius: 13px;
-      display: inline-block;
-      text-align: center;
-      cursor: pointer;
-      transition: background linear 200ms;
-    }
-    .option-button svg {
-      display: block;
-      fill: white;
-      width: 19px;
-      height: 19px;
-    }
-  `)
-
   node.innerHTML = /* HTML */ `
-    <div class="editor-controls">
+    <div class="${editorControlsClass}">
       <button render-button type="button" class="editor-controls-button">
         <span label>Render</span>
       </button>
@@ -152,15 +155,17 @@ const getEditorControls = ({
       { buttonElement: deleteButtonElement },
       { buttonElement: signOutButtonElement },
     ],
-    button: /* HTML */ `<button type="button" title="Options" class="option-button">
-      <svg aria-hidden xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 512">
-        <!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
-        <path
-          d="M64 360a56 56 0 1 0 0 112 56 56 0 1 0 0-112zm0-160a56 56 0 1 0 0 112 56 56 0 1 0 0-112zM120 96A56 56 0 1 0 8 96a56 56 0 1 0 112 0z"
-        />
-      </svg>
-      <span class="sr-only">Options</span>
-    </button>`,
+    button: /* HTML */ `
+      <button type="button" title="Options" class="option-button">
+        <svg aria-hidden xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 512">
+          <!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
+          <path
+            d="M64 360a56 56 0 1 0 0 112 56 56 0 1 0 0-112zm0-160a56 56 0 1 0 0 112 56 56 0 1 0 0-112zM120 96A56 56 0 1 0 8 96a56 56 0 1 0 112 0z"
+          />
+        </svg>
+        <span class="sr-only">Options</span>
+      </button>
+    `,
   })
 
   let currentRenderedDescriptionHash
