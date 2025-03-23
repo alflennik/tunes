@@ -84,16 +84,14 @@ const getEditor = async ({
 
   const handleDescriptionsChange = () => {
     const createGapElement = ({ descriptionId = null, time = null }) => {
-      const gapNode = document.createElement("div")
-      getDescriptionGap({
-        node: gapNode,
+      const { descriptionGapElement } = getDescriptionGap({
         descriptionId,
         time,
         getDescriptions,
         createDescription,
         seekTo,
       })
-      return gapNode
+      return descriptionGapElement
     }
 
     if (!descriptionsElement.firstElementChild) {
@@ -112,16 +110,12 @@ const getEditor = async ({
         : descriptionsElement.firstElementChild
       const nextElement = previousElement ? previousElement.nextElementSibling : null
 
-      let node
+      let descriptionElement
       const existingElement = descriptionsElement.querySelector(`#${description.id}`)
       if (existingElement) {
-        node = existingElement
+        descriptionElement = existingElement
       } else {
-        node = document.createElement("div")
-        node.setAttribute("id", description.id)
-        node.setAttribute("description-node", "")
-        getDescription({
-          node,
+        const { descriptionElement: newDescriptionElement } = getDescription({
           id: description.id,
           getDescriptions,
           updateDescription,
@@ -131,6 +125,7 @@ const getEditor = async ({
           firstGapId,
           seekTo,
         })
+        descriptionElement = newDescriptionElement
       }
 
       let gapNode
@@ -145,14 +140,14 @@ const getEditor = async ({
       let elementRequiringFocus
       let selectionStart
       let selectionEnd
-      if (node.contains(document.activeElement)) {
+      if (descriptionElement.contains(document.activeElement)) {
         elementRequiringFocus = document.activeElement
         selectionStart = document.activeElement.selectionStart
         selectionEnd = document.activeElement.selectionEnd
       }
 
-      descriptionsElement.insertBefore(node, nextElement)
-      descriptionsElement.insertBefore(gapNode, node.nextElementSibling)
+      descriptionsElement.insertBefore(descriptionElement, nextElement)
+      descriptionsElement.insertBefore(gapNode, descriptionElement.nextElementSibling)
 
       if (elementRequiringFocus) {
         elementRequiringFocus.focus()

@@ -3,6 +3,7 @@ import getModal from "./utilities/getModal.js"
 import { getSignInModal, getTermsModal } from "./getLoginModals.js"
 import addStyle from "./utilities/addStyle.js"
 import getId from "./utilities/getId.js"
+import createElementHTML from "./utilities/createElementHTML.js"
 
 const editorControlsClass = getId()
 
@@ -128,12 +129,6 @@ const getEditorControls = ({
   const renderButton = node.querySelector("[render-button]")
   const saveButton = node.querySelector("[save-button]")
   const publishButton = node.querySelector("[publish-button]")
-
-  const createElementHTML = html => {
-    const temp = document.createElement("div")
-    temp.innerHTML = html
-    return temp.firstElementChild
-  }
 
   const newButtonElement = createElementHTML(`<button type="button">New</button>`)
   const openButtonElement = createElementHTML(`<button type="button">Open</button>`)

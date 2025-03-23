@@ -1,4 +1,5 @@
 import addStyle from "./addStyle.js"
+import createElementHTML from "./createElementHTML.js"
 import getId from "./getId.js"
 
 const dropdownClass = getId()
@@ -106,7 +107,7 @@ const getDropdown = ({ node, button, items }) => {
   const itemElements = items.map(item => {
     item.buttonElement.addEventListener("click", closeDropdown)
 
-    const li = document.createElement("li")
+    const li = createElementHTML(`<li></li>`)
     li.appendChild(item.buttonElement)
     return li
   })

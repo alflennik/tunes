@@ -1,4 +1,5 @@
 import addStyle from "./utilities/addStyle.js"
+import createElementHTML from "./utilities/createElementHTML.js"
 import getId from "./utilities/getId.js"
 
 const descriptionGapClass = getId()
@@ -40,15 +41,14 @@ addStyle(`
 `)
 
 const getDescriptionGap = ({
-  node,
   descriptionId = null,
   time = null,
   getDescriptions,
   createDescription,
   seekTo,
 }) => {
-  node.innerHTML = /* HTML */ `
-    <div class="${descriptionGapClass}">
+  const descriptionGapElement = createElementHTML(`
+    <div id="gap${descriptionId}" class="${descriptionGapClass}">
       <button play-from-here type="button" title="Play From Here">
         <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512">
           <!--!Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
@@ -68,7 +68,7 @@ const getDescriptionGap = ({
         <span class="sr-only">Add Description Here</span>
       </button>
     </div>
-  `
+  `)
 
   const getTime = () => {
     let newTime
@@ -80,15 +80,17 @@ const getDescriptionGap = ({
     return newTime
   }
 
-  node.querySelector("[play-from-here]").addEventListener("click", () => {
+  descriptionGapElement.querySelector("[play-from-here]").addEventListener("click", () => {
     seekTo(getTime())
   })
 
-  node.querySelector("[add-description]").addEventListener("click", () => {
+  descriptionGapElement.querySelector("[add-description]").addEventListener("click", () => {
     let newTime = getTime()
     const { id: newId } = createDescription({ time: newTime })
     document.querySelector(`#${newId} textarea`).focus()
   })
+
+  return { descriptionGapElement }
 }
 
 export default getDescriptionGap

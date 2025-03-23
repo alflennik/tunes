@@ -1,6 +1,8 @@
 import getDescriptionTime from "./getDescriptionTime.js"
 import addStyle from "./utilities/addStyle.js"
+import createElementHTML from "./utilities/createElementHTML.js"
 import getId from "./utilities/getId.js"
+import getModal from "./utilities/getModal.js"
 
 const descriptionClass = getId()
 
@@ -51,7 +53,6 @@ addStyle(`
 `)
 
 const getDescription = ({
-  node,
   id,
   getDescriptions,
   deleteDescription,
@@ -61,8 +62,8 @@ const getDescription = ({
   firstGapId,
   seekTo,
 }) => {
-  node.innerHTML = /* HTML */ `
-    <div class="${descriptionClass}">
+  const descriptionElement = createElementHTML(`
+    <div id="${id}" class="${descriptionClass}">
       <div class="description-actions">
         <button play-from-description type="button" title="Play From Here">
           <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512">
@@ -90,24 +91,24 @@ const getDescription = ({
       >
       <div provide-ssml-text></div>
     </div>
-  `
+  `)
 
   const getDescription = () => getDescriptions().find(description => description.id === id)
 
   getDescriptionTime({
-    node: node.querySelector("[description-time]"),
+    node: descriptionElement.querySelector("[description-time]"),
     id,
     getDescription,
     updateDescription,
     onDescriptionsChange,
   })
 
-  const textTextarea = node.querySelector("[text]")
+  const textTextarea = descriptionElement.querySelector("[text]")
   textTextarea.addEventListener("input", () => {
     updateDescription({ id, text: textTextarea.value })
   })
 
-  const ssmlCheckbox = node.querySelector("[provide-ssml]")
+  const ssmlCheckbox = descriptionElement.querySelector("[provide-ssml]")
 
   const handleChange = () => {
     const description = getDescription()
@@ -124,14 +125,14 @@ const getDescription = ({
       textTextarea.setSelectionRange(textSelectionStart, textSelectionEnd)
     }
 
-    let ssmlTextarea = node.querySelector("[provide-ssml-text]")
+    let ssmlTextarea = descriptionElement.querySelector("[provide-ssml-text]")
     if (description.ssml == null && ssmlTextarea.tagName === "TEXTAREA") {
       ssmlTextarea.outerHTML = "<div provide-ssml-text></div>"
-      node.querySelector("[provide-ssml]").focus()
+      descriptionElement.querySelector("[provide-ssml]").focus()
     } else if (description.ssml != null && ssmlTextarea.tagName === "DIV") {
       ssmlTextarea.outerHTML = "<textarea provide-ssml-text></textarea>"
 
-      ssmlTextarea = node.querySelector("[provide-ssml-text]")
+      ssmlTextarea = descriptionElement.querySelector("[provide-ssml-text]")
 
       ssmlTextarea.value = description.ssml
 
@@ -155,13 +156,13 @@ const getDescription = ({
   onDescriptionsChange(handleChange)
   handleChange()
 
-  const playButton = node.querySelector("[play-from-description]")
+  const playButton = descriptionElement.querySelector("[play-from-description]")
   playButton.addEventListener("click", () => {
     const description = getDescription()
     seekTo(description.time)
   })
 
-  const deleteButton = node.querySelector("[description-delete]")
+  const deleteButton = descriptionElement.querySelector("[description-delete]")
   deleteButton.addEventListener("click", () => {
     getModal({
       title: "Are you sure?",
@@ -229,6 +230,8 @@ const getDescription = ({
       }
     }
   })
+
+  return { descriptionElement }
 }
 
 export default getDescription
