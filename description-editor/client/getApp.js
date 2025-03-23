@@ -1,3 +1,8 @@
+import getFFmpeg from "./ffmpeg/getFFmpeg.js"
+import getEditor from "./getEditor.js"
+import getAudio from "./getAudio.js"
+import { getSignInPage, getSignedInPage } from "./getLoginPages.js"
+
 const getApp = async () => {
   if (location.href.endsWith("/?/sign-in-with-github")) {
     getSignInPage()
@@ -104,8 +109,6 @@ const getApp = async () => {
   }
 
   await loadVideoId(demoVideoId)
-
-  // getStartupDialog({ node: root.querySelector("[startup-dialog-node]") })
 
   let audioRef = { current: null }
 
@@ -329,3 +332,5 @@ const getDemoData = () => {
     ],
   }
 }
+
+getApp()

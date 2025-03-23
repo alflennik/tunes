@@ -86,3 +86,5 @@ const loadObjectHash = async () => {
   })
   // objectHash is now a global variable
 }
+
+export default editDescriptions

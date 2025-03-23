@@ -120,7 +120,7 @@ const getDescriptionTime = ({
   }
 
   const handleChange = () => {
-    description = getDescription()
+    const description = getDescription()
 
     if (!description) return // It was deleted
 
@@ -214,3 +214,5 @@ const getDescriptionTime = ({
   node.querySelector("[move-earlier]").addEventListener("click", moveEarlier)
   node.querySelector("[move-later]").addEventListener("click", moveLater)
 }
+
+export default getDescriptionTime

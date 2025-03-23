@@ -89,3 +89,5 @@ const getDescriptionGap = ({
     document.querySelector(`#${newId} textarea`).focus()
   })
 }
+
+export default getDescriptionGap

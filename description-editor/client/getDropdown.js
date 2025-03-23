@@ -102,3 +102,5 @@ const getDropdown = ({ node, button, items }) => {
 
   closeDropdown()
 }
+
+export default getDropdown

@@ -108,3 +108,5 @@ const getSignedInPage = async () => {
     close()
   })
 }
+
+export { getSignInPage, getSignedInPage }

@@ -1,3 +1,8 @@
+import editDescriptions from "./editDescriptions.js"
+import getEditorControls from "./getEditorControls.js"
+import getDescriptionGap from "./getDescriptionGap.js"
+import getDescription from "./getDescription.js"
+
 const getEditor = async ({
   node,
   seekTo,
@@ -183,3 +188,5 @@ const getEditor = async ({
 
   return { getDescriptions, getDefaultSsml }
 }
+
+export default getEditor

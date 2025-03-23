@@ -1,3 +1,7 @@
+import getDropdown from "./getDropdown.js"
+import getModal from "./getModal.js"
+import { getSignInModal } from "./getLoginModals.js"
+
 const getEditorControls = ({
   node,
   renderAudio,
@@ -273,3 +277,5 @@ const getEditorControls = ({
     }
   })
 }
+
+export default getEditorControls

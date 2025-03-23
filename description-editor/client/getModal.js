@@ -149,3 +149,5 @@ const getModal = ({ title, getBody, body, actions, replacesExistingModals = fals
 
   firstElement.focus()
 }
+
+export default getModal

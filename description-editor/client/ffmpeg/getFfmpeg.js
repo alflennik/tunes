@@ -44,3 +44,5 @@ const getFFmpeg = async () => {
 
   return { ffmpeg, fetchFile, getMostRecentDurationSeconds: () => mostRecentDurationSeconds }
 }
+
+export default getFFmpeg

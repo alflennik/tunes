@@ -1,3 +1,5 @@
+import getDescriptionTime from "./getDescriptionTime.js"
+
 const getDescription = ({
   styleNode,
   node,
@@ -109,7 +111,7 @@ const getDescription = ({
   const ssmlCheckbox = node.querySelector("[provide-ssml]")
 
   const handleChange = () => {
-    description = getDescription()
+    const description = getDescription()
 
     if (!description) return // It was deleted
 
@@ -229,3 +231,5 @@ const getDescription = ({
     }
   })
 }
+
+export default getDescription

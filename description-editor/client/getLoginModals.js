@@ -1,3 +1,5 @@
+import getModal from "./getModal.js"
+
 const getSignInModal = ({ callback } = {}) => {
   getModal({
     title: "Please Sign In",
@@ -134,3 +136,5 @@ const getTermsModal = () => {
     ],
   })
 }
+
+export { getSignInModal, getConfirmSignInModal, getTermsModal }

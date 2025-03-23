@@ -291,3 +291,5 @@ const getAudio = ({
     getDuckingTimes: () => duckingTimes,
   }
 }
+
+export default getAudio
