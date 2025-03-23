@@ -1,3 +1,5 @@
+import addStyle from "./utilities/addStyle.js"
+
 const getDescriptionTime = ({
   node,
   styleNode,
@@ -6,37 +8,30 @@ const getDescriptionTime = ({
   updateDescription,
   onDescriptionsChange,
 }) => {
-  if (!styleNode.querySelector("[description-time]")) {
-    const div = document.createElement("div")
-    div.setAttribute("description-time", "")
-    styleNode.appendChild(div)
-    div.innerHTML = /* HTML */ `
-      <style>
-        .description-time {
-          flex-grow: 1;
-          display: flex;
-          gap: 7px;
-          justify-content: center;
-          height: 22px;
-        }
-        .description-time button {
-          padding: 4px 5px;
-          background: #2d52ce;
-          border-radius: 4px;
-        }
-        .description-time input {
-          width: 95px;
-          text-align: center;
-          background: white;
-          color: black;
-          border: none;
-          font-family: monospace;
-          border-radius: 4px;
-          display: block;
-        }
-      </style>
-    `
-  }
+  addStyle(`
+    .description-time {
+      flex-grow: 1;
+      display: flex;
+      gap: 7px;
+      justify-content: center;
+      height: 22px;
+    }
+    .description-time button {
+      padding: 4px 5px;
+      background: #2d52ce;
+      border-radius: 4px;
+    }
+    .description-time input {
+      width: 95px;
+      text-align: center;
+      background: white;
+      color: black;
+      border: none;
+      font-family: monospace;
+      border-radius: 4px;
+      display: block;
+    }
+  `)
 
   node.innerHTML = /* HTML */ `
     <button move-earlier type="button" title="Move Earlier" tabindex="-1">

@@ -2,6 +2,7 @@ import getFFmpeg from "./ffmpeg/getFFmpeg.js"
 import getEditor from "./getEditor.js"
 import getAudio from "./getAudio.js"
 import { getSignInPage, getSignedInPage } from "./getLoginPages.js"
+import addStyle from "./utilities/addStyle.js"
 
 const getApp = async () => {
   if (location.href.endsWith("/?/sign-in-with-github")) {
@@ -12,50 +13,51 @@ const getApp = async () => {
     return
   }
 
+  addStyle(`
+    html,
+    body {
+      margin: 0;
+    }
+    body {
+      background: black;
+      color: white;
+      font-family: monospace;
+      overflow: hidden;
+    }
+    html,
+    body,
+    #root,
+    #app,
+    #video-player,
+    #editor-container,
+    #editor {
+      height: 100%;
+    }
+    .sr-only {
+      position: absolute !important;
+      width: 1px !important;
+      height: 1px !important;
+      padding: 0 !important;
+      margin: -1px !important;
+      overflow: hidden !important;
+      clip: rect(0, 0, 0, 0) !important;
+      border: 0 !important;
+    }
+    #app {
+      display: flex;
+      align-items: stretch;
+      width: 100%;
+    }
+    #editor-container {
+      width: 440px;
+    }
+    #video-player {
+      width: calc(100% - 440px);
+    }
+  `)
+
   const root = document.querySelector("#root")
   root.innerHTML = /* HTML */ `
-    <style>
-      html,
-      body {
-        margin: 0;
-      }
-      body {
-        background: black;
-        color: white;
-        font-family: monospace;
-        overflow: hidden;
-      }
-      html,
-      body,
-      #root,
-      #app,
-      #video-player,
-      #editor-container,
-      #editor {
-        height: 100%;
-      }
-      .sr-only {
-        position: absolute !important;
-        width: 1px !important;
-        height: 1px !important;
-        padding: 0 !important;
-        margin: -1px !important;
-        overflow: hidden !important;
-        clip: rect(0, 0, 0, 0) !important;
-        border: 0 !important;
-      }
-      #app {
-        display: flex;
-        align-items: stretch;
-        width: 100%;
-      }
-      #editor-container {
-        width: 440px;
-      }
-      #video-player {
-        width: calc(100% - 440px);
-      }
-    </style>
     <div startup-dialog-node></div>
     <div id="app">
       <div id="video-player"></div>

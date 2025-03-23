@@ -2,6 +2,7 @@ import editDescriptions from "./editDescriptions.js"
 import getEditorControls from "./getEditorControls.js"
 import getDescriptionGap from "./getDescriptionGap.js"
 import getDescription from "./getDescription.js"
+import addStyle from "./utilities/addStyle.js"
 
 const getEditor = async ({
   node,
@@ -16,22 +17,23 @@ const getEditor = async ({
   watchAudioStatus,
   loadVideoId,
 }) => {
+  addStyle(`
+    #editor {
+      width: 100%;
+      background: #242424;
+      display: flex;
+      flex-direction: column;
+    }
+    #descriptions {
+      flex-grow: 1;
+      overflow-y: scroll;
+      padding: 7px 0;
+    }
+  `)
+
   const getId = () => `id${Math.random().toString().substr(2, 9)}`
 
   node.innerHTML = /* HTML */ `
-    <style>
-      #editor {
-        width: 100%;
-        background: #242424;
-        display: flex;
-        flex-direction: column;
-      }
-      #descriptions {
-        flex-grow: 1;
-        overflow-y: scroll;
-        padding: 7px 0;
-      }
-    </style>
     <div description-gap-style-node></div>
     <div description-style-node></div>
     <div id="editor">

@@ -1,4 +1,5 @@
 import getDescriptionTime from "./getDescriptionTime.js"
+import addStyle from "./utilities/addStyle.js"
 
 const getDescription = ({
   styleNode,
@@ -12,54 +13,50 @@ const getDescription = ({
   firstGapId,
   seekTo,
 }) => {
-  if (!styleNode.hasChildNodes()) {
-    styleNode.innerHTML = /* HTML */ `
-      <style>
-        .description {
-          padding: 7px 20px;
-        }
-        .description textarea {
-          width: 100% !important;
-          background: #313131;
-          border: none;
-          color: white;
-          height: 100px;
-          font-size: 15px;
-          line-height: 1.4;
-          box-sizing: border-box;
-          display: block;
-          padding: 4px;
-          border-radius: 4px;
-        }
-        .description-actions {
-          display: flex;
-          gap: 7px;
-          padding: 0px 0px 7px;
-        }
-        .description-actions button {
-          border: none;
-          display: flex;
-          align-items: center;
-        }
-        .description-actions svg {
-          fill: white;
-          width: 14px;
-          height: 14px;
-        }
-        .description-actions > button {
-          padding: 4px 18px;
-          background: #313131;
-          border-radius: 4px;
-        }
-        .description-provide-ssml {
-          font-family: monospace;
-          font-weight: bold;
-          margin-bottom: 4px;
-          display: block;
-        }
-      </style>
-    `
-  }
+  addStyle(`
+    .description {
+      padding: 7px 20px;
+    }
+    .description textarea {
+      width: 100% !important;
+      background: #313131;
+      border: none;
+      color: white;
+      height: 100px;
+      font-size: 15px;
+      line-height: 1.4;
+      box-sizing: border-box;
+      display: block;
+      padding: 4px;
+      border-radius: 4px;
+    }
+    .description-actions {
+      display: flex;
+      gap: 7px;
+      padding: 0px 0px 7px;
+    }
+    .description-actions button {
+      border: none;
+      display: flex;
+      align-items: center;
+    }
+    .description-actions svg {
+      fill: white;
+      width: 14px;
+      height: 14px;
+    }
+    .description-actions > button {
+      padding: 4px 18px;
+      background: #313131;
+      border-radius: 4px;
+    }
+    .description-provide-ssml {
+      font-family: monospace;
+      font-weight: bold;
+      margin-bottom: 4px;
+      display: block;
+    }
+  `)
 
   node.innerHTML = /* HTML */ `
     <div class="description">

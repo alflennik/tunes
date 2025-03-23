@@ -1,43 +1,44 @@
-import getModal from "./getModal.js"
+import getModal from "./utilities/getModal.js"
 
 const getSignInModal = ({ callback } = {}) => {
+  addStyle(`
+    .modal .sign-in-with-github {
+      margin-top: 17px;
+      background: #282626;
+      color: white;
+      border: 1px solid white;
+      border-radius: 4px;
+      font-family: monospace;
+      padding: 15px;
+      font-size: 16px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    .modal .sign-in-with-github svg {
+      fill: white;
+      width: 18px;
+      height: 18px;
+    }
+    .modal .already-signed-in-button {
+      display: block;
+      background: transparent;
+      border: none;
+      color: #6a8cff;
+      font-family: monospace;
+      margin-top: 21px;
+      text-decoration: underline;
+      padding: 0 0 2px 0;
+      font-size: 14px;
+      cursor: pointer;
+    }
+  `)
+
   getModal({
     title: "Please Sign In",
     getBody: parentNode => {
       parentNode.innerHTML = /* HTML */ `
-        <style>
-          .modal .sign-in-with-github {
-            margin-top: 17px;
-            background: #282626;
-            color: white;
-            border: 1px solid white;
-            border-radius: 4px;
-            font-family: monospace;
-            padding: 15px;
-            font-size: 16px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-          }
-          .modal .sign-in-with-github svg {
-            fill: white;
-            width: 18px;
-            height: 18px;
-          }
-          .modal .already-signed-in-button {
-            display: block;
-            background: transparent;
-            border: none;
-            color: #6a8cff;
-            font-family: monospace;
-            margin-top: 21px;
-            text-decoration: underline;
-            padding: 0 0 2px 0;
-            font-size: 14px;
-            cursor: pointer;
-          }
-        </style>
         Click the link below to sign in with GitHub. If you do not have a GitHub account, you can
         create one.
         <button sign-in-with-github type="button" class="sign-in-with-github">

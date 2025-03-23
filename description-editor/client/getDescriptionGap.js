@@ -1,3 +1,5 @@
+import addStyle from "./utilities/addStyle.js"
+
 const getDescriptionGap = ({
   styleNode,
   node,
@@ -7,44 +9,40 @@ const getDescriptionGap = ({
   createDescription,
   seekTo,
 }) => {
-  if (!styleNode.hasChildNodes()) {
-    styleNode.innerHTML = /* HTML */ `
-      <style>
-        .description-gap {
-          position: relative;
-          display: flex;
-          justify-content: center;
-          margin: 12px 20px;
-        }
-        .description-gap::before {
-          content: "";
-          display: block;
-          height: 2px;
-          width: 100%;
-          position: absolute;
-          background: #333333;
-          top: 50%;
-        }
-        .description-gap button {
-          border-radius: 9px;
-          align-items: center;
-          display: flex;
-          height: 18px;
-          width: 18px;
-          border: none;
-          margin-left: 7px;
-          background: #4f4f4f;
-          position: relative;
-          box-shadow: 0 0 0 6px #242424;
-        }
-        .description-gap svg {
-          fill: white;
-          width: 15px;
-          height: 15px;
-        }
-      </style>
-    `
-  }
+  addStyle(`
+    .description-gap {
+      position: relative;
+      display: flex;
+      justify-content: center;
+      margin: 12px 20px;
+    }
+    .description-gap::before {
+      content: "";
+      display: block;
+      height: 2px;
+      width: 100%;
+      position: absolute;
+      background: #333333;
+      top: 50%;
+    }
+    .description-gap button {
+      border-radius: 9px;
+      align-items: center;
+      display: flex;
+      height: 18px;
+      width: 18px;
+      border: none;
+      margin-left: 7px;
+      background: #4f4f4f;
+      position: relative;
+      box-shadow: 0 0 0 6px #242424;
+    }
+    .description-gap svg {
+      fill: white;
+      width: 15px;
+      height: 15px;
+    }
+  `)
 
   node.innerHTML = /* HTML */ `
     <div class="description-gap">

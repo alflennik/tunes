@@ -1,6 +1,7 @@
-import getDropdown from "./getDropdown.js"
-import getModal from "./getModal.js"
-import { getSignInModal } from "./getLoginModals.js"
+import getDropdown from "./utilities/getDropdown.js"
+import getModal from "./utilities/getModal.js"
+import { getSignInModal, getTermsModal } from "./getLoginModals.js"
+import addStyle from "./utilities/addStyle.js"
 
 const getEditorControls = ({
   node,
@@ -16,89 +17,83 @@ const getEditorControls = ({
   onDescriptionsChange,
   loadVideoId,
 }) => {
-  if (!document.querySelector("[editor-control-style]")) {
-    const firstStyleNode = document.querySelector("style")
-    const styleElement = document.createElement("style")
-    styleElement.setAttribute("editor-control-style", "")
-    styleElement.innerText = /* CSS */ `
-      .editor-controls {
-        padding: 20px;
-        display: flex;
-        gap: 10px;
-        align-items: center;
-        background: #333;
-      }
-      .editor-controls-button {
-        background: #4b4b4b;
-        color: white;
-        border: none;
-        font-family: monospace;
-        padding: 6px 12px 4px;
-        border-radius: 4px;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        border: 2px solid transparent;
-        transition: background 200ms linear;
-      }
-      .editor-controls-button:hover {
-        background: #424242;
-      }
-      .editor-controls-button:active {
-        background: #3b3b3b;
-      }
-      .editor-controls-button svg {
-        width: 12px;
-        height: 12px;
-        fill: white;
-      }
-      .editor-controls-button.working {
-        background: gray;
-      }
-      .editor-controls-button.working:hover {
-        background: gray;
-      }
-      .editor-controls-button.working:active {
-        background: gray;
-      }
-      .editor-controls-button.done, .editor-controls-button.working {
-        background: #383838;
-        color: #f4f4f4;
-        border: 2px dashed #444444;
-        cursor: default;
-      }
-      .editor-controls-button.done:hover, .editor-controls-button.working:hover{
-        background: #383838;
-      }
-      .editor-controls-button.done:active, .editor-controls-button.working:active {
-        background: #383838;
-      }
-      .option-button-container {
-        flex-grow: 1;
-        display: flex;
-        justify-content: end;
-      }
-      .option-button {
-        background: #6f6f6f;
-        border: none;
-        height: 30px;
-        padding: 0 7px;
-        border-radius: 13px;
-        display: inline-block;
-        text-align: center;
-        cursor: pointer;
-        transition: background linear 200ms;
-      }
-      .option-button svg {
-        display: block;
-        fill: white;
-        width: 19px;
-        height: 19px;
-      }
-    `
-    firstStyleNode.parentNode.insertBefore(styleElement, firstStyleNode)
-  }
+  addStyle(`
+    .editor-controls {
+      padding: 20px;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      background: #333;
+    }
+    .editor-controls-button {
+      background: #4b4b4b;
+      color: white;
+      border: none;
+      font-family: monospace;
+      padding: 6px 12px 4px;
+      border-radius: 4px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border: 2px solid transparent;
+      transition: background 200ms linear;
+    }
+    .editor-controls-button:hover {
+      background: #424242;
+    }
+    .editor-controls-button:active {
+      background: #3b3b3b;
+    }
+    .editor-controls-button svg {
+      width: 12px;
+      height: 12px;
+      fill: white;
+    }
+    .editor-controls-button.working {
+      background: gray;
+    }
+    .editor-controls-button.working:hover {
+      background: gray;
+    }
+    .editor-controls-button.working:active {
+      background: gray;
+    }
+    .editor-controls-button.done, .editor-controls-button.working {
+      background: #383838;
+      color: #f4f4f4;
+      border: 2px dashed #444444;
+      cursor: default;
+    }
+    .editor-controls-button.done:hover, .editor-controls-button.working:hover{
+      background: #383838;
+    }
+    .editor-controls-button.done:active, .editor-controls-button.working:active {
+      background: #383838;
+    }
+    .option-button-container {
+      flex-grow: 1;
+      display: flex;
+      justify-content: end;
+    }
+    .option-button {
+      background: #6f6f6f;
+      border: none;
+      height: 30px;
+      padding: 0 7px;
+      border-radius: 13px;
+      display: inline-block;
+      text-align: center;
+      cursor: pointer;
+      transition: background linear 200ms;
+    }
+    .option-button svg {
+      display: block;
+      fill: white;
+      width: 19px;
+      height: 19px;
+    }
+  `)
 
   node.innerHTML = /* HTML */ `
     <div class="editor-controls">

@@ -1,73 +1,72 @@
+import addStyle from "./utilities/addStyle.js"
+
 const getSignInPage = () => {
+  addStyle(`
+    body {
+      background: black;
+      color: white;
+      font-family: monospace;
+      font-size: 16px;
+    }
+    .redirecting {
+      padding: 15px;
+    }
+  `)
   const root = document.querySelector("#root")
-  root.innerHTML = /* HTML */ `
-    <style>
-      body {
-        background: black;
-        color: white;
-        font-family: monospace;
-        font-size: 16px;
-      }
-      .redirecting {
-        padding: 15px;
-      }
-    </style>
-    <div class="redirecting">Redirecting to GitHub ...</div>
-  `
+  root.innerHTML = /* HTML */ ` <div class="redirecting">Redirecting to GitHub ...</div> `
   location.href = "/api/github-pre-authentication"
 }
 
 const getSignedInPage = async () => {
-  const root = document.querySelector("#root")
-  root.innerHTML = /* HTML */ `
-    <style>
-      body {
-        background: black;
-        color: white;
-        font-family: monospace;
-        font-size: 16px;
-      }
-      .close-tab {
-        background: #454545;
-        border-radius: 4px;
-        margin: 30px;
-        grid-template-columns: 1fr max-content;
-        display: grid;
-        border: 12px solid #757272;
-        padding: 15px;
-        gap: 15px;
-        max-width: max-content;
-        align-items: center;
-      }
-      .close-button {
-        border: none;
-        background: #2d52ce;
-        display: flex;
-        height: 30px;
-        width: 30px;
-        align-items: center;
-        justify-content: center;
-        border-radius: 4px;
-      }
-      .close-button svg {
-        fill: white;
-        width: 20px;
-        height: 20px;
-      }
+  addStyle(`
+    body {
+      background: black;
+      color: white;
+      font-family: monospace;
+      font-size: 16px;
+    }
+    .close-tab {
+      background: #454545;
+      border-radius: 4px;
+      margin: 30px;
+      grid-template-columns: 1fr max-content;
+      display: grid;
+      border: 12px solid #757272;
+      padding: 15px;
+      gap: 15px;
+      max-width: max-content;
+      align-items: center;
+    }
+    .close-button {
+      border: none;
+      background: #2d52ce;
+      display: flex;
+      height: 30px;
+      width: 30px;
+      align-items: center;
+      justify-content: center;
+      border-radius: 4px;
+    }
+    .close-button svg {
+      fill: white;
+      width: 20px;
+      height: 20px;
+    }
 
-      .sr-only {
-        position: absolute !important;
-        width: 1px !important;
-        height: 1px !important;
-        padding: 0 !important;
-        margin: -1px !important;
-        overflow: hidden !important;
-        clip: rect(0, 0, 0, 0) !important;
-        border: 0 !important;
-      }
-    </style>
-    <div container></div>
-  `
+    .sr-only {
+      position: absolute !important;
+      width: 1px !important;
+      height: 1px !important;
+      padding: 0 !important;
+      margin: -1px !important;
+      overflow: hidden !important;
+      clip: rect(0, 0, 0, 0) !important;
+      border: 0 !important;
+    }
+  `)
+
+  const root = document.querySelector("#root")
+  root.innerHTML = /* HTML */ ` <div container></div> `
 
   const containerElement = root.querySelector("[container]")
 
@@ -77,10 +76,10 @@ const getSignedInPage = async () => {
   let message
   if (user && user.username) {
     message = `
-             <span>
-            <strong>Welcome, ${user.username}!</strong>
-            You have signed in. You can close this tab and return to the app.
-          </span>
+      <span>
+        <strong>Welcome, ${user.username}!</strong>
+        You have signed in. You can close this tab and return to the app.
+      </span>
     `
   } else {
     message = `An error occurred.`
