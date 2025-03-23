@@ -1,9 +1,17 @@
-const editDescriptions = async ({ savedDescriptions }) => {
+const editDescriptions = async ({ getSavedDescriptions, savedDescriptionsOnChange }) => {
   const getId = () => `id${Math.random().toString().slice(2, 9)}`
 
   const cloneData = data => JSON.parse(JSON.stringify(data))
 
-  let descriptions = savedDescriptions ?? []
+  let descriptions = getSavedDescriptions()
+  const descriptionsListeners = []
+  const updatedDescriptions = () => {
+    descriptionsListeners.forEach(listener => listener())
+  }
+  savedDescriptionsOnChange(() => {
+    descriptions = getSavedDescriptions()
+    updatedDescriptions()
+  })
 
   await loadObjectHash()
   const getDescriptionsHash = () => objectHash(descriptions)
@@ -21,18 +29,13 @@ const editDescriptions = async ({ savedDescriptions }) => {
     }
   }
 
-  const listeners = []
-  const notifyListeners = () => {
-    listeners.forEach(listener => listener())
-  }
-
   return {
     getDescriptions: () => descriptions,
 
     getDescriptionsHash,
 
     onDescriptionsChange: listener => {
-      listeners.push(listener)
+      descriptionsListeners.push(listener)
     },
 
     createDescription: ({ time }) => {
@@ -40,7 +43,7 @@ const editDescriptions = async ({ savedDescriptions }) => {
       const id = getId()
       descriptions.push({ id, time, text: "", ssml: null })
       sortDescriptions()
-      notifyListeners()
+      updatedDescriptions()
       return { id }
     },
 
@@ -53,7 +56,7 @@ const editDescriptions = async ({ savedDescriptions }) => {
       if (ssml !== undefined) newDescription.ssml = ssml
       descriptions[index] = newDescription
       sortDescriptions()
-      notifyListeners()
+      updatedDescriptions()
     },
 
     deleteDescription: id => {
@@ -61,7 +64,7 @@ const editDescriptions = async ({ savedDescriptions }) => {
       const index = descriptions.findIndex(description => description.id === id)
       descriptions.splice(index, 1)
       const previousId = descriptions[index - 1] ? descriptions[index - 1].id : null
-      notifyListeners()
+      updatedDescriptions()
       return previousId
     },
   }

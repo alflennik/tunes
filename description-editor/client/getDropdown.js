@@ -53,19 +53,14 @@ const getDropdown = ({ node, button, items }) => {
 
   node.innerHTML = /* HTML */ `
     <div class="dropdown" dropdown>
-      <ul class="dropdown-menu">
-        <li><button type="button">New</button></li>
-        <li><button type="button">Open</button></li>
-        <li><button type="button">Share</button></li>
-        <li><button type="button">Delete</button></li>
-        <li><button type="button">Sign Out</button></li>
-      </ul>
+      <ul class="dropdown-menu" dropdown-menu></ul>
       ${button}
     </div>
   `
 
-  const buttonElement = node.querySelector(".dropdown > button")
   const dropdownElement = node.querySelector("[dropdown]")
+  const buttonElement = node.querySelector("[dropdown] > button")
+  const dropdownMenuElement = node.querySelector("[dropdown-menu]")
 
   const openDropdown = () => {
     dropdownElement.classList.add("open")
@@ -94,6 +89,16 @@ const getDropdown = ({ node, button, items }) => {
       closeDropdown()
     }
   })
+
+  const itemElements = items.map(item => {
+    item.buttonElement.addEventListener("click", closeDropdown)
+
+    const li = document.createElement("li")
+    li.appendChild(item.buttonElement)
+    return li
+  })
+
+  dropdownMenuElement.replaceChildren(...itemElements)
 
   closeDropdown()
 }

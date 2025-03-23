@@ -13,7 +13,7 @@ const getYouTubePlayer = async ({
   startsMuted,
   getStartSeconds,
   getVideoId,
-  listenForChange,
+  onVideoChange,
   onPlay,
   onPause,
   onSeek,
@@ -48,8 +48,8 @@ const getYouTubePlayer = async ({
   let previousVideoId = getVideoId()
   let previousStartSeconds = getStartSeconds()
 
-  if (listenForChange) {
-    listenForChange(() => {
+  if (onVideoChange) {
+    onVideoChange(() => {
       if (previousVideoId !== getVideoId() || previousStartSeconds !== getStartSeconds()) {
         youtubePlayer.loadVideoById({
           videoId: getVideoId(),

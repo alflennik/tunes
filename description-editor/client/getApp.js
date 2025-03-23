@@ -62,15 +62,48 @@ const getApp = async () => {
   let videoId = location.href.match(/\?.*videoId=([^&]+)/)?.[1]
   if (!videoId) videoId = demoVideoId
 
-  const [videoData, savedContent] = await Promise.all([
-    fetch(`/api/video-data?videoId=${videoId}`).then(videoDataResponse => videoDataResponse.json()),
-    (async () => {
-      if (videoId === demoVideoId) return getDemoData()
-      return fetch(`/api/load?videoId=${videoId}`).then(savedResponse => savedResponse.json())
-    })(),
-  ])
+  let videoData
+  let savedContent
 
   const getVideo = () => videoData
+  const getSavedContent = () => savedContent
+
+  let savedContentListeners = []
+  const onSavedContentChange = listener => {
+    savedContentListeners.push(listener)
+  }
+  const updatedSavedContent = () => {
+    savedContentListeners.forEach(listener => listener())
+  }
+
+  let videoChangeListeners = []
+  const onVideoChange = listener => {
+    videoChangeListeners.push(listener)
+  }
+  const updatedVideo = () => {
+    videoChangeListeners.forEach(listener => listener())
+  }
+
+  const loadVideoId = async newVideoId => {
+    const [newVideoData, newSavedContent] = await Promise.all([
+      fetch(`/api/video-data?videoId=${newVideoId}`).then(videoDataResponse =>
+        videoDataResponse.json()
+      ),
+      (async () => {
+        if (newVideoId === demoVideoId) return getDemoData()
+        return getStarterData({ videoId: newVideoId })
+        // return fetch(`/api/load?videoId=${newVideoId}`).then(savedResponse => savedResponse.json())
+      })(),
+    ])
+
+    videoData = newVideoData
+    savedContent = newSavedContent
+
+    updatedSavedContent()
+    updatedVideo()
+  }
+
+  await loadVideoId(demoVideoId)
 
   // getStartupDialog({ node: root.querySelector("[startup-dialog-node]") })
 
@@ -106,7 +139,8 @@ const getApp = async () => {
       getAudioElement: getAudioElementWhenAvailable,
       getCaptions: getAudioCaptionsWhenAvailable,
       getDuckingTimes: getDuckingTimesWhenAvailable,
-      listenForChange: callback => {
+      onVideoChange: callback => {
+        onVideoChange(callback)
         audioElementListeners.push(callback)
       },
     }),
@@ -125,14 +159,17 @@ const getApp = async () => {
     node: root.querySelector("#editor-container"),
     seekTo,
     getVideo,
+    onVideoChange,
     getAudioCaptions: getAudioCaptionsWhenAvailable,
     getDuckingTimes: getDuckingTimesWhenAvailable,
     renderAudio: renderAudioWhenAvailable,
     getAudioStatus: getAudioStatusWhenAvailable,
-    getSavedContent: () => savedContent,
+    getSavedContent,
+    onSavedContentChange,
     watchAudioStatus: callback => {
       audioStatusListeners.push(callback)
     },
+    loadVideoId,
   })
 
   const { renderAudio, getAudioElement, getAudioCaptions, getDuckingTimes, getAudioStatus } =
@@ -159,6 +196,20 @@ const getApp = async () => {
   }
 
   await renderAudio()
+}
+
+const getStarterData = ({ videoId }) => {
+  return {
+    videoId,
+    descriptions: [
+      {
+        id: "id5644301",
+        ssml: null,
+        text: "",
+        time: 0,
+      },
+    ],
+  }
 }
 
 const getDemoData = () => {

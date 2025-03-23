@@ -11,7 +11,11 @@ const githubSecretPromise = fs
 
 const jwtSecretPromise = fs
   .readFile(path.resolve(__dirname, "secretJwt.txt"), { encoding: "utf8" })
-  .then(key => key.trim())
+  .then(key => {
+    // Make sure a missing secret does not silently work, which would compromise security
+    if (!key || !key.trim().length) throw new Error("secretJwt not found")
+    return key.trim()
+  })
 
 const githubPreAuthentication = (req, res) => {
   res.writeHead(302, {

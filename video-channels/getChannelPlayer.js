@@ -4,7 +4,7 @@ const getChannelPlayer = async ({ node, videos, channels, startsMuted }) => {
   let startSeconds = channels.getStartSeconds()
 
   const changeListeners = []
-  const listenForChange = changeListener => {
+  const onVideoChange = changeListener => {
     changeListeners.push(changeListener)
   }
 
@@ -329,7 +329,7 @@ const getChannelPlayer = async ({ node, videos, channels, startsMuted }) => {
     getDuckingTimes: () => null,
     getCaptions: () => null,
 
-    listenForChange,
+    onVideoChange,
     onEnd: onVideoEnd,
   })
 }

@@ -6,8 +6,10 @@ const getEditor = async ({
   getAudioCaptions,
   getDuckingTimes,
   getSavedContent,
+  onSavedContentChange,
   getAudioStatus,
   watchAudioStatus,
+  loadVideoId,
 }) => {
   const getId = () => `id${Math.random().toString().substr(2, 9)}`
 
@@ -45,7 +47,10 @@ const getEditor = async ({
     createDescription,
     updateDescription,
     deleteDescription,
-  } = await editDescriptions({ savedDescriptions: getSavedContent()?.descriptions })
+  } = await editDescriptions({
+    getSavedDescriptions: () => getSavedContent().descriptions,
+    savedDescriptionsOnChange: onSavedContentChange,
+  })
 
   const editorControlsContainer = node.querySelector("[editor-controls-container]")
   getEditorControls({
@@ -60,6 +65,7 @@ const getEditor = async ({
     getAudioCaptions,
     getDuckingTimes,
     onDescriptionsChange,
+    loadVideoId,
   })
 
   const getDefaultSsml = description => {

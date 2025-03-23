@@ -10,6 +10,7 @@ const getEditorControls = ({
   getAudioCaptions,
   getDuckingTimes,
   onDescriptionsChange,
+  loadVideoId,
 }) => {
   if (!document.querySelector("[editor-control-style]")) {
     const firstStyleNode = document.querySelector("style")
@@ -126,9 +127,32 @@ const getEditorControls = ({
   const saveButton = node.querySelector("[save-button]")
   const publishButton = node.querySelector("[publish-button]")
 
+  const createElementHTML = html => {
+    const temp = document.createElement("div")
+    temp.innerHTML = html
+    return temp.firstElementChild
+  }
+
+  const newButtonElement = createElementHTML(`<button type="button">New</button>`)
+  const openButtonElement = createElementHTML(`<button type="button">Open</button>`)
+  const shareButtonElement = createElementHTML(`<button type="button">Share</button>`)
+  const deleteButtonElement = createElementHTML(`<button type="button">Delete</button>`)
+  const signOutButtonElement = createElementHTML(`<button type="button">Sign Out</button>`)
+
+  newButtonElement.addEventListener("click", async () => {
+    await loadVideoId("cXmYNmQ4BuM")
+  })
+
   const optionButtonContainer = node.querySelector("[option-button-container]")
   getDropdown({
     node: optionButtonContainer,
+    items: [
+      { buttonElement: newButtonElement },
+      { buttonElement: openButtonElement },
+      { buttonElement: shareButtonElement },
+      { buttonElement: deleteButtonElement },
+      { buttonElement: signOutButtonElement },
+    ],
     button: /* HTML */ `<button type="button" title="Options" class="option-button">
       <svg aria-hidden xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 512">
         <!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->

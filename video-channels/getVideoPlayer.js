@@ -7,7 +7,7 @@ const getVideoPlayer = async ({
   getAudioElement,
   getCaptions,
   getDuckingTimes,
-  listenForChange = null,
+  onVideoChange = null,
 }) => {
   node.innerHTML = /* HTML */ `<style>
       .caption-container {
@@ -102,7 +102,7 @@ const getVideoPlayer = async ({
     }
   }
 
-  listenForChange(handleChange)
+  onVideoChange(handleChange)
 
   handleChange()
 
@@ -137,7 +137,7 @@ const getVideoPlayer = async ({
     startsMuted,
     getVideoId: () => getVideo().id,
     getStartSeconds,
-    listenForChange,
+    onVideoChange,
     onEnd,
     onPlay,
     onPause,
