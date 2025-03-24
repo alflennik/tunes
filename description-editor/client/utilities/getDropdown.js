@@ -51,7 +51,7 @@ addStyle(`
   }
 `)
 
-const getDropdown = ({ button, items }) => {
+const getDropdown = ({ buttonElement, items }) => {
   // const dropdownElement = createElementHTML(`<div></div>`)
 
   // const dropdownMenuElement = createElementHTML(`<ul></ul>`)
@@ -68,12 +68,11 @@ const getDropdown = ({ button, items }) => {
   const dropdownElement = createElementHTML(`
     <div class="${dropdownClass}">
       <ul class="dropdown-menu"></ul>
-      ${button}
     </div>
   `)
 
-  const buttonElement = dropdownElement.querySelector(`.${dropdownClass} > button`)
   const dropdownMenuElement = dropdownElement.querySelector(".dropdown-menu")
+  dropdownElement.insertAdjacentElement("beforeend", buttonElement)
 
   const openDropdown = () => {
     dropdownElement.classList.add("open")

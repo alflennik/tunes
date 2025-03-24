@@ -149,7 +149,7 @@ const getEditorControls = ({
       { buttonElement: deleteButtonElement },
       { buttonElement: signOutButtonElement },
     ],
-    button: /* HTML */ `
+    buttonElement: createElementHTML(`
       <button type="button" title="Options" class="option-button">
         <svg aria-hidden xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 512">
           <!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
@@ -159,7 +159,7 @@ const getEditorControls = ({
         </svg>
         <span class="sr-only">Options</span>
       </button>
-    `,
+    `),
   })
 
   optionButtonContainer.replaceChildren(dropdownElement)

@@ -93,7 +93,11 @@ const getConfirmSignInModal = ({ callback } = {}) => {
   return getModal({
     replacesExistingModals: true,
     title: "Did you sign in?",
-    body: /* HTML */ `Press "continue" after you have signed in.`,
+    body: createElementHTML(`
+      <div>
+        Press "continue" after you have signed in.
+      </div>
+    `),
     actions: [
       {
         text: "Continue",

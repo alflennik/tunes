@@ -66,7 +66,7 @@ const getSignInPage = () => {
   document.body.classList.add(signInPageClass)
 
   const root = document.querySelector("#root")
-  root.innerHTML = /* HTML */ ` <div class="redirecting">Redirecting to GitHub ...</div> `
+  root.innerHTML = `<div class="redirecting">Redirecting to GitHub ...</div>`
 
   location.href = "/api/github-pre-authentication"
 }
@@ -75,7 +75,7 @@ const getSignedInPage = async () => {
   document.body.classList.add(signedInPageClass)
 
   const root = document.querySelector("#root")
-  root.innerHTML = /* HTML */ ` <div class="container"></div> `
+  root.innerHTML = `<div class="container"></div>`
 
   const containerElement = root.querySelector(".container")
 

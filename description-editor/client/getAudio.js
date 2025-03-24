@@ -279,7 +279,7 @@ const getAudio = ({
   // `new Audio()` would be cleaner but there was a bug where audioElement.currentTime = 123 would
   // incorrectly set the audio.currentTime to 0 (??!) Using an audio element on the page fixes this.
   const div = document.createElement("div")
-  div.innerHTML = /* HTML */ `<audio />`
+  div.innerHTML = `<audio />`
   audioElement = div.querySelector("audio")
   document.body.insertAdjacentElement("afterbegin", div)
 
