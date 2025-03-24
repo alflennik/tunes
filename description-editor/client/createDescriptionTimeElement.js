@@ -33,7 +33,7 @@ const createDescriptionTimeElement = ({
   id,
   getDescription,
   updateDescription,
-  onDescriptionsChange,
+  savedContentObservable,
 }) => {
   const descriptionTimeElement = createElementHTML(`
     <div class="${descriptionTimeClass}">
@@ -118,7 +118,7 @@ const createDescriptionTimeElement = ({
     return totalSeconds
   }
 
-  const handleChange = () => {
+  savedContentObservable.onChange(() => {
     const description = getDescription()
 
     if (!description) return // It was deleted
@@ -127,10 +127,7 @@ const createDescriptionTimeElement = ({
     const selectionEnd = timeInput.selectionEnd
     timeInput.value = formatTime(description.time)
     timeInput.setSelectionRange(selectionStart, selectionEnd)
-  }
-
-  onDescriptionsChange(handleChange)
-  handleChange()
+  })
 
   const getChangeTime = amount => () => {
     let time

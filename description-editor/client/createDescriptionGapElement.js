@@ -43,7 +43,7 @@ addStyle(`
 const createDescriptionGapElement = ({
   descriptionId = null,
   time = null,
-  getDescriptions,
+  savedContentObservable,
   createDescription,
   seekTo,
 }) => {
@@ -73,7 +73,9 @@ const createDescriptionGapElement = ({
   const getTime = () => {
     let newTime
     if (descriptionId) {
-      newTime = getDescriptions().find(description => description.id === descriptionId).time + 1
+      newTime =
+        savedContentObservable.getValue().find(description => description.id === descriptionId)
+          .time + 1
     } else {
       newTime = time
     }

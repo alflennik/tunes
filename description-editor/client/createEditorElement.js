@@ -29,11 +29,11 @@ const createEditorElement = async ({
   seekTo,
   videoDataObservable,
   savedContentObservable,
+  savedContentMutable,
   renderAudio,
-  getAudioCaptions,
-  getDuckingTimes,
-  getAudioStatus,
-  watchAudioStatus,
+  audioStatusObservable,
+  audioCaptionsObservable,
+  audioDuckingTimesObservable,
   loadVideoId,
 }) => {
   const getId = () => `id${Math.random().toString().substr(2, 9)}`
@@ -47,45 +47,32 @@ const createEditorElement = async ({
 
   const descriptionsElement = editorElement.querySelector(".descriptions")
 
-  const {
-    getDescriptions,
-    getDescriptionsHash,
-    onDescriptionsChange,
-    createDescription,
-    updateDescription,
-    deleteDescription,
-  } = await editDescriptions({
-    savedContentObservable,
-  })
+  const { getDescriptionsHash, createDescription, updateDescription, deleteDescription } =
+    await editDescriptions({
+      savedContentMutable,
+    })
 
   const editorControlsContainer = editorElement.querySelector(".controls-container")
   const { editorControlsElement } = createEditorControlsElement({
-    renderAudio,
-    getAudioStatus,
-    watchAudioStatus,
     getDescriptionsHash,
     savedContentObservable,
     videoDataObservable,
-    getDescriptions,
-    getAudioCaptions,
-    getDuckingTimes,
-    onDescriptionsChange,
+    renderAudio,
+    audioStatusObservable,
+    audioCaptionsObservable,
+    audioDuckingTimesObservable,
     loadVideoId,
   })
   editorControlsContainer.replaceChildren(editorControlsElement)
 
-  const getDefaultSsml = description => {
-    return `<prosody rate="+40%">${description.text || "no content"}</prosody>`
-  }
-
   let firstGapId
 
-  const handleDescriptionsChange = () => {
+  savedContentObservable.onChange(() => {
     const createGapElement = ({ descriptionId = null, time = null }) => {
       const { descriptionGapElement } = createDescriptionGapElement({
         descriptionId,
         time,
-        getDescriptions,
+        savedContentObservable,
         createDescription,
         seekTo,
       })
@@ -99,7 +86,7 @@ const createEditorElement = async ({
       descriptionsElement.insertBefore(gapElement, descriptionsElement.firstElementChild)
     }
 
-    const descriptions = getDescriptions()
+    const descriptions = savedContentObservable.getValue().descriptions
 
     descriptions.forEach((description, index) => {
       const previousDescription = descriptions[index - 1]
@@ -115,10 +102,9 @@ const createEditorElement = async ({
       } else {
         const { descriptionElement: newDescriptionElement } = createDescriptionElement({
           id: description.id,
-          getDescriptions,
+          savedContentObservable,
           updateDescription,
           deleteDescription,
-          onDescriptionsChange,
           getDefaultSsml,
           firstGapId,
           seekTo,
@@ -166,11 +152,7 @@ const createEditorElement = async ({
     while (lastElement.nextElementSibling) {
       lastElement.nextElementSibling.remove()
     }
-  }
-
-  handleDescriptionsChange()
-
-  onDescriptionsChange(handleDescriptionsChange)
+  })
 
   const preventLeave = event => {
     if (
@@ -183,7 +165,12 @@ const createEditorElement = async ({
   }
   window.addEventListener("beforeunload", preventLeave)
 
-  return { editorElement, getDescriptions, getDefaultSsml }
+  return { editorElement }
+}
+
+const getDefaultSsml = description => {
+  return `<prosody rate="+40%">${description.text || "no content"}</prosody>`
 }
 
 export default createEditorElement
+export { getDefaultSsml }

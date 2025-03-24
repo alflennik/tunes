@@ -1,24 +1,24 @@
-const editDescriptions = async ({ savedContentObservable }) => {
-  const getId = () => `id${Math.random().toString().slice(2, 9)}`
+import getId from "./utilities/getId.js"
 
+const editDescriptions = async ({ savedContentMutable }) => {
   const cloneData = data => JSON.parse(JSON.stringify(data))
 
-  let descriptions = savedContentObservable.getValue().descriptions
-  const descriptionsListeners = []
-  const updatedDescriptions = () => {
-    descriptionsListeners.forEach(listener => listener())
-  }
-  savedContentObservable.onChange(() => {
-    descriptions = savedContentObservable.getValue().descriptions
-    updatedDescriptions()
+  let descriptions = cloneData(savedContentMutable.getValue().descriptions)
+
+  savedContentMutable.onChange(() => {
+    descriptions = cloneData(savedContentMutable.getValue().descriptions)
   })
 
-  await loadObjectHash()
-  const getDescriptionsHash = () => objectHash(descriptions)
+  const commitDescriptions = () => {
+    savedContentMutable.update({ ...savedContentMutable.getValue(), descriptions })
+  }
 
   const sortDescriptions = () => {
     descriptions.sort((a, b) => a.time - b.time)
   }
+
+  await loadObjectHash()
+  const getDescriptionsHash = () => objectHash(descriptions)
 
   const history = []
 
@@ -30,20 +30,14 @@ const editDescriptions = async ({ savedContentObservable }) => {
   }
 
   return {
-    getDescriptions: () => descriptions,
-
     getDescriptionsHash,
-
-    onDescriptionsChange: listener => {
-      descriptionsListeners.push(listener)
-    },
 
     createDescription: ({ time }) => {
       addToHistory()
       const id = getId()
       descriptions.push({ id, time, text: "", ssml: null })
       sortDescriptions()
-      updatedDescriptions()
+      commitDescriptions()
       return { id }
     },
 
@@ -56,7 +50,7 @@ const editDescriptions = async ({ savedContentObservable }) => {
       if (ssml !== undefined) newDescription.ssml = ssml
       descriptions[index] = newDescription
       sortDescriptions()
-      updatedDescriptions()
+      commitDescriptions()
     },
 
     deleteDescription: id => {
@@ -64,7 +58,7 @@ const editDescriptions = async ({ savedContentObservable }) => {
       const index = descriptions.findIndex(description => description.id === id)
       descriptions.splice(index, 1)
       const previousId = descriptions[index - 1] ? descriptions[index - 1].id : null
-      updatedDescriptions()
+      commitDescriptions()
       return previousId
     },
   }

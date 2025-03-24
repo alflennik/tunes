@@ -86,16 +86,13 @@ addStyle(`
 `)
 
 const createEditorControlsElement = ({
-  renderAudio,
-  getAudioStatus,
-  watchAudioStatus,
   getDescriptionsHash,
   savedContentObservable,
   videoDataObservable,
-  getDescriptions,
-  getAudioCaptions,
-  getDuckingTimes,
-  onDescriptionsChange,
+  renderAudio,
+  audioStatusObservable,
+  audioCaptionsObservable,
+  audioDuckingTimesObservable,
   loadVideoId,
 }) => {
   const editorControlsElement = createElementHTML(`
@@ -166,8 +163,8 @@ const createEditorControlsElement = ({
 
   let currentRenderedDescriptionHash
 
-  watchAudioStatus(() => {
-    const audioStatus = getAudioStatus()
+  audioStatusObservable.onChange(() => {
+    const audioStatus = audioStatusObservable.getValue()
     if (audioStatus === "rendering") {
       renderButton.querySelector(".label").innerText = "Rendering..."
       renderButton.classList.add("working")
@@ -182,7 +179,7 @@ const createEditorControlsElement = ({
     }
   })
 
-  const handleDescriptionChange = () => {
+  savedContentObservable.onChange(() => {
     if (currentRenderedDescriptionHash !== getDescriptionsHash()) {
       renderButton.querySelector(".label").innerText = "Render"
       renderButton.classList.remove("working")
@@ -194,10 +191,7 @@ const createEditorControlsElement = ({
       saveButton.querySelector(".warning-icon").style.display = "none"
       publishButton.querySelector(".warning-icon").style.display = "none"
     }
-  }
-
-  onDescriptionsChange(handleDescriptionChange)
-  handleDescriptionChange()
+  })
 
   const handleUserChange = () => {
     const { isDemoVideo } = savedContentObservable.getValue()
@@ -241,9 +235,9 @@ const createEditorControlsElement = ({
       body: JSON.stringify({
         videoId: videoDataObservable.getValue().id,
         descriptionsHash,
-        descriptions: getDescriptions(),
-        captions: getAudioCaptions(),
-        duckingTimes: getDuckingTimes(),
+        descriptions: savedContentObservable.getValue().descriptions,
+        captions: audioCaptionsObservable.getValue(),
+        duckingTimes: audioDuckingTimesObservable.getValue(),
       }),
     })
 

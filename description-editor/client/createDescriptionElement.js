@@ -57,10 +57,9 @@ addStyle(`
 
 const createDescriptionElement = ({
   id,
-  getDescriptions,
+  savedContentObservable,
   deleteDescription,
   updateDescription,
-  onDescriptionsChange,
   getDefaultSsml,
   firstGapId,
   seekTo,
@@ -98,13 +97,14 @@ const createDescriptionElement = ({
 
   const descriptionTimeContainerElement = descriptionElement.querySelector(".description-time")
 
-  const getDescription = () => getDescriptions().find(description => description.id === id)
+  const getDescription = () =>
+    savedContentObservable.getValue().descriptions.find(description => description.id === id)
 
   const { descriptionTimeElement } = createDescriptionTimeElement({
     id,
     getDescription,
     updateDescription,
-    onDescriptionsChange,
+    savedContentObservable,
   })
 
   descriptionTimeContainerElement.replaceChildren(descriptionTimeElement)
@@ -116,7 +116,7 @@ const createDescriptionElement = ({
 
   const ssmlCheckbox = descriptionElement.querySelector(".provide-ssml-checkbox")
 
-  const handleChange = () => {
+  savedContentObservable.onChange(() => {
     const description = getDescription()
 
     if (!description) return // It was deleted
@@ -157,10 +157,7 @@ const createDescriptionElement = ({
         ssmlTextarea.setSelectionRange(textSelectionStart, textSelectionEnd)
       }
     }
-  }
-
-  onDescriptionsChange(handleChange)
-  handleChange()
+  })
 
   const playButton = descriptionElement.querySelector(".play-from-description-button")
   playButton.addEventListener("click", () => {

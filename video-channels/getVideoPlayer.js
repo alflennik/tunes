@@ -2,12 +2,11 @@ const getVideoPlayer = async ({
   parentElement,
   startsMuted = false,
   videoDataObservable,
+  audioElementObservable,
+  audioCaptionsObservable,
+  audioDuckingTimesObservable,
   getStartSeconds = () => undefined,
   onEnd = null,
-  getAudioElement,
-  getCaptions,
-  getDuckingTimes,
-  onVideoChange = null,
 }) => {
   parentElement.innerHTML = /* HTML */ `<style>
       .caption-container {
@@ -81,33 +80,35 @@ const getVideoPlayer = async ({
     refreshVideoDimensions()
   })
 
-  const handleChange = () => {
-    refreshVideoDimensions()
+  onObservableChanges(
+    [
+      audioElementObservable,
+      audioCaptionsObservable,
+      audioDuckingTimesObservable,
+      videoDataObservable,
+    ],
+    () => {
+      refreshVideoDimensions()
 
-    audioElement = getAudioElement()
-    if (audioElement) {
-      // Note that this will not work on iOS. But since iOS also does not support audio ducking,
-      // the volume will actually need to be 1 (maximum) to overpower the music.
-      audioElement.volume = 0.25
+      audioElement = audioElementObservable.getValue()
+      if (audioElement) {
+        // Note that this will not work on iOS. But since iOS also does not support audio ducking,
+        // the volume will actually need to be 1 (maximum) to overpower the music.
+        audioElement.volume = 0.25
+      }
+
+      duckingTimes = audioDuckingTimesObservable.getValue()
+      captions = audioCaptionsObservable.getValue()
+
+      const hasCaptions = captions && captions.length
+
+      if (hasCaptions && activeCaption.style.display === "none") {
+        activeCaption.style.display = "block"
+      } else if (!hasCaptions && activeCaption.style.display !== "none") {
+        activeCaption.style.display = "none"
+      }
     }
-    duckingTimes = getDuckingTimes()
-
-    captions = getCaptions()
-    const hasCaptions = captions && captions.length
-
-    if (hasCaptions && activeCaption.style.display === "none") {
-      activeCaption.style.display = "block"
-    } else if (!hasCaptions && activeCaption.style.display !== "none") {
-      activeCaption.style.display = "none"
-    }
-  }
-
-  onVideoChange(handleChange)
-  videoDataObservable.onChange(handleChange)
-
-  handleChange()
-
-  refreshVideoDimensions()
+  )
 
   const onPlay = () => {
     if (audioElement && getCurrentTimeRef.current() < audioElement.duration) {
@@ -138,7 +139,6 @@ const getVideoPlayer = async ({
     startsMuted,
     videoDataObservable,
     getStartSeconds,
-    onVideoChange,
     onEnd,
     onPlay,
     onPause,

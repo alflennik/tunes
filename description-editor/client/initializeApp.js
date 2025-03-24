@@ -5,7 +5,6 @@ import { getSignInPage, getSignedInPage } from "./getLoginPages.js"
 import addStyle from "./utilities/addStyle.js"
 import getId from "./utilities/getId.js"
 import createElementHTML from "./utilities/createElementHTML.js"
-import { createObservable } from "./video-channels/little-observable/index.js"
 
 const appClass = getId()
 
@@ -75,76 +74,35 @@ const initializeApp = async () => {
   const videoPlayerElement = appElement.querySelector(".video-player")
   const editorContainerElement = appElement.querySelector(".editor-container")
 
-  let videoDataObservable
-  let savedContentObservable
-  let loadVideoId
-  ;(() => {
-    const videoDataMutable = createObservable()
-    videoDataObservable = videoDataMutable.getReadOnly()
-
-    const savedContentMutable = createObservable()
-    savedContentObservable = savedContentMutable.getReadOnly()
-
-    loadVideoId = async newVideoId => {
-      const [videoData, savedContent] = await Promise.all([
-        fetch(`/api/video-data?videoId=${newVideoId}`).then(videoDataResponse =>
-          videoDataResponse.json()
-        ),
-        (async () => {
-          if (newVideoId === demoVideoId) return getDemoData()
-          return getStarterData({ videoId: newVideoId })
-          // return fetch(`/api/load?videoId=${newVideoId}`).then(savedResponse => savedResponse.json())
-        })(),
-      ])
-
-      videoDataMutable.update(videoData)
-      savedContentMutable.update(savedContent)
-    }
-  })()
-
   const demoVideoId = "pCh3Kp6qxo8"
-  let videoId = location.href.match(/\?.*videoId=([^&]+)/)?.[1]
-  if (!videoId) videoId = demoVideoId
+  let initialVideoId = location.href.match(/\?.*videoId=([^&]+)/)?.[1]
+  if (!initialVideoId) initialVideoId = demoVideoId
 
-  await loadVideoId(videoId)
+  const videoDataMutable = createObservable()
+  const videoDataObservable = videoDataMutable.getReadOnly()
 
-  let audioRef = { current: null }
+  const savedContentMutable = createObservable()
+  const savedContentObservable = savedContentMutable.getReadOnly()
 
-  const getAudioElementWhenAvailable = () => {
-    if (audioRef.current) return audioRef.current.getAudioElement()
+  const loadVideoId = async videoId => {
+    const [videoData, savedContent] = await Promise.all([
+      fetch(`/api/video-data?videoId=${videoId}`).then(videoDataResponse =>
+        videoDataResponse.json()
+      ),
+      (async () => {
+        if (videoId === demoVideoId) return getDemoData()
+        return getStarterData({ videoId: videoId })
+        // return fetch(`/api/load?videoId=${videoId}`).then(savedResponse => savedResponse.json())
+      })(),
+    ])
+
+    videoDataMutable.update(videoData)
+    savedContentMutable.update(savedContent)
   }
 
-  const getAudioCaptionsWhenAvailable = () => {
-    if (audioRef.current) return audioRef.current.getAudioCaptions()
-  }
-
-  const getDuckingTimesWhenAvailable = () => {
-    if (audioRef.current) return audioRef.current.getDuckingTimes()
-  }
-
-  const renderAudioWhenAvailable = () => {
-    if (audioRef.current) return audioRef.current.renderAudio()
-  }
-
-  const getAudioStatusWhenAvailable = () => {
-    if (audioRef.current) return audioRef.current.getAudioStatus()
-  }
-
-  const audioElementListeners = []
-  const audioStatusListeners = []
-
-  const [{ seekTo }, { ffmpeg, fetchFile, getMostRecentDurationSeconds }] = await Promise.all([
-    getVideoPlayer({
-      parentElement: videoPlayerElement,
-      videoDataObservable,
-      getAudioElement: getAudioElementWhenAvailable,
-      getCaptions: getAudioCaptionsWhenAvailable,
-      getDuckingTimes: getDuckingTimesWhenAvailable,
-      onVideoChange: callback => {
-        audioElementListeners.push(callback)
-      },
-    }),
+  const [{ ffmpeg, fetchFile, getMostRecentDurationSeconds }] = await Promise.all([
     getFFmpeg(),
+    loadVideoId(initialVideoId),
     (async () => {
       const response = await fetch("/api/user")
       const user = await response.json()
@@ -155,44 +113,42 @@ const initializeApp = async () => {
     })(),
   ])
 
-  const { editorElement, getDescriptions, getDefaultSsml } = await createEditorElement({
+  const {
+    renderAudio,
+    audioElementObservable,
+    audioCaptionsObservable,
+    audioDuckingTimesObservable,
+    audioStatusObservable,
+  } = getAudio({
+    ffmpeg,
+    fetchFile,
+    getMostRecentDurationSeconds,
+    savedContentObservable,
+  })
+
+  const [{ seekTo }] = await Promise.all([
+    getVideoPlayer({
+      parentElement: videoPlayerElement,
+      videoDataObservable,
+      audioElementObservable,
+      audioCaptionsObservable,
+      audioDuckingTimesObservable,
+    }),
+  ])
+
+  const { editorElement } = await createEditorElement({
     seekTo,
     videoDataObservable,
     savedContentObservable,
-    getAudioCaptions: getAudioCaptionsWhenAvailable,
-    getDuckingTimes: getDuckingTimesWhenAvailable,
-    renderAudio: renderAudioWhenAvailable,
-    getAudioStatus: getAudioStatusWhenAvailable,
-    watchAudioStatus: callback => {
-      audioStatusListeners.push(callback)
-    },
+    savedContentMutable,
+    renderAudio,
+    audioStatusObservable,
+    audioCaptionsObservable,
+    audioDuckingTimesObservable,
     loadVideoId,
   })
 
   editorContainerElement.replaceChildren(editorElement)
-
-  const { renderAudio, getAudioElement, getAudioCaptions, getDuckingTimes, getAudioStatus } =
-    getAudio({
-      ffmpeg,
-      fetchFile,
-      getMostRecentDurationSeconds,
-      getDefaultSsml,
-      getDescriptions,
-      onAudioElementChange: () => {
-        audioElementListeners.forEach(callback => callback())
-      },
-      onAudioStatusChange: () => {
-        audioStatusListeners.forEach(callback => callback())
-      },
-    })
-
-  audioRef.current = {
-    renderAudio,
-    getAudioElement,
-    getAudioCaptions,
-    getDuckingTimes,
-    getAudioStatus,
-  }
 
   await renderAudio()
 }

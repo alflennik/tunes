@@ -13,7 +13,6 @@ const getYouTubePlayer = async ({
   startsMuted,
   getStartSeconds,
   videoDataObservable,
-  onVideoChange,
   onPlay,
   onPause,
   onSeek,
@@ -48,7 +47,7 @@ const getYouTubePlayer = async ({
   let previousVideoId = videoDataObservable.getValue().id
   let previousStartSeconds = getStartSeconds()
 
-  const handleChange = () => {
+  videoDataObservable.onChange(() => {
     if (
       previousVideoId !== videoDataObservable.getValue().id ||
       previousStartSeconds !== getStartSeconds()
@@ -60,12 +59,7 @@ const getYouTubePlayer = async ({
       previousVideoId = videoDataObservable.getValue().id
       previousStartSeconds = getStartSeconds()
     }
-  }
-
-  if (onVideoChange) {
-    onVideoChange(handleChange)
-  }
-  videoDataObservable.onChange(handleChange)
+  })
 
   youtubePlayer.setVolume(100)
 

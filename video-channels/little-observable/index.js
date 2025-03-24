@@ -62,5 +62,3 @@ const groupObservableUpdates = updateFunction => {
     }
   }
 }
-
-export { createObservable, onObservableChanges, groupObservableUpdates }
