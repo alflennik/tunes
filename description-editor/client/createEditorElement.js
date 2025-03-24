@@ -26,12 +26,12 @@ addStyle(`
 `)
 
 const createEditorElement = async ({
-  userMutable,
+  userMutableObservable,
   userObservable,
   seekTo,
   videoDataObservable,
   savedContentObservable,
-  savedContentMutable,
+  savedContentMutableObservable,
   renderAudio,
   audioStatusObservable,
   audioCaptionsObservable,
@@ -51,12 +51,12 @@ const createEditorElement = async ({
 
   const { getDescriptionsHash, createDescription, updateDescription, deleteDescription } =
     await editDescriptions({
-      savedContentMutable,
+      savedContentMutableObservable,
     })
 
   const editorControlsContainer = editorElement.querySelector(".controls-container")
   const { editorControlsElement } = createEditorControlsElement({
-    userMutable,
+    userMutableObservable,
     userObservable,
     getDescriptionsHash,
     savedContentObservable,

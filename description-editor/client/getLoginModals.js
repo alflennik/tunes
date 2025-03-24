@@ -41,7 +41,7 @@ addStyle(`
   }
 `)
 
-const showSignInModal = ({ userMutable, callback } = {}) => {
+const showSignInModal = ({ userMutableObservable, callback } = {}) => {
   showModal({
     title: "Please Sign In",
     getBody: () => {
@@ -68,11 +68,11 @@ const showSignInModal = ({ userMutable, callback } = {}) => {
       signInWithGitHubElement.addEventListener("click", () => {
         window.open("/?/sign-in-with-github")
 
-        showConfirmSignInModal({ userMutable, callback })
+        showConfirmSignInModal({ userMutableObservable, callback })
       })
 
       alreadySignedInElement.addEventListener("click", () => {
-        showConfirmSignInModal({ userMutable, callback })
+        showConfirmSignInModal({ userMutableObservable, callback })
       })
 
       return bodyElement
@@ -89,7 +89,7 @@ const showSignInModal = ({ userMutable, callback } = {}) => {
   })
 }
 
-const showConfirmSignInModal = ({ userMutable, callback } = {}) => {
+const showConfirmSignInModal = ({ userMutableObservable, callback } = {}) => {
   return showModal({
     replacesExistingModals: true,
     title: "Did you sign in?",
@@ -106,7 +106,7 @@ const showConfirmSignInModal = ({ userMutable, callback } = {}) => {
           const response = await fetch("/api/user")
           const user = await response.json()
           if (user) {
-            userMutable.update(user)
+            userMutableObservable.update(user)
             if (callback) callback()
             return
           }

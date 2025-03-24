@@ -1,10 +1,10 @@
 import { getDefaultSsml } from "./createEditorElement.js"
 
 const getAudio = ({ ffmpeg, fetchFile, getMostRecentDurationSeconds, savedContentObservable }) => {
-  const audioElementMutable = createObservable()
-  const audioCaptionsMutable = createObservable()
-  const audioDuckingTimesMutable = createObservable()
-  const audioStatusMutable = createObservable()
+  const audioElementMutableObservable = createObservable()
+  const audioCaptionsMutableObservable = createObservable()
+  const audioDuckingTimesMutableObservable = createObservable()
+  const audioStatusMutableObservable = createObservable()
 
   let currentAudioData
   const audioDataById = {}
@@ -36,15 +36,15 @@ const getAudio = ({ ffmpeg, fetchFile, getMostRecentDurationSeconds, savedConten
 
   const renderAudio = async () => {
     // TODO: Returning early could cause stale audio, maybe queue up a second render instead
-    if (audioStatusMutable.getValue() === "rendering") return
+    if (audioStatusMutableObservable.getValue() === "rendering") return
 
-    audioStatusMutable.update("rendering")
+    audioStatusMutableObservable.update("rendering")
 
     console.groupCollapsed("Rendering audio")
 
     const descriptions = savedContentObservable.getValue().descriptions
 
-    let audioElement = audioElementMutable.getValue()
+    let audioElement = audioElementMutableObservable.getValue()
 
     let duckingTimes
     let captions
@@ -218,10 +218,10 @@ const getAudio = ({ ffmpeg, fetchFile, getMostRecentDurationSeconds, savedConten
       audioElement.src = "/video-channels/none.mp3"
 
       groupObservableUpdates(() => {
-        audioStatusMutable.update("done")
-        audioCaptionsMutable.update(captions)
-        audioDuckingTimesMutable.update(duckingTimes)
-        audioElementMutable.update(audioElement)
+        audioStatusMutableObservable.update("done")
+        audioCaptionsMutableObservable.update(captions)
+        audioDuckingTimesMutableObservable.update(duckingTimes)
+        audioElementMutableObservable.update(audioElement)
       })
 
       return
@@ -268,10 +268,10 @@ const getAudio = ({ ffmpeg, fetchFile, getMostRecentDurationSeconds, savedConten
     console.groupEnd()
 
     groupObservableUpdates(() => {
-      audioStatusMutable.update("done")
-      audioCaptionsMutable.update(captions)
-      audioDuckingTimesMutable.update(duckingTimes)
-      audioElementMutable.update(audioElement)
+      audioStatusMutableObservable.update("done")
+      audioCaptionsMutableObservable.update(captions)
+      audioDuckingTimesMutableObservable.update(duckingTimes)
+      audioElementMutableObservable.update(audioElement)
     })
   }
 
@@ -279,15 +279,15 @@ const getAudio = ({ ffmpeg, fetchFile, getMostRecentDurationSeconds, savedConten
   // incorrectly set the audio.currentTime to 0 (??!) Using an audio element on the page fixes this.
   const div = document.createElement("div")
   div.innerHTML = `<audio />`
-  audioElementMutable.update(div.querySelector("audio"))
+  audioElementMutableObservable.update(div.querySelector("audio"))
   document.body.insertAdjacentElement("afterbegin", div)
 
   return {
     renderAudio,
-    audioElementObservable: audioElementMutable.getReadOnly(),
-    audioCaptionsObservable: audioCaptionsMutable.getReadOnly(),
-    audioDuckingTimesObservable: audioDuckingTimesMutable.getReadOnly(),
-    audioStatusObservable: audioStatusMutable.getReadOnly(),
+    audioElementObservable: audioElementMutableObservable.getReadOnly(),
+    audioCaptionsObservable: audioCaptionsMutableObservable.getReadOnly(),
+    audioDuckingTimesObservable: audioDuckingTimesMutableObservable.getReadOnly(),
+    audioStatusObservable: audioStatusMutableObservable.getReadOnly(),
   }
 }
 

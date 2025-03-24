@@ -86,7 +86,7 @@ addStyle(`
 `)
 
 const createEditorControlsElement = ({
-  userMutable,
+  userMutableObservable,
   userObservable,
   getDescriptionsHash,
   savedContentObservable,
@@ -223,7 +223,7 @@ const createEditorControlsElement = ({
 
     if (!userObservable.getValue()) {
       await new Promise(resolve => {
-        showSignInModal({ userMutable, callback: resolve })
+        showSignInModal({ userMutableObservable, callback: resolve })
       })
     }
 
@@ -258,7 +258,7 @@ const createEditorControlsElement = ({
     await renderAudio()
     if (!userObservable.getValue()) {
       await new Promise(resolve => {
-        showSignInModal({ userMutable, callback: resolve })
+        showSignInModal({ userMutableObservable, callback: resolve })
       })
     }
     if (userObservable.getValue()) {

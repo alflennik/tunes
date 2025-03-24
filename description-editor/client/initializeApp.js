@@ -78,11 +78,11 @@ const initializeApp = async () => {
   let initialVideoId = location.href.match(/\?.*videoId=([^&]+)/)?.[1]
   if (!initialVideoId) initialVideoId = demoVideoId
 
-  const videoDataMutable = createObservable()
-  const videoDataObservable = videoDataMutable.getReadOnly()
+  const videoDataMutableObservable = createObservable()
+  const videoDataObservable = videoDataMutableObservable.getReadOnly()
 
-  const savedContentMutable = createObservable()
-  const savedContentObservable = savedContentMutable.getReadOnly()
+  const savedContentMutableObservable = createObservable()
+  const savedContentObservable = savedContentMutableObservable.getReadOnly()
 
   const loadVideoId = async videoId => {
     const [videoData, savedContent] = await Promise.all([
@@ -96,12 +96,12 @@ const initializeApp = async () => {
       })(),
     ])
 
-    videoDataMutable.update(videoData)
-    savedContentMutable.update(savedContent)
+    videoDataMutableObservable.update(videoData)
+    savedContentMutableObservable.update(savedContent)
   }
 
-  const userMutable = createObservable()
-  const userObservable = userMutable.getReadOnly()
+  const userMutableObservable = createObservable()
+  const userObservable = userMutableObservable.getReadOnly()
 
   const [{ ffmpeg, fetchFile, getMostRecentDurationSeconds }] = await Promise.all([
     getFFmpeg(),
@@ -110,7 +110,7 @@ const initializeApp = async () => {
       const response = await fetch("/api/user")
       const user = await response.json()
       if (user) {
-        userMutable.update(user)
+        userMutableObservable.update(user)
       }
     })(),
   ])
@@ -139,12 +139,12 @@ const initializeApp = async () => {
   ])
 
   const { editorElement } = await createEditorElement({
-    userMutable,
+    userMutableObservable,
     userObservable,
     seekTo,
     videoDataObservable,
     savedContentObservable,
-    savedContentMutable,
+    savedContentMutableObservable,
     renderAudio,
     audioStatusObservable,
     audioCaptionsObservable,

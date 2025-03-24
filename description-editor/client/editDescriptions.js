@@ -1,16 +1,19 @@
 import getId from "./utilities/getId.js"
 
-const editDescriptions = async ({ savedContentMutable }) => {
+const editDescriptions = async ({ savedContentMutableObservable }) => {
   const cloneData = data => JSON.parse(JSON.stringify(data))
 
-  let descriptions = cloneData(savedContentMutable.getValue().descriptions)
+  let descriptions = cloneData(savedContentMutableObservable.getValue().descriptions)
 
-  savedContentMutable.onChange(() => {
-    descriptions = cloneData(savedContentMutable.getValue().descriptions)
+  savedContentMutableObservable.onChange(() => {
+    descriptions = cloneData(savedContentMutableObservable.getValue().descriptions)
   })
 
   const commitDescriptions = () => {
-    savedContentMutable.update({ ...savedContentMutable.getValue(), descriptions })
+    savedContentMutableObservable.update({
+      ...savedContentMutableObservable.getValue(),
+      descriptions,
+    })
   }
 
   const sortDescriptions = () => {
