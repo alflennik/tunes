@@ -1,15 +1,15 @@
-const editDescriptions = async ({ getSavedDescriptions, savedDescriptionsOnChange }) => {
+const editDescriptions = async ({ savedContentObservable }) => {
   const getId = () => `id${Math.random().toString().slice(2, 9)}`
 
   const cloneData = data => JSON.parse(JSON.stringify(data))
 
-  let descriptions = getSavedDescriptions()
+  let descriptions = savedContentObservable.getValue().descriptions
   const descriptionsListeners = []
   const updatedDescriptions = () => {
     descriptionsListeners.forEach(listener => listener())
   }
-  savedDescriptionsOnChange(() => {
-    descriptions = getSavedDescriptions()
+  savedContentObservable.onChange(() => {
+    descriptions = savedContentObservable.getValue().descriptions
     updatedDescriptions()
   })
 

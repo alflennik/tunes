@@ -75,37 +75,32 @@ const initializeApp = async () => {
   const videoPlayerElement = appElement.querySelector(".video-player")
   const editorContainerElement = appElement.querySelector(".editor-container")
 
-  const videoDataMutable = createObservable()
-  const videoDataObservable = videoDataMutable.getReadOnly()
-  let savedContent
+  let videoDataObservable
+  let savedContentObservable
+  let loadVideoId
+  ;(() => {
+    const videoDataMutable = createObservable()
+    videoDataObservable = videoDataMutable.getReadOnly()
 
-  const getSavedContent = () => savedContent
+    const savedContentMutable = createObservable()
+    savedContentObservable = savedContentMutable.getReadOnly()
 
-  let savedContentListeners = []
-  const onSavedContentChange = listener => {
-    savedContentListeners.push(listener)
-  }
-  const updatedSavedContent = () => {
-    savedContentListeners.forEach(listener => listener())
-  }
+    loadVideoId = async newVideoId => {
+      const [videoData, savedContent] = await Promise.all([
+        fetch(`/api/video-data?videoId=${newVideoId}`).then(videoDataResponse =>
+          videoDataResponse.json()
+        ),
+        (async () => {
+          if (newVideoId === demoVideoId) return getDemoData()
+          return getStarterData({ videoId: newVideoId })
+          // return fetch(`/api/load?videoId=${newVideoId}`).then(savedResponse => savedResponse.json())
+        })(),
+      ])
 
-  const loadVideoId = async newVideoId => {
-    const [videoData, newSavedContent] = await Promise.all([
-      fetch(`/api/video-data?videoId=${newVideoId}`).then(videoDataResponse =>
-        videoDataResponse.json()
-      ),
-      (async () => {
-        if (newVideoId === demoVideoId) return getDemoData()
-        return getStarterData({ videoId: newVideoId })
-        // return fetch(`/api/load?videoId=${newVideoId}`).then(savedResponse => savedResponse.json())
-      })(),
-    ])
-
-    videoDataMutable.update(videoData)
-    savedContent = newSavedContent
-
-    updatedSavedContent()
-  }
+      videoDataMutable.update(videoData)
+      savedContentMutable.update(savedContent)
+    }
+  })()
 
   const demoVideoId = "pCh3Kp6qxo8"
   let videoId = location.href.match(/\?.*videoId=([^&]+)/)?.[1]
@@ -163,12 +158,11 @@ const initializeApp = async () => {
   const { editorElement, getDescriptions, getDefaultSsml } = await createEditorElement({
     seekTo,
     videoDataObservable,
+    savedContentObservable,
     getAudioCaptions: getAudioCaptionsWhenAvailable,
     getDuckingTimes: getDuckingTimesWhenAvailable,
     renderAudio: renderAudioWhenAvailable,
     getAudioStatus: getAudioStatusWhenAvailable,
-    getSavedContent,
-    onSavedContentChange,
     watchAudioStatus: callback => {
       audioStatusListeners.push(callback)
     },

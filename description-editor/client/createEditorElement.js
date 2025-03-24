@@ -28,11 +28,10 @@ addStyle(`
 const createEditorElement = async ({
   seekTo,
   videoDataObservable,
+  savedContentObservable,
   renderAudio,
   getAudioCaptions,
   getDuckingTimes,
-  getSavedContent,
-  onSavedContentChange,
   getAudioStatus,
   watchAudioStatus,
   loadVideoId,
@@ -56,8 +55,7 @@ const createEditorElement = async ({
     updateDescription,
     deleteDescription,
   } = await editDescriptions({
-    getSavedDescriptions: () => getSavedContent().descriptions,
-    savedDescriptionsOnChange: onSavedContentChange,
+    savedContentObservable,
   })
 
   const editorControlsContainer = editorElement.querySelector(".controls-container")
@@ -66,7 +64,7 @@ const createEditorElement = async ({
     getAudioStatus,
     watchAudioStatus,
     getDescriptionsHash,
-    getSavedContent,
+    savedContentObservable,
     videoDataObservable,
     getDescriptions,
     getAudioCaptions,
@@ -175,7 +173,10 @@ const createEditorElement = async ({
   onDescriptionsChange(handleDescriptionsChange)
 
   const preventLeave = event => {
-    if (currentSavedDescriptionsHash !== getDescriptionsHash() && !getSavedContent().isDemoVideo) {
+    if (
+      currentSavedDescriptionsHash !== getDescriptionsHash() &&
+      !savedContentObservable.getValue().isDemoVideo
+    ) {
       event.preventDefault()
       event.returnValue = true
     }

@@ -90,7 +90,7 @@ const createEditorControlsElement = ({
   getAudioStatus,
   watchAudioStatus,
   getDescriptionsHash,
-  getSavedContent,
+  savedContentObservable,
   videoDataObservable,
   getDescriptions,
   getAudioCaptions,
@@ -189,7 +189,7 @@ const createEditorControlsElement = ({
       renderButton.classList.add("ready")
       renderButton.classList.remove("done")
     }
-    const { isDemoVideo } = getSavedContent()
+    const { isDemoVideo } = savedContentObservable.getValue()
     if (isDemoVideo) {
       saveButton.querySelector(".warning-icon").style.display = "none"
       publishButton.querySelector(".warning-icon").style.display = "none"
@@ -200,7 +200,7 @@ const createEditorControlsElement = ({
   handleDescriptionChange()
 
   const handleUserChange = () => {
-    const { isDemoVideo } = getSavedContent()
+    const { isDemoVideo } = savedContentObservable.getValue()
     if (window.user || isDemoVideo) {
       saveButton.querySelector(".warning-icon").style.display = "none"
     } else {
@@ -218,7 +218,7 @@ const createEditorControlsElement = ({
   let currentSavedDescriptionsHash = getDescriptionsHash()
 
   saveButton.addEventListener("click", async () => {
-    if (getSavedContent().isDemoVideo) {
+    if (savedContentObservable.getValue().isDemoVideo) {
       return showModal({
         title: "Demo Video",
         body: "To save, please start a description for any video which is not the demo video.",
@@ -254,7 +254,7 @@ const createEditorControlsElement = ({
   })
 
   publishButton.addEventListener("click", async () => {
-    if (getSavedContent().isDemoVideo) {
+    if (savedContentObservable.getValue().isDemoVideo) {
       return showModal({
         title: "Demo Video",
         body: "To publish, please start a description for any video which is not the demo video.",
@@ -265,7 +265,7 @@ const createEditorControlsElement = ({
     await renderAudio()
     if (!window.user) {
       await new Promise(resolve => {
-        getSignInModal({ callback: resolve })
+        showSignInModal({ callback: resolve })
       })
     }
     if (window.user) {
