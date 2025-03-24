@@ -1,6 +1,6 @@
 import getFFmpeg from "./ffmpeg/getFFmpeg.js"
 import createEditorElement from "./createEditorElement.js"
-import getAudio from "./getAudio.js"
+import getAudioService from "./getAudioService.js"
 import { getSignInPage, getSignedInPage } from "./getLoginPages.js"
 import addStyle from "./utilities/addStyle.js"
 import getId from "./utilities/getId.js"
@@ -121,7 +121,7 @@ const initializeApp = async () => {
     audioCaptionsObservable,
     audioDuckingTimesObservable,
     audioStatusObservable,
-  } = getAudio({
+  } = getAudioService({
     ffmpeg,
     fetchFile,
     getMostRecentDurationSeconds,

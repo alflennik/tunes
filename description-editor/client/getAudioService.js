@@ -1,6 +1,11 @@
 import { getDefaultSsml } from "./createEditorElement.js"
 
-const getAudio = ({ ffmpeg, fetchFile, getMostRecentDurationSeconds, savedContentObservable }) => {
+const getAudioService = ({
+  ffmpeg,
+  fetchFile,
+  getMostRecentDurationSeconds,
+  savedContentObservable,
+}) => {
   const audioElementMutableObservable = createObservable()
   const audioCaptionsMutableObservable = createObservable()
   const audioDuckingTimesMutableObservable = createObservable()
@@ -8,31 +13,6 @@ const getAudio = ({ ffmpeg, fetchFile, getMostRecentDurationSeconds, savedConten
 
   let currentAudioData
   const audioDataById = {}
-
-  const getSemaphore = () => {
-    let isActive = false
-    let queue = []
-
-    return async callback => {
-      await new Promise(resolve => {
-        if (isActive === false) {
-          isActive = true
-          resolve()
-        } else {
-          queue.push(resolve)
-        }
-      })
-
-      await callback()
-
-      if (queue.length > 0) {
-        const next = queue.shift()
-        next()
-      } else {
-        isActive = false
-      }
-    }
-  }
 
   const renderAudio = async () => {
     // TODO: Returning early could cause stale audio, maybe queue up a second render instead
@@ -291,4 +271,29 @@ const getAudio = ({ ffmpeg, fetchFile, getMostRecentDurationSeconds, savedConten
   }
 }
 
-export default getAudio
+const getSemaphore = () => {
+  let isActive = false
+  let queue = []
+
+  return async callback => {
+    await new Promise(resolve => {
+      if (isActive === false) {
+        isActive = true
+        resolve()
+      } else {
+        queue.push(resolve)
+      }
+    })
+
+    await callback()
+
+    if (queue.length > 0) {
+      const next = queue.shift()
+      next()
+    } else {
+      isActive = false
+    }
+  }
+}
+
+export default getAudioService
