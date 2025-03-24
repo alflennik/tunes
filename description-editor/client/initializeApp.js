@@ -5,6 +5,7 @@ import { getSignInPage, getSignedInPage } from "./getLoginPages.js"
 import addStyle from "./utilities/addStyle.js"
 import getId from "./utilities/getId.js"
 import createElementHTML from "./utilities/createElementHTML.js"
+import { createObservable } from "./video-channels/little-observable/index.js"
 
 const appClass = getId()
 
@@ -74,14 +75,10 @@ const initializeApp = async () => {
   const videoPlayerElement = appElement.querySelector(".video-player")
   const editorContainerElement = appElement.querySelector(".editor-container")
 
-  const demoVideoId = "pCh3Kp6qxo8"
-  let videoId = location.href.match(/\?.*videoId=([^&]+)/)?.[1]
-  if (!videoId) videoId = demoVideoId
-
-  let videoData
+  const videoDataMutable = createObservable()
+  const videoDataObservable = videoDataMutable.getReadOnly()
   let savedContent
 
-  const getVideo = () => videoData
   const getSavedContent = () => savedContent
 
   let savedContentListeners = []
@@ -92,16 +89,8 @@ const initializeApp = async () => {
     savedContentListeners.forEach(listener => listener())
   }
 
-  let videoChangeListeners = []
-  const onVideoChange = listener => {
-    videoChangeListeners.push(listener)
-  }
-  const updatedVideo = () => {
-    videoChangeListeners.forEach(listener => listener())
-  }
-
   const loadVideoId = async newVideoId => {
-    const [newVideoData, newSavedContent] = await Promise.all([
+    const [videoData, newSavedContent] = await Promise.all([
       fetch(`/api/video-data?videoId=${newVideoId}`).then(videoDataResponse =>
         videoDataResponse.json()
       ),
@@ -112,14 +101,17 @@ const initializeApp = async () => {
       })(),
     ])
 
-    videoData = newVideoData
+    videoDataMutable.update(videoData)
     savedContent = newSavedContent
 
     updatedSavedContent()
-    updatedVideo()
   }
 
-  await loadVideoId(demoVideoId)
+  const demoVideoId = "pCh3Kp6qxo8"
+  let videoId = location.href.match(/\?.*videoId=([^&]+)/)?.[1]
+  if (!videoId) videoId = demoVideoId
+
+  await loadVideoId(videoId)
 
   let audioRef = { current: null }
 
@@ -149,12 +141,11 @@ const initializeApp = async () => {
   const [{ seekTo }, { ffmpeg, fetchFile, getMostRecentDurationSeconds }] = await Promise.all([
     getVideoPlayer({
       parentElement: videoPlayerElement,
-      getVideo,
+      videoDataObservable,
       getAudioElement: getAudioElementWhenAvailable,
       getCaptions: getAudioCaptionsWhenAvailable,
       getDuckingTimes: getDuckingTimesWhenAvailable,
       onVideoChange: callback => {
-        onVideoChange(callback)
         audioElementListeners.push(callback)
       },
     }),
@@ -171,8 +162,7 @@ const initializeApp = async () => {
 
   const { editorElement, getDescriptions, getDefaultSsml } = await createEditorElement({
     seekTo,
-    getVideo,
-    onVideoChange,
+    videoDataObservable,
     getAudioCaptions: getAudioCaptionsWhenAvailable,
     getDuckingTimes: getDuckingTimesWhenAvailable,
     renderAudio: renderAudioWhenAvailable,

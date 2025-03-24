@@ -1,7 +1,7 @@
 const getVideoPlayer = async ({
   parentElement,
   startsMuted = false,
-  getVideo,
+  videoDataObservable,
   getStartSeconds = () => undefined,
   onEnd = null,
   getAudioElement,
@@ -59,7 +59,7 @@ const getVideoPlayer = async ({
 
     const availableRatio = availableWidth / availableHeight
 
-    const { aspectRatio } = getVideo()
+    const { aspectRatio } = videoDataObservable.getValue()
 
     let width
     let height
@@ -103,6 +103,7 @@ const getVideoPlayer = async ({
   }
 
   onVideoChange(handleChange)
+  videoDataObservable.onChange(handleChange)
 
   handleChange()
 
@@ -135,7 +136,7 @@ const getVideoPlayer = async ({
   const { seekTo, getCurrentTime, setVolume } = await getYouTubePlayer({
     youtubePlayerId: "youtube-player",
     startsMuted,
-    getVideoId: () => getVideo().id,
+    videoDataObservable,
     getStartSeconds,
     onVideoChange,
     onEnd,

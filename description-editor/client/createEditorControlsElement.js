@@ -91,7 +91,7 @@ const createEditorControlsElement = ({
   watchAudioStatus,
   getDescriptionsHash,
   getSavedContent,
-  getVideo,
+  videoDataObservable,
   getDescriptions,
   getAudioCaptions,
   getDuckingTimes,
@@ -239,7 +239,7 @@ const createEditorControlsElement = ({
     const saveResponse = await fetch("/api/save", {
       method: "POST",
       body: JSON.stringify({
-        videoId: getVideo().id,
+        videoId: videoDataObservable.getValue().id,
         descriptionsHash,
         descriptions: getDescriptions(),
         captions: getAudioCaptions(),

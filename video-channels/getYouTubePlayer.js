@@ -12,7 +12,7 @@ const getYouTubePlayer = async ({
   youtubePlayerId,
   startsMuted,
   getStartSeconds,
-  getVideoId,
+  videoDataObservable,
   onVideoChange,
   onPlay,
   onPause,
@@ -24,7 +24,7 @@ const getYouTubePlayer = async ({
       const youtubePlayer = new YT.Player(youtubePlayerId, {
         height: "315",
         width: "560",
-        videoId: getVideoId(),
+        videoId: videoDataObservable.getValue().id,
         playerVars: {
           autoplay: 1,
           start: getStartSeconds(),
@@ -45,21 +45,27 @@ const getYouTubePlayer = async ({
     firstScriptTag.parentNode.insertBefore(scriptElement, firstScriptTag)
   })
 
-  let previousVideoId = getVideoId()
+  let previousVideoId = videoDataObservable.getValue().id
   let previousStartSeconds = getStartSeconds()
 
-  if (onVideoChange) {
-    onVideoChange(() => {
-      if (previousVideoId !== getVideoId() || previousStartSeconds !== getStartSeconds()) {
-        youtubePlayer.loadVideoById({
-          videoId: getVideoId(),
-          startSeconds: getStartSeconds(),
-        })
-        previousVideoId = getVideoId()
-        previousStartSeconds = getStartSeconds()
-      }
-    })
+  const handleChange = () => {
+    if (
+      previousVideoId !== videoDataObservable.getValue().id ||
+      previousStartSeconds !== getStartSeconds()
+    ) {
+      youtubePlayer.loadVideoById({
+        videoId: videoDataObservable.getValue().id,
+        startSeconds: getStartSeconds(),
+      })
+      previousVideoId = videoDataObservable.getValue().id
+      previousStartSeconds = getStartSeconds()
+    }
   }
+
+  if (onVideoChange) {
+    onVideoChange(handleChange)
+  }
+  videoDataObservable.onChange(handleChange)
 
   youtubePlayer.setVolume(100)
 

@@ -27,7 +27,7 @@ addStyle(`
 
 const createEditorElement = async ({
   seekTo,
-  getVideo,
+  videoDataObservable,
   renderAudio,
   getAudioCaptions,
   getDuckingTimes,
@@ -67,7 +67,7 @@ const createEditorElement = async ({
     watchAudioStatus,
     getDescriptionsHash,
     getSavedContent,
-    getVideo,
+    videoDataObservable,
     getDescriptions,
     getAudioCaptions,
     getDuckingTimes,
