@@ -61,7 +61,7 @@ addStyle(`
   }
 `)
 
-const getModal = ({ title, getBody, body, actions, replacesExistingModals = false }) => {
+const showModal = ({ title, getBody, body, actions, replacesExistingModals = false }) => {
   const modalElement = createElementHTML(`
     <div class="${modalShadeClass} modal-instance">
       <div class="${modalClass}">
@@ -145,4 +145,4 @@ const getModal = ({ title, getBody, body, actions, replacesExistingModals = fals
   firstElement.focus()
 }
 
-export default getModal
+export default showModal

@@ -1,4 +1,4 @@
-import getModal from "./utilities/getModal.js"
+import showModal from "./utilities/showModal.js"
 import getId from "./utilities/getId.js"
 import addStyle from "./utilities/addStyle.js"
 import createElementHTML from "./utilities/createElementHTML.js"
@@ -41,8 +41,8 @@ addStyle(`
   }
 `)
 
-const getSignInModal = ({ callback } = {}) => {
-  getModal({
+const showSignInModal = ({ callback } = {}) => {
+  showModal({
     title: "Please Sign In",
     getBody: () => {
       const bodyElement = createElementHTML(`
@@ -68,11 +68,11 @@ const getSignInModal = ({ callback } = {}) => {
       signInWithGitHubElement.addEventListener("click", () => {
         window.open("/?/sign-in-with-github")
 
-        getConfirmSignInModal({ callback })
+        showConfirmSignInModal({ callback })
       })
 
       alreadySignedInElement.addEventListener("click", () => {
-        getConfirmSignInModal({ callback })
+        showConfirmSignInModal({ callback })
       })
 
       return bodyElement
@@ -89,8 +89,8 @@ const getSignInModal = ({ callback } = {}) => {
   })
 }
 
-const getConfirmSignInModal = ({ callback } = {}) => {
-  return getModal({
+const showConfirmSignInModal = ({ callback } = {}) => {
+  return showModal({
     replacesExistingModals: true,
     title: "Did you sign in?",
     body: createElementHTML(`
@@ -117,15 +117,15 @@ const getConfirmSignInModal = ({ callback } = {}) => {
       {
         text: "Back",
         action: () => {
-          getSignInModal({ callback })
+          showSignInModal({ callback })
         },
       },
     ],
   })
 }
 
-const getTermsModal = () => {
-  return getModal({
+const showTermsModal = () => {
+  return showModal({
     title: "Terms",
     body: createElementHTML(`
       <div>
@@ -155,4 +155,4 @@ const getTermsModal = () => {
   })
 }
 
-export { getSignInModal, getConfirmSignInModal, getTermsModal }
+export { showSignInModal, showConfirmSignInModal, showTermsModal }

@@ -1,8 +1,8 @@
-import getDescriptionTime from "./getDescriptionTime.js"
+import createDescriptionTimeElement from "./createDescriptionTimeElement.js"
 import addStyle from "./utilities/addStyle.js"
 import createElementHTML from "./utilities/createElementHTML.js"
 import getId from "./utilities/getId.js"
-import getModal from "./utilities/getModal.js"
+import showModal from "./utilities/showModal.js"
 
 const descriptionClass = getId()
 
@@ -55,7 +55,7 @@ addStyle(`
   }
 `)
 
-const getDescription = ({
+const createDescriptionElement = ({
   id,
   getDescriptions,
   deleteDescription,
@@ -100,7 +100,7 @@ const getDescription = ({
 
   const getDescription = () => getDescriptions().find(description => description.id === id)
 
-  const { descriptionTimeElement } = getDescriptionTime({
+  const { descriptionTimeElement } = createDescriptionTimeElement({
     id,
     getDescription,
     updateDescription,
@@ -170,7 +170,7 @@ const getDescription = ({
 
   const deleteButton = descriptionElement.querySelector(".description-delete")
   deleteButton.addEventListener("click", () => {
-    getModal({
+    showModal({
       title: "Are you sure?",
       body: "Are you sure you want to delete this description?",
       actions: [
@@ -208,7 +208,7 @@ const getDescription = ({
       }
 
       if (description.ssml !== getDefaultSsml(description)) {
-        getModal({
+        showModal({
           title: "Are you sure?",
           body: "Are you sure you want to remove your changes to the SSML?",
           actions: [
@@ -240,4 +240,4 @@ const getDescription = ({
   return { descriptionElement }
 }
 
-export default getDescription
+export default createDescriptionElement

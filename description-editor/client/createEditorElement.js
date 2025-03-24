@@ -1,7 +1,7 @@
 import editDescriptions from "./editDescriptions.js"
-import getEditorControls from "./getEditorControls.js"
-import getDescriptionGap from "./getDescriptionGap.js"
-import getDescription from "./getDescription.js"
+import createEditorControlsElement from "./createEditorControlsElement.js"
+import createDescriptionGapElement from "./createDescriptionGapElement.js"
+import createDescriptionElement from "./createDescriptionElement.js"
 import addStyle from "./utilities/addStyle.js"
 import getId from "./utilities/getId.js"
 import createElementHTML from "./utilities/createElementHTML.js"
@@ -25,7 +25,7 @@ addStyle(`
   }
 `)
 
-const getEditor = async ({
+const createEditorElement = async ({
   seekTo,
   getVideo,
   renderAudio,
@@ -61,7 +61,7 @@ const getEditor = async ({
   })
 
   const editorControlsContainer = editorElement.querySelector(".controls-container")
-  const { editorControlsElement } = getEditorControls({
+  const { editorControlsElement } = createEditorControlsElement({
     renderAudio,
     getAudioStatus,
     watchAudioStatus,
@@ -84,7 +84,7 @@ const getEditor = async ({
 
   const handleDescriptionsChange = () => {
     const createGapElement = ({ descriptionId = null, time = null }) => {
-      const { descriptionGapElement } = getDescriptionGap({
+      const { descriptionGapElement } = createDescriptionGapElement({
         descriptionId,
         time,
         getDescriptions,
@@ -115,7 +115,7 @@ const getEditor = async ({
       if (existingElement) {
         descriptionElement = existingElement
       } else {
-        const { descriptionElement: newDescriptionElement } = getDescription({
+        const { descriptionElement: newDescriptionElement } = createDescriptionElement({
           id: description.id,
           getDescriptions,
           updateDescription,
@@ -185,4 +185,4 @@ const getEditor = async ({
   return { editorElement, getDescriptions, getDefaultSsml }
 }
 
-export default getEditor
+export default createEditorElement

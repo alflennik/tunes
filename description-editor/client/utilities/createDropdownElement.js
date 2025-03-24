@@ -51,7 +51,7 @@ addStyle(`
   }
 `)
 
-const getDropdown = ({ buttonElement, items }) => {
+const createDropdownElement = ({ buttonElement, items }) => {
   // const dropdownElement = createElementHTML(`<div></div>`)
 
   // const dropdownMenuElement = createElementHTML(`<ul></ul>`)
@@ -117,4 +117,4 @@ const getDropdown = ({ buttonElement, items }) => {
   return { dropdownElement }
 }
 
-export default getDropdown
+export default createDropdownElement

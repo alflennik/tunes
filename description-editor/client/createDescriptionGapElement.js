@@ -40,7 +40,7 @@ addStyle(`
   }
 `)
 
-const getDescriptionGap = ({
+const createDescriptionGapElement = ({
   descriptionId = null,
   time = null,
   getDescriptions,
@@ -93,4 +93,4 @@ const getDescriptionGap = ({
   return { descriptionGapElement }
 }
 
-export default getDescriptionGap
+export default createDescriptionGapElement

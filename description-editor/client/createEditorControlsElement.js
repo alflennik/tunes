@@ -1,6 +1,6 @@
-import getDropdown from "./utilities/getDropdown.js"
-import getModal from "./utilities/getModal.js"
-import { getSignInModal, getTermsModal } from "./getLoginModals.js"
+import createDropdownElement from "./utilities/createDropdownElement.js"
+import showModal from "./utilities/showModal.js"
+import { showSignInModal, showTermsModal } from "./getLoginModals.js"
 import addStyle from "./utilities/addStyle.js"
 import getId from "./utilities/getId.js"
 import createElementHTML from "./utilities/createElementHTML.js"
@@ -85,7 +85,7 @@ addStyle(`
   }
 `)
 
-const getEditorControls = ({
+const createEditorControlsElement = ({
   renderAudio,
   getAudioStatus,
   watchAudioStatus,
@@ -141,7 +141,7 @@ const getEditorControls = ({
 
   const optionButtonContainer = editorControlsElement.querySelector(".option-button-container")
 
-  const { dropdownElement } = getDropdown({
+  const { dropdownElement } = createDropdownElement({
     items: [
       { buttonElement: newButtonElement },
       { buttonElement: openButtonElement },
@@ -219,7 +219,7 @@ const getEditorControls = ({
 
   saveButton.addEventListener("click", async () => {
     if (getSavedContent().isDemoVideo) {
-      return getModal({
+      return showModal({
         title: "Demo Video",
         body: "To save, please start a description for any video which is not the demo video.",
         actions: [{ text: "Okay", isPrimary: true }],
@@ -230,7 +230,7 @@ const getEditorControls = ({
 
     if (!window.user) {
       await new Promise(resolve => {
-        getSignInModal({ callback: resolve })
+        showSignInModal({ callback: resolve })
       })
     }
 
@@ -255,7 +255,7 @@ const getEditorControls = ({
 
   publishButton.addEventListener("click", async () => {
     if (getSavedContent().isDemoVideo) {
-      return getModal({
+      return showModal({
         title: "Demo Video",
         body: "To publish, please start a description for any video which is not the demo video.",
         actions: [{ text: "Okay", isPrimary: true }],
@@ -269,11 +269,11 @@ const getEditorControls = ({
       })
     }
     if (window.user) {
-      getTermsModal()
+      showTermsModal()
     }
   })
 
   return { editorControlsElement }
 }
 
-export default getEditorControls
+export default createEditorControlsElement

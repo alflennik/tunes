@@ -1,5 +1,5 @@
 import getFFmpeg from "./ffmpeg/getFFmpeg.js"
-import getEditor from "./getEditor.js"
+import createEditorElement from "./createEditorElement.js"
 import getAudio from "./getAudio.js"
 import { getSignInPage, getSignedInPage } from "./getLoginPages.js"
 import addStyle from "./utilities/addStyle.js"
@@ -51,7 +51,7 @@ addStyle(`
   }
 `)
 
-const getApp = async () => {
+const initializeApp = async () => {
   if (location.href.endsWith("/?/sign-in-with-github")) {
     getSignInPage()
     return
@@ -169,7 +169,7 @@ const getApp = async () => {
     })(),
   ])
 
-  const { editorElement, getDescriptions, getDefaultSsml } = await getEditor({
+  const { editorElement, getDescriptions, getDefaultSsml } = await createEditorElement({
     seekTo,
     getVideo,
     onVideoChange,
@@ -345,4 +345,4 @@ const getDemoData = () => {
   }
 }
 
-getApp()
+initializeApp()

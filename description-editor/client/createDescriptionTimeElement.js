@@ -29,7 +29,12 @@ addStyle(`
   }
 `)
 
-const getDescriptionTime = ({ id, getDescription, updateDescription, onDescriptionsChange }) => {
+const createDescriptionTimeElement = ({
+  id,
+  getDescription,
+  updateDescription,
+  onDescriptionsChange,
+}) => {
   const descriptionTimeElement = createElementHTML(`
     <div class="${descriptionTimeClass}">
       <button class="move-earlier-button" type="button" title="Move Earlier" tabindex="-1">
@@ -215,4 +220,4 @@ const getDescriptionTime = ({ id, getDescription, updateDescription, onDescripti
   return { descriptionTimeElement }
 }
 
-export default getDescriptionTime
+export default createDescriptionTimeElement
