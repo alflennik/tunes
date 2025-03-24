@@ -32,7 +32,7 @@ addStyle(`
 const getDescriptionTime = ({ id, getDescription, updateDescription, onDescriptionsChange }) => {
   const descriptionTimeElement = createElementHTML(`
     <div class="${descriptionTimeClass}">
-      <button move-earlier type="button" title="Move Earlier" tabindex="-1">
+      <button class="move-earlier-button" type="button" title="Move Earlier" tabindex="-1">
         <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
           <!--!Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
           <path
@@ -41,7 +41,7 @@ const getDescriptionTime = ({ id, getDescription, updateDescription, onDescripti
         </svg>
         <span class="sr-only">Move Earlier</span>
       </button>
-      <button nudge-earlier type="button" title="Nudge Earlier" tabindex="-1">
+      <button class="nudge-earlier-button" type="button" title="Nudge Earlier" tabindex="-1">
         <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
           <!--!Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
           <path
@@ -50,8 +50,8 @@ const getDescriptionTime = ({ id, getDescription, updateDescription, onDescripti
         </svg>
         <span class="sr-only">Nudge Earlier</span>
       </button>
-      <input time type="text" />
-      <button nudge-later type="button" title="Nudge Later" tabindex="-1">
+      <input class="time-input" type="text" />
+      <button class="nudge-later-button" type="button" title="Nudge Later" tabindex="-1">
         <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
           <!--!Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
           <path
@@ -60,7 +60,7 @@ const getDescriptionTime = ({ id, getDescription, updateDescription, onDescripti
         </svg>
         <span class="sr-only">Nudge Later</span>
       </button>
-      <button move-later type="button" title="Move Later" tabindex="-1">
+      <button class="move-later-button" type="button" title="Move Later" tabindex="-1">
         <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
           <!--!Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
           <path
@@ -72,7 +72,7 @@ const getDescriptionTime = ({ id, getDescription, updateDescription, onDescripti
     </div>
   `)
 
-  const timeInput = descriptionTimeElement.querySelector("[time]")
+  const timeInput = descriptionTimeElement.querySelector(".time-input")
 
   const formatTime = rawSeconds => {
     // Remove "interesting" float behavior
@@ -203,10 +203,14 @@ const getDescriptionTime = ({ id, getDescription, updateDescription, onDescripti
     }
   })
 
-  descriptionTimeElement.querySelector("[nudge-earlier]").addEventListener("click", nudgeEarlier)
-  descriptionTimeElement.querySelector("[nudge-later]").addEventListener("click", nudgeLater)
-  descriptionTimeElement.querySelector("[move-earlier]").addEventListener("click", moveEarlier)
-  descriptionTimeElement.querySelector("[move-later]").addEventListener("click", moveLater)
+  descriptionTimeElement
+    .querySelector(".nudge-earlier-button")
+    .addEventListener("click", nudgeEarlier)
+  descriptionTimeElement.querySelector(".nudge-later-button").addEventListener("click", nudgeLater)
+  descriptionTimeElement
+    .querySelector(".move-earlier-button")
+    .addEventListener("click", moveEarlier)
+  descriptionTimeElement.querySelector(".move-later-button").addEventListener("click", moveLater)
 
   return { descriptionTimeElement }
 }

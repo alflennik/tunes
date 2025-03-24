@@ -100,34 +100,34 @@ const getEditorControls = ({
 }) => {
   const editorControlsElement = createElementHTML(`
     <div class="${editorControlsClass}">
-      <button render-button type="button" class="editor-controls-button">
-        <span label>Render</span>
+      <button type="button" class="render-button editor-controls-button">
+        <span class="label">Render</span>
       </button>
-      <button save-button type="button" class="editor-controls-button">
-        <span label>Save</span>
-        <svg aria-hidden warning-icon xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512">
+      <button type="button" class="save-button editor-controls-button">
+        <span class="label">Save</span>
+        <svg aria-hidden class="warning-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512">
           <!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
           <path
             d="M192 32c17.7 0 32 14.3 32 32l0 135.5 111.5-66.9c15.2-9.1 34.8-4.2 43.9 11s4.2 34.8-11 43.9L254.2 256l114.3 68.6c15.2 9.1 20.1 28.7 11 43.9s-28.7 20.1-43.9 11L224 312.5 224 448c0 17.7-14.3 32-32 32s-32-14.3-32-32l0-135.5L48.5 379.4c-15.2 9.1-34.8 4.2-43.9-11s-4.2-34.8 11-43.9L129.8 256 15.5 187.4c-15.2-9.1-20.1-28.7-11-43.9s28.7-20.1 43.9-11L160 199.5 160 64c0-17.7 14.3-32 32-32z"
           ></path>
         </svg>
       </button>
-      <button publish-button type="button" class="editor-controls-button">
-        <span label>Publish</span>
-        <svg aria-hidden warning-icon xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512">
+      <button type="button" class="publish-button editor-controls-button">
+        <span class="label">Publish</span>
+        <svg aria-hidden class="warning-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512">
           <!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
           <path
             d="M192 32c17.7 0 32 14.3 32 32l0 135.5 111.5-66.9c15.2-9.1 34.8-4.2 43.9 11s4.2 34.8-11 43.9L254.2 256l114.3 68.6c15.2 9.1 20.1 28.7 11 43.9s-28.7 20.1-43.9 11L224 312.5 224 448c0 17.7-14.3 32-32 32s-32-14.3-32-32l0-135.5L48.5 379.4c-15.2 9.1-34.8 4.2-43.9-11s-4.2-34.8 11-43.9L129.8 256 15.5 187.4c-15.2-9.1-20.1-28.7-11-43.9s28.7-20.1 43.9-11L160 199.5 160 64c0-17.7 14.3-32 32-32z"
           ></path>
         </svg>
       </button>
-      <div option-button-container class="option-button-container"></div>
+      <div class="option-button-container"></div>
     </div>
   `)
 
-  const renderButton = editorControlsElement.querySelector("[render-button]")
-  const saveButton = editorControlsElement.querySelector("[save-button]")
-  const publishButton = editorControlsElement.querySelector("[publish-button]")
+  const renderButton = editorControlsElement.querySelector(".render-button")
+  const saveButton = editorControlsElement.querySelector(".save-button")
+  const publishButton = editorControlsElement.querySelector(".publish-button")
 
   const newButtonElement = createElementHTML(`<button type="button">New</button>`)
   const openButtonElement = createElementHTML(`<button type="button">Open</button>`)
@@ -139,7 +139,7 @@ const getEditorControls = ({
     await loadVideoId("cXmYNmQ4BuM")
   })
 
-  const optionButtonContainer = editorControlsElement.querySelector("[option-button-container]")
+  const optionButtonContainer = editorControlsElement.querySelector(".option-button-container")
 
   const { dropdownElement } = getDropdown({
     items: [
@@ -169,13 +169,13 @@ const getEditorControls = ({
   watchAudioStatus(() => {
     const audioStatus = getAudioStatus()
     if (audioStatus === "rendering") {
-      renderButton.querySelector("[label]").innerText = "Rendering..."
+      renderButton.querySelector(".label").innerText = "Rendering..."
       renderButton.classList.add("working")
       renderButton.classList.remove("ready")
       renderButton.classList.remove("done")
     } else if (audioStatus === "done") {
       currentRenderedDescriptionHash = getDescriptionsHash()
-      renderButton.querySelector("[label]").innerText = "Rendered"
+      renderButton.querySelector(".label").innerText = "Rendered"
       renderButton.classList.remove("working")
       renderButton.classList.remove("ready")
       renderButton.classList.add("done")
@@ -184,15 +184,15 @@ const getEditorControls = ({
 
   const handleDescriptionChange = () => {
     if (currentRenderedDescriptionHash !== getDescriptionsHash()) {
-      renderButton.querySelector("[label]").innerText = "Render"
+      renderButton.querySelector(".label").innerText = "Render"
       renderButton.classList.remove("working")
       renderButton.classList.add("ready")
       renderButton.classList.remove("done")
     }
     const { isDemoVideo } = getSavedContent()
     if (isDemoVideo) {
-      saveButton.querySelector("[warning-icon]").style.display = "none"
-      publishButton.querySelector("[warning-icon]").style.display = "none"
+      saveButton.querySelector(".warning-icon").style.display = "none"
+      publishButton.querySelector(".warning-icon").style.display = "none"
     }
   }
 
@@ -202,9 +202,9 @@ const getEditorControls = ({
   const handleUserChange = () => {
     const { isDemoVideo } = getSavedContent()
     if (window.user || isDemoVideo) {
-      saveButton.querySelector("[warning-icon]").style.display = "none"
+      saveButton.querySelector(".warning-icon").style.display = "none"
     } else {
-      saveButton.querySelector("[warning-icon]").style.display = "block"
+      saveButton.querySelector(".warning-icon").style.display = "block"
     }
   }
 

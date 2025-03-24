@@ -123,16 +123,20 @@ const getConfirmSignInModal = ({ callback } = {}) => {
 const getTermsModal = () => {
   return getModal({
     title: "Terms",
-    body: /* HTML */ `Your work will be published under the
-      <a href="https://opensource.org/license/mit" target="_blank" rel="noreferrer"
-        >MIT open source license</a
-      >, allowing it to be used for any purpose without attribution. <br /><br />
+    body: createElementHTML(`
+      <div>
+        Your work will be published under the
+        <a href="https://opensource.org/license/mit" target="_blank" rel="noreferrer"
+          >MIT open source license</a
+        >, allowing it to be used for any purpose without attribution. <br /><br />
 
-      While you can delete your work at any time, please note that anyone who already downloaded
-      your work might continue to use it, and there will still be copies of your work in the
-      project's source code history. <br /><br />
+        While you can delete your work at any time, please note that anyone who already downloaded
+        your work might continue to use it, and there will still be copies of your work in the
+        project's source code history. <br /><br />
 
-      Do you accept these terms?`,
+        Do you accept these terms?
+      </div>
+    `),
     actions: [
       {
         text: "I accept",

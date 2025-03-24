@@ -63,7 +63,7 @@ addStyle(`
 
 const getModal = ({ title, getBody, body, actions, replacesExistingModals = false }) => {
   const modalElement = createElementHTML(`
-    <div modal-instance class="${modalShadeClass}">
+    <div class="${modalShadeClass} modal-instance">
       <div class="${modalClass}">
         <div class="title">
           <h1>${title}</h1>
@@ -90,12 +90,12 @@ const getModal = ({ title, getBody, body, actions, replacesExistingModals = fals
 
     const isFirst = index === 0
     if (isFirst) {
-      button.setAttribute("is-first", "")
+      button.classList.add("is-first")
     }
 
     const isLast = index === actions.length - 1
     if (isLast) {
-      button.setAttribute("is-last", "")
+      button.classList.add("is-last")
     }
 
     actionsElement.appendChild(button)
@@ -114,15 +114,15 @@ const getModal = ({ title, getBody, body, actions, replacesExistingModals = fals
   })
 
   if (replacesExistingModals) {
-    Array.from(document.querySelectorAll("[modal-instance]")).forEach(element => {
+    Array.from(document.querySelectorAll(".modal-instance")).forEach(element => {
       element.remove()
     })
   }
 
   document.body.appendChild(modalElement)
 
-  const firstElement = modalElement.querySelector("[is-first]")
-  const lastElement = modalElement.querySelector("[is-last]")
+  const firstElement = modalElement.querySelector(".is-first")
+  const lastElement = modalElement.querySelector(".is-last")
 
   document.addEventListener("keydown", function (e) {
     let isTabPressed = e.key === "Tab"

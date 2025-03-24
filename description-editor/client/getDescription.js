@@ -68,7 +68,7 @@ const getDescription = ({
   const descriptionElement = createElementHTML(`
     <div id="${id}" class="${descriptionClass}">
       <div class="description-actions">
-        <button play-from-description type="button" title="Play From Here">
+        <button class="play-from-description-button" type="button" title="Play From Here">
           <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512">
             <!--!Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
             <path
@@ -77,8 +77,8 @@ const getDescription = ({
           </svg>
           <span class="sr-only">Play From Here</span>
         </button>
-        <div description-time class="description-time"></div>
-        <button description-delete class="description-delete" type="button" title="Delete">
+        <div class="description-time"></div>
+        <button class="description-delete" type="button" title="Delete">
           <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
             <!--!Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
             <path
@@ -88,15 +88,15 @@ const getDescription = ({
           <span class="sr-only">Delete</span>
         </button>
       </div>
-      <textarea text></textarea>
+      <textarea class="text"></textarea>
       <label class="description-provide-ssml"
-        ><input provide-ssml type="checkbox" /> Provide SSML</label
+        ><input class="provide-ssml-checkbox" type="checkbox" /> Provide SSML</label
       >
-      <div provide-ssml-text></div>
+      <div class="provide-ssml-text"></div>
     </div>
   `)
 
-  const descriptionTimeContainerElement = descriptionElement.querySelector("[description-time]")
+  const descriptionTimeContainerElement = descriptionElement.querySelector(".description-time")
 
   const getDescription = () => getDescriptions().find(description => description.id === id)
 
@@ -109,12 +109,12 @@ const getDescription = ({
 
   descriptionTimeContainerElement.replaceChildren(descriptionTimeElement)
 
-  const textTextarea = descriptionElement.querySelector("[text]")
+  const textTextarea = descriptionElement.querySelector(".text")
   textTextarea.addEventListener("input", () => {
     updateDescription({ id, text: textTextarea.value })
   })
 
-  const ssmlCheckbox = descriptionElement.querySelector("[provide-ssml]")
+  const ssmlCheckbox = descriptionElement.querySelector(".provide-ssml-checkbox")
 
   const handleChange = () => {
     const description = getDescription()
@@ -131,14 +131,14 @@ const getDescription = ({
       textTextarea.setSelectionRange(textSelectionStart, textSelectionEnd)
     }
 
-    let ssmlTextarea = descriptionElement.querySelector("[provide-ssml-text]")
+    let ssmlTextarea = descriptionElement.querySelector(".provide-ssml-text")
     if (description.ssml == null && ssmlTextarea.tagName === "TEXTAREA") {
-      ssmlTextarea.outerHTML = "<div provide-ssml-text></div>"
-      descriptionElement.querySelector("[provide-ssml]").focus()
+      ssmlTextarea.outerHTML = `<div class="provide-ssml-text"></div>`
+      descriptionElement.querySelector(".provide-ssml-checkbox").focus()
     } else if (description.ssml != null && ssmlTextarea.tagName === "DIV") {
-      ssmlTextarea.outerHTML = "<textarea provide-ssml-text></textarea>"
+      ssmlTextarea.outerHTML = `<textarea class="provide-ssml-text"></textarea>`
 
-      ssmlTextarea = descriptionElement.querySelector("[provide-ssml-text]")
+      ssmlTextarea = descriptionElement.querySelector(".provide-ssml-text")
 
       ssmlTextarea.value = description.ssml
 
@@ -162,13 +162,13 @@ const getDescription = ({
   onDescriptionsChange(handleChange)
   handleChange()
 
-  const playButton = descriptionElement.querySelector("[play-from-description]")
+  const playButton = descriptionElement.querySelector(".play-from-description-button")
   playButton.addEventListener("click", () => {
     const description = getDescription()
     seekTo(description.time)
   })
 
-  const deleteButton = descriptionElement.querySelector("[description-delete]")
+  const deleteButton = descriptionElement.querySelector(".description-delete")
   deleteButton.addEventListener("click", () => {
     getModal({
       title: "Are you sure?",
@@ -180,9 +180,9 @@ const getDescription = ({
           action: () => {
             const previousId = deleteDescription(id)
             if (previousId) {
-              document.querySelector(`#gap${previousId} [add-description]`).focus()
+              document.querySelector(`#gap${previousId} .add-description-button`).focus()
             } else {
-              document.querySelector(`#${firstGapId} [add-description]`).focus()
+              document.querySelector(`#${firstGapId} .add-description-button`).focus()
             }
           },
         },

@@ -75,9 +75,9 @@ const getSignedInPage = async () => {
   document.body.classList.add(signedInPageClass)
 
   const root = document.querySelector("#root")
-  root.innerHTML = /* HTML */ ` <div container></div> `
+  root.innerHTML = /* HTML */ ` <div class="container"></div> `
 
-  const containerElement = root.querySelector("[container]")
+  const containerElement = root.querySelector(".container")
 
   const response = await fetch("/api/user")
   const user = await response.json()
@@ -96,8 +96,8 @@ const getSignedInPage = async () => {
 
   containerElement.innerHTML = /* HTML */ `
     <div class="close-tab">
-      <div class="close-tab-body" message></div>
-      <button close-button type="button" title="Close" class="close-button">
+      <div class="close-tab-body"></div>
+      <button type="button" title="Close" class="close-button">
         <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512">
           <!--!Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
           <path
@@ -109,10 +109,10 @@ const getSignedInPage = async () => {
     </div>
   `
 
-  const messageElement = containerElement.querySelector("[message]")
+  const messageElement = containerElement.querySelector(".close-tab-body")
   messageElement.innerHTML = message
 
-  containerElement.querySelector("[close-button]").addEventListener("click", () => {
+  containerElement.querySelector(".close-button").addEventListener("click", () => {
     close()
   })
 }
