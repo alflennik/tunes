@@ -86,6 +86,8 @@ addStyle(`
 `)
 
 const createEditorControlsElement = ({
+  userMutable,
+  userObservable,
   getDescriptionsHash,
   savedContentObservable,
   videoDataObservable,
@@ -193,17 +195,14 @@ const createEditorControlsElement = ({
     }
   })
 
-  const handleUserChange = () => {
+  userObservable.onChange(() => {
     const { isDemoVideo } = savedContentObservable.getValue()
-    if (window.user || isDemoVideo) {
+    if (userObservable.getValue() || isDemoVideo) {
       saveButton.querySelector(".warning-icon").style.display = "none"
     } else {
       saveButton.querySelector(".warning-icon").style.display = "block"
     }
-  }
-
-  window.userListeners.push(handleUserChange)
-  handleUserChange()
+  })
 
   renderButton.addEventListener("click", async () => {
     await renderAudio()
@@ -222,9 +221,9 @@ const createEditorControlsElement = ({
 
     await renderAudio()
 
-    if (!window.user) {
+    if (!userObservable.getValue()) {
       await new Promise(resolve => {
-        showSignInModal({ callback: resolve })
+        showSignInModal({ userMutable, callback: resolve })
       })
     }
 
@@ -257,12 +256,12 @@ const createEditorControlsElement = ({
     }
 
     await renderAudio()
-    if (!window.user) {
+    if (!userObservable.getValue()) {
       await new Promise(resolve => {
-        showSignInModal({ callback: resolve })
+        showSignInModal({ userMutable, callback: resolve })
       })
     }
-    if (window.user) {
+    if (userObservable.getValue()) {
       showTermsModal()
     }
   })

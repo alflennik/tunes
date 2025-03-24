@@ -100,6 +100,9 @@ const initializeApp = async () => {
     savedContentMutable.update(savedContent)
   }
 
+  const userMutable = createObservable()
+  const userObservable = userMutable.getReadOnly()
+
   const [{ ffmpeg, fetchFile, getMostRecentDurationSeconds }] = await Promise.all([
     getFFmpeg(),
     loadVideoId(initialVideoId),
@@ -107,9 +110,8 @@ const initializeApp = async () => {
       const response = await fetch("/api/user")
       const user = await response.json()
       if (user) {
-        window.user = user
+        userMutable.update(user)
       }
-      window.userListeners = []
     })(),
   ])
 
@@ -137,6 +139,8 @@ const initializeApp = async () => {
   ])
 
   const { editorElement } = await createEditorElement({
+    userMutable,
+    userObservable,
     seekTo,
     videoDataObservable,
     savedContentObservable,

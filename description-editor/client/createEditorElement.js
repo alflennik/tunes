@@ -26,6 +26,8 @@ addStyle(`
 `)
 
 const createEditorElement = async ({
+  userMutable,
+  userObservable,
   seekTo,
   videoDataObservable,
   savedContentObservable,
@@ -54,6 +56,8 @@ const createEditorElement = async ({
 
   const editorControlsContainer = editorElement.querySelector(".controls-container")
   const { editorControlsElement } = createEditorControlsElement({
+    userMutable,
+    userObservable,
     getDescriptionsHash,
     savedContentObservable,
     videoDataObservable,
