@@ -38,8 +38,6 @@ const createEditorElement = async ({
   audioDuckingTimesObservable,
   loadVideoId,
 }) => {
-  const getId = () => `id${Math.random().toString().substr(2, 9)}`
-
   const editorElement = createElementHTML(`
     <div class="${editorClass}">
       <div class="descriptions"></div>
@@ -48,13 +46,11 @@ const createEditorElement = async ({
   `)
 
   const descriptionsElement = editorElement.querySelector(".descriptions")
+  const editorControlsContainer = editorElement.querySelector(".controls-container")
 
   const { getDescriptionsHash, createDescription, updateDescription, deleteDescription } =
-    await editDescriptions({
-      savedContentMutableObservable,
-    })
+    await editDescriptions({ savedContentMutableObservable })
 
-  const editorControlsContainer = editorElement.querySelector(".controls-container")
   const { editorControlsElement } = createEditorControlsElement({
     userMutableObservable,
     userObservable,
@@ -67,6 +63,7 @@ const createEditorElement = async ({
     audioDuckingTimesObservable,
     loadVideoId,
   })
+
   editorControlsContainer.replaceChildren(editorControlsElement)
 
   let firstGapId
