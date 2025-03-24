@@ -62,17 +62,17 @@ const getApp = async () => {
 
   const root = document.querySelector("#root")
 
-  const node = createElementHTML(`
+  const appElement = createElementHTML(`
     <div class="${appClass}">
       <div class="video-player"></div>
       <div class="editor-container"></div>
     </div>
   `)
 
-  root.appendChild(node)
+  root.appendChild(appElement)
 
-  const videoPlayerElement = node.querySelector(".video-player")
-  const editorContainerElement = node.querySelector(".editor-container")
+  const videoPlayerElement = appElement.querySelector(".video-player")
+  const editorContainerElement = appElement.querySelector(".editor-container")
 
   const demoVideoId = "pCh3Kp6qxo8"
   let videoId = location.href.match(/\?.*videoId=([^&]+)/)?.[1]
@@ -148,7 +148,7 @@ const getApp = async () => {
 
   const [{ seekTo }, { ffmpeg, fetchFile, getMostRecentDurationSeconds }] = await Promise.all([
     getVideoPlayer({
-      node: videoPlayerElement,
+      parentElement: videoPlayerElement,
       getVideo,
       getAudioElement: getAudioElementWhenAvailable,
       getCaptions: getAudioCaptionsWhenAvailable,
@@ -169,8 +169,7 @@ const getApp = async () => {
     })(),
   ])
 
-  const { getDescriptions, getDefaultSsml } = await getEditor({
-    node: editorContainerElement,
+  const { editorElement, getDescriptions, getDefaultSsml } = await getEditor({
     seekTo,
     getVideo,
     onVideoChange,
@@ -185,6 +184,8 @@ const getApp = async () => {
     },
     loadVideoId,
   })
+
+  editorContainerElement.replaceChildren(editorElement)
 
   const { renderAudio, getAudioElement, getAudioCaptions, getDuckingTimes, getAudioStatus } =
     getAudio({

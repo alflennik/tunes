@@ -43,6 +43,9 @@ addStyle(`
       background: #313131;
       border-radius: 4px;
     }
+    .description-time {
+      flex-grow: 1;
+    }
     .description-provide-ssml {
       font-family: monospace;
       font-weight: bold;
@@ -93,15 +96,18 @@ const getDescription = ({
     </div>
   `)
 
+  const descriptionTimeContainerElement = descriptionElement.querySelector("[description-time]")
+
   const getDescription = () => getDescriptions().find(description => description.id === id)
 
-  getDescriptionTime({
-    node: descriptionElement.querySelector("[description-time]"),
+  const { descriptionTimeElement } = getDescriptionTime({
     id,
     getDescription,
     updateDescription,
     onDescriptionsChange,
   })
+
+  descriptionTimeContainerElement.replaceChildren(descriptionTimeElement)
 
   const textTextarea = descriptionElement.querySelector("[text]")
   textTextarea.addEventListener("input", () => {

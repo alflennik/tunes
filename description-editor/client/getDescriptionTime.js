@@ -1,11 +1,11 @@
 import addStyle from "./utilities/addStyle.js"
+import createElementHTML from "./utilities/createElementHTML.js"
 import getId from "./utilities/getId.js"
 
 const descriptionTimeClass = getId()
 
 addStyle(`
   .${descriptionTimeClass} {
-    flex-grow: 1;
     display: flex;
     gap: 7px;
     justify-content: center;
@@ -29,56 +29,50 @@ addStyle(`
   }
 `)
 
-const getDescriptionTime = ({
-  node,
-  id,
-  getDescription,
-  updateDescription,
-  onDescriptionsChange,
-}) => {
-  node.classList.add(descriptionTimeClass)
+const getDescriptionTime = ({ id, getDescription, updateDescription, onDescriptionsChange }) => {
+  const descriptionTimeElement = createElementHTML(`
+    <div class="${descriptionTimeClass}">
+      <button move-earlier type="button" title="Move Earlier" tabindex="-1">
+        <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+          <!--!Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
+          <path
+            d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160zm352-160l-160 160c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L301.3 256 438.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0z"
+          ></path>
+        </svg>
+        <span class="sr-only">Move Earlier</span>
+      </button>
+      <button nudge-earlier type="button" title="Nudge Earlier" tabindex="-1">
+        <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
+          <!--!Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
+          <path
+            d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"
+          ></path>
+        </svg>
+        <span class="sr-only">Nudge Earlier</span>
+      </button>
+      <input time type="text" />
+      <button nudge-later type="button" title="Nudge Later" tabindex="-1">
+        <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
+          <!--!Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
+          <path
+            d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"
+          ></path>
+        </svg>
+        <span class="sr-only">Nudge Later</span>
+      </button>
+      <button move-later type="button" title="Move Later" tabindex="-1">
+        <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+          <!--!Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
+          <path
+            d="M470.6 278.6c12.5-12.5 12.5-32.8 0-45.3l-160-160c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L402.7 256 265.4 393.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l160-160zm-352 160l160-160c12.5-12.5 12.5-32.8 0-45.3l-160-160c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L210.7 256 73.4 393.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0z"
+          ></path>
+        </svg>
+        <span class="sr-only">Move Later</span>
+      </button>
+    </div>
+  `)
 
-  node.innerHTML = /* HTML */ `
-    <button move-earlier type="button" title="Move Earlier" tabindex="-1">
-      <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-        <!--!Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
-        <path
-          d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160zm352-160l-160 160c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L301.3 256 438.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0z"
-        ></path>
-      </svg>
-      <span class="sr-only">Move Earlier</span>
-    </button>
-    <button nudge-earlier type="button" title="Nudge Earlier" tabindex="-1">
-      <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
-        <!--!Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
-        <path
-          d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"
-        ></path>
-      </svg>
-      <span class="sr-only">Nudge Earlier</span>
-    </button>
-    <input time type="text" />
-    <button nudge-later type="button" title="Nudge Later" tabindex="-1">
-      <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
-        <!--!Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
-        <path
-          d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"
-        ></path>
-      </svg>
-      <span class="sr-only">Nudge Later</span>
-    </button>
-    <button move-later type="button" title="Move Later" tabindex="-1">
-      <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-        <!--!Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
-        <path
-          d="M470.6 278.6c12.5-12.5 12.5-32.8 0-45.3l-160-160c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L402.7 256 265.4 393.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l160-160zm-352 160l160-160c12.5-12.5 12.5-32.8 0-45.3l-160-160c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L210.7 256 73.4 393.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0z"
-        ></path>
-      </svg>
-      <span class="sr-only">Move Later</span>
-    </button>
-  `
-
-  const timeInput = node.querySelector("[time]")
+  const timeInput = descriptionTimeElement.querySelector("[time]")
 
   const formatTime = rawSeconds => {
     // Remove "interesting" float behavior
@@ -209,10 +203,12 @@ const getDescriptionTime = ({
     }
   })
 
-  node.querySelector("[nudge-earlier]").addEventListener("click", nudgeEarlier)
-  node.querySelector("[nudge-later]").addEventListener("click", nudgeLater)
-  node.querySelector("[move-earlier]").addEventListener("click", moveEarlier)
-  node.querySelector("[move-later]").addEventListener("click", moveLater)
+  descriptionTimeElement.querySelector("[nudge-earlier]").addEventListener("click", nudgeEarlier)
+  descriptionTimeElement.querySelector("[nudge-later]").addEventListener("click", nudgeLater)
+  descriptionTimeElement.querySelector("[move-earlier]").addEventListener("click", moveEarlier)
+  descriptionTimeElement.querySelector("[move-later]").addEventListener("click", moveLater)
+
+  return { descriptionTimeElement }
 }
 
 export default getDescriptionTime

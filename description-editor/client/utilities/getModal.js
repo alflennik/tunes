@@ -62,7 +62,7 @@ addStyle(`
 `)
 
 const getModal = ({ title, getBody, body, actions, replacesExistingModals = false }) => {
-  const node = createElementHTML(`
+  const modalElement = createElementHTML(`
     <div modal-instance class="${modalShadeClass}">
       <div class="${modalClass}">
         <div class="title">
@@ -74,13 +74,13 @@ const getModal = ({ title, getBody, body, actions, replacesExistingModals = fals
     </div>
   `)
 
-  const modalBody = node.querySelector(".body")
-  const actionsNode = node.querySelector(".actions")
+  const modalBody = modalElement.querySelector(".body")
+  const actionsElement = modalElement.querySelector(".actions")
 
   if (body) {
-    modalBody.innerHTML = body
+    modalBody.replaceChildren(body)
   } else if (getBody) {
-    getBody(modalBody)
+    modalBody.replaceChildren(getBody())
   }
 
   actions.forEach(({ text, action, isPrimary }, index) => {
@@ -98,7 +98,7 @@ const getModal = ({ title, getBody, body, actions, replacesExistingModals = fals
       button.setAttribute("is-last", "")
     }
 
-    actionsNode.appendChild(button)
+    actionsElement.appendChild(button)
 
     button.innerHTML = text
 
@@ -108,7 +108,7 @@ const getModal = ({ title, getBody, body, actions, replacesExistingModals = fals
         shouldClose = await action()
       }
       if (shouldClose !== false) {
-        node.remove()
+        modalElement.remove()
       }
     })
   })
@@ -119,10 +119,10 @@ const getModal = ({ title, getBody, body, actions, replacesExistingModals = fals
     })
   }
 
-  document.body.appendChild(node)
+  document.body.appendChild(modalElement)
 
-  const firstElement = node.querySelector("[is-first]")
-  const lastElement = node.querySelector("[is-last]")
+  const firstElement = modalElement.querySelector("[is-first]")
+  const lastElement = modalElement.querySelector("[is-last]")
 
   document.addEventListener("keydown", function (e) {
     let isTabPressed = e.key === "Tab"

@@ -1,6 +1,7 @@
 import getModal from "./utilities/getModal.js"
 import getId from "./utilities/getId.js"
 import addStyle from "./utilities/addStyle.js"
+import createElementHTML from "./utilities/createElementHTML.js"
 
 const signInWithGitHubClass = getId()
 
@@ -43,8 +44,8 @@ addStyle(`
 const getSignInModal = ({ callback } = {}) => {
   getModal({
     title: "Please Sign In",
-    getBody: parentNode => {
-      parentNode.innerHTML = /* HTML */ `
+    getBody: () => {
+      const bodyElement = createElementHTML(`
         <div class="${signInWithGitHubClass}">
           Click the link below to sign in with GitHub. If you do not have a GitHub account, you can
           create one.
@@ -59,10 +60,10 @@ const getSignInModal = ({ callback } = {}) => {
           </button>
           <button type="button" class="already-signed-in-button">Already signed in?</button>
         </div>
-      `
+      `)
 
-      const signInWithGitHubElement = parentNode.querySelector(".sign-in-with-github-button")
-      const alreadySignedInElement = parentNode.querySelector(".already-signed-in-button")
+      const signInWithGitHubElement = bodyElement.querySelector(".sign-in-with-github-button")
+      const alreadySignedInElement = bodyElement.querySelector(".already-signed-in-button")
 
       signInWithGitHubElement.addEventListener("click", () => {
         window.open("/?/sign-in-with-github")
@@ -73,6 +74,8 @@ const getSignInModal = ({ callback } = {}) => {
       alreadySignedInElement.addEventListener("click", () => {
         getConfirmSignInModal({ callback })
       })
+
+      return bodyElement
     },
 
     actions: [

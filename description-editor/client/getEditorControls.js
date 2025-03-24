@@ -86,7 +86,6 @@ addStyle(`
 `)
 
 const getEditorControls = ({
-  node,
   renderAudio,
   getAudioStatus,
   watchAudioStatus,
@@ -99,7 +98,7 @@ const getEditorControls = ({
   onDescriptionsChange,
   loadVideoId,
 }) => {
-  node.innerHTML = /* HTML */ `
+  const editorControlsElement = createElementHTML(`
     <div class="${editorControlsClass}">
       <button render-button type="button" class="editor-controls-button">
         <span label>Render</span>
@@ -124,11 +123,11 @@ const getEditorControls = ({
       </button>
       <div option-button-container class="option-button-container"></div>
     </div>
-  `
+  `)
 
-  const renderButton = node.querySelector("[render-button]")
-  const saveButton = node.querySelector("[save-button]")
-  const publishButton = node.querySelector("[publish-button]")
+  const renderButton = editorControlsElement.querySelector("[render-button]")
+  const saveButton = editorControlsElement.querySelector("[save-button]")
+  const publishButton = editorControlsElement.querySelector("[publish-button]")
 
   const newButtonElement = createElementHTML(`<button type="button">New</button>`)
   const openButtonElement = createElementHTML(`<button type="button">Open</button>`)
@@ -140,9 +139,9 @@ const getEditorControls = ({
     await loadVideoId("cXmYNmQ4BuM")
   })
 
-  const optionButtonContainer = node.querySelector("[option-button-container]")
-  getDropdown({
-    node: optionButtonContainer,
+  const optionButtonContainer = editorControlsElement.querySelector("[option-button-container]")
+
+  const { dropdownElement } = getDropdown({
     items: [
       { buttonElement: newButtonElement },
       { buttonElement: openButtonElement },
@@ -162,6 +161,8 @@ const getEditorControls = ({
       </button>
     `,
   })
+
+  optionButtonContainer.replaceChildren(dropdownElement)
 
   let currentRenderedDescriptionHash
 
@@ -271,6 +272,8 @@ const getEditorControls = ({
       getTermsModal()
     }
   })
+
+  return { editorControlsElement }
 }
 
 export default getEditorControls

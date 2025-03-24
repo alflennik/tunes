@@ -143,7 +143,7 @@ const getChannelPlayer = async ({ node, videos, channels, startsMuted }) => {
     </style>
 
     <div class="player-container">
-      <div video-player-node class="video-player"></div>
+      <div video-player-element class="video-player"></div>
       <div class="player-buttons">
         <span class="channel-label">Channel</span>
         <span channel-indicator class="channel-indicator"></span>
@@ -319,7 +319,7 @@ const getChannelPlayer = async ({ node, videos, channels, startsMuted }) => {
   })
 
   await getVideoPlayer({
-    node: node.querySelector("[video-player-node]"),
+    parentElement: node.querySelector("[video-player-element]"),
     startsMuted,
     getVideo: () => video,
     getStartSeconds: () => startSeconds,

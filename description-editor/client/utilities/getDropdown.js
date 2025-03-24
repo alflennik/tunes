@@ -51,7 +51,7 @@ addStyle(`
   }
 `)
 
-const getDropdown = ({ node, button, items }) => {
+const getDropdown = ({ button, items }) => {
   // const dropdownElement = createElementHTML(`<div></div>`)
 
   // const dropdownMenuElement = createElementHTML(`<ul></ul>`)
@@ -65,16 +65,15 @@ const getDropdown = ({ node, button, items }) => {
   //   dropdownMenuElement.replaceChildren(...itemElements)
   // })
 
-  node.innerHTML = /* HTML */ `
+  const dropdownElement = createElementHTML(`
     <div class="${dropdownClass}">
       <ul class="dropdown-menu"></ul>
       ${button}
     </div>
-  `
+  `)
 
-  const dropdownElement = node.querySelector(`.${dropdownClass}`)
-  const buttonElement = node.querySelector(`.${dropdownClass} > button`)
-  const dropdownMenuElement = node.querySelector(".dropdown-menu")
+  const buttonElement = dropdownElement.querySelector(`.${dropdownClass} > button`)
+  const dropdownMenuElement = dropdownElement.querySelector(".dropdown-menu")
 
   const openDropdown = () => {
     dropdownElement.classList.add("open")
@@ -115,6 +114,8 @@ const getDropdown = ({ node, button, items }) => {
   dropdownMenuElement.replaceChildren(...itemElements)
 
   closeDropdown()
+
+  return { dropdownElement }
 }
 
 export default getDropdown

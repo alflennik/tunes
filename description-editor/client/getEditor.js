@@ -4,6 +4,7 @@ import getDescriptionGap from "./getDescriptionGap.js"
 import getDescription from "./getDescription.js"
 import addStyle from "./utilities/addStyle.js"
 import getId from "./utilities/getId.js"
+import createElementHTML from "./utilities/createElementHTML.js"
 
 const editorClass = getId()
 
@@ -25,7 +26,6 @@ addStyle(`
 `)
 
 const getEditor = async ({
-  node,
   seekTo,
   getVideo,
   renderAudio,
@@ -39,14 +39,14 @@ const getEditor = async ({
 }) => {
   const getId = () => `id${Math.random().toString().substr(2, 9)}`
 
-  node.innerHTML = /* HTML */ `
+  const editorElement = createElementHTML(`
     <div class="${editorClass}">
       <div class="descriptions"></div>
       <div class="controls-container"></div>
     </div>
-  `
+  `)
 
-  const descriptionsElement = node.querySelector(".descriptions")
+  const descriptionsElement = editorElement.querySelector(".descriptions")
 
   const {
     getDescriptions,
@@ -60,9 +60,8 @@ const getEditor = async ({
     savedDescriptionsOnChange: onSavedContentChange,
   })
 
-  const editorControlsContainer = node.querySelector(".controls-container")
-  getEditorControls({
-    node: editorControlsContainer,
+  const editorControlsContainer = editorElement.querySelector(".controls-container")
+  const { editorControlsElement } = getEditorControls({
     renderAudio,
     getAudioStatus,
     watchAudioStatus,
@@ -75,6 +74,7 @@ const getEditor = async ({
     onDescriptionsChange,
     loadVideoId,
   })
+  editorControlsContainer.replaceChildren(editorControlsElement)
 
   const getDefaultSsml = description => {
     return `<prosody rate="+40%">${description.text || "no content"}</prosody>`
@@ -128,13 +128,13 @@ const getEditor = async ({
         descriptionElement = newDescriptionElement
       }
 
-      let gapNode
-      const existingGapNode = descriptionsElement.querySelector(`#gap${description.id}`)
-      if (existingGapNode) {
-        gapNode = existingGapNode
+      let gapElement
+      const existingGapElement = descriptionsElement.querySelector(`#gap${description.id}`)
+      if (existingGapElement) {
+        gapElement = existingGapElement
       } else {
-        gapNode = createGapElement({ descriptionId: description.id })
-        gapNode.setAttribute("id", `gap${description.id}`)
+        gapElement = createGapElement({ descriptionId: description.id })
+        gapElement.setAttribute("id", `gap${description.id}`)
       }
 
       let elementRequiringFocus
@@ -147,7 +147,7 @@ const getEditor = async ({
       }
 
       descriptionsElement.insertBefore(descriptionElement, nextElement)
-      descriptionsElement.insertBefore(gapNode, descriptionElement.nextElementSibling)
+      descriptionsElement.insertBefore(gapElement, descriptionElement.nextElementSibling)
 
       if (elementRequiringFocus) {
         elementRequiringFocus.focus()
@@ -160,9 +160,9 @@ const getEditor = async ({
     let lastElement
     const id = descriptions[descriptions.length - 1] && descriptions[descriptions.length - 1].id
     if (id) {
-      lastElement = node.querySelector(`#gap${id}`)
+      lastElement = editorElement.querySelector(`#gap${id}`)
     } else {
-      lastElement = node.querySelector(`#${firstGapId}`)
+      lastElement = editorElement.querySelector(`#${firstGapId}`)
     }
 
     while (lastElement.nextElementSibling) {
@@ -182,7 +182,7 @@ const getEditor = async ({
   }
   window.addEventListener("beforeunload", preventLeave)
 
-  return { getDescriptions, getDefaultSsml }
+  return { editorElement, getDescriptions, getDefaultSsml }
 }
 
 export default getEditor

@@ -1,5 +1,5 @@
 const getVideoPlayer = async ({
-  node,
+  parentElement,
   startsMuted = false,
   getVideo,
   getStartSeconds = () => undefined,
@@ -9,7 +9,7 @@ const getVideoPlayer = async ({
   getDuckingTimes,
   onVideoChange = null,
 }) => {
-  node.innerHTML = /* HTML */ `<style>
+  parentElement.innerHTML = /* HTML */ `<style>
       .caption-container {
         height: 100%;
         width: 100%;
@@ -41,17 +41,17 @@ const getVideoPlayer = async ({
       <div class="active-caption" active-caption></div>
     </div>`
 
-  const activeCaption = node.querySelector("[active-caption]")
+  const activeCaption = parentElement.querySelector("[active-caption]")
 
   let audioElement
   let duckingTimes
   let captions
 
   const refreshVideoDimensions = () => {
-    const youtubeContainer = node.querySelector("#youtube-player")
+    const youtubeContainer = parentElement.querySelector("#youtube-player")
 
     const { width: availableWidth, height: availableHeightBeforeCaptions } =
-      node.getBoundingClientRect()
+      parentElement.getBoundingClientRect()
 
     const captionsHeight = activeCaption.getBoundingClientRect().height
 
