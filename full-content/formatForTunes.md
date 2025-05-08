@@ -1,3 +1,4 @@
+- First update fullContent.json by using Node to run getFullContent.js
 - Copy the contents of fullContent.json
 - In a browser console, write the following:
 
@@ -21,5 +22,5 @@ copy(
 )
 ```
 
-- Paste the copied data into videos.json
+- Paste the copied data into /video-channels/videos.json
 - Update getApp.js to include any new properties you added
