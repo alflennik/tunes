@@ -11,8 +11,9 @@ const getAvPermissions = () => {
 const getYouTubePlayer = async ({
   youtubePlayerId,
   startsMuted,
-  getStartSeconds,
   videoDataObservable,
+  startSecondsObservable,
+  seekSecondsObservable,
   onPlay,
   onPause,
   onSeek,
@@ -26,7 +27,7 @@ const getYouTubePlayer = async ({
         videoId: videoDataObservable.getValue().id,
         playerVars: {
           autoplay: 1,
-          start: getStartSeconds(),
+          start: startSecondsObservable.getValue(),
           playsinline: 1, // Instead of immediately going full screen.
           color: "white", // Instead of youtube red.
           rel: 0, // Recommend videos from the same channel after it ends.
@@ -45,20 +46,27 @@ const getYouTubePlayer = async ({
   })
 
   let previousVideoId = videoDataObservable.getValue().id
-  let previousStartSeconds = getStartSeconds()
+  let previousStartSeconds = startSecondsObservable.getValue()
 
-  videoDataObservable.onChange(() => {
+  onObservableChanges([videoDataObservable, startSecondsObservable], () => {
     if (
       previousVideoId !== videoDataObservable.getValue().id ||
-      previousStartSeconds !== getStartSeconds()
+      previousStartSeconds !== startSecondsObservable.getValue()
     ) {
       youtubePlayer.loadVideoById({
         videoId: videoDataObservable.getValue().id,
-        startSeconds: getStartSeconds(),
+        startSeconds: startSecondsObservable.getValue(),
       })
+
       previousVideoId = videoDataObservable.getValue().id
-      previousStartSeconds = getStartSeconds()
+      previousStartSeconds = startSecondsObservable.getValue()
     }
+  })
+
+  seekSecondsObservable.onChange(() => {
+    if (seekSecondsObservable.getValue() == null) return
+
+    youtubePlayer.seekTo(seekSecondsObservable.getValue(), true)
   })
 
   youtubePlayer.setVolume(100)

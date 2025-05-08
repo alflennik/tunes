@@ -1,21 +1,13 @@
 const getChannelPlayer = async ({ node, videos, channels, startsMuted }) => {
-  let video = channels.getVideo()
   let videoIndex = channels.getVideoIndex()
-  let startSeconds = channels.getStartSeconds()
-
-  const changeListeners = []
-  const onVideoChange = changeListener => {
-    changeListeners.push(changeListener)
-  }
+  const videoDataObservable = createObservable(channels.getVideo())
+  const startSecondsObservable = createObservable(channels.getStartSeconds())
+  const seekSecondsObservable = createObservable()
 
   channels.onChange(() => {
-    video = channels.getVideo()
     videoIndex = channels.getVideoIndex()
-    startSeconds = channels.getStartSeconds()
-
-    changeListeners.forEach(changeListener => {
-      changeListener()
-    })
+    startSecondsObservable.update(channels.getStartSeconds())
+    videoDataObservable.update(channels.getVideo())
   })
 
   const onVideoEnd = () => {
@@ -25,12 +17,9 @@ const getChannelPlayer = async ({ node, videos, channels, startsMuted }) => {
       videoIndex = 0
     }
 
-    video = videos[videoIndex]
-
-    startSeconds = 0
-
-    changeListeners.forEach(changeListener => {
-      changeListener()
+    groupObservableUpdates(() => {
+      startSecondsObservable.update(0)
+      videoDataObservable.update(videos[videoIndex])
     })
   }
 
@@ -279,26 +268,19 @@ const getChannelPlayer = async ({ node, videos, channels, startsMuted }) => {
   })
 
   node.querySelector("[restart]").addEventListener("click", () => {
-    startSeconds = 0
-
-    changeListeners.forEach(changeListener => {
-      changeListener()
-    })
+    seekSecondsObservable.update(0)
   })
 
   node.querySelector("[previous]").addEventListener("click", () => {
     if (videos[videoIndex - 1]) {
       videoIndex -= 1
     } else {
-      videoindex = videos.length - 1
+      videoIndex = videos.length - 1
     }
 
-    video = videos[videoIndex]
-
-    startSeconds = 0
-
-    changeListeners.forEach(changeListener => {
-      changeListener()
+    groupObservableUpdates(() => {
+      startSecondsObservable.update(0)
+      videoDataObservable.update(videos[videoIndex])
     })
   })
 
@@ -306,30 +288,27 @@ const getChannelPlayer = async ({ node, videos, channels, startsMuted }) => {
     if (videos[videoIndex + 1]) {
       videoIndex += 1
     } else {
-      videoindex = 0
+      videoIndex = 0
     }
 
-    video = videos[videoIndex]
-
-    startSeconds = 0
-
-    changeListeners.forEach(changeListener => {
-      changeListener()
+    groupObservableUpdates(() => {
+      startSecondsObservable.update(0)
+      videoDataObservable.update(videos[videoIndex])
     })
   })
 
   await getVideoPlayer({
     parentElement: node.querySelector("[video-player-element]"),
     startsMuted,
-    getVideo: () => video,
-    getStartSeconds: () => startSeconds,
+    videoDataObservable,
+    startSecondsObservable,
+    seekSecondsObservable,
 
     // Eventually descriptions will come through here
-    getAudioElement: () => null,
-    getDuckingTimes: () => null,
-    getCaptions: () => null,
+    audioElementObservable: createObservable(),
+    audioCaptionsObservable: createObservable(),
+    audioDuckingTimesObservable: createObservable(),
 
-    onVideoChange,
     onEnd: onVideoEnd,
   })
 }

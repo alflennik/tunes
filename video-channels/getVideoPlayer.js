@@ -5,7 +5,8 @@ const getVideoPlayer = async ({
   audioElementObservable,
   audioCaptionsObservable,
   audioDuckingTimesObservable,
-  getStartSeconds = () => undefined,
+  startSecondsObservable,
+  seekSecondsObservable,
   onEnd = null,
 }) => {
   parentElement.innerHTML = /* HTML */ `<style>
@@ -138,7 +139,8 @@ const getVideoPlayer = async ({
     youtubePlayerId: "youtube-player",
     startsMuted,
     videoDataObservable,
-    getStartSeconds,
+    startSecondsObservable,
+    seekSecondsObservable,
     onEnd,
     onPlay,
     onPause,
