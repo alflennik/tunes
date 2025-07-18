@@ -6,8 +6,10 @@ const getChannelPlayer = async ({ node, videos, channels, startsMuted }) => {
 
   channels.onChange(() => {
     videoIndex = channels.getVideoIndex()
-    startSecondsObservable.update(channels.getStartSeconds())
-    videoDataObservable.update(channels.getVideo())
+    groupObservableUpdates(() => {
+      startSecondsObservable.update(channels.getStartSeconds())
+      videoDataObservable.update(channels.getVideo())
+    })
   })
 
   const onVideoEnd = () => {

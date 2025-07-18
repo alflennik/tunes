@@ -1,28 +1,22 @@
-getUniqueSet = generic (Item<TypeSignature> ?? Any) &Returns {
-  list<[ Item ]> = []
+getUniqueSet = (Item = Any) => {
+  list<[Item]> = []
   
-  add = (item<Item>) <none> {
-    if !list.contains(item) { list.add(item) }
+  add = (item<Item>) => {
+    if !list.contains(item), list.add(item)
   }
 
-  remove = (item<Item>) <none> {
-    index = list.findIndex(item)
-    if index { list.remove(index) }
+  remove = (item<Item>) => {
+    index<!> = try? list.findIndex(listItem => listItem == item)
+    if try? index<!>, list.removeAt(index)
   }
 
-  result = [ add, remove, empty: list.empty, count: list.count ]
-
-  &Returns = <result>
-
-  <<* result
+  return [add, remove, empty: list.empty, length: list.length]
 }
 
 uniqueArtists = getUniqueSet(<Artist>)
-songs.each((song) {
-  given song.by {
-    .artist { uniqueArtists.add(song.by) }
-    .artists { song.by.each((artist) { uniqueArtists.add(artist) }) }
-    else {}
-  }
-  uniqueArtists.add(song.artist)
+songs.each((song) => {
+  song.by.switch(
+    [.artist]: artist => uniqueArtists.add(artist)
+    [.artists]: artists => artists.each(artist => uniqueArtists.add(artist))
+  )
 })

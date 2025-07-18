@@ -1,42 +1,38 @@
-UnpopulatedVideo = <[ id: <"">, name: <""> ]>
+UnpopulatedVideo = <[id: String, name: String]>
 
-Video = <[ ...UnpopulatedVideo, height: <0>, width: <0> ]>
+Video = <[...UnpopulatedVideo, height: Number, width: Number]>
 
-unpopulatedVideos<[ UnpopulatedVideo ]> = 
-  getVideos()
-    .await()
-    .forceFromJSON()
-    .forceType(<[ UnpopulatedVideo ]>)
+unpopulatedVideos<[UnpopulatedVideo]> =
+  try await getVideos().parseJson().setType(<[UnpopulatedVideo]>)
 
-videos<[ Video ]> = 
-  unpopulatedVideos.each(
-    (video) {
-      dimensions = fetch("/api/video-dimensions?id=\{id}").await().forceType(
-        <[ height: <0>, width: <0> ]>
-      )
+videos<[Video]> = 
+  await unpopulatedVideos.each(concurrent: true,
+    video => {
+      dimensions = 
+        await fetch("/api/video-dimensions?id=\{id}").setType(<[height: Number, width: Number]>)
 
-      <<* [ ...video, ...dimensions ]
+      return [...video, ...dimensions]
     }
-  ).awaitAll()
+  )
 
 --
 
-Character = <[ addHealthPoints: <(0) { None }> ]>
+Character = <[addHealthPoints: (Number) => null> ]>
 
-Fruit = <[ name: "", healthPoints: 0 ]>
+Fruit = <[name: "", healthPoints: 0]>
 
-getCharacter = () &Result {
+createCharacter = () => {
   &healthPoints = 50
 
-  Food = <| .(Fruit) /* etc. */ |>
+  Food = <|Fruit, /* others */|>
 
-  eat = ([ healthPoints: <0> ]<Food>) <none> {
+  eat = ([healthPoints: Number]<Food>) => {
     &healthPoints += healthPoints
   }
 
-  result = [ eat: ]
+  result = [eat:]
 
-  &Result = result.Type
+  createCharacter.Return.setType(result.Type)
 
-  <<* result
+  return result
 }

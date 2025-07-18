@@ -24,35 +24,34 @@ getHtml(
 
 getHtml(
   .button("play-from-here": "", type: "button", title: "Play From Here", 
-    html`
+    html'
       <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512">
         <!--!Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
         <path
           d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"
         ></path>
       </svg>
-    `,
+    '
     .span(class: "sr-only", "Play From Here")
   )
   .custom("my-element-name")
 )
 
 MarginValue = <|
-  .(0),
-  .px(<0>),
+  Number,
+  .px(Number),
 |>
 
 [
-  margin?: [
-    .([MarginValue, MarginValue, MarginValue, MarginValue])
-    .([MarginValue, MarginValue, MarginValue])
-    .([MarginValue, MarginValue])
-    .(MarginValue)
-    .(none)
-  ]
+  margin?: |
+    [MarginValue, MarginValue, MarginValue, MarginValue]
+    [MarginValue, MarginValue, MarginValue]
+    [MarginValue, MarginValue]
+    MarginValue
+  |
 ]
 
-Selector = <"">
+Selector = String
 
 CssStyles = [
   ...Rules,
@@ -66,16 +65,16 @@ myRules<CssStyles> = [
 ]
 
 NoItemAttibutes = <[
-  id?: <""?>
-  class?: <""?>
-  <"">: <"">,
+  id?: String
+  class?: String
+  [String]: String,
 ]>
 
 &HtmlNode = Any // Specified for real below
 
 BaseAttributes = <[
   ...NoItemAttibutes,
-  ...<[&HtmlNode]>,
+  ...&HtmlNode,
 ]>
 
 AElementAttributes = <[
@@ -89,18 +88,18 @@ CustomElementAttributes = <[
 ]>
 
 HtmlElement = <|
-  .a(...AAttributes, ...<[&HtmlNode]>),
-  .aside(...BaseAttributes, ...<[&HtmlNode]>),
-  .br(...NoItemAttibutes, ...<[&HtmlNode]>),
-  .canvas(...BaseAttributes, ...<[&HtmlNode]>),
-  .custom(...CustomElementAttributes, ...<[&HtmlNode]>)
-  .div(...BaseAttributes, ...<[&HtmlNode]>),
+  .a(...AAttributes, ...&HtmlNode),
+  .aside(...BaseAttributes, ...&HtmlNode),
+  .br(...NoItemAttibutes, ...&HtmlNode),
+  .canvas(...BaseAttributes, ...&HtmlNode),
+  .custom(...CustomElementAttributes, ...&HtmlNode)
+  .div(...BaseAttributes, ...&HtmlNode),
 |>
 
-HtmlNode = <| .(<"">), .(HtmlElement) |>
+HtmlNode = <|String, HtmlElement|>
 &HtmlNode = HtmlNode
 
-getHtml = (...nodes<[HtmlNode]>) <Any> { 
+createHtml = (...nodes<[HtmlNode]>)<Any> => {
   // ...
 }
 
@@ -121,20 +120,17 @@ document.body.add(
             width: .percent(100),
             position: .absolute,
             background: .hex(333333),
-          ],
-        ],
-      ]),
-    ),
-    .h1("Greetings"),
-    .p("Hello world!"),
+          ]
+        ]
+      ])
+    )
+    .h1("Greetings")
+    .p("Hello world!")
   )
 )
 
-getHtml = generic (...HtmlNode) &Result {
-}
-
 document.body.add(
-  .script(js`
+  .script(js'
     (async () => {
       const youtubePlayer = await new Promise(async resolve => {
         window.onYouTubeIframeAPIReady = () => {
@@ -162,5 +158,5 @@ document.body.add(
         firstScriptTag.parentNode.insertBefore(scriptElement, firstScriptTag)
       })
     })()
-  `)
+  ')
 )

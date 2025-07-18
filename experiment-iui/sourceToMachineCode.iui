@@ -1,0 +1,23 @@
+"someNumber = 1 + 1"
+["someNumber", "=", "1","+","1"]
+[.name("someNumber"), .assign, .number(1), .add, .number(1)]
+
+
+
+
+[.potentialLeftHandSide(.name("someNumber"))]
+[.potentialLeftHandSide(.assign(.name("someNumber", .potentialRightHandSide)))]
+[.potentialLeftHandSide(.assign(.name("someNumber", .potentialRightHandSide)))]
+
+[.assign(.name("someNumber"), .number(1))]
+[.assign(.name("someNumber"), .add(.number(1), ...))]
+[.assign(.name("someNumber"), .add(.number(1), .number(1)))]
+// statement end
+
+
+
+[.assign(.name("someNumber"), .add(.number(1), .number(1)))]
+
+/*
+[assign(name("someNumber"), add(number("1"), number("1")))]
+*/  

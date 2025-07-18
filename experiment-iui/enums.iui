@@ -2,125 +2,104 @@ vals = [
   "a",
   "b",
   myAttribute: true,
-  enums: [
-    .option1: 1,
-    .option2(2),
-    .option3.part2: 32,
-    .option4.part2(42),
-    .option5
+  enums<[|.option1, .option2(Number), .option3|]>: [
+    .option1,
+    .option1,
+    .option2(99)
+    .option3
+    .option3
   ]
 ]
 
 vals[0] // "a"
 vals[1] // "b"
 vals.myAttribute // "true"
-vals.enums[0] // [.option1: 1]
-vals.enums[0].checkCase(.option1) // 1
-vals.enums[1] // [.option2(2)]
-vals.enums[1].checkCase(.option2) // 2
-vals.enums[2] // [.option3: [.part2: 32]]
-vals.enums[3] // [.option4: [.part2(42)]]
-vals.enums[4] // [.option5]
+vals.enums // .option1
+try vals.enums[0].case(.option1) // true ... true?
+vals.enums[2] // .option2(99)
+try vals.enums[2].case(.option2) // 2
 
-demonArguments = (a<0> ?? 0, b: <0> ?? 100) {}
 
-[a<0> ?? 0, b: <0> ?? 100] = demonObject
+
+demonArguments = (a<Number> = 0, b: <Number> = 100) => {}
+
+[a<0> = 0, b: <0> = 100] = demonObject
 
 v1 = [a: [b: [c:]]]
 
 readV1 = v1.a.b.c
 
-v2 = [.a: [.b: [.c:]]]
+v2 = [.a(.b(.c))]
 
-readV2 = v2.checkCase(.a).checkCase(.b).checkCase(.c)
+readV2 = try? v2.case(.a).case(.b).case(.c)
 
 isOfficialVideo = titleContent
-  .checkCase(.musicVideo)
+  .case(.musicVideo)
   .providedContentType
-  .checkCase(.commonTerm) == .officialVideo
+  .case(.commonTerm) == .officialVideo
 
 MinType = <[
-  titleContent.<|[
-    .musicVideo: <[
-      providedContentType.<|[
-        .commonTerm: <|
+  titleContent: |
+    .musicVideo: [
+      providedContentType: |
+        .commonTerm(|
           .officialVideo
           .officialMusicVideo
-        |>
-        .specialTerm: <"">
-      ]|>
-    ]>
-  ]|>
+        |)
+        .specialTerm(String)
+      |
+    ]
+  |
 ]>
 
 myVideo<MinType> = [
-  titleContent.musicVideo: [
-    providedContentType.commonTerm: .officialVideo
-  ]
+  titleContent: .musicVideo(
+    providedContentType: .commonTerm(.officialVideo)
+  )
 ]
 
 TypeComparison = <|
   .unnested
-  .associated(<"">, <"">)
-  .secondary.<|
+  .associated(String, String)
+  .secondary(|
     .unnested
-    .associated(<"">)
-  |>
+    .associated(String)
+  |)
 |>
 
 v1<TypeComparison> = .unnested
 v2<TypeComparison> = .associated("a", "b")
-v5<TypeComparison> = .secondary.unnested
-v6<TypeComparison> = .secondary.associated("g")
+v5<TypeComparison> = .secondary(.unnested)
+v6<TypeComparison> = .secondary(.associated("g"))
 
-OtherVal = <|[
-  .interesting(code: <"">): [<"">, <"">]
-]|>
+OtherVal = <|
+  .interesting(code: String, [String, String])
+|>
 
-otherVals<[OtherVal]> = [
-  // Both an "associated value" and a "nested value"
-  .interesting(code: "abc"): ["def", "efg"]
-]
+otherVals<[OtherVal]> = .interesting(code: "abc", ["def", "efg"])
 
-otherVals[0].checkCase(.interesting).associated.code // "abc"
-otherVals[0].checkCase(.interesting)[0] // "def"
-otherVals[0].checkCase(.interesting)[1] // "efg"
-
-myVideo<MinType> = [
-  titleContent.<|[
-    ...given TitleContentType {
-      .musicVideo: VideoType { 
-        <<* <|[
-          .commonTerm: <| .officialVideo |>
-          .customTerm: <"">
-        ]|>
-      }
-      .livePerformance: VideoType {
-
-      }
-      else { forceExit() }
-    }
-  ]|>
-]
+try otherVals[0].case(.interesting).code // "abc"
+try otherVals[0].case(.interesting)[0] // ["def", "efg"]
+try otherVals[0].case(.interesting)[0][1] // "def"
 
 ElementContainer = [
-  name: <"">
-  elements: <| none, <0>, [<0>, <0>] |>
+  name: String
+  elements: <|null, Number, [Number, Number]|>
 ]
 
-val1<ElementContainer> = [name: "Container", elements: none]
+val1<ElementContainer> = [name: "Container", elements: null]
 val2<ElementContainer> = [name: "FirstDimension", elements: 10]
 val2<ElementContainer> = [name: "Grid", elements: [10, 12]]
 
-ElementContainer.elements // <| ... |>
-ElementContainer.elements.options[0] // none
-ElementContainer.elements.options[1] // <0>
-ElementContainer.elements.options[2] // [<0>, <0>]
-ElementContainer.elements.options[2][1] // <0>
+ElementContainer.elements // <[ ... ]>
+ElementContainer.elements[0] // none
+ElementContainer.elements[1] // Number
+ElementContainer.elements[2] // [Number, Number]
+ElementContainer.elements[2][1] // Number
 
-BaseAttributes.omit(.(elementName))
+BaseAttributes.omit('name)
 
-Contributors = <[<|[ .artist: Artist, .contributor: OtherContributor ]|>]>
+Contributors = <[[|.artist: Artist, .contributor: OtherContributor|]]>
 
 contributors<Contributors> = [
   [.artist: "Beck"],

@@ -1,0 +1,75 @@
+stringWithoutLineBreak = "Generally strings fit on one line."
+
+stringWithoutLineBreak = 
+  "Longer strings (without any intended line breaks) can easily be wrapped, since line breaks will
+    be converted to a space. A side benefit of this is that auto formatters can properly format
+    strings, which is not possible in JavaScript. The second line sets the indentation level which 
+    will not be considered as part of the string."
+
+whitespaceBehavior = 
+  "Since it is invisible, any whitespace at the end of a line will be ignored. Also, whitespace     
+    before the indentation level of the second line will be ignored."
+
+whitespace2 = 
+  "   The same cannot be said for spaces at the beginning and end of a   
+  string, after all those spaces are visible.   "
+
+wrappingStringWithoutSpaces = 
+  "f1d721951e8ca3b95bb523bc6dfc2c13b28d273e835c72a00e6b4e55c88e0366bdbbf6ef919cb68ad3d3156671233d97\
+    df5d31921b249d189d5d0f4c0270ae0adb591a6d16405302264b9e91db85f9b5e9bbe2cbf1c5d8197ac81f63c05c7a7\
+    016709ddfab857519bf6410f97fcc565885fcd70b9b2d6beebab6f72b468dff1217604158cfc4a85137bbb5eeccd36b\
+    38a08b39fe85539c5be951d45afcf99906e7cfd5730cd9c13ecfb25126542dc43cd1ff79daf77c32975e441e8f5e79c\
+    aa473bcd88"
+
+multiline = `
+  /* Multiline strings use tildes instead of double quotes. */
+  // The issue here is with long lines. Newlines are no longer converted to spaces. Now it is the \
+  wrapped lines which need to be escaped to preserve formatting.
+  mySum = 1 + 1
+  myDivision = 3 / 2
+  myProduct = 8 * 8
+  crazyNum = 
+    mySum
+      + mySum
+      / myDivision
+      * myProduct
+`
+
+textReplacements = "You can insert values like this: {myValue}"
+
+avoidingConflictsWithText = *"For text that has {} in it you can add a *, now it's *{myValue}"*
+
+avoidingConflictsWithText2 = 
+  **"For text that has *{}, which is weird to be fair, you can use two *'s, now it's **{myValue}"**
+
+regexes1 = 
+  "Strings are typically horrible for regexes, since you have to double escape. 
+    \\b\\d{4}-\\d{2}-\\d{2}\\b"
+
+regexes2 = 
+  *"Just use asterisks again, to the rescue. \b\d{4}-\d{2}-\d{2}\b."*
+
+asteriskNewlines =
+  *"The only downside with this design, and probably it's fine, is that you might add an asterisk
+    for the purposes of avoiding issues with {}, but then if you have a newline somewhere, it will
+    stop working until you add an ugly asterisk to it.\*n\*
+    \*n\*
+    See what I mean? Yikes ...\*
+    "*
+
+quotes =
+  *"It's common to have quotes in strings, and escaping them is annoying and ugly, even "fugly"."*
+
+j = "
+  It's subtle, but if you consider the closing quote, you'll see that its
+  indentation is to the left of the text. That would normally not be
+  allowed, since it's arguably inconsistent indentation, but it's sometimes 
+  useful to visually give an impression similar to code formatted like 
+  brackets. Note that extra spaces will appear at the beginning and end 
+  of this example.
+"
+
+k = "\
+  The automatic conversion of line breaks to spaces can be prevented by
+  inserting a backslash at the end of the line.\ 
+"

@@ -1,0 +1,90 @@
+"return try? await !utils.isDivideByZero(99 + 1 / 2)"
+["return", "try?", "await", "!", "utils", ".", "isDivideByZero", "(", "99", "+", "1", "/", "2", ")"]
+[.return, .tryFalse, .await, .negate, .name("utils"), .read, .name("isDivideByZero"), .callStart, 
+  .argumentsStart, .number(99), .add, .number(1), .divide, .number(2), .argumentsEnd, .callEnd
+]
+
+/* 
+  Algorithm: 
+  
+  Take the lexemes, and for all operators, convert them to an array where the first value
+  is their binding precedence, and the second value is the operator itself. See below.
+*/
+
+[.return, [5, .tryFalse], [5, .await], [5, .negate], .name("utils"), [1, .read], 
+  .name("isDivideByZero"), [4, .callStart], .argumentsStart, .number(99), [3, .add], .number(1), 
+  [2, .divide], .number(2), .argumentsEnd, .callEnd
+]
+
+/* 
+  Note that it is important that all operators be disambiguated at the prior lexer stage, for example parentheses must be identified for either grouping or function calls, and square brackets need to be identified as object notation, type notation or object key notation. No ambiguous operators, or else this all falls apart.
+  
+  Also the lexer stage must identify all areas of altered syntax parsing. For example types (denoted by <>), strings, objects, function arguments. These are treated as expressions for the purposes of parsing operators.
+
+  In order of precedence, wrap the expressions with the operator. For binary operators take the expression to the left and right, for urnary operators take just the left or just the right.
+
+  Simpler example:
+*/
+
+"9 + 1 / 2"
+["9", "+", "1", "/", "2"]
+[.number(9), .add, .number(1), .divide, .number(2)]
+[.number(9), [2, .add], .number(1), [1, .divide], .number(2)]
+[.number(9), [2, .add], .divide(.number(1), .number(2))]
+[.add(.number(9), .divide(.number(1), .number(2)))]
+/* [add(number("9"), divide(number("1"), number("2")))] */
+
+"9 / 1 + 2"
+["9", "/", "1", "+", "2"]
+[.number(9), .divide, .number(1), .add, .number(2)]
+[.number(9), [1, .divide], .number(1), [2, .add], .number(2)]
+[.divide(.number(9), .number(1)), [2, .add], .number(2)]
+[.add(.divide(.number(9), .number(1)), .number(2))]
+/* [add(divide(number("9"), number("1")), number("2"))] */
+
+[
+  .return(
+    .tryFalse(
+      .await(
+        .negate(
+          .call(
+            .read(
+              .name("utils"),
+              .name("isDivideByZero")
+            ),
+            .arguments(
+              .add(
+                .number(99),
+                .divide(
+                  .number(1),
+                  .number(2)
+                )
+              )
+            )
+          )
+        )
+      )
+    )
+  )
+]
+
+[
+  .return,                   // statement + optional expression
+  .tryFalse,                 // [PRIO 5] operator + expression
+  .await,                    // [PRIO 5] operator + expression
+  .negate,                   // [PRIO 5] operator + expression
+  .name("utils"),            // 
+  .read,                     // [PRIO 1] expression + operator + expression
+  .name("isDivideByZero"),   // 
+  .callStart,                // [PRIO 4] expression + operator + arguments + callEnd
+
+  .argumentsStart,           // [NEST 3] arguments syntax
+  .number(99),               // 
+  .add,                      // [PRIO 3] expression + operator
+  .number(1),                // 
+  .divide,                   // [PRIO 2] expression + operator + expression
+  .number(2),                // 
+  .argumentsEnd,
+
+  .callEnd,                  //
+]

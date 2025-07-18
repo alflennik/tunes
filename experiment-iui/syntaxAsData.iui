@@ -5,7 +5,7 @@ someNumber = 1 + 1
     .assignment: [
       .variable: "someNumber"
       .expression: [
-        .addition: [1, 1]
+        .addition: [.number(1), .number(1)]
       ]
     ]
   ]
@@ -14,7 +14,7 @@ someNumber = 1 + 1
 [
   .statement.assignment: [
     .variable: "someNumber",
-    .expression.plus: [1, 1],
+    .expression.plus: [.number(1), .number(1)],
   ],
 ]
 
@@ -22,13 +22,13 @@ someNumber = 1 + 1
   .statement(
     .assignment(
       .variable("someNumber")
-      .expression(.plus(1, 1))
+      .expression(.plus(.number(1), .number(1)))
     )
   )
 ]
 
 [
-  .assign(.variable("someNumber"), .add(1, 1))
+  .assign(.variable("someNumber"), .add(.number(1), .number(1)))
 ]
 
 // Taking it a bit too far...

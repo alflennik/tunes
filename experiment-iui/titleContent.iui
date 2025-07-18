@@ -1,33 +1,33 @@
 TitleContent = {
-  Date = ""
+  Date = String
   
   Artist = <|
-    <"">,
-    [ <"">, disambiguationId: <""> ]
+    String
+    [String, disambiguationId: String]
   |>
 
   OtherContributor = <[
-    type.<|[ .artist: Artist, .other: <""> ]|>,
-    contributorType: <| .producedBy, .directedBy, .starring |>,
-  ]>
+    type: |.artist(Artist), .other(String)|
+    contributorType: |.producedBy, .directedBy, .starring|
+ ]>
 
   Song = <[
-    by: <| Artist, [ Artist ] |>,
-    title: <"">,
-    featuring?: <|
+    by: |Artist, [Artist]|
+    title: String
+    featuring?: |
       .artist: Artist,
-      .artists: <[ Artist ]>,
+      .artists: [Artist],
       .other: OtherContributor,
-      .others: [ <|[ .artist: Artist, .contributor: OtherContributor ]|> ],
-    |>,
+      .others: [|.artist(Artist), .contributor(OtherContributor)|]
+    |
     covering?: [
-      coveringType: <| .cover, .remix |>,
-      by: <| Artist, [ Artist ] |>,
+      coveringType: |.cover, .remix|
+      by: |Artist, [Artist]|
     ]
   ]>
 
-  ProvidedContentType = <|[
-    .commonTerm: <|
+  ProvidedContentType = <|
+    .commonTerm(|
       .unlabeled
       .officialVideo
       .officialMusicVideo
@@ -36,84 +36,84 @@ TitleContent = {
       .officialMv
       .officialLyricVideo
       .officialAudio
-    |>,
-    .customTerm: <"">,
-    .misleading: <[
-      reason: <"">,
-      provided.<|[
-        .commonTerm: ProvidedContentType.commonTerm,
-        .customTerm: ProvidedContentType.customTerm,
-      ]|>,
-    ]>
-  ]|>
+    |)
+    .customTerm(String)
+    .misleading([
+      reason: String
+      provided: |
+        .commonTerm(ProvidedContentType.commonTerm.Parameters[0])
+        .customTerm(ProvidedContentType.customTerm.Parameters[0])
+      |,
+    ])
+  |>
 
-  TitleAddendum = <[ <"">, delimitedBy: <| .parentheses, .comma, .space |> ]>,
+  TitleAddendum = <[String, delimitedBy: |.parentheses, .comma, .space|]>
 
   OneVideoOneSong = <[
-    providedContentType.<|[ ...ProvidedContentType ]|>,
-    song: Song,
-    titleAddendum?: <TitleAddendum?>,
+    providedContentType: ProvidedContentType
+    song: Song
+    titleAddendum?: TitleAddendum
   ]>
 
-  FreeformContent = {
+  FreeformContent = *{
     FlexibleTitleContent = <[
-      ...OneVideoOneSong.omit(.(song)),
-      music: <| Song, [ Song ] |>,
+      ...OneVideoOneSong.omit(OneVideoOneSong.song)
+      music: |Song, [Song]|
     ]>
 
     SpecialTitleContent = <[
-      specialTitle: <"">,
-      music: <| Song, [ Song ] |>,
+      specialTitle: String
+      music: |Song, [Song]|
     ]>
 
-    <<* <|[
-      .standard: FlexibleTitleContent,
-      .special: SpecialTitleContent
-    ]|>
+    *return <|
+      .standard(FlexibleTitleContent)
+      .special(SpecialTitleContent)
+    |>
   }
 
-  LivePerformanceContent = {
+  LivePerformanceContent = *{
     SpecialLiveContent = <[
-      customTitle: <"">,
-      performing.<|[
+      customTitle: String
+      performing: |
         .performance: [
-          by: <| Artist, [ Artists ] |>,
-        ],
-        .song: Song,
-        .songs: [ Song ],
-      ]|>,
-      place?.<|[ .venue: <"">, .other: <""> ]|>
-      series?: <""?>
+          by: |Artist, [Artists]|
+        ]
+        .song: Song
+        .songs: [Song]
+      |
+      place?: |.venue(String), .other(String)|
+      series?: String
     ]>
 
-    StandardLiveContent = [
-      ...SpecialLiveContent.omit(.(customTitle)),
-      performing.<|[
-        ...SpecialLiveContent.performing.options,
+    StandardLiveContent = <[
+      ...SpecialLiveContent.omit('customTitle')
+      performing: |
+        ...SpecialLiveContent.performing
         .performance: [
-          ...SpecialLiveContent.performing.options.performance,
-          title.<|[
-            .providedAs: <"">,
-            .generated: none,
-          ]|>
+          ...SpecialLiveContent.performing.performance
+          title: |
+            .providedAs(String)
+            .generated
+          |
         ]
-      ]|>,
+      |
       place?: [
-        ...SpecialLiveContent.place,
-        delimitedBy: <| .at, .on, .from |>
-      ],
+        ...SpecialLiveContent.place
+        delimitedBy: |.at, .on, .from|
+      ]
       series?: [
-        ...SpecialLiveContent.series,
-        delimitedBy: <| .at, .on, .from |>,
-      ],
-      liveAddendum?: ["", delimitedBy: <| .space, .comma |>],
-      titleAddendum?: TitleAddendum,
-    ]
+        ...SpecialLiveContent.series
+        delimitedBy: |.at, .on, .from|
+      ]
+      liveAddendum?: [String, delimitedBy: |.space, .comma|]
+      titleAddendum?: TitleAddendum
+    ]>
     
-    <<* <|[
-      .standard: StandardLiveContent,
-      .special: SpecialLiveContent,
-    ]|>
+    *return <|
+      .standard: StandardLiveContent
+      .special: SpecialLiveContent
+    |>
 
     // Examples:
     // Official title
@@ -150,40 +150,40 @@ TitleContent = {
     // CHANMINA - BIJIN (Live at Yokohama Arena, AREA OF DIAMOND)
   }
   
-  * <|[
-    .musicVideo: OneVideoOneSong,
-    .lyricVideo: OneVideoOneSong,
-    .audioVideo: OneVideoOneSong,
-    .visual.<|[...FreeformContent]|>,
-    .sessionVideo.<|[...FreeformContent]|>,
-    .livePerformance.<|[...LivePerformanceContent]|>,
-    .fanVideo.<|[...FreeformContent]|>,
-    .musicTrailer: none // TODO: fill this out
-    .promotionalVideo: none, // TODO: fill this out
-    .foundFootage: none,
-    .documentary: none,
-    .shortFilm: none,
-  ]|>
+  *return <|
+    .musicVideo(OneVideoOneSong)
+    .lyricVideo(OneVideoOneSong)
+    .audioVideo(OneVideoOneSong)
+    .visual(FreeformContent)
+    .sessionVideo(FreeformContent)
+    .livePerformance(LivePerformanceContent)
+    .fanVideo(FreeformContent)
+    .musicTrailer // TODO: fill this out
+    .promotionalVideo // TODO: fill this out
+    .foundFootage
+    .documentary
+    .shortFilm
+  |>
 }
 
 TunesVideo = <[
   youtubeVideo: [
-    id: <"">,
+    id: String,
     date: Date,
-    duration: <"">,
-    width: <0>,
-    height: <0>,
-    channel: <"">,
-    title: <"">,
-    thumbnailSrc: <"">,
-    viewCountHistory: <[ <[ count: <0>, date: Date ]> ]>,
+    duration: String,
+    width: Number,
+    height: Number,
+    channel: String,
+    title: String,
+    thumbnailSrc: String,
+    viewCountHistory: [[count: Number, date: Date]],
   ],
   titleContent: TitleContent,
-  id: <"">,
-  title: <"">,
+  id: String,
+  title: String,
 ]>
 
-videos<[ TunesVideo ]> = [
+videos<[TunesVideo]> = [
   [
     youtubeVideo: [
       id: "38bw_3hQK8o",
@@ -195,63 +195,60 @@ videos<[ TunesVideo ]> = [
       title: "Tycho - Time To Run (Official Video)",
       thumbnailSrc: "https://img.youtube.com/vi/38bw_3hQK8o/maxresdefault.jpg",
     ],
-    titleContent.musicVideo: [
-      providedContentType.commonTerm: .officialVideo,
-      song: [ by.artist: "Tycho", title: "Time To Run" ],
-    ],
+    titleContent: .musicVideo([
+      providedContentType: .commonTerm(.officialVideo),
+      song: [by: .artist("Tycho"), title: "Time To Run" ],
+      song: [by: .artist("Tycho"), title: "Time To Run" ],
+    ]),
     id: autogeneratedDoNotEdit("tycho-time-to-run")
     title: autogeneratedDoNotEdit("Tycho - Time To Run")
   ],
 ]
 
 firstContentType<?> =
-  videos[0]<?>
-    .titleContent
-    .checkCase(.musicVideo)<?>
-    .providedContentType
-    .checkCase(.commonTerm)<?>
+  try? videos[0].titleContent.case(.musicVideo).providedContentType.case(commonTerm)
 
-videos = {
-  videoList<[ Video ]> = []
+videos = *{
+  videoList<[Video]> = []
 
-  playlists.each((playlist) { 
-    playlist.videos.each((video) { videoList.add(video) })
+  playlists.each(playlist => { 
+    playlist.videos.each(video => videoList.add(video))
   })
 
-  duplicates = videoList.findDuplicates()
-  if duplicates { forceError("Found duplicated videos, which is not allowed. \{duplicates}") }
+  duplicates<!> = try? videoList.findDuplicates()
+  if try? duplicates<!> {
+    throw createError("Found duplicated videos, which is not allowed. {duplicates}")
+  }
 
-  <<* videoList
+  *return videoList
 }
 
-songs = {
-  songList<[ Song ]> = []
+songs = *{
+  songList<[Song]> = []
 
-  addSongs = (songs) { songs.each((song) { songList.add(song) }) }
+  addSongs = songs => songs.each(song => songList.add(song))
 
-  videos.each((video) {
-    given video.titleContent {
-      .musicVideo, .lyricVideo, .audioVideo (content) { 
-        addSong(content.song)
+  videos.each(video => {
+    video.titleContent.switch(
+      [[.musicVideo, .lyricVideo, .audioVideo]]: content => addSong(content.song)
+      [[.visual, .sessionVideo, .fanVideo]]: content => {
+        content.music.switch(
+          [Song]: song => songList.add(song)
+          [<[Song]>]: songs => addSongs(songs)
+        )
       }
-      .visual, .sessionVideo, .fanVideo (content) {
-        given content.music {
-          .(Song)  { (song) { songList.add(song) } }
-          .(<[ Song ]>) { (songs) { addSongs(songs) } }
-        }
+      [.livePerformance]: content => {
+        content.performing.switch(
+          [.song]: song => songList.add(song)
+          [.songs]: songs => addSongs(songs)
+          [.performance]: () => {}
+        )
       }
-      .livePerformance (content) {
-        given content.performing {
-          .song (song) { songList.add(song) },
-          .songs (songs) { addSongs(songs) },
-          .performance {}
-        }
-      }
-      .musicTrailer, .promotionalVideo, .foundFootage, .documentary, .shortFilm {}
-    }
+      [[.musicTrailer, .promotionalVideo, .foundFootage, .documentary, .shortFilm]]: () => {}
+    )
   })
 
   songList.removeDuplicates()
 
-  <<* songList
+  *return songList
 }

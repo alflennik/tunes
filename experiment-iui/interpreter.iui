@@ -1,0 +1,40 @@
+Expression = <|
+  .name(String)
+  .add(Expression, Expression)
+  .(Number)
+  .(String)
+|>
+
+Statement = <|
+  .assign(Expression, Expression)
+|>
+
+statement<[Statement]> = [.assign(.name("someNumber"), .add(1, 1))]
+
+evaluateStatement = (statement<Statement>)<try> => {
+  statement.switch(
+    [.assign(Expression, Expression)]: (.assign(assignTo, value)) => *{
+      assignTo.switch(
+        [.name(String)]: (.name(variableName)) => *{
+          if try? scope.has(variableName) {
+            return createError("Variable has already been defined")
+          }
+          scope.add(variableName, try evaluateExpression(value))
+        }
+        default: () => *{ return createError("Invalid left hand side of assignment") }
+      )
+    }
+    default: () => {
+      throw createError("Failed to parse statement")
+    }
+  )
+}
+
+evaluateExpression = (expression<Expression>)<try Any> => {
+  expression.switch(
+    [.add(Expression, Expression)]: (.add(expression1, expression2)) => *{
+      return try evaluateExpression(expression1) + evaluateExpression(expression2)
+    }
+    [[Number, String]]: primitiveValue => *{ return primitiveValue }
+  )
+}

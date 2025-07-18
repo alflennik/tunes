@@ -1,0 +1,102 @@
+createList = (Item, contents) => {
+  // Passes types through to the callback
+  // Supports being generically async or not
+  // Supports being generically wrapped in try or not
+  // Allows different async strategies, concurrent or sequential (sequential is default)
+  each = (
+    @static concurrent: isConcurrent<Boolean> = false,
+    callback<(Item, index?: Number) => createGenericType()>
+  )<createMutableType()> => {
+    OutputItem = callback.Return
+
+    &OutputType = each.&Return
+    OutputType = &OutputType
+    
+    [OutputResult, isTry, isAwait] = *{
+      if try? OutputItem.Result || OutputItem.Resolved.Result {
+        if try? OutputItem.Resolved || OutputItem.Result.Resolved {
+          *return [OutputItem.Result.Resolved || OutputItem.Resolved.Result, true, true]
+        } else {
+          *return [OutputItem.Result, true, false]
+        }
+      } else {
+        if try? OutputItem.Resolved {
+          *return [OutputItem.Resolved, false, true]
+        } else {
+          *return [OutputItem, false, false]
+        }
+      }
+    }
+
+    &OutputListItem
+    OutputListItem = &OutputListItem
+
+    if isTry {
+      if isAwait {
+        if isConcurrent {
+          &OutputType = <try [await OutputResult]>
+          &OutputListItem = await OutputResult
+        } else {
+          &OutputType = <try await [OutputResult]>
+          &OutputListItem = OutputResult
+        }
+      } else {
+        &OutputType = <try [OutputResult]>
+        &OutputListItem = OutputResult
+      }
+    } else {
+      if isAwait {
+        if isConcurrent {
+          &OutputType = <[await OutputResult]>
+          &OutputListItem = await OutputResult
+        } else {
+          &OutputType = <await [OutputResult]>
+          &OutputListItem = OutputResult
+        }
+      } else {
+        &OutputType = <[OutputResult]>
+        &OutputListItem = OutputResult
+      }
+    }
+
+    outputList<[OutputListItem]> = []
+
+    &i = 0
+    index = &i
+
+    while (&i < list.length) {
+      &outputItem
+      outputItem = &outputItem
+      
+      if isTry {
+        if isAwait {
+          if isConcurrent {
+            &outputItem = try callback(list[&i], index:)
+          } else {
+            &outputItem = try await callback(list[&i], index:)
+          }
+        } else {
+          &outputItem = try callback(list[&i], index:)
+        }
+      } else {
+        if isAwait {
+          if isConcurrent {
+            &outputItem = callback(list[&i], index:)
+          } else {
+            &outputItem = await callback(list[&i], index:)
+          }
+        } else {
+          &outputItem = callback(list[&i], index:)
+        }
+      }
+
+      outputList.add(outputItem)
+
+      &i += 1
+    }
+
+    return outputList
+  }
+
+  return [each]
+}

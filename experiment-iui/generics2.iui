@@ -1,0 +1,35 @@
+export createUniqueSet = (Item = Untyped) => {
+  innerList<[Item]> = []
+
+  return [
+    add: (item<Item>) => {
+      if !innerList.contains(item), innerList.add(item)
+    }
+    remove: (item<Item>) => {
+      index<!> = try? innerList.findIndex(listItem => listItem == item)
+      if try? index<!>, innerList.removeAt(index)
+    }
+    empty: list.empty,
+    length: list.length
+  ]
+}
+
+favoriteNumbers = createUniqueSet(Number)
+favoriteNumbers.add(3)
+favoriteNumbers.add(1)
+favoriteNumbers.add(5)
+
+// Usage:
+// myMoveableItem = () => {
+//   &position = [0, 0]
+//   return [
+//     ...getMoveMethods(&position)
+//   ]
+// }
+getMoveMethods = (&position<[Number, Number]>) => {
+  moveLeft = (distance<Number>) => {
+    &position[1] -= distance
+  }
+
+  return [moveLeft]
+}

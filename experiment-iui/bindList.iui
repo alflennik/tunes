@@ -1,65 +1,66 @@
-getElement = () {
+getElement = () => {
   container = // ...
   // ...
 
-  bindList = generic (items<[ Generic ]>, createElement<(Generic) { HtmlElement }>) <none> {
-    forceTypesToMatch(items.Item, <[ id: <""> ]>)
+  bindList = (
+    items<[createGenericType()]>, createElement<(createGenericType()) => HtmlElement>
+  )<> => {
+    forceTypesToMatch(items.Item, <[id: String]>)
     forceTypesToMatch(items.Item, callback.Parameters[0])
 
-    watch items {
-      idsToElements<[ <"">: Element ]> = []
+    items.watch(() => {
+      idsToElements<[[String]: HtmlElement]> = []
 
-      container.elements.each((element) {
-        elementId = element.getAttribute("id")<?>.forceOption()
+      container.elements.each(element => {
+        elementId = try! element.getAttribute("id")
         idsToElements[elementId] = element
       })
 
-      itemIds<[ <""> ]> = items.each((item) { <<* item.id })
+      itemIds<[String]> = items.each(item => item.id)
 
-      &index = 0
-      loop ***{ **{ 
-        element<?> = container.elements[&index]
-        item<?> = items[&index]
+      &i = 0
+      while true {
+        element<!> = try? container.elements[&i]
+        item<!> = try? items[&i]
 
-        if !item<?> {
+        if !item<!> {
           // Since all required items have been inserted any remaining elements should be removed.
-          if element<?> {
-            container.elements.remove(&index)
-            <<**
+          if try? element<!> {
+            container.elements.remove(&i)
+            break
           }
-          <<***
         }
 
-        elementId<?> = element<?>.getAttribute("id")
-        
+        elementId<!> = try? element<!>.getAttribute("id")
+
         // Correct location
-        if item.id == elementId<?> { 
-          &index += 1
-          <<**
+        if try? item.id == elementId<!> {
+          &i += 1
+          continue
         }
 
         // Exists in wrong location
-        if idsToElements[item.id] {
-          container.elements.insert(&index, element)
-          &index += 1
-          <<**
+        if try? idsToElements[item.id] {
+          container.elements.insertAt(&i, element)
+          &i += 1
+          continue
         }
 
         // Shouldn't exist
-        if elementId<?> && !itemIds.contains(elementId) {
-          container.elements.remove(&index)
-          <<**
+        if try? elementId<!> && !itemIds.contains(elementId) {
+          container.elements.remove(&i)
+          continue
         }
 
         // Missing
-        if !idsToElements[item.id] {
+        if try? !idsToElements[item.id] {
           correctElement = createElement(item)
-          container.elements.insert(&index, correctElement)
-          &index += 1
-          <<**
+          container.elements.insert(&i, correctElement)
+          &i += 1
+          continue
         }
-      } }
-    }
+      }
+    })
   }
 }
 

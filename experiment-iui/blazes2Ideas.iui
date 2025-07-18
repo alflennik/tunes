@@ -1,0 +1,261 @@
+v1 = () => {
+  request<~> = fetch("http://myapi.com")<~>
+
+  responseOrError<!> = request<~>.await()<!>
+
+  untypedResponse<%> = responseOrError<!>.forceResult()<%>
+
+  response = untypedResponse<%>.forceType(<[a: Number, b: Number]>)
+}
+
+v2 = ()<~[a: Number, b: Number]> => {
+  response = 
+    fetch("http://myapi.com")<~>
+      .await()<!>
+      .forceResult()<%>
+      .forceType(<[a: Number, b: Number]>)
+}
+
+v3 = ()<[promise: [a: Number, b: Number]]> => {
+  response = fetch("http://myapi.com")/~/.await()/!/.checkResult()/_?/?.checkType(<[a: Number, b: Number]>)
+}
+
+v4 = () => {
+  response/?/ = 
+    fetch("http://myapi.com")/~/
+      .await()/!/
+      .checkResult()/_?/
+      ?.checkType(<[a: Number, b: Number]>)
+  
+  if !response /?/, crash()
+
+  log(response)
+}
+
+v5 = ()<~[a: Number, b: Number]> => {
+  return fetch("http://myapi.com")
+    .await()
+    .forceResult()
+    .forceType(<[a: Number, b: Number]>)
+
+  return response
+}
+
+// Promise<Result<{ a: number, b: number }>>
+// Promise(Result([a: Number, b: Number]))
+// createPromiseType(createResultType(<[a: Number, b: Number]>))
+// .promise(.result([a: Number, b: Number]))
+// [promise: [error?: Error, result?: [a: Number, b: Number]]]
+// ~![a: Number, b: Number]
+// ~!?[a: Number, b: Number]
+// ~Number
+// .promise(.result([a: Number, b: Number]))
+
+v5 = ()<~![a: Number, b: Number]> => {
+  response =
+    fetch("http://myapi.com")<~>
+      .await()<!>
+      .tryResult()<%>
+      .parseJson()<!>
+      .tryResult()<%>
+      .tryType(<[a: Number, b: Number]>)
+}
+
+v6 = ()<.await(.try([a: Number, b: Number]))> => {
+  response = 
+    fetch("http://myapi.com").await($.try($.parseJson().assignType(<[a: Number, b: Number]>)))
+}
+
+v6pt2 = ()<.await([a: Number, b: Number])> => {
+  response = 
+    fetch("http://myapi.com").await($.force($.parseJson().assignType(<[a: Number, b: Number]>)))
+}
+
+v6pt3 = ()<createOptionType(<[a: Number, b: Number]>)> => {
+  httpResponse<!> = fetch("http://myapi.com")<~>.await()<!>
+
+  if httpResponse.checkError()<!> { 
+    log(httpResponse<!>)
+    return .none
+  }
+
+  responseContent<?> = httpResponse.parseJson()<~>.await()<?>.checkOption()<%>
+  response<?> = responseContent<?>.checkOption()<%>.checkType(<[a: Number, b: Number]>)
+
+  if !response {
+    log("invalid response", responseContent)
+    return .none
+  }
+
+  return .some(response)
+}
+
+v6.9 = ()<createResultType(<[a: Number, b: Number]>)> => {
+  response = 
+    fetch("http://myapi.com")<~>
+      .await()<!>
+      .tryResult()
+      .parseJson()<~>
+      .await()<!>
+      .tryResult()<%>
+      .tryType(<[a: Number, b: Number]>)
+}
+
+v6.9 = ()<try await [a: Number, b: Number]> => {
+  response = try await fetch("http://myapi.com").parseJson().setType(<[a: Number, b: Number]>)
+}
+
+v7 = ()<createOption(createAsyncType([a: Number, b: Number]))> => {
+  response<?> = fetch("http://myapi.com").await().parseJson().setType(<[a: Number, b: Number]>)
+}
+
+v8 = ()<await try [a: Number, b: Number]> => {
+  response = 
+    await try fetch("http://myapi.com").parseJson().assignType(<[a: Number, b: Number]>)
+}
+
+v8.1 = ()<await [a: Number, b: Number]> => {
+  response<!> = 
+    await try? fetch("http://myapi.com").parseJson().assignType(<[a: Number, b: Number]>)
+}
+
+v8.2 = ()<await [a: Number, b: Number]> => {
+  response = 
+    await try! fetch("http://myapi.com").parseJson().assignType(<[a: Number, b: Number]>)
+}
+
+createPromise = (callback<((???) => Null, (createErrorType()) => Null) => Null>) => {
+  Value = callback.Parameters[0]
+
+  resolve = ()<Null> => {
+    // magic code
+  }
+
+  reject = (error<Error>)<Null> => {
+    // magic code
+  }
+
+  // magic code
+  
+  callback(resolve, reject)
+
+  await = (Value) => {
+    // magic code
+  }
+
+  return [await:, unawait:]
+}
+
+createPromiseType = (Value) => {
+  CreatePromise = createPromise.Type.copy()
+  CreatePromise.Arguments[0].Arguments[0].&Type = Value
+
+  return CreatePromise.Returns
+}
+
+createResultType = (Result, Error) => {
+  @matchTypes(createErrorType(), Error)
+
+  return <|
+    .result: Result
+    .error: Error
+  |>
+}
+
+createOptionType = (Option) => {
+  return <|
+    .option: Option,
+    .none
+  |>
+}
+
+createOptionType = (Option) => {
+  return <|
+    .try(Option)
+    .force(Option)
+  |>
+}
+
+createNoneType = () => {
+  return <| .none |>
+}
+
+createBooleanType = () => {
+  return <| .true, .false |>
+}
+
+userId<?> = currentUser<?>.check(~.id)
+
+userId = user.id
+
+userId<?> = session.check(~.user.check(~.id))
+
+userId<?> = session?.user?.id
+userId<?> = session!.user!.id
+userId<?> = session!!.user!!.id
+
+userId = session.force(~.user.force(~.id))
+
+userId = session<%>.force(.user)<%>.force(.id)
+
+dbHost = session.force(.db).host
+
+if !user.admin {
+  return .none
+}
+
+
+idsToElements<[[String]: Element]> = []
+
+container.elements.each(element => {
+  elementId = element.getAttribute("id").check(.option)
+  idsToElements[elementId] = element
+})
+
+loadDimensions = ()<try await [width: Number, height: Number]> => {
+  dimensions = try await videos.each(concurrent: true, video => fetchDimensions(video))
+}
+
+loadDimensions = ()<try await [width: Number, height: Number]> => {
+  dimensions<!> = try? await videos.each(concurrent: true, video => fetchDimensions(video))
+}
+
+loadDimensions = ()<await [width: Number, height: Number]> => {
+  dimensions = await videos.each(concurrent: true, video => try! fetchDimensions(video))
+}
+
+loadDimensions = ()<[width: Number, height: Number]> => {
+  dimensions = blockMainThread(() => {
+    return videos.each(concurrent: true, video => try! fetchDimensions(video))
+  })
+}
+
+getUser = ()<try User> => {
+  return try? session.user
+}
+
+getUser = ()<User> => {
+  return try! session.user
+}
+
+getUser = ()<try User> => {
+  if isLoggedOut(), return
+  return session.user
+}
+
+playMode<|.ended, .paused, .playing|> = watch speechSynthesis, activeUtterances {
+  return if speechSynthesis.paused, .paused else if activeUtterances.length == 0, .ended else .playing
+}
+
+  return if speechSynthesis.paused {
+    .paused
+  } else if activeUtterances.length == 0 {
+    .ended
+  } else {
+    .playing
+  }
+
+playMode<|.paused, .ended, .playing|> = watch(speechSynthesis, activeUtterances, () => {
+  if speechSynthesis.paused, return .paused
+  return activeUtterances.length == 0 ? .ended : .playing
+})
