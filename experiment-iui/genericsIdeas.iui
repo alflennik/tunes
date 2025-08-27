@@ -21,7 +21,7 @@ Character = <[addHealthPoints: (Number) => null> ]>
 
 Fruit = <[name: "", healthPoints: 0]>
 
-createCharacter = () => {
+createCharacter = ()<createMutableType()> => {
   &healthPoints = 50
 
   Food = <|Fruit, /* others */|>
@@ -32,7 +32,7 @@ createCharacter = () => {
 
   result = [eat:]
 
-  createCharacter.Return.setType(result.Type)
+  createCharacter.&Return = result.Type
 
   return result
 }

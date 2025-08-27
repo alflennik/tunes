@@ -83,7 +83,7 @@ AElementAttributes = <[
 ]>
 
 CustomElementAttributes = <[
-  elementName<"">,
+  elementName<String>,
   ...BaseAttributes,
 ]>
 

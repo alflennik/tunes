@@ -1,15 +1,15 @@
 Expression = <|
   .name(String)
   .add(Expression, Expression)
-  .(Number)
-  .(String)
+  Number
+  String
 |>
 
 Statement = <|
   .assign(Expression, Expression)
 |>
 
-statement<[Statement]> = [.assign(.name("someNumber"), .add(1, 1))]
+statement<[Statement]> = .assign(.name("someNumber"), .add(1, 1))
 
 evaluateStatement = (statement<Statement>)<try> => {
   statement.switch(
@@ -24,8 +24,8 @@ evaluateStatement = (statement<Statement>)<try> => {
         default: () => *{ return createError("Invalid left hand side of assignment") }
       )
     }
-    default: () => {
-      throw createError("Failed to parse statement")
+    default: () => *{
+      return createError("Failed to parse statement")
     }
   )
 }

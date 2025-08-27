@@ -14,7 +14,7 @@ vals = [
 vals[0] // "a"
 vals[1] // "b"
 vals.myAttribute // "true"
-vals.enums // .option1
+vals.enums // [.option1, .option1, ...]
 try vals.enums[0].case(.option1) // true ... true?
 vals.enums[2] // .option2(99)
 try vals.enums[2].case(.option2) // 2
@@ -33,14 +33,13 @@ v2 = [.a(.b(.c))]
 
 readV2 = try? v2.case(.a).case(.b).case(.c)
 
-isOfficialVideo = titleContent
-  .case(.musicVideo)
-  .providedContentType
-  .case(.commonTerm) == .officialVideo
+isOfficialVideo = toBoolean(
+  try? titleContent.case(.musicVideo).providedContentType.case(.commonTerm) == .officialVideo
+)
 
 MinType = <[
   titleContent: |
-    .musicVideo: [
+    .musicVideo([
       providedContentType: |
         .commonTerm(|
           .officialVideo
@@ -48,14 +47,14 @@ MinType = <[
         |)
         .specialTerm(String)
       |
-    ]
+    ])
   |
 ]>
 
 myVideo<MinType> = [
-  titleContent: .musicVideo(
+  titleContent: .musicVideo([
     providedContentType: .commonTerm(.officialVideo)
-  )
+  ])
 ]
 
 TypeComparison = <|

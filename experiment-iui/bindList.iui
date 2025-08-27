@@ -1,15 +1,15 @@
-getElement = () => {
-  container = // ...
+createElement = () => {
+  container<DomElement> = // ...
   // ...
 
   bindList = (
-    items<[createGenericType()]>, createElement<(createGenericType()) => HtmlElement>
-  )<> => {
-    forceTypesToMatch(items.Item, <[id: String]>)
-    forceTypesToMatch(items.Item, callback.Parameters[0])
+    items<[createGenericType()]>, createElement<(createGenericType()) => DomElement>
+  )<null> => {    
+    try! matchTypes(items.Item, <[id: Id]>)
+    try! matchTypes(items.Item, createElement.Parameters[0])
 
     items.watch(() => {
-      idsToElements<[[String]: HtmlElement]> = []
+      idsToElements<[[String]: DomElement]> = []
 
       container.elements.each(element => {
         elementId = try! element.getAttribute("id")
@@ -64,6 +64,6 @@ getElement = () => {
   }
 }
 
-container.bindList(items, (item) {
-  <<* getHtml(.div(id: "\{item.id}", item.name))
+container.bindList(items, (item) => {
+  return createHtml(.div(id: item.id, item.name))
 })

@@ -9,16 +9,16 @@ TitleContent = {
   OtherContributor = <[
     type: |.artist(Artist), .other(String)|
     contributorType: |.producedBy, .directedBy, .starring|
- ]>
+  ]>
 
   Song = <[
     by: |Artist, [Artist]|
     title: String
     featuring?: |
-      .artist: Artist,
-      .artists: [Artist],
-      .other: OtherContributor,
-      .others: [|.artist(Artist), .contributor(OtherContributor)|]
+      .artist(Artist),
+      .artists([Artist]),
+      .other(OtherContributor),
+      .others([|.artist(Artist), .contributor(OtherContributor)|])
     |
     covering?: [
       coveringType: |.cover, .remix|
@@ -76,11 +76,11 @@ TitleContent = {
     SpecialLiveContent = <[
       customTitle: String
       performing: |
-        .performance: [
+        .performance([
           by: |Artist, [Artists]|
-        ]
-        .song: Song
-        .songs: [Song]
+        ])
+        .song(Song)
+        .songs([Song])
       |
       place?: |.venue(String), .other(String)|
       series?: String
@@ -90,13 +90,13 @@ TitleContent = {
       ...SpecialLiveContent.omit('customTitle')
       performing: |
         ...SpecialLiveContent.performing
-        .performance: [
+        .performance([
           ...SpecialLiveContent.performing.performance
           title: |
             .providedAs(String)
             .generated
           |
-        ]
+        ])
       |
       place?: [
         ...SpecialLiveContent.place
@@ -205,7 +205,7 @@ videos<[TunesVideo]> = [
   ],
 ]
 
-firstContentType<?> =
+firstContentType<!> =
   try? videos[0].titleContent.case(.musicVideo).providedContentType.case(commonTerm)
 
 videos = *{

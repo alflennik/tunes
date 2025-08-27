@@ -12,8 +12,6 @@ fieldSet<[position: String, salary: Number]> = [position: "CEO", salary: 1]
 
 fieldList<[[String]: String]> = [australia: "au", austria: "at"]
 
-withDefault<[name: ""]> = [name: ""]
-
 extractName = ([name: String = "Unspecified"]) => name
 
 [name: objectName<String> = "Unspecified"] = objectWithName<[name: String]>
