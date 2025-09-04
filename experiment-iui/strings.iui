@@ -1,4 +1,8 @@
-stringWithoutLineBreak = "Generally strings fit on one line."
+stringWithoutLineBreak = "Strings are wrapped in double quotes."
+
+singleQuoteString = 'Single quotes work as well, in exactly the same way as double strings.'
+
+tildeQuoteString = `Tildes also, but there are some differences you'll see later.`
 
 stringWithoutLineBreak = 
   "Longer strings (without any intended line breaks) can easily be wrapped, since line breaks will
@@ -44,7 +48,7 @@ avoidingConflictsWithText2 =
 
 regexes1 = 
   "Strings are typically horrible for regexes, since you have to double escape. 
-    \\b\\d{4}-\\d{2}-\\d{2}\\b"
+    \\b\\d\{4}-\\d\{2}-\\d\{2}\\b"
 
 regexes2 = 
   *"Just use asterisks again, to the rescue. \b\d{4}-\d{2}-\d{2}\b."*

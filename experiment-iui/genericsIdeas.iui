@@ -9,7 +9,7 @@ videos<[Video]> =
   await unpopulatedVideos.each(concurrent: true,
     video => {
       dimensions = 
-        await fetch("/api/video-dimensions?id=\{id}").setType(<[height: Number, width: Number]>)
+        try! await fetch("/api/video-dimensions?id={id}").setType(<[height: Number, width: Number]>)
 
       return [...video, ...dimensions]
     }

@@ -1,6 +1,6 @@
 "return try? await !utils.isDivideByZero(99 + 1 / 2)"
 ["return", "try?", "await", "!", "utils", ".", "isDivideByZero", "(", "99", "+", "1", "/", "2", ")"]
-[.return, .tryFalse, .await, .negate, .name("utils"), .read, .name("isDivideByZero"), .callStart, 
+[.return, .tryNull, .await, .negate, .name("utils"), .read, .name("isDivideByZero"), .callStart, 
   .argumentsStart, .number(99), .add, .number(1), .divide, .number(2), .argumentsEnd, .callEnd
 ]
 
@@ -11,7 +11,7 @@
   is their binding precedence, and the second value is the operator itself. See below.
 */
 
-[.return, [5, .tryFalse], [5, .await], [5, .negate], .name("utils"), [1, .read], 
+[.return, [5, .tryNull], [5, .await], [5, .negate], .name("utils"), [1, .read], 
   .name("isDivideByZero"), [4, .callStart], .argumentsStart, .number(99), [3, .add], .number(1), 
   [2, .divide], .number(2), .argumentsEnd, .callEnd
 ]
@@ -44,7 +44,7 @@
 
 [
   .return(
-    .tryFalse(
+    .tryNull(
       .await(
         .negate(
           .call(
@@ -70,7 +70,7 @@
 
 [
   .return,                   // statement + optional expression
-  .tryFalse,                 // [PRIO 5] operator + expression
+  .tryNull,                 // [PRIO 5] operator + expression
   .await,                    // [PRIO 5] operator + expression
   .negate,                   // [PRIO 5] operator + expression
   .name("utils"),            // 

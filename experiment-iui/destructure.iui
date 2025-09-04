@@ -16,7 +16,7 @@ myObject = [b: <|.option1, .option2|>]
 
 [b:] = myObject
 
-MyObject = <[b: |.option1, .option2, .(null)|]>
+MyObject = <[b: |.option1, .option2, null|]>
 
 [b: = .option1]<MyObject> = [b: inputValue]
 
@@ -34,12 +34,12 @@ myObject<MyObject> = [b.test1: 99]
 
 [
   b.|[
-    .test1: test1<?>,
-    .test2: test2<?>,
+    .test1: test1<!>,
+    .test2: test2<!>,
   ]|
 ] = myObject
 
-if test1<?> { log("see?") }
+if test1<!>, log("see?")
 
 myObject.b.switch(
   [.test1]: test1 => log(test1)
@@ -58,7 +58,7 @@ myEnum.b.switch(
   [.test2]: ([a:, b:]) => log(a, b)
   [.test3]: () => log("It's option 3")
   [.test4]: () => {}
-  [.test5(true)]: (.test5(value)) => log("Associated value is \{value}")
+  [.test5(true)]: (.test5(value)) => log("Associated value is {value}")
   [.test5(true)]: (enumField) => log(try! enumField.wrapped)
   default: log("none of the above")
 )

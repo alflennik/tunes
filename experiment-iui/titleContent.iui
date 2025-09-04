@@ -6,23 +6,25 @@ TitleContent = {
     [String, disambiguationId: String]
   |>
 
-  OtherContributor = <[
+  Contributor = <[
     type: |.artist(Artist), .other(String)|
     contributorType: |.producedBy, .directedBy, .starring|
   ]>
 
+  AnyContributors = <|
+    .artist(Artist)
+    .artists([Artist])
+    .contributor(Contributor)
+    .contributors([|.artist(Artist), .contributor(Contributor)|])
+  |>
+
   Song = <[
-    by: |Artist, [Artist]|
+    by: |Artist, [Artist], .xCollaboration([Artist])|
     title: String
-    featuring?: |
-      .artist(Artist),
-      .artists([Artist]),
-      .other(OtherContributor),
-      .others([|.artist(Artist), .contributor(OtherContributor)|])
-    |
+    featuring?: AnyContributors
     covering?: [
       coveringType: |.cover, .remix|
-      by: |Artist, [Artist]|
+      by: |Artist, [Artist], .xCollaboration([Artist])|
     ]
   ]>
 
@@ -149,6 +151,11 @@ TitleContent = {
     // CHANMINA - 美人 (BIJIN) (AREA OF DIAMOND @ Yokohama Arena)
     // CHANMINA - BIJIN (Live at Yokohama Arena, AREA OF DIAMOND)
   }
+
+  PromotionalVideo = <[
+    by?: AnyContributors
+    title: String
+  ]>
   
   *return <|
     .musicVideo(OneVideoOneSong)
@@ -206,7 +213,7 @@ videos<[TunesVideo]> = [
 ]
 
 firstContentType<!> =
-  try? videos[0].titleContent.case(.musicVideo).providedContentType.case(commonTerm)
+  try? videos[0].titleContent.case(.musicVideo).providedContentType.case(.commonTerm)
 
 videos = *{
   videoList<[Video]> = []

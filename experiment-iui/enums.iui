@@ -96,7 +96,7 @@ ElementContainer.elements[1] // Number
 ElementContainer.elements[2] // [Number, Number]
 ElementContainer.elements[2][1] // Number
 
-BaseAttributes.omit('name)
+BaseAttributes.omit(&"name")
 
 Contributors = <[[|.artist: Artist, .contributor: OtherContributor|]]>
 

@@ -26,6 +26,10 @@ favoriteNumbers.add(5)
 //     ...getMoveMethods(&position)
 //   ]
 // }
+// 
+// ...
+// 
+// movableItem.moveLeft(2)
 getMoveMethods = (&position<[Number, Number]>) => {
   moveLeft = (distance<Number>) => {
     &position[1] -= distance
