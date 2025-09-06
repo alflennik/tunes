@@ -111,17 +111,17 @@ v7 = ()<createOption(createAsyncType([a: Number, b: Number]))> => {
 
 v8 = ()<await try [a: Number, b: Number]> => {
   response = 
-    await try fetch("http://myapi.com").parseJson().assignType(<[a: Number, b: Number]>)
+    await try fetch("http://myapi.com").parseJson().setType(<[a: Number, b: Number]>)
 }
 
 v8.1 = ()<await [a: Number, b: Number]> => {
   response<!> = 
-    await try? fetch("http://myapi.com").parseJson().assignType(<[a: Number, b: Number]>)
+    await fetch("http://myapi.com")<!>.parseJson()<!>.setType(<[a: Number, b: Number]>)<!>
 }
 
 v8.2 = ()<await [a: Number, b: Number]> => {
   response = 
-    await try! fetch("http://myapi.com").parseJson().assignType(<[a: Number, b: Number]>)
+    await try! fetch("http://myapi.com")<!>.parseJson()<!>.setType(<[a: Number, b: Number]>)<!>
 }
 
 createPromise = (callback<((???) => Null, (createErrorType()) => Null) => Null>) => {
@@ -213,34 +213,34 @@ container.elements.each(element => {
 })
 
 loadDimensions = ()<try await [width: Number, height: Number]> => {
-  dimensions = try await videos.each(concurrent: true, video => fetchDimensions(video))
+  dimensions = try await videos.each(concurrent: true, video => fetchDimensions(video)<!>)<!>
 }
 
 loadDimensions = ()<try await [width: Number, height: Number]> => {
-  dimensions<!> = try? await videos.each(concurrent: true, video => fetchDimensions(video))
+  dimensions<!> = await videos.each(concurrent: true, video => fetchDimensions(video)<!>)<!>
 }
 
 loadDimensions = ()<await [width: Number, height: Number]> => {
-  dimensions = await videos.each(concurrent: true, video => try! fetchDimensions(video))
+  dimensions = await videos.each(concurrent: true, video => try! fetchDimensions(video)<!>)
 }
 
 loadDimensions = ()<[width: Number, height: Number]> => {
   dimensions = blockMainThread(() => {
-    return videos.each(concurrent: true, video => try! fetchDimensions(video))
+    return videos.each(concurrent: true, video => try! fetchDimensions(video)<!>)
   })
 }
 
 getUser = ()<try User> => {
-  return try? session.user
+  return try? session<!>.user
 }
 
 getUser = ()<User> => {
-  return try! session.user
+  return try! session<!>.user
 }
 
 getUser = ()<try User> => {
   if isLoggedOut(), return
-  return session.user
+  return session<!>.user
 }
 
 playMode<|.ended, .paused, .playing|> = watch speechSynthesis, activeUtterances {

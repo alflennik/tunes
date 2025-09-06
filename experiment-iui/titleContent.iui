@@ -57,7 +57,7 @@ TitleContent = {
     titleAddendum?: TitleAddendum
   ]>
 
-  FreeformContent = *{
+  FreeformContent = _{
     FlexibleTitleContent = <[
       ...OneVideoOneSong.omit(OneVideoOneSong.song)
       music: |Song, [Song]|
@@ -68,13 +68,13 @@ TitleContent = {
       music: |Song, [Song]|
     ]>
 
-    *return <|
+    return <|
       .standard(FlexibleTitleContent)
       .special(SpecialTitleContent)
     |>
   }
 
-  LivePerformanceContent = *{
+  LivePerformanceContent = _{
     SpecialLiveContent = <[
       customTitle: String
       performing: |
@@ -112,7 +112,7 @@ TitleContent = {
       titleAddendum?: TitleAddendum
     ]>
     
-    *return <|
+    return <|
       .standard: StandardLiveContent
       .special: SpecialLiveContent
     |>
@@ -157,7 +157,7 @@ TitleContent = {
     title: String
   ]>
   
-  *return <|
+  return <|
     .musicVideo(OneVideoOneSong)
     .lyricVideo(OneVideoOneSong)
     .audioVideo(OneVideoOneSong)
@@ -213,24 +213,24 @@ videos<[TunesVideo]> = [
 ]
 
 firstContentType<!> =
-  try? videos[0].titleContent.case(.musicVideo).providedContentType.case(.commonTerm)
+  videos[0].titleContent.case(.musicVideo)<!>.providedContentType.case(.commonTerm)<!>
 
-videos = *{
+videos = _{
   videoList<[Video]> = []
 
   playlists.each(playlist => { 
     playlist.videos.each(video => videoList.add(video))
   })
 
-  duplicates<!> = try? videoList.findDuplicates()
-  if try? duplicates<!> {
+  duplicates = videoList.findDuplicates()
+  if duplicates.length {
     throw createError("Found duplicated videos, which is not allowed. {duplicates}")
   }
 
-  *return videoList
+  return videoList
 }
 
-songs = *{
+songs = _{
   songList<[Song]> = []
 
   addSongs = songs => songs.each(song => songList.add(song))
@@ -257,5 +257,5 @@ songs = *{
 
   songList.removeDuplicates()
 
-  *return songList
+  return songList
 }

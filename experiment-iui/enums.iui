@@ -31,10 +31,10 @@ readV1 = v1.a.b.c
 
 v2 = [.a(.b(.c))]
 
-readV2 = try? v2.case(.a).case(.b).case(.c)
+readV2<!> = v2.case(.a)<!>.case(.b)<!>.case(.c)<!>
 
 isOfficialVideo = toBoolean(
-  try? titleContent.case(.musicVideo).providedContentType.case(.commonTerm) == .officialVideo
+  titleContent.case(.musicVideo)<!>.providedContentType.case(.commonTerm)<!> == .officialVideo
 )
 
 MinType = <[
@@ -77,9 +77,9 @@ OtherVal = <|
 
 otherVals<[OtherVal]> = .interesting(code: "abc", ["def", "efg"])
 
-try otherVals[0].case(.interesting).code // "abc"
-try otherVals[0].case(.interesting)[0] // ["def", "efg"]
-try otherVals[0].case(.interesting)[0][1] // "def"
+try otherVals[0].case(.interesting)<!>.code // "abc"
+try otherVals[0].case(.interesting)<!>[0] // ["def", "efg"]
+try otherVals[0].case(.interesting)<!>[0][1] // "def"
 
 ElementContainer = [
   name: String

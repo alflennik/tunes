@@ -1,0 +1,3 @@
+if session<!> && try! session.admin<!> {
+  // Do something important
+}

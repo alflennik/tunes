@@ -10,20 +10,19 @@ createList = (Item, contents) => {
     OutputItem = callback.Return
 
     &OutputType = each.&Return
-    OutputType = &OutputType
     
-    [OutputResult, isTry, isAwait] = *{
-      if try? OutputItem.Result || OutputItem.Resolved.Result {
-        if try? OutputItem.Resolved || OutputItem.Result.Resolved {
-          *return [OutputItem.Result.Resolved || OutputItem.Resolved.Result, true, true]
+    [OutputResult, isTry, isAwait] = _{
+      if OutputItem.Result || OutputItem.Resolved.Result {
+        if OutputItem.Resolved || OutputItem.Result.Resolved {
+          return [OutputItem.Result.Resolved || OutputItem.Resolved.Result, true, true]
         } else {
-          *return [OutputItem.Result, true, false]
+          return [OutputItem.Result, true, false]
         }
       } else {
-        if try? OutputItem.Resolved {
-          *return [OutputItem.Resolved, false, true]
+        if OutputItem.Resolved {
+          return [OutputItem.Resolved, false, true]
         } else {
-          *return [OutputItem, false, false]
+          return [OutputItem, false, false]
         }
       }
     }

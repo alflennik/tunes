@@ -6,8 +6,8 @@ export createUniqueSet = (Item = Untyped) => {
       if !innerList.contains(item), innerList.add(item)
     }
     remove: (item<Item>) => {
-      index<!> = try? innerList.findIndex(listItem => listItem == item)
-      if try? index<!>, innerList.removeAt(index)
+      index<!> = innerList.findIndex(listItem => listItem == item)<!>
+      if index<!>, innerList.removeAt(index)
     }
     empty: list.empty,
     length: list.length

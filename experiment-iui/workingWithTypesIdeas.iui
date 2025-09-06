@@ -1,21 +1,22 @@
 // See that await is not needed, it's just part of the types which can be omitted
-submitForm = (userInput<try>, errorContainer) => {
-  userInput<!>.onError(error => *{
-    errorContainer.replace(error.message)
+submitForm = (userInput<try Any>, errorContainer) => {
+  if !userInput<!> {
+    errorContainer.replace(userInput<!>.error.message)
     return
-  })
+  }
 
-  // See that try? is not needed, this is super clean and I want the types flexible enough to do 
-  // this
-  result = await fetchCreateUser(userInput).onError(error => *{
-    errorContainer.replace(error.message)
+  result<!> = await fetchCreateUser(userInput)<!>
+  if !result<!> {
+    errorContainer.replace(result.error.message)
     return
-  })
+  }
+  
+  return result
 }
 
 // The return type of FieldSet allows for some type checking, like it wouldn't allow try or await,
 // but not going so far to disallow multiple kinds of FieldSets
-createMyObject = ()<FieldSet> => {
+createMyObject = ()<[[Any]: Any]> => {
   return [
     a: () => "a"
     b: () => "b"

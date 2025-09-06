@@ -1,0 +1,45 @@
+triggerVoice = (
+  voicePromise: <await Voice>
+  descriptions: <[Description]>
+  videoPlayerPromise: <await VideoPlayer>
+)<await> => {
+  [videoPlayer, voice] = await concurrent(videoPlayerPromise, voicePromise)
+
+  &playingDescription<!>
+  &lastTime<!>
+
+  watch(videoPlayer.time<!>, () => {
+    if !videoPlayer.time<!>, return
+
+    currentDescription<!> = 
+      descriptions.findLast((description) => videoPlayer.time < description.time)<!>
+
+    isTimeSeek = 
+      videoPlayer.time && lastTime<!>
+        ? absoluteValue(videoPlayer.time - lastTime) > 1
+        : false
+    
+    if currentDescription<!> {
+      if isTimeSeek {
+        voice.play()
+        voice.say(currentDescription)
+      } else if &playingDescription<!> != currentDescription {
+        voice.say(currentDescription)
+      }
+    } else {
+      voice.clear()
+    }
+
+    &playingDescription = currentDescription<!>
+  })
+
+  watch(videoPlayer.status<!>, () => {
+    if !videoPlayer.status<!>, return
+
+    videoPlayer.status.switch(
+      [.playing]: () => voice.play()
+      [.paused]: () => voice.pause()
+      [.cleared]: () => voice.clear()
+    )
+  })
+}

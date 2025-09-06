@@ -1,15 +1,19 @@
 buildingHeights<[Number]> = [5, 7, 2, 1]
 
-answer<Number> = *{
+answer<Number> = _{
   &largestHeightSoFar = 0
+  &result<!>
 
-  buildingHeights.reversed().each((height, index:) => {
+  buildingHeights.reversed().each((height, index:, stop:) => {
     if height > &largestHeightSoFar {
       &largestHeightSoFar = height
     } else {
-      *return buildingHeights.length - index - 1
+      &result = buildingHeights.length - index - 1
+      return stop()
     }
   })
+
+  return try! &result<!>
 }
 
 log(answer)

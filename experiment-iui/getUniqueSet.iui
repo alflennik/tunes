@@ -6,8 +6,8 @@ getUniqueSet = (Item = Any) => {
   }
 
   remove = (item<Item>) => {
-    index<!> = try? list.findIndex(listItem => listItem == item)
-    if try? index<!>, list.removeAt(index)
+    index<!> = list.findIndex(listItem => listItem == item)<!>
+    if index<!>, list.removeAt(index)
   }
 
   return [add, remove, empty: list.empty, length: list.length]

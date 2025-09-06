@@ -59,7 +59,7 @@ myEnum.b.switch(
   [.test3]: () => log("It's option 3")
   [.test4]: () => {}
   [.test5(true)]: (.test5(value)) => log("Associated value is {value}")
-  [.test5(true)]: (enumField) => log(try! enumField.wrapped)
+  [.test5(true)]: (enumField) => log(try! enumField<!>.wrapped)
   default: log("none of the above")
 )
 
@@ -84,5 +84,5 @@ text<StringEnum> = .text("And some text")
 first.switch(
   [[.("first"), .("second")]]: () => log("recognized")
   [String]: () => log("something else")
-  [.text(String)]: (.text(text<!>)) => if try? text<!>, log(text)
+  [.text(String)]: (.text(text<!>)) => if try? text, log(text)
 )
