@@ -1,0 +1,30 @@
+makeLunch = (makeSandwich:, makeDrink:) => {
+  try? catch makeSandwich()
+  makeDrink()
+}
+
+planForToday = () => {
+  dayOfWeek = getDayOfWeek()
+
+  makeLunch(
+    makeDrink: () => {
+      return 'tea'
+    }
+    makeSandwich: ()<String> => *{
+      if dayOfWeek == .thursday, return createError("I'm going to Tahiti")
+      return 'turkey'
+    },
+  )
+}
+
+// This is super weird. Because due to *{} the return is supposed to return from planForToday immediately, but makeDrink hasn't run yet. Looking at makeLunch, there should be no way makeDrink doesn't run.
+planForToday()
+
+// 
+// 
+
+eatBerries = () => {
+  ['apple', 'banana', 'blueberry', 'strawberry'].each(fruit => *{
+    if fruit == 'blueberry', return "nah I'm good"
+  })
+}
