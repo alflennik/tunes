@@ -13,9 +13,9 @@ submitForm = (userInput<try>, errorContainer) => {
   })
 }
 
-// The return type of Fieldset allows for some type checking, like it wouldn't allow try or await,
-// but not going so far to disallow multiple kinds of Fieldsets
-createMyObject = ()<Fieldset> => {
+// The return type of FieldSet allows for some type checking, like it wouldn't allow try or await,
+// but not going so far to disallow multiple kinds of FieldSets
+createMyObject = ()<FieldSet> => {
   return [
     a: () => "a"
     b: () => "b"

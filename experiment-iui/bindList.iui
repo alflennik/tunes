@@ -23,7 +23,7 @@ createElement = () => {
         element<!> = try? container.elements[&i]
         item<!> = try? items[&i]
 
-        if !item<!> {
+        if try? !item<!> {
           // Since all required items have been inserted any remaining elements should be removed.
           if element<!> {
             container.elements.remove(&i)

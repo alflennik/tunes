@@ -16,7 +16,7 @@ evaluateStatement = (statement<Statement>)<try> => {
     [.assign(Expression, Expression)]: (.assign(assignTo, value)) => *{
       assignTo.switch(
         [.name(String)]: (.name(variableName)) => *{
-          if try? scope.has(variableName) {
+          if try? scope.has(variableName, sameNestingLevel: true) {
             return createError("Variable has already been defined")
           }
           scope.add(variableName, try evaluateExpression(value))
