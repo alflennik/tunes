@@ -87,8 +87,6 @@ const getFullContent = async () => {
         title: removeConsecutiveSpaces(video.localizations?.en?.title || video.snippet.title),
         hasCaptions:
           video.contentDetails.caption === true || video.contentDetails.caption === "true",
-        defaultLanguage: video.snippet.defaultLanguage ?? null,
-        defaultAudioLanguage: video.snippet.defaultAudioLanguage ?? null,
         supportsEmbedding:
           video.status.embeddable &&
           !(video.contentDetails?.contentRating?.ytRating === "ytAgeRestricted"),
