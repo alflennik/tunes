@@ -1,0 +1,49 @@
+while(session<!>.user<!>.id == 88, (break:, continue:) => {
+  break
+})
+
+while !&concepts<!>.user.isProcessed {
+  for user of users *{
+    if &concepts.user.status == user.status {
+      &concepts.user.&isProcessed = true
+      break 
+    }
+    continue
+  }
+
+  break
+}
+
+while(block { !&concepts<!>.user.isReady }, () => {
+  
+})
+
+***{
+  while(!&concepts<!>.user.isReady, ()<await> => **{
+    *{ 
+      users.each(user => {
+        if &concepts.user.status == user.status {
+          *return
+        }
+      })
+      ***return
+    }
+
+    await createTimeout(1000)
+  })
+}
+
+playALittleGame = () => {
+  *{
+    while(true, () => {
+      if randomDecimal() < 0.0001 {
+        log('oh, so close')
+        return
+      }
+      if randomDecimal() > 0.9999, *return
+    })
+  }
+
+  &winners += 1
+  log('congrats')
+}

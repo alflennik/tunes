@@ -1,4 +1,4 @@
-triggerVoice = (
+export triggerVoice = (
   voicePromise: <await Voice>
   descriptions: <[Description]>
   videoPlayerPromise: <await VideoPlayer>

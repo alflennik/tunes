@@ -1,4 +1,4 @@
-export createUniqueSet = (Item = Untyped) => {
+export createUniqueSet = (Item = Any) => {
   innerList<[Item]> = []
 
   return [

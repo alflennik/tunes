@@ -33,7 +33,7 @@ createElement = () => {
           }
         }
 
-        elementId<!> = element.getAttribute("id")<!>
+        elementId<!> = element<!>.getAttribute("id")<!>
 
         // Correct location
         if item.id == elementId<!> {

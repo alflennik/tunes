@@ -1,4 +1,3 @@
-// See that await is not needed, it's just part of the types which can be omitted
 submitForm = (userInput<try Any>, errorContainer) => {
   if !userInput<!> {
     errorContainer.replace(userInput<!>.error.message)
@@ -14,8 +13,6 @@ submitForm = (userInput<try Any>, errorContainer) => {
   return result
 }
 
-// The return type of FieldSet allows for some type checking, like it wouldn't allow try or await,
-// but not going so far to disallow multiple kinds of FieldSets
 createMyObject = ()<[[Any]: Any]> => {
   return [
     a: () => "a"
