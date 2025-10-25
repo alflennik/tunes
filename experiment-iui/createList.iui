@@ -4,9 +4,11 @@ createList = (Item, contents) => {
   // Supports being generically wrapped in try or not
   // Allows different async strategies, concurrent or sequential (sequential is default)
   each = (
-    @static concurrent: isConcurrent<Boolean> = false,
+    concurrent: isConcurrent<Boolean> = false,
     callback<(Item, index?: Number) => createGenericType()>
   )<createMutableType()> => {
+    try! forceStaticValue(concurrent)
+
     OutputItem = callback.Return
 
     &OutputType = each.&Return
@@ -63,7 +65,7 @@ createList = (Item, contents) => {
     &i = 0
     index = &i
 
-    while (&i < list.length) {
+    while &i < list.length {
       &outputItem
       outputItem = &outputItem
       

@@ -84,5 +84,13 @@ text<StringEnum> = .text("And some text")
 first.switch(
   [[.("first"), .("second")]]: () => log("recognized")
   [String]: () => log("something else")
-  [.text(String)]: (.text(text<!>)) => if try? text, log(text)
+  [.text(try String)]: (.text(text<!>)) => if text<!>, log(text)
 )
+
+maybePossiblyList<try [String]> = ['Anne', 'Gary', 'Josephine']
+
+// It would be insanely convenient to allow flexible behavior for destructuring
+[firstName<!>] = maybePossiblyList<!>
+
+[firstName] = try maybePossiblyList<!>
+[firstName] = try! maybePossiblyList<!>

@@ -1,7 +1,7 @@
-"return try? await !utils.isDivideByZero(99 + 1 / 2)"
-["return", "try?", "await", "!", "utils", ".", "isDivideByZero", "(", "99", "+", "1", "/", "2", ")"]
-[.return, .tryNull, .await, .negate, .name("utils"), .read, .name("isDivideByZero"), .callStart, 
-  .argumentsStart, .number(99), .add, .number(1), .divide, .number(2), .argumentsEnd, .callEnd
+"return await !utils.isDivideByZero(99 + 1 / 2)"
+["return", "await", "!", "utils", ".", "isDivideByZero", "(", "99", "+", "1", "/", "2", ")"]
+[.return, .await, .not, .name("utils"), .read, .name("isDivideByZero"), .call, 
+  .argumentsStart, .number(99), .add, .number(1), .divide, .number(2), .argumentsEnd
 ]
 
 /* 
@@ -11,9 +11,9 @@
   is their binding precedence, and the second value is the operator itself. See below.
 */
 
-[.return, [5, .tryNull], [5, .await], [5, .negate], .name("utils"), [1, .read], 
-  .name("isDivideByZero"), [4, .callStart], .argumentsStart, .number(99), [3, .add], .number(1), 
-  [2, .divide], .number(2), .argumentsEnd, .callEnd
+[.return, [5, .await], [5, .not], .name("utils"), [1, .read], .name("isDivideByZero"), 
+  [4, .call], .argumentsStart, .number(99), [3, .add], .number(1), [2, .divide], .number(2), 
+  .argumentsEnd
 ]
 
 /* 
@@ -44,21 +44,19 @@
 
 [
   .return(
-    .tryNull(
-      .await(
-        .negate(
-          .call(
-            .read(
-              .name("utils"),
-              .name("isDivideByZero")
-            ),
-            .arguments(
-              .add(
-                .number(99),
-                .divide(
-                  .number(1),
-                  .number(2)
-                )
+    .await(
+      .not(
+        .call(
+          .read(
+            .name("utils"),
+            .name("isDivideByZero")
+          ),
+          .arguments(
+            .add(
+              .number(99),
+              .divide(
+                .number(1),
+                .number(2)
               )
             )
           )
@@ -66,25 +64,4 @@
       )
     )
   )
-]
-
-[
-  .return,                   // statement + optional expression
-  .tryNull,                 // [PRIO 5] operator + expression
-  .await,                    // [PRIO 5] operator + expression
-  .negate,                   // [PRIO 5] operator + expression
-  .name("utils"),            // 
-  .read,                     // [PRIO 1] expression + operator + expression
-  .name("isDivideByZero"),   // 
-  .callStart,                // [PRIO 4] expression + operator + arguments + callEnd
-
-  .argumentsStart,           // [NEST 3] arguments syntax
-  .number(99),               // 
-  .add,                      // [PRIO 3] expression + operator
-  .number(1),                // 
-  .divide,                   // [PRIO 2] expression + operator + expression
-  .number(2),                // 
-  .argumentsEnd,
-
-  .callEnd,                  //
 ]

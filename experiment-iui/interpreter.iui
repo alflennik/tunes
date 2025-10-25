@@ -12,33 +12,33 @@ Statement = <|
 statement<[Statement]> = .assign(.name("someNumber"), .add(1, 1))
 
 evaluateStatement = (statement<Statement>)<try> => {
-  try statement.switch(
+  statement.switch(
     [.assign(Expression, Expression)]: (.assign(assignTo, value)) => {
-      try assignTo.switch(
-        [.name(String)]: (.name(variableName)) => {
+      assignTo.switch(
+        [.name(String)]: (.name(variableName)) => *{
           if scope.has(variableName, sameNestingLevel: true) {
             return createError("Variable has already been defined")
           }
           scope.add(variableName, try evaluateExpression(value))
         }
-        default: () => { return createError("Invalid left hand side of assignment") }
-      )<!>
+        default: () => *{
+          return createError("Invalid left hand side of assignment") 
+        }
+      )
     }
-    default: () => {
+    default: () => *{
       return createError("Failed to parse statement")
     }
-  )<!>
+  )
 }
 
-evaluateExpression = (expression<Expression>)<try Any> => {
-  &result<!>
-  try expression.switch(
-    [.add(Expression, Expression)]: (.add(expression1, expression2)) => {
-      &result = try evaluateExpression(expression1) + evaluateExpression(expression2)
+evaluateExpression = (expression<Expression>)<try> => {
+  expression.switch(
+    [.add(Expression, Expression)]: (.add(expression1, expression2)) => *{
+      return try evaluateExpression(expression1) + evaluateExpression(expression2)
     }
-    [[Number, String]]: primitiveValue => { 
-      &result = primitiveValue
+    [[Number, String]]: primitiveValue => *{
+      return primitiveValue
     }
-  )<!>
-  return &result
+  )
 }
