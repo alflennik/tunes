@@ -1,0 +1,77 @@
+// Usage
+
+versionOutOfDate = *{
+  startRepeatingTimer(.minutes(30), (stop:)<await> => {
+    if await currentVersion != checkVersion() {
+      stop()
+      *return true
+    }
+  })
+  *return false
+}
+
+watch(versionOutOfDate, ()<await> => {
+  await showRefreshModal()
+  showCountdownAlert()
+  createTimeout(.minutes(5), forceRefresh)
+})
+
+// Implementation
+
+Stop = <() => null>
+RepeatingTimer = <[stop: Stop]>
+
+openIntervalTimers<[String]: Any> = []
+
+export startRepeatingTimer = (
+  durationDefinition<DurationDefinition>, 
+  callback<Stop>
+)<RepeatingTimer> => {
+  core = importContext(coreContext)
+
+  &intervalId<try Number>
+
+  stop<Stop> = () => {
+    if &intervalId<!> {
+      core.runtime.clearInterval(intervalId)
+    }
+  }
+  
+  [milliseconds] = createDuration(durationDefinition)
+
+  // Version where *return would end the interval
+  &intervalId = core.runtime.setInterval(() => {
+    openIntervalTimers[&intervalTimer.id] = intervalId
+
+    unawait *{
+      &isBreak = true
+      defer(() => {
+        if &isBreak == false, return
+        clear()
+      })
+      breaking await callback()
+      &isBreak = false
+    }
+  }, milliseconds)
+
+  // Version where *return does not end the interval
+  startNextTimer = () => {
+    timeoutId = core.runtime.setTimeout(() => {
+      unawait *{
+        defer(() => {
+          &isStopped = toBoolean(openIntervalTimers[&intervalTimer.id]<!>)
+          if &isStopped, return
+
+          // TODO: this is wrong, if the callback takes a long time it will screw up the interval
+          startNextTimer()
+        })
+        breaking await callback()
+      }
+    }, milliseconds)
+
+    openIntervalTimers[&intervalTimer.id] = timeoutId
+  }
+  startNextTimer()
+
+  return [stop:]
+}

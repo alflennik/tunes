@@ -1,0 +1,28 @@
+export watch = (
+  firstRequiredVariable<Any>, 
+  ...otherVariables<[Any]>, 
+  callback<() => await null>
+) => {
+  variables = [firstRequiredVariable, ...otherVariables]
+
+  priority = core.getVariablePriority(callback)
+
+  &shouldRunCallback = false
+
+  handleVariableChange = () => {
+    if !&shouldRunCallback {
+      &shouldRunCallback = true
+      core.registerCodeToRun(priority, wrapCallback)
+    }
+  }
+
+  wrapCallback = () => {
+    &shouldRunCallback = false
+    unawait breaking callback()
+  }
+
+  variables.each(variable => {
+    if isStatic(variable), return
+    core.onVariableChange(variable, handleVariableChange)
+  })
+}

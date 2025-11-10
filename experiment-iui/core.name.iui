@@ -1,0 +1,127 @@
+core.name = (
+  mode: <Mode>
+  items: [nameString]<[String,]>
+  metadata: <Metadata>
+  isAssignment: <Boolean> = false
+  // analyzing or interpreting
+  parentMemoryObject: <|null, MemoryObject|> = null
+  // compiling
+  parentCompiledMemoryObject: <|null, CompiledMemoryObject|> = null
+)<createMutableType()> => {
+  switch(mode,
+    [.analyzing]: () => core.name.Return.&Type = <|StaticError, MemoryObject|>
+    [.interpreting]: () => core.name.Return.&Type = <|RuntimeError, MemoryObject|>
+    [.compiling]: () => core.name.Return.&Type = CompiledRuntimeErrorOrMemoryObject
+  )
+  
+  nameString = items[0]
+
+  // name being used in an assignment, for example:
+  // myVariableName = something()
+  if isAssignment {
+    if !nameString.startsWith('&') {
+      errorString = `Variable {nameString} has already been defined`
+
+      switch(mode,
+        [[.analyzing, .interpreting]]: () => *{
+          existingValue<!> = scope.get(nameString, considerParentScopes: false)
+          if existingValue<!> {
+            return switch(mode, inclusive: false
+              [.analyzing]: () => createStaticError(errorString, metadata:),
+              [.interpreting]: () => createRuntimeError(errorString, metadata:)
+            )
+          }
+        }
+        [.compiling]: () => *{
+          return createCompiledRuntimeErrorOrMemoryObject(
+            *`
+              (() => {
+                const existingValue = scope.get(*{nameString}, { considerParentScopes: false })
+                if (!existingValue) {
+                  return createRuntimeError(*{errorString}, { metadata: *{try! toJson(metadata)} })
+                }
+                return existingValue
+              })()
+            `*,
+          )
+        }
+      )
+    }
+
+    switch(mode,
+      [[.analyzing, .interpreting]]: () => *{
+        return scope.create(
+          nameString,
+          staticType: null,
+          runtimeType: null,
+          staticValue: null,
+          runtimeValue: null
+        )
+      }
+      [.compiling]: () => *{
+        return createCompiledMemoryObject(
+          *`
+            scope.create(*{nameString}, { 
+              staticType: null,
+              runtimeType: null,
+              staticValue: null,
+              runtimeValue: null
+            })
+          `*
+        )
+      }
+    )
+  }
+
+  // name is being read, as in user.username
+  if parentMemoryObject<!> || parentCompiledMemoryObject<!> {
+    nameStringFormatted = escapeForErrors(nameString)
+    errorString = `Property "{nameStringFormatted}" not found`
+
+    switch(mode,
+      [.analyzing, .interpreting]: () => *{
+        memoryObject<!> = parentMemoryObject.get(nameString)<!>
+        return memoryObject<!>
+          ? memoryObject
+          : switch(mode,
+            [.analyzing]: () => createStaticError(errorString, metadata:)
+            [.interpreting]: () => createRuntimeError(errorString, metadata:)
+          )
+      }
+      [.compiling]: () => *{
+        createCompiledRuntimeErrorOrMemoryObject(
+          *`
+            (() => {
+              const memoryObject = *{parentCompiledMemoryObject}.get(*{nameString})
+              return memoryObject !== null 
+                ? memoryObject
+                : createRuntimeError(*{errorString}, { metadata: *{toJson(metadata)} })
+            })()
+          `*
+        )
+      }
+    )
+  }
+
+  // variable is being used
+  errorString = `Variable {nameString} not found`
+
+  switch(mode,
+    [.analyzing, .interpreting]: () => *{
+      memoryObject<!> = scope.get(nameString)
+      return memoryObject<!> ? memoryObject : createRuntimeError(errorString, metadata:)
+    }
+    [.compiling]: () => *{
+      return createCompiledRuntimeErrorOrMemoryObject(
+        *`
+          (() => {
+            const memoryObject = scope.get(*{nameString})
+            return memoryObject !== null ?
+              memoryObject :
+              createRuntimeError(*{errorString}, { metadata: *{try! toJson(metadata)}})
+          })()
+        `*
+      )
+    }
+  )
+}

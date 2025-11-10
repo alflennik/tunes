@@ -1,0 +1,66 @@
+"return await !utils.isDivideByZero(99 + 1 / 2)"
+["return", "await", "!", "utils", ".", "isDivideByZero", "(", "99", "+", "1", "/", "2", ")"]
+[.return, .await, .negate, .name("utils"), .read, .name("isDivideByZero"), .call, 
+  .argumentsStart, .number(99), .add, .number(1), .divide, .number(2), .argumentsEnd
+]
+[
+  .return(
+    .await(
+      .negate(
+        .call(
+          .read(.name("utils"), .name("isDivideByZero")),
+          .arguments(
+            .add(
+              .number(99), 
+              .divide(.number(1), .number(2))
+            )
+          )
+        )
+      )
+    )
+  )
+]
+[
+  [node: "return", metadata: [], items: [
+    [node: "await", metadata: [], items: [
+      [node: "negate", metadata: [], items: [
+        [node: "call", metadata: [], items: [
+          [node: "read", metadata: [], items: [
+            [node: "name", metadata: [], items: ["utils"]],
+            [node: "name", metadata: [], items: ["isDivideByZero"]],
+          ]],
+          [node: "arguments", metadata: [], items: [
+            [node: "add", metadata: [], items: [
+              [node: "number", metadata: [], items: [99]]
+              [node: "divide", metadata: [], items: [
+                [node: "number", metadata: [], items: [1]], 
+                [node: "number", metadata: [], items: [2]]
+              ]]
+            ]]
+          ]]
+        ]]
+      ]]
+    ]]
+  ]]
+]
+
+
+
+startRepeatingTimer(.minutes(30), forceRefresh)
+"startRepeatingTimer(.minutes(30), forceRefresh)"
+["startRepeatingTimer", "(", ".", "minutes", "(", "30", ")", ",", " ", "forceRefresh", ")"]
+[.name("startRepeatingTimer"), .call, .argumentsStart, .read, .name("minutes"), .call, .argumentsStart, .number(30), .argumentsEnd, .comma, .name('forceRefresh'), .argumentsEnd]
+[
+  .call(
+    .name("startRepeatingTimer")
+    .arguments(
+      .read( 
+        .call(
+          .name("minutes"),
+          .arguments(.number(30))
+        )
+      )
+      .name('forceRefresh')
+    )
+  )
+]
