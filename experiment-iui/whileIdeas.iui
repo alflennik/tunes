@@ -3,7 +3,7 @@ while(session<!>.user<!>.id == 88, (break:, continue:) => {
 })
 
 while !&concepts<!>.user.isProcessed {
-  for user of users *{
+  for user of users {
     if &concepts.user.status == user.status {
       &concepts.user.&isProcessed = true
       break 
@@ -35,15 +35,297 @@ while(block { !&concepts<!>.user.isReady }, () => {
 
 playALittleGame = () => {
   *{
-    while(true, () => {
+    loop(() => {
       if randomDecimal() < 0.0001 {
         log('oh, so close')
         return
       }
-      if randomDecimal() > 0.9999, *return
+      if randomDecimal() > 0.9999, *throw
     })
   }
 
   &winners += 1
   log('congrats')
+}
+
+perfectStudent<!> = *{
+  schools.each(school => {
+    school.classes.each(class => {
+      class.students.each(student => {
+        if student.averageGrade == 4.0 {
+          *return student
+        }
+      })
+    })
+  })
+}
+
+perfectStudent<!> = _{
+  &student
+  schools.each((school, done: done1) => {
+    classes.each((class, done: done2) => {
+      class.students.each((student, done: done3) => {
+        if student.averageGrade == 4.0 {
+          done3()
+          done2()
+          done1()
+          &student = student
+          return
+        }
+      })
+    })
+  })
+  return &student
+}
+
+firstPair<try [Card, Card]> = **{
+  drawnCards<[Card]> = []
+
+  *. loop(() => {
+    card<!> = deck.draw()
+    if !card<!>, *return
+
+    drawnCards.each(drawnCard => {
+      if card.rank == drawnCard.rank, **return [card, drawnCard]
+    })
+
+    drawnCards.add(card)
+  })
+}
+
+firstPair<try [Card, Card]> = _{
+  drawnCards<[Card]> = []
+
+  while true {
+    card<!> = deck.draw()
+    if !card<!>, break
+
+    for drawnCard of drawnCards {
+      if card.rank == drawnCard.rank, return [card, drawnCard]
+    }
+
+    drawnCards.add(card)
+  }
+}
+
+firstPair<try [Card, Card]> = ***{
+  drawnCards<[Card]> = []
+
+  while card<!> = deck.draw() {
+    drawnCards.each(drawnCard => {
+      if card.rank == drawnCard.rank, *return [card, drawnCard]
+    })
+
+    drawnCards.add(card)
+  }
+}
+
+firstPair<try [Card, Card]> = _{
+  drawnCards<[Card]> = []
+
+  &firstPair<!>
+  firstPair<!> = &firstPair<!>
+
+  while(true, (done:) => {
+    card<!> = deck.draw()
+    if !card<!>, return done()
+
+    drawnCards.each((drawnCard, done:) => {
+      if card.rank == drawnCard.rank {
+        &firstPair = [card, drawnCard]
+        return done()
+      }
+    })
+
+    if &firstPair<!>, return done()
+  })
+
+  return firstPair
+}
+
+firstPair<try [Card, Card]> = *{
+  drawnCards<[Card]> = []
+
+  while(true, () => **{
+    card<!> = deck.draw()
+    if !card<!>, **return
+
+    drawnCards.each(drawnCard => {
+      if card.rank == drawnCard.rank, *return [card, drawnCard]
+    })
+
+    drawnCards.add(card)
+  })
+}
+
+hasDuplicateIds = () => *{
+  ids<String> = []
+
+  callback = (element) => {
+    if element.id<!> && ids.contains(element.id), *return true
+  }
+
+  recurse = (element) => {
+    callback(element)
+    
+    element.items.each(item => {
+      recurse(item)
+    })
+  }
+
+  recurse(body)
+
+  return false
+}
+
+hasDuplicateIds = () => {
+  ids<String> = []
+
+  &result = false
+
+  callback = (element, done:) => {
+    if element.id<!> && ids.contains(element.id) {
+      &result = true
+      return done()
+    }
+  }
+
+  recurse = _{
+    &isDone = false
+    done = () => &isDone = true
+    
+    return (element) => {
+      if &isDone, return
+
+      callback(element, done:)
+      
+      element.items.each(item => {
+        recurse(item)
+      })
+    }
+  }
+
+  recurse(body)
+
+  return &result
+}
+
+getArticle = ()<try await String> => *{
+  &article = ""
+  article = &article
+
+  try await loop(() => {
+    if stream.isDone(), *return article
+    &article += try await stream.loadChunk()
+  })<!>
+}
+
+getArticle = ()<try await String> => {
+  &article = ""
+  article = &article
+
+  try await loop((done:) => {
+    if stream.isDone(), return done()
+    &article += try await stream.loadChunk()
+  })<!>
+
+  return article
+}
+
+getArticle = ()<try await String> => {
+  &article = ""
+  article = &article
+
+  try await while(
+    () => !stream.isDone(), 
+    ()<try await> => {
+      &article += try await stream.loadChunk()
+    }
+  )<!>
+
+  return article
+}
+
+getArticle = ()<try await String> => {
+  &article = ""
+  article = &article
+
+  while &chunk = try await stream.loadChunk() {
+    &article += &chunk
+  }
+
+  return article
+}
+
+createDropdownMenu = () => {
+  element = createElement(.div)
+  
+  try! addToScope(sessionContext)
+
+  watch(&`session<!>.user<!>`, () => {
+    if session<!>.user<!> {
+      element.replaceItems(createSignedOutMenu())
+    } else {
+      element.replaceItems(createSignedInMenu())
+    }
+  })
+}
+
+Status = <|.playing, .paused, .buffering, .cleared|>
+status<Status> = *{
+  watch(&'video.status<!>', () => {
+    if video.status<!> {
+      *return video.status
+    } else {
+      *return .cleared
+    }
+  })
+}
+
+Status = <|.playing, .paused, .buffering, .cleared|>
+status<Status> = createStream(&status => {
+  watch video.status<!> {
+    &status = video.status<!> ? video.status : .cleared
+  }
+})
+
+Status = <|.playing, .paused, .buffering, .cleared|>
+status<Status> = *{
+  watch(video.status<!>, () => {
+    *return video.status<!> ? video.status : .cleared
+  })
+}
+
+documentReady = createStream(&documentReady => {
+  &documentReady = false
+
+  poll(40, (clear:) => {
+    if document.querySelector(.h1)<!> {
+      &documentReady = true
+      clear()
+    }
+  })
+})
+
+perfectStudent<!> = block(end => {
+  schools.each(school => {
+    school.classes.each(class => {
+      class.students.each(student => {
+        if student.averageGrade == 4.0 {
+          end(student)
+        }
+      })
+    })
+  })
+})
+
+getArticle = ()<try await String> => {
+  return block((end)<try await> => {
+    while !stream.isDone() {
+      sections = try await stream.loadChunk()
+      sections.each(section => {
+        if section.isArticle, end(section)
+      })
+    }
+  })<!>
 }
