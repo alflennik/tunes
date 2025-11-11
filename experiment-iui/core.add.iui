@@ -1,0 +1,30 @@
+core.add = (
+  mode: <Mode>
+  items: <[SyntaxTree, SyntaxTree]>
+  scope: <Scope>
+  metadata: <Metadata>
+)<|ExecutionError, MemoryObject|> => {
+  [memoryObject1, memoryObject2] = *{
+    result1 = executeSyntaxTree(items[0], mode:, scope:)
+    result2 = executeSyntaxTree(items[1], mode:, scope:)
+    if matchTypes(result1, ExecutionError), return result1
+    if matchTypes(result2, ExecutionError), return result2
+    *return [result1, result2]
+  }
+
+  if 
+    mode == .executing && (memoryObject1.type != "number" || memoryObject2.type != "number") ||
+    mode == .analyzing && 
+      !(memoryObject1.type == null || memoryObject1.type == "number") && 
+      !(memoryObject2.type == null || memoryObject2.type == "number")
+  {
+    return createExecutionError("Attempted to add a non-number", metadata:)
+  }
+
+  if mode == .analyzing && memoryObject1.value != null && memoryObject2.value != null {
+    return createMemoryObject(value: null, type: "number")
+  }
+
+  value = runtime.add(memoryObject1.value, memoryObject2.value)
+  return createMemoryObject(value:, type: "number")
+}
