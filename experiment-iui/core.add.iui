@@ -20,6 +20,63 @@ analyzer.add = (
 }
 
 core.add = (
+  executionMode: <|.compile, .interpret, .analyze|>
+  executionModeMethods: |
+    .compile
+    .interpret
+    .analyze(registerError:)
+  |
+  items: <[SyntaxTree, SyntaxTree]>
+  metadata: <Metadata>
+  scope: <Scope>
+) => {
+  expression1 = compile(items[0], scope:)
+  expression2 = compile(items[1], scope:)
+  
+  code = compile(
+    scope:,
+    addScopeVariables: [expression1:, expression2:, metadata:, createMemoryObject:], 
+    () => {
+      [memoryObject1, memoryObject2] = *{
+        result1 = expression1.execute()
+        result2 = expression2.execute()
+        if matchTypes(result1, ExecutionError), return result1
+        if matchTypes(result2, ExecutionError), return result2
+        *return [result1, result2]
+      }
+
+      if memoryObject1.type != "number" || memoryObject2.type != "number" {
+        return createExecutionError("Attempted to add a non-number", metadata:)
+      }
+
+      value = runtime.add(memoryObject1.value, memoryObject2.value)
+      return createMemoryObject(value:, type: "number")
+  })
+
+  switch(executionMode,
+    [.compile]: () => *{
+      return code
+    }
+    [.interpret]: () => *{
+      return code.execute()
+    }
+    [.analyze]: () => *{
+      memoryObject1 = result1.execute()
+      memoryObject2 = result2.execute()
+      if memoryObject1.type == null || memoryObject2.type == null {
+        return createMemoryObject(value: null, type: Number)
+      }
+      result = code.execute()
+      if matchTypes(result, ExecutionError) {
+        registerError(result)
+        return createMemoryObject(value: null, type: Number)
+      }
+      return result
+    }
+  )
+}
+
+interpreter.add = (
   items: <[SyntaxTree, SyntaxTree]>
   scope: <Scope>
   metadata: <Metadata>
@@ -38,4 +95,41 @@ core.add = (
 
   value = runtime.add(memoryObject1.value, memoryObject2.value)
   return createMemoryObject(value:, type: "number")
+}
+
+compiler.add = (
+  items: <[SyntaxTree, SyntaxTree]>
+  metadata: <Metadata>
+)<CompiledRuntimeErrorOrMemoryObject> => {
+  return createCompiledRuntimeErrorOrMemoryObject(*`
+    (() => {
+      const result1 = *{compileSyntaxTree(items[0])}
+      const result2 = *{compileSyntaxTree(items[1])}
+      if (result1.isExecutionError) return result1
+      if (result2.isExecutionError) return result2
+      const memoryObject1 = result1
+      const memoryObject2 = result2
+      value = result1.value.add(result2)
+      return runtime.createMemoryObject({ value, type: "number" })
+    })()
+  `*)
+
+  return [
+    .assign(.name("result1"), compileSyntaxTree(items[0]))
+    .assign(.name("result2"), compileSyntaxTree(items[1]))
+    .if(.read(.name("result1"), .name("isExecutionError")), .return(.name("result1")))
+    .if(.read(.name("result2"), .name("isExecutionError")), .return(.name("result2")))
+    .assign(.name("memoryObject1"), .name("result1"))
+    .assign(.name("memoryObject2"), .name("result2"))
+    .assign(
+      .name("value"),
+      .call(
+        .read(.name("runtime"), .name("createMemoryObject")),
+        .arguments(
+          .argument(.key("value")),
+          .argument(.key("type"), .value(.string(.stringText("number"))))
+        )
+      )
+    )
+  ]
 }

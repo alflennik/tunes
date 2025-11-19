@@ -1,9 +1,10 @@
 import { fpFromDecimal } from "@hastom/fixed-point"
 
+// A BigInt can have up to 19 decimal digits and fit into 64 bits of value storage.
 const officialPrecision = 18 // largest possible number is 999 quadrillion
 
-// Enables some digits of rounding, so 1/3 + 1/3 + 1/3 = 1 instead of 0.9999999
-const extraDigitsOfHiddenPrecision = 4
+// Enables digits of rounding, so 1/3 + 1/3 + 1/3 = 1 instead of 0.9999999
+const extraDigitsOfHiddenPrecision = 1
 
 const internalPrecision = officialPrecision + extraDigitsOfHiddenPrecision
 

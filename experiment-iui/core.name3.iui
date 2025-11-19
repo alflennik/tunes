@@ -1,0 +1,32 @@
+compileCoreFunction(
+  "name", 
+  (
+    nameString<String>,
+    uniqueId: <Number>,
+    scope: <Scope>,
+    metadata: <Metadata>,
+  )<try MemoryObject> => {
+    return [
+      uniqueId:
+      nameString:
+      createForAssignment: ()<try MemoryObject> => {
+        if scope.get(nameString, considerParentScopes: false)<!> && !nameString.startsWith('&') {
+          return createError(`Variable {nameString} has already been defined`, data: [metadata:])
+        }
+        return scope.createMemoryObject(nameString, type: null, value: null)
+      }
+      readAsProperty: (parent: <MemoryObject>)<try MemoryObject> => {
+        memoryObject<!> = parent.get(nameString)<!>
+        return memoryObject<!>
+          ? memoryObject
+          : createError(`Property {nameString} not found`, data: [metadata:])
+      }
+      readAsVariable: ()<try MemoryObject> => {
+        memoryObject<!> = scope.get(nameString)<!>
+        return memoryObject<!> 
+          ? memoryObject
+          : createError(`Variable {nameString} not found`, data: [metadata:])
+      }
+    ]
+  }
+)

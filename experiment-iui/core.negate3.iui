@@ -1,0 +1,19 @@
+compileCoreFunction(
+  "negate",
+  (node, execute:) => {
+    result = execute(node)
+    if result == false || result == null || matchTypes(result, Error) {
+      return false
+    }
+    return result
+  }
+)
+
+compiler.add(scopeVariables: [core], () => {
+  core.negate = result => {
+    if result == false || result == null || matchTypes(result, Error) {
+      return false
+    }
+    return result
+  }
+})

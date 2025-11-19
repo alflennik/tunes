@@ -44,6 +44,35 @@
   ]]
 ]
 
+core.function((args) => {
+  core.number(2)
+  core.number(1)
+  core.divide
+  core.number(99)
+  core.add
+  core.arguments
+  core.name("isDivideByZero")
+  core.name("utils")
+  core.read
+  core.call
+  core.negate
+  core.await
+  core.return
+  core.body
+})
+
+line(1)
+column(42, 43)
+push(core.number(1))
+column(46, 47)
+push(core.number(2))
+column(44, 45)
+await event(core.divide)
+column(37, 39)
+push(core.number(99))
+column(40, 41)
+await event(core.add)
+
 
 
 startRepeatingTimer(.minutes(30), forceRefresh)
