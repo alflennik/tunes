@@ -1,6 +1,0 @@
-{
-  "type": "module",
-  "dependencies": {
-    "@hastom/fixed-point": "^4.3.0"
-  }
-}

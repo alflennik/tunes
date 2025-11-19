@@ -1,0 +1,40 @@
+compilation.add(scopeVariables: [core], () => {
+  core.negate = result => {
+    if result == false || result == null || matchTypes(result, Error) {
+      return false
+    }
+    return result
+  }
+})
+
+['core', '.', 'negate', ' ', '=', ' ', 'result', ' ', '=>', ' ', '\{', '\n  ', 'if']
+
+[.scopeVariable('core'), .read, .name('negate'), .assign, .functionStart, .parametersStart, .name('result'), .parametersEnd, .bodyStart, .if]
+
+[
+  .assign(
+    .read(.scopeVariable('core'), .name('negate')),
+    .function(
+      .parameters(
+        .name('result')
+      )
+      .body(
+        .if(
+          .condition(
+            .or(
+              .equals(.name('result'), .boolean(false))
+              .or(
+                .equals(.name('result', .null())),
+                .call(.name('matchTypes'), .arguments(.name('result'), .name('Error')))
+              )
+            )
+          )
+          .body(
+            .return(.boolean(false))
+          )
+        )
+        .return(.name('result'))
+      )
+    )
+  )
+]
