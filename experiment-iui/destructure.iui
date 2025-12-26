@@ -64,15 +64,15 @@ myEnum.b.switch(
 )
 
 myEnum.switch(
-  [[.("mail"), .("email")]]: () => log("recognized message type")
+  [|"mail", "email"|]: () => log("recognized message type")
   [String]: () => log("secondary message type")
   default: () => log("complex message type")
 )
 
 StringEnum = <|
-  .("first")
-  .("second")
-  .(String)
+  "first"
+  "second"
+  String
   .text(try String)
 |>
 
@@ -94,3 +94,12 @@ maybePossiblyList<try [String]> = ['Anne', 'Gary', 'Josephine']
 
 [firstName] = try maybePossiblyList<!>
 [firstName] = try! maybePossiblyList<!>
+
+// You can destructure enums with associated values, and the values will be potentially null
+
+ScholasticIndividual = <|.student(Student), .teacher(Teacher), .administrator(Administrator)|>
+
+|
+  .undergraduateStudent(student<!>)
+  .teacher(teacher<!>)
+| = scholasticIndividual

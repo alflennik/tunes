@@ -8,12 +8,12 @@ migrateUsers = ()<await> => {
 }
 
 playALittleGame = () => {
-  **while true *{
+  while true {
     if randomDecimal() < 0.0001 {
       log('oh, so close')
-      *return
+      continue
     }
-    if randomDecimal() > 0.9999, **return
+    if randomDecimal() > 0.9999, break
   }
 
   &winners += 1
@@ -25,7 +25,7 @@ perfectStudent<!> = *{
     school.classes.each(class => {
       class.students.each(student => {
         if student.averageGrade == 4.0 {
-          *return student
+          return student
         }
       })
     })

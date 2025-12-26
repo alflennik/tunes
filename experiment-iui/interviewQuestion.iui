@@ -1,6 +1,6 @@
 buildingHeights<[Number]> = [5, 7, 2, 1]
 
-answer<Number> = _{
+answer<Number> = {
   &largestHeightSoFar = 0
   &result<!>
 

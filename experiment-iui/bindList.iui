@@ -19,7 +19,7 @@ createElement = () => {
       itemIds<[String]> = items.each(item => item.id)
 
       &i = 0
-      while true *{
+      while true {
         element<!> = container.elements[&i]<!>
         item<!> = items[&i]<!>
 
@@ -27,7 +27,7 @@ createElement = () => {
           // Since all required items have been inserted any remaining elements should be removed.
           if element<!> {
             container.elements.remove(&i)
-            *return
+            continue
           } else {
             return
           }
@@ -38,20 +38,20 @@ createElement = () => {
         // Correct location
         if item.id == elementId<!> {
           &i += 1
-          *return
+          continue
         }
 
         // Exists in wrong location
         if idsToElements[item.id]<!> {
           container.elements.insertAt(&i, element)
           &i += 1
-          *return
+          continue
         }
 
         // Shouldn't exist
         if elementId<!> && !itemIds.contains(elementId) {
           container.elements.remove(&i)
-          *return
+          continue
         }
 
         // Missing
@@ -59,7 +59,7 @@ createElement = () => {
           correctElement = createElement(item)
           container.elements.insert(&i, correctElement)
           &i += 1
-          *return
+          continue
         }
       }
     })

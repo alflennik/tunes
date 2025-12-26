@@ -2,6 +2,7 @@ createList = (Item, contents) => {
   // Passes types through to the callback
   // Supports being generically async or not
   // Supports being generically wrapped in try or not
+  // Support short-circuiting early
   // Allows different async strategies, concurrent or sequential (sequential is default)
   each = (
     concurrent: isConcurrent<Boolean> = false,
@@ -29,8 +30,7 @@ createList = (Item, contents) => {
       }
     }
 
-    &OutputListItem
-    OutputListItem = &OutputListItem
+    OutputListItem, &OutputListItem = Any
 
     if isTry {
       if isAwait {
@@ -62,32 +62,30 @@ createList = (Item, contents) => {
 
     outputList<[OutputListItem]> = []
 
-    &i = 0
-    index = &i
+    index, &i = 0
 
     while &i < list.length {
-      &outputItem
-      outputItem = &outputItem
+      outputItem<!>, &outputItem<!> = null
       
       if isTry {
         if isAwait {
           if isConcurrent {
-            &outputItem = try callback(list[&i], index:)
+            &outputItem = try breaking callback(list[&i], index:)
           } else {
-            &outputItem = try await callback(list[&i], index:)
+            &outputItem = try await breaking callback(list[&i], index:)
           }
         } else {
-          &outputItem = try callback(list[&i], index:)
+          &outputItem = try breaking callback(list[&i], index:)
         }
       } else {
         if isAwait {
           if isConcurrent {
-            &outputItem = callback(list[&i], index:)
+            &outputItem = breaking callback(list[&i], index:)
           } else {
-            &outputItem = await callback(list[&i], index:)
+            &outputItem = await breaking callback(list[&i], index:)
           }
         } else {
-          &outputItem = callback(list[&i], index:)
+          &outputItem = breaking callback(list[&i], index:)
         }
       }
 

@@ -1,6 +1,6 @@
 export watch = (
-  firstRequiredVariable<Any>, 
-  ...otherVariables<[Any]>, 
+  firstRequiredVariable<Any>
+  ...otherVariables<[Any]>
   callback<() => await null>
 ) => {
   variables = [firstRequiredVariable, ...otherVariables]

@@ -62,3 +62,22 @@ startRepeatingTimer(.minutes(30), forceRefresh)
     )
   )
 ]
+
+greeting = *"Hello, **{user.username}*, how are you?"*
+["greeting", " ", "=", " ", '*"', .stringContent("Hello, *"), "user", ".", "username", .stringContent("*, how are you?"), '"*']
+[.name("greeting"), .assign, .stringStart(level: 1), .stringContent("Hello, *"), .name("user"), .read, .name("username"), .stringContent("*, how are you?"), .stringEnd(level: 1)]
+[
+  .assign(
+    .name("greeting"),
+    .string(level: 1
+      .stringContent("Hello, *")
+      .stringReplacement(
+        .read(
+          .name("user"),
+          .name("username")
+        )
+      )
+      .stringContent("*, how are you?")
+    )
+  )
+]

@@ -1,0 +1,5 @@
+jsonSerialize([test: 123, true, true, test2: 456])
+
+// { test: 123, test2: 456, items: [true, true] }]
+
+object = jsonParse(json)

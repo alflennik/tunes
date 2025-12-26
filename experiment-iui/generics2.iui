@@ -9,8 +9,8 @@ export createUniqueSet = (Item = Any) => {
       index<!> = innerList.findIndex(listItem => listItem == item)<!>
       if index<!>, innerList.removeAt(index)
     }
-    empty: list.empty,
-    length: list.length
+    empty: list.empty
+    count: list.count
   ]
 }
 

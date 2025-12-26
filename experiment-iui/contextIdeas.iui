@@ -1,0 +1,28 @@
+getProfilePage = () => {  
+  return createHtmlTemplate([
+    .h1("Profile")
+    .div("Username: {user.username}")
+  ])
+}
+
+getHomePage = () => {
+  user<!>, &user<!> = recoverSession()
+  if !user<!>, return getSignInPage()
+
+  addToContext(user:)
+
+  return getProfilePage()
+}
+
+test('profile page renders', () => {
+  addToContext(user: createMockUser())
+  getProfilePage()
+})
+
+getProfilePage() // Required variable "user" not found in context
+// Wait, how to specify a type for that variable?
+
+// Should there be some kind of explicit API?
+// package export getIframe = () => {
+//   loadContext()
+// }
