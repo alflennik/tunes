@@ -1,0 +1,20 @@
+# A list that can only contain unique items
+get_unique_set = (Item = Any) =>
+    list<[Item]> = []
+
+    add = (item<Item>) =>
+        if !list.contains(item), list.add(item)
+
+    remove = (item<Item>) =>
+        index<!> = list.find_index(list_item => list_item == item)<!>
+        if index<!>, list.remove_at(index)
+
+    return [add, remove, empty: list.empty, length: list.length]
+
+unique_artists = get_unique_set(Artist)
+songs.each(song =>
+    song.by.switch(
+        [.artist]: artist => unique_artists.add(artist)
+        [.artists]: artists => artists.each(artist => unique_artists.add(artist))
+    )
+)

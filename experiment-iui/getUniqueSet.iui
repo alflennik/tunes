@@ -14,7 +14,7 @@ getUniqueSet = (Item = Any) => {
 }
 
 uniqueArtists = getUniqueSet(Artist)
-songs.each((song) => {
+songs.each(song => {
   song.by.switch(
     [.artist]: artist => uniqueArtists.add(artist)
     [.artists]: artists => artists.each(artist => uniqueArtists.add(artist))

@@ -1,7 +1,7 @@
-jsonSerialize([test: 123, true, true, test2: 456])
-JSON.serialize([test: 123, true, true, test2: 456])
+// jsonSerialize([test: 123, true, true, test2: 456])
+json = JSON.serialize([test: 123, true, true, test2: 456])
 
-// [true, true, { "test": 123, "test2": 456 }]
+log(json) // [true, true, { "test": 123, "test2": 456 }]
 
-object = jsonParse(json)
+// object = jsonParse(json)
 object = JSON.parse(json)
