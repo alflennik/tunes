@@ -1,0 +1,195 @@
+h1 = JS.name("document").read("querySelector").call(JS.string("h1"))
+
+h1.read("innerText").assign(JS.string("Am I still on?"))
+
+onYoutubeReady = (youtubePlayer<JSObject>) => {
+  return [
+    play: () => {
+      try! youtubePlayer.read("play")<!>.call()<!>
+    }
+  ]
+}
+
+h1 = JS.evaluateExpression(*(document.querySelector("h1")))
+
+h1.style.color.assign("white")
+
+h1 = HTML.createElement(*(<h1>Counter</h1>))
+
+document = HTML.createDocument(*(
+  <!DOCTYPE html>
+  <html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+  </head>
+  <body>
+    *{h1}
+  </body>
+  </html>
+))
+
+document.body.insert(h1)
+
+html(
+
+)
+
+document = HTML.createDocument(boilerplate: true)
+
+counter = {
+  &count = 0
+  
+  container = HTML.createElement(*(<div></div>))
+
+  incrementButton = HTML.createElement(*(<button type="button">Increment</button>))
+  decrementButton = HTML.createElement(*(<button type="button">Decrement</button>))
+
+  incrementButton.on('click', () => {
+    &count += 1
+  })
+
+  decrementButton.on('click', () => {
+    &count -= 1
+  })
+
+  container.setContent(*(
+    <div>
+      <div class="count">
+        Count: *{&count}
+      </div>
+      *{decrementButton}
+      *{incrementButton}
+    </div>
+  )*)
+
+  css.insertStyles(*(style { display: flex })*)
+
+  container.style(*(
+    .count {
+      border: 1px solid black;
+    }
+  ))
+
+  return container
+}
+
+counter = {
+  &count = 0
+
+  handleIncrement = () => {
+    &count += 1
+  }
+
+  handleDecrement = () => {
+    &count -= 1
+  }
+  
+  return HTML.createElement(*(
+    <div *{.style(*(display: flex;))}>
+      <button type="button" *{.on("click", handleDecrement)}>Decrement</button>
+      <div *{.style(*(border: 1px solid black;))}>{&count}</div>
+      <button type="button" *{.on("click", handleIncrement)}>Increment</button>
+    </div>
+  )*)
+}
+
+container = HTML.createElement(*(<div>123</div>))
+
+document.add(counter)
+
+document = {
+  document = HTML.createDocument(standard: true)
+  
+  &count = 0
+
+  document.add(
+    "Count: {&count}"
+    html(<br/>)
+    createHtmlElement(
+      html(<button type="button">Increment</button>),
+      eventListeners: [
+        .click(() => {
+          &count += 1
+        })
+      ]
+    )
+    createHtmlElement(
+      html(<button type="button">Decrement</button>),
+      eventListeners: [
+        .click(() => {
+          &count += 1
+        })
+      ]
+    )
+  )
+
+  return document
+}
+
+youtubePlayer = try await js.evaluateExpression(*(
+  await new Promise(async resolve => {
+    window.onYouTubeIframeAPIReady = () => {
+      const youtubePlayer = new YT.Player(youtubePlayerId, {
+        height: "315",
+        width: "560",
+        videoId: *{videoData.id},
+        playerVars: {
+          autoplay: 1,
+          start: *{startSeconds},
+          playsinline: 1, // Instead of immediately going full screen.
+          color: "white", // Instead of youtube red.
+          rel: 0, // Recommend videos from the same channel after it ends.
+        },
+      })
+
+      youtubePlayer.addEventListener("onReady", () => {
+        resolve(youtubePlayer)
+      })
+    }
+
+    const scriptElement = document.createElement("script")
+    scriptElement.src = "https://www.youtube.com/iframe_api"
+    const firstScriptTag = document.getElementsByTagName("script")[0]
+    firstScriptTag.parentNode.insertBefore(scriptElement, firstScriptTag)
+  })
+))
+
+div123<HTML.SourceString> = *(
+  <div>123</div>
+)
+
+user = parseJson(*({ "id": 123, "username": "CaliKing123" }))
+user = json::parse(*({ "id": 123, "username": "CaliKing123" }))
+
+user = json.parse(*({ "id": 123, "username": "CaliKing123" }))
+user = JSON.parse(*({ "id": 123, "username": "CaliKing123" }))
+
+fetchCreateUser(method: .post, *({ "id": 123, "username": "CaliKing123" }))
+
+HTML.createElement(html(<h1></h1>))
+HTML.createElement(*(<h1></h1>)*)
+
+createHtmlElement(html(<h1></h1>))
+
+user.register()
+user/.register(user)
+user/.registerUser()
+user/register()
+user::register(user)
+user~register(user)
+users_.register(user)
+userTools.register(user)
+user>>registerUser()
+registerUser()<<user
+
+HTML.createElement(*(<h1></h1>))
+
+channels<js.SourceString> = *(
+  globalThis.channels = () => ({
+    getVideo: () => *{.memoryObject(video)}.getValue(),
+    channelUp: () => iui.runtime.bootstrap.call(*{.memoryObject(channelUp)}, {}),
+    channelDown: () => iui.runtime.bootstrap.call(*{.memoryObject(channelDown)}, {}),
+  })
+)
