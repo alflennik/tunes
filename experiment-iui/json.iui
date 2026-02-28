@@ -5,3 +5,13 @@ log(json) // [true, true, { "test": 123, "test2": 456 }]
 
 // object = jsonParse(json)
 object = JSON.parse(json)
+
+JsonRpc.start()
+JSON.RPC.start()
+JSONRPC.start()
+Jsonrpc.start()
+
+// JSON-RPC.start()
+// JSON_RPC.start()
+
+startJSONRPC()

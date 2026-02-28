@@ -1,8 +1,10 @@
+postJson(*({ "greeting": null, "test": [true, false, 99] })*)
+
 h1 = JS.name("document").read("querySelector").call(JS.string("h1"))
 
 h1.read("innerText").assign(JS.string("Am I still on?"))
 
-onYoutubeReady = (youtubePlayer<JSObject>) => {
+onYoutubeReady = (youtubePlayer<JsObject>) => {
   return [
     play: () => {
       try! youtubePlayer.read("play")<!>.call()<!>
@@ -14,7 +16,7 @@ h1 = JS.evaluateExpression(*(document.querySelector("h1")))
 
 h1.style.color.assign("white")
 
-h1 = HTML.createElement(*(<h1>Counter</h1>))
+h1 = HTML.createElement(*(<h1>Counter</h1>)*)
 
 document = HTML.createDocument(*(
   <!DOCTYPE html>
@@ -28,7 +30,7 @@ document = HTML.createDocument(*(
     *{h1}
   </body>
   </html>
-))
+)*)
 
 document.body.insert(h1)
 
@@ -70,12 +72,12 @@ counter = {
     .count {
       border: 1px solid black;
     }
-  ))
+  )*)
 
   return container
 }
 
-counter = {
+counterElement = {
   &count = 0
 
   handleIncrement = () => {
@@ -87,15 +89,15 @@ counter = {
   }
   
   return HTML.createElement(*(
-    <div *{.style(*(display: flex;))}>
+    <div *{.style(*(display: flex;)*)}>
       <button type="button" *{.on("click", handleDecrement)}>Decrement</button>
-      <div *{.style(*(border: 1px solid black;))}>{&count}</div>
+      <div *{.style(*(border: 1px solid black;)*)}>{&count}</div>
       <button type="button" *{.on("click", handleIncrement)}>Increment</button>
     </div>
   )*)
 }
 
-container = HTML.createElement(*(<div>123</div>))
+container = HTML.createElement(*(<div>123</div>)*)
 
 document.add(counter)
 
@@ -128,7 +130,7 @@ document = {
   return document
 }
 
-youtubePlayer = try await js.evaluateExpression(*(
+youtubePlayer = try await JS.evaluateExpression(*(
   await new Promise(async resolve => {
     window.onYouTubeIframeAPIReady = () => {
       const youtubePlayer = new YT.Player(youtubePlayerId, {
@@ -154,9 +156,9 @@ youtubePlayer = try await js.evaluateExpression(*(
     const firstScriptTag = document.getElementsByTagName("script")[0]
     firstScriptTag.parentNode.insertBefore(scriptElement, firstScriptTag)
   })
-))
+)*)
 
-div123<HTML.SourceString> = *(
+div123<HTML.Code> = *(
   <div>123</div>
 )
 
@@ -164,6 +166,7 @@ user = parseJson(*({ "id": 123, "username": "CaliKing123" }))
 user = json::parse(*({ "id": 123, "username": "CaliKing123" }))
 
 user = json.parse(*({ "id": 123, "username": "CaliKing123" }))
+user = Json.parse(*({ "id": 123, "username": "CaliKing123" }))
 user = JSON.parse(*({ "id": 123, "username": "CaliKing123" }))
 
 fetchCreateUser(method: .post, *({ "id": 123, "username": "CaliKing123" }))
@@ -186,10 +189,13 @@ registerUser()<<user
 
 HTML.createElement(*(<h1></h1>))
 
-channels<js.SourceString> = *(
+channels<JS.Code> = *(
   globalThis.channels = () => ({
     getVideo: () => *{.memoryObject(video)}.getValue(),
     channelUp: () => iui.runtime.bootstrap.call(*{.memoryObject(channelUp)}, {}),
     channelDown: () => iui.runtime.bootstrap.call(*{.memoryObject(channelDown)}, {}),
   })
 )
+
+startJSONRPCServer()
+startJsonRpcServer()
