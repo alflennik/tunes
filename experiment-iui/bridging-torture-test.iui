@@ -1,0 +1,26 @@
+counterElement = {
+  &count = 0
+
+  handleIncrement = () => {
+    &count += 1
+  }
+
+  handleDecrement = () => {
+    &count -= 1
+  }
+  
+  return html.createElement(*(
+    <div *{.style(*(display: flex;)*)}>
+      <button type="button" *{.on("click", handleDecrement)}>Decrement</button>
+      <div *{.style(*(border: 1px solid black;)*)}>*{&count}</div>
+      <button type="button" *{.on("click", handleIncrement)}>Increment</button>
+      <script>console.log(123)</script>
+      <style>
+        html, body {
+          margin: 0;
+          border: 1px solid black;
+        }
+      </style>
+    </div>
+  )*)
+}

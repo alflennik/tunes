@@ -1,4 +1,4 @@
-postJson(*({ "greeting": null, "test": [true, false, 99] })*)
+json.parse(*({ "greeting": "hi", "test": [true, false, 99] })*)
 
 h1 = JS.name("document").read("querySelector").call(JS.string("h1"))
 
@@ -12,13 +12,13 @@ onYoutubeReady = (youtubePlayer<JsObject>) => {
   ]
 }
 
-h1 = JS.evaluateExpression(*(document.querySelector("h1")))
+h1 = js.evaluateExpression(*(document.querySelector("h1"))*)
 
 h1.style.color.assign("white")
 
-h1 = HTML.createElement(*(<h1>Counter</h1>)*)
+h1 = html.createElement(*(<h1>Counter</h1>)*)
 
-document = HTML.createDocument(*(
+document = html.createDocument(*(
   <!DOCTYPE html>
   <html>
   <head>
@@ -38,15 +38,15 @@ html(
 
 )
 
-document = HTML.createDocument(boilerplate: true)
+document = html.createDocument(boilerplate: true)
 
 counter = {
   &count = 0
   
-  container = HTML.createElement(*(<div></div>))
+  container = html.createElement(*(<div></div>)*)
 
-  incrementButton = HTML.createElement(*(<button type="button">Increment</button>))
-  decrementButton = HTML.createElement(*(<button type="button">Decrement</button>))
+  incrementButton = html.createElement(*(<button type="button">Increment</button>)*)
+  decrementButton = html.createElement(*(<button type="button">Decrement</button>)*)
 
   incrementButton.on('click', () => {
     &count += 1
@@ -88,21 +88,21 @@ counterElement = {
     &count -= 1
   }
   
-  return HTML.createElement(*(
+  return html.createElement(*(
     <div *{.style(*(display: flex;)*)}>
       <button type="button" *{.on("click", handleDecrement)}>Decrement</button>
-      <div *{.style(*(border: 1px solid black;)*)}>{&count}</div>
+      <div *{.style(*(border: 1px solid black;)*)}>*{&count}</div>
       <button type="button" *{.on("click", handleIncrement)}>Increment</button>
     </div>
   )*)
 }
 
-container = HTML.createElement(*(<div>123</div>)*)
+container = html.createElement(*(<div>123</div>)*)
 
 document.add(counter)
 
 document = {
-  document = HTML.createDocument(standard: true)
+  document = html.createDocument(standard: true)
   
   &count = 0
 
@@ -130,7 +130,7 @@ document = {
   return document
 }
 
-youtubePlayer = try await JS.evaluateExpression(*(
+youtubePlayer = try await js.evaluateExpression(*(
   await new Promise(async resolve => {
     window.onYouTubeIframeAPIReady = () => {
       const youtubePlayer = new YT.Player(youtubePlayerId, {
@@ -158,21 +158,22 @@ youtubePlayer = try await JS.evaluateExpression(*(
   })
 )*)
 
-div123<HTML.Code> = *(
+div123<Syntax.Html> = *(
   <div>123</div>
-)
+)*
 
-user = parseJson(*({ "id": 123, "username": "CaliKing123" }))
-user = json::parse(*({ "id": 123, "username": "CaliKing123" }))
+user = parseJson(*({ "id": 123, "username": "CaliKing123" })*)
+user = json::parse(*({ "id": 123, "username": "CaliKing123" })*)
 
-user = json.parse(*({ "id": 123, "username": "CaliKing123" }))
-user = Json.parse(*({ "id": 123, "username": "CaliKing123" }))
-user = JSON.parse(*({ "id": 123, "username": "CaliKing123" }))
+user = json.parse(*({ "id": 123, "username": "CaliKing123" })*)
+user = Json.parse(*({ "id": 123, "username": "CaliKing123" })*)
+user = JSON.parse(*({ "id": 123, "username": "CaliKing123" })*)
+user = #json.parse(*({ "id": 123, "username": "CaliKing123" })*)
 
-fetchCreateUser(method: .post, *({ "id": 123, "username": "CaliKing123" }))
+fetchCreateUser(method: .post, *({ "id": 123, "username": "CaliKing123" })*)
 
-HTML.createElement(html(<h1></h1>))
-HTML.createElement(*(<h1></h1>)*)
+html.createElement(html(<h1></h1>))
+html.createElement(*(<h1></h1>)*)
 
 createHtmlElement(html(<h1></h1>))
 
@@ -187,15 +188,16 @@ userTools.register(user)
 user>>registerUser()
 registerUser()<<user
 
-HTML.createElement(*(<h1></h1>))
+html.createElement(*(<h1></h1>)*)
 
-channels<JS.Code> = *(
+channels<Syntax.Js> = *(
   globalThis.channels = () => ({
     getVideo: () => *{.memoryObject(video)}.getValue(),
     channelUp: () => iui.runtime.bootstrap.call(*{.memoryObject(channelUp)}, {}),
     channelDown: () => iui.runtime.bootstrap.call(*{.memoryObject(channelDown)}, {}),
   })
-)
+)*
 
 startJSONRPCServer()
 startJsonRpcServer()
+json.rpc.startServer()
