@@ -329,3 +329,50 @@ getArticle = ()<try await String> => {
     }
   })<!>
 }
+
+*for concurrent .indexed(card, index) of cards {
+  while true, max: 90_000 {
+    if randomNumber(min: 0, max: 100) === 99 {
+      *break
+    }
+  }
+}
+
+updateUserWorkflow = createWorkflow()
+
+for users (user) {
+  updated = []
+
+  for user.entries() ([field, value]) {  
+    currentValue = copy(value)
+
+    watch value {
+      if value != currentValue, updated[field] = value  
+    }
+  }
+
+  {
+    &isRunning = false
+    watch updated {
+      if &isRunning == true, break
+      &isRunning = true
+      defer { 
+        &isRunning = false
+      }
+      await apiFetch('./users', [user, updated])
+    }
+  }
+}
+
+for [user, index] in users.indexed(), concurrent: true {
+
+}
+
+for 10 (i) {
+  // noop
+}
+log('Done')
+
+for i = 0; i < scopes.length; i += 1 {
+
+}

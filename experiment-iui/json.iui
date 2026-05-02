@@ -4,7 +4,8 @@ json = JSON.serialize([test: 123, true, true, test2: 456])
 log(json) // [true, true, { "test": 123, "test2": 456 }]
 
 // object = jsonParse(json)
-object = JSON.parse(json)
+// object = JSON.parse(json)
+object = json.parse(json)
 
 JsonRpc.start()
 JSON.RPC.start()

@@ -169,18 +169,24 @@ user = json.parse(*({ "id": 123, "username": "CaliKing123" })*)
 user = Json.parse(*({ "id": 123, "username": "CaliKing123" })*)
 user = JSON.parse(*({ "id": 123, "username": "CaliKing123" })*)
 user = #json.parse(*({ "id": 123, "username": "CaliKing123" })*)
+user = ::json.parse(*({ "id": 123, "username": "CaliKing123" })*)
 
 fetchCreateUser(method: .post, *({ "id": 123, "username": "CaliKing123" })*)
 
 html.createElement(html(<h1></h1>))
+html.createElement*(<h1></h1>)*
 html.createElement(*(<h1></h1>)*)
 
 createHtmlElement(html(<h1></h1>))
 
 user.register()
+^user.register()
+#user.register()
+::user.register()
 user/.register(user)
 user/.registerUser()
 user/register()
+/user.register()
 user::register(user)
 user~register(user)
 users_.register(user)
