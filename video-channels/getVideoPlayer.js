@@ -5,8 +5,8 @@ const getVideoPlayer = async ({
   audioElementObservable,
   audioCaptionsObservable,
   audioDuckingTimesObservable,
-  startSecondsObservable,
-  seekSecondsObservable,
+  startSecondsObservable = null,
+  seekSecondsObservable = null,
   onEnd = null,
 }) => {
   parentElement.innerHTML = /* HTML */ `<style>
@@ -108,7 +108,7 @@ const getVideoPlayer = async ({
       } else if (!hasCaptions && activeCaption.style.display !== "none") {
         activeCaption.style.display = "none"
       }
-    }
+    },
   )
 
   const onPlay = () => {
@@ -154,7 +154,7 @@ const getVideoPlayer = async ({
 
     if (currentTime && duckingTimes) {
       const isDucking = duckingTimes.some(
-        ({ time, timeEnd }) => currentTime >= time && currentTime <= timeEnd
+        ({ time, timeEnd }) => currentTime >= time && currentTime <= timeEnd,
       )
 
       if (isDucking) {
@@ -166,7 +166,7 @@ const getVideoPlayer = async ({
 
     if (currentTime && captions) {
       const caption = captions.find(
-        ({ time, timeEnd }) => currentTime >= time && currentTime <= timeEnd
+        ({ time, timeEnd }) => currentTime >= time && currentTime <= timeEnd,
       )
 
       // Must use innerText to prevent XSS

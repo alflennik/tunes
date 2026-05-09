@@ -90,11 +90,15 @@ const getApp = async () => {
         transform: rotate3d(0.3, 1, -0.2, 100deg);
       }
       .dialog.showing {
-        transition: transform cubic-bezier(0, 0.47, 0, 1) 800ms, opacity 100ms;
+        transition:
+          transform cubic-bezier(0, 0.47, 0, 1) 800ms,
+          opacity 100ms;
         opacity: 1;
       }
       .dialog.before-hiding {
-        transition: 400ms cubic-bezier(0.86, 0, 1, 1), opacity 300ms linear 100ms;
+        transition:
+          400ms cubic-bezier(0.86, 0, 1, 1),
+          opacity 300ms linear 100ms;
         opacity: 1;
       }
       .dialog.hiding {
