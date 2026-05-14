@@ -77,7 +77,7 @@ getArticle = ()<try await String> => {
 createDropdownMenu = () => {
   element = createElement(.div)
   
-  try! addToScope(sessionContext)
+  try throw addToScope(sessionContext)
 
   watch(session<!>, session<!>.user<!>, () => {
     if session<!>.user<!> {

@@ -7,7 +7,7 @@ h1.read("innerText").assign(JS.string("Am I still on?"))
 onYoutubeReady = (youtubePlayer<JsObject>) => {
   return [
     play: () => {
-      try! youtubePlayer.read("play")<!>.call()<!>
+      try throw youtubePlayer.read("play")<!>.call()<!>
     }
   ]
 }
@@ -171,6 +171,7 @@ user = JSON.parse(*({ "id": 123, "username": "CaliKing123" })*)
 user = #json.parse(*({ "id": 123, "username": "CaliKing123" })*)
 user = ::json.parse(*({ "id": 123, "username": "CaliKing123" })*)
 user = :::json.parse(*({ "id": 123, "username": "CaliKing123" })*)
+user = .:json.parse(*({ "id": 123, "username": "CaliKing123" })*)
 
 fetchCreateUser(method: .post, *({ "id": 123, "username": "CaliKing123" })*)
 
@@ -195,6 +196,7 @@ userTools.register(user)
 user>>registerUser()
 registerUser()<<user
 :::registerUser(user)
+.:registerUser(user)
 
 html.createElement(*(<h1></h1>)*)
 

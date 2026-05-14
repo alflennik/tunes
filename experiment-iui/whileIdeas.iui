@@ -82,7 +82,7 @@ firstPair<try [Card, Card]> = **{
   drawnCards<[Card]> = []
 
   *. loop(() => {
-    card<!> = deck.draw()
+    card<!> = deck.draw()<!>
     if !card<!>, *return
 
     drawnCards.each(drawnCard => {
@@ -97,7 +97,7 @@ firstPair<try [Card, Card]> = _{
   drawnCards<[Card]> = []
 
   while true {
-    card<!> = deck.draw()
+    card<!> = deck.draw()<!>
     if !card<!>, break
 
     for drawnCard of drawnCards {
@@ -111,7 +111,7 @@ firstPair<try [Card, Card]> = _{
 firstPair<try [Card, Card]> = ***{
   drawnCards<[Card]> = []
 
-  while card<!> = deck.draw() {
+  while card<!> = deck.draw()<!> {
     drawnCards.each(drawnCard => {
       if card.rank == drawnCard.rank, *return [card, drawnCard]
     })
@@ -258,7 +258,7 @@ getArticle = ()<try await String> => {
 createDropdownMenu = () => {
   element = createElement(.div)
   
-  try! addToScope(sessionContext)
+  try throw addToScope(sessionContext)
 
   watch(&`session<!>.user<!>`, () => {
     if session<!>.user<!> {

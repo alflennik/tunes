@@ -59,7 +59,7 @@ myEnum.b.switch(
   [.test3]: () => log("It's option 3")
   [.test4]: () => {}
   [.test5(true)]: (.test5(value)) => log("Associated value is {value}")
-  [.test5(true)]: (enumField) => log(try! enumField<!>.wrapped)
+  [.test5(true)]: (enumField) => log(try throw enumField<!>.wrapped)
   default: log("none of the above")
 )
 

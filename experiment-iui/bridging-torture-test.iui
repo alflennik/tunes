@@ -9,7 +9,7 @@ counterElement = {
     &count -= 1
   }
   
-  return :::html.createElement(*(
+  return .:html.createElement(*(
     <div *{.style(*(display: flex;)*)}>
       <button type="button" *{.on("click", handleDecrement)}>Decrement</button>
       <div *{.style(*(border: 1px solid black;)*)}>*{&count}</div>

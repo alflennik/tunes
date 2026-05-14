@@ -53,6 +53,6 @@ createHypergraph = () => {
 hypergraph = createHypergraph()
 Hypergraph = hypergraph.Return
 
-await :::populateHypergraph(hypergraph)
+await .:populateHypergraph(hypergraph)
 
 iterateEdges(hypergraph)

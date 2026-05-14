@@ -20,37 +20,37 @@ versionOutOfDate.watch(()<await> => {
 })
 
 startRepeatingTimer = (
-  durationDefinition<:::time.DurationDefinition>,
+  durationDefinition<.:time.DurationDefinition>,
   callback<(stop: <() => null>) => Any>
 ) => {
-  duration = :::time.createDuration(durationDefinition).to(.milliseconds)
+  duration = .:time.createDuration(durationDefinition).to(.milliseconds)
 
-  script = :::js.createScript()
+  script = .:js.createScript()
 
   &intervalId<try Number>
 
   stop = () => {
     if &intervalId<!> {
-      :::js.evaluate(script:, *(
+      .:js.evaluate(script:, *(
         clearInterval(*{&intervalId})
       )*)
     }
   }
 
   triggerCallback = () => {
-    breakout callback(stop:)
+    callback(stop:)
 
     /*
     &isBreakout = true
     defer {
       if &isBreakout, stop()
     }
-    breakout callback(stop:)
+    callback(stop:)
     &isBreakout = false
     */
   }
 
-  &intervalId = :::js.return(script:, *(
+  &intervalId = .:js.return(script:, *(
     return setInterval(() => {
       iui.bootstrap.call(*{.sharedMemory(triggerCallback)}.getValue())
     }, *{duration})

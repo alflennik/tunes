@@ -1,21 +1,21 @@
 getProfilePage = () => {  
   return createHtmlTemplate([
     .h1("Profile")
-    .div("Username: {:::user.username}")
+    .div("Username: {.:user.username}")
   ])
 }
 
 getHomePage = () => {
-  :::user<!> = recoverSession()
-  if !:::user<!>, return getSignInPage()
+  .:user<!> = recoverSession()
+  if !.:user<!>, return getSignInPage()
 
   return getProfilePage()
 }
 
 test('profile page renders', () => {
-  :::user = createMockUser()
+  .:user = createMockUser()
   getProfilePage()
 })
 
 getProfilePage() 
-// ^^^^^^^^^^^ Required variable ":::user" not found in context
+// ^^^^^^^^^^^ Required variable ".:user" not found in context

@@ -1,7 +1,7 @@
 createTunesApp = () => {
   addToScope(...import(.webPlatform))
 
-  document = createDocument(*(
+  .:document = createDocument(*(
     <!DOCTYPE html>
     <html lang="en">
       <head>

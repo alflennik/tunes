@@ -10,19 +10,24 @@
   log("b{&b}")
 })
 
-&a = &b 
+&a = &b // couple &a and &b
 // a2
 
 &b = 3
 // a3
 // b3
 
+&b = 3 // no change
+
 &b = 4
 // a4
 // b4
 
-&a = 4
-// a4
+&a = 5 // decoupled again
+// a5
+
+&b = 6
+// b6
 
 // ---
 
@@ -67,12 +72,12 @@ handleButtonClick = () => {
   &title = &inputText
 }
 
-:::form.append(*(
+.:form.append(*(
   <h1>*{title}</h1>
   <input type="text" *{.on('change', handleChange)}>
   <button type="button" *{.on('click', handleButtonClick)}>Apply</button>
 )*)
 
 &title.watch(()<await> => {
-  await :::saveProgress('title', title)
+  await .:saveProgress('title', title)
 })

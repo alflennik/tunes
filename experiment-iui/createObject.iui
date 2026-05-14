@@ -4,11 +4,8 @@ createList = (Item = Any, contents) => {
   // Supports being generically wrapped in try or not
   // Support short-circuiting early
   // Allows different async strategies, concurrent or sequential (sequential is default)
-  each = (
-    concurrent: <Boolean> = false,
-    callback<(Item, index: Number) => GenericArgument>
-  )<MutableReturn> => {
-    isConcurrent = try throw concurrent.getStaticValue()<!>
+  each = (concurrent: <Boolean> = false, callback<(Item, index: Number) => Generic>)<Mutable> => {
+    isConcurrent = concurrent.getStaticValue()
 
     OutputItem = callback.Return
 
@@ -70,22 +67,22 @@ createList = (Item = Any, contents) => {
       if isTry {
         if isAwait {
           if isConcurrent {
-            &outputItem = try breakout callback(list[&i], index:)
+            &outputItem = try callback(list[&i], index:)
           } else {
-            &outputItem = try await breakout callback(list[&i], index:)
+            &outputItem = try await callback(list[&i], index:)
           }
         } else {
-          &outputItem = try breakout callback(list[&i], index:)
+          &outputItem = try callback(list[&i], index:)
         }
       } else {
         if isAwait {
           if isConcurrent {
-            &outputItem = breakout callback(list[&i], index:)
+            &outputItem = callback(list[&i], index:)
           } else {
-            &outputItem = await breakout callback(list[&i], index:)
+            &outputItem = await callback(list[&i], index:)
           }
         } else {
-          &outputItem = breakout callback(list[&i], index:)
+          &outputItem = callback(list[&i], index:)
         }
       }
 
