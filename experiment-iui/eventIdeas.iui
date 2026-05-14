@@ -1,0 +1,46 @@
+createApp = ()<try await> => {
+  events = createEvents(
+    load: ()<try await> => {
+      try videoPlayer.refreshDimensions()
+    }
+  )
+  
+  videoPlayer = createVideoPlayer(parentElement:, events:)
+
+  try await events.load()
+}
+
+createVideoPlayer = (parentElement:, events:) => { 
+  activeCaption = parentElement.querySelector("[active-caption]")
+  
+  refreshDimensions = events.on(.load, .resize, ()<try> => {
+    youtubeContainer = parentElement.querySelector("#youtube-player")
+
+    [
+      width: availableWidth,
+      height: availableHeightBeforeCaptions
+    ] = parentElement.getBoundingClientRect()
+
+    captionsHeight = activeCaption.getBoundingClientRect().height
+
+    availableHeight = availableHeightBeforeCaptions - captionsHeight
+
+    availableRatio = try availableWidth / availableHeight
+
+    [aspectRatio] = videoDataObservable.getValue()
+
+    [width, height] = {
+      widthIsDominant = aspectRatio > availableRatio
+      if (widthIsDominant) {
+        return try [availableWidth, availableWidth / aspectRatio]
+      } else {
+        return [availableHeight, availableHeight * aspectRatio]
+      }
+    }
+
+    youtubeContainer.style.width = "{width}px"
+    youtubeContainer.style.height = "{height}px"
+  })
+
+  return [refreshDimensions]
+}

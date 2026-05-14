@@ -25,7 +25,7 @@ perfectStudent<!> = *{
     school.classes.each(class => {
       class.students.each(student => {
         if student.averageGrade == 4.0 {
-          return student
+          *return student
         }
       })
     })
@@ -45,14 +45,14 @@ firstPair<try [Card, Card]> = *{
 }
 
 hasDuplicateIds = () => *{
-  ids<String> = []
+  ids<[String]> = []
 
   callback = (element) => {
     if element.id<!> && ids.contains(element.id), *return true
   }
 
   recurse = (element) => {
-    breaking callback(element)
+    callback(element)
     
     element.items.each(item => {
       recurse(item)
@@ -61,7 +61,7 @@ hasDuplicateIds = () => *{
 
   recurse(document.body)
 
-  return false
+  *return false
 }
 
 getArticle = ()<try await String> => {

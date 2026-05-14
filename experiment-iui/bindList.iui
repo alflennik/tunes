@@ -2,17 +2,15 @@ createElement = () => {
   container<DomElement> = // ...
   // ...
 
-  bindList = (
-    items<[createGenericType()]>, createElement<(createGenericType()) => DomElement>
-  )<null> => {    
-    try! matchTypes(items.Item, <[id: Id]>)
-    try! matchTypes(items.Item, createElement.Parameters[0])
+  bindList = (items<[Generic]>, createElement<Generic => DomElement>)<try null> => {    
+    try throw matchTypes(items.Item, <[id: Id]>)<!>
+    try throw matchTypes(items.Item, createElement.Parameters[0])<!>
 
     items.watch(() => {
       idsToElements<[[String]: DomElement]> = []
 
       container.elements.each(element => {
-        elementId = try! element.getAttribute("id")<!>
+        elementId = try throw element.getAttribute("id")<!>
         idsToElements[elementId] = element
       })
 
@@ -24,9 +22,9 @@ createElement = () => {
         item<!> = items[&i]<!>
 
         if !item<!> {
-          // Since all required items have been inserted any remaining elements should be removed.
+          // Since all required items have been inserted any remaining elements should be removed
           if element<!> {
-            container.elements.remove(&i)
+            container.elements.remove(at: &i)
             continue
           } else {
             return
@@ -43,21 +41,21 @@ createElement = () => {
 
         // Exists in wrong location
         if idsToElements[item.id]<!> {
-          container.elements.insertAt(&i, element)
+          container.elements.insert(at: &i, element)
           &i += 1
           continue
         }
 
         // Shouldn't exist
         if elementId<!> && !itemIds.contains(elementId) {
-          container.elements.remove(&i)
+          container.elements.remove(at: &i)
           continue
         }
 
         // Missing
         if !idsToElements[item.id]<!> {
           correctElement = createElement(item)
-          container.elements.insert(&i, correctElement)
+          container.elements.insert(at: &i, correctElement)
           &i += 1
           continue
         }

@@ -1,0 +1,78 @@
+&a = 1
+
+&b = 2
+
+&a.watch(() => {
+  log("a{&a}")
+})
+
+&b.watch(() => {
+  log("b{&b}")
+})
+
+&a = &b 
+// a2
+
+&b = 3
+// a3
+// b3
+
+&b = 4
+// a4
+// b4
+
+&a = 4
+// a4
+
+// ---
+
+&row = 12
+
+&column = 1
+
+colors[[&row, &column]] = .red
+
+&row = 13
+
+log(colors[[&row, &column]]<!>) // null
+
+log(colors[[12, 1]]<!>) // .red
+
+colors[[&row.getIdentifier(), &column.getIdentifier()]] = .blue
+
+&row = 14
+
+log(colors[[&row.getIdentifier(), &column.getIdentifier()]]) // .blue
+
+// ---
+
+&a = 1
+
+&b = 2
+
+&a = &b
+
+assert(&a.getIdentifier() != &b.getIdentifier())
+
+// ---
+
+title, &title = ""
+
+&inputText = ""
+handleChange = event => {
+  &inputText = event.target.value
+}
+
+handleButtonClick = () => {
+  &title = &inputText
+}
+
+:::form.append(*(
+  <h1>*{title}</h1>
+  <input type="text" *{.on('change', handleChange)}>
+  <button type="button" *{.on('click', handleButtonClick)}>Apply</button>
+)*)
+
+&title.watch(()<await> => {
+  await :::saveProgress('title', title)
+})

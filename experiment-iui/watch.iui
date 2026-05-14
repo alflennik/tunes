@@ -1,4 +1,4 @@
-export watch = (
+watch = (
   firstRequiredVariable<Any>
   ...otherVariables<[Any]>
   callback<() => await null>
@@ -18,7 +18,7 @@ export watch = (
 
   wrapCallback = () => {
     &shouldRunCallback = false
-    unawait breaking callback()
+    unawait breakout callback()
   }
 
   variables.each(variable => {
@@ -26,3 +26,5 @@ export watch = (
     core.onVariableChange(variable, handleVariableChange)
   })
 }
+
+export watch

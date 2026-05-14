@@ -211,8 +211,8 @@ hasDuplicateIds = () => {
 }
 
 getArticle = ()<try await String> => *{
-  &article = ""
-  article = &article
+  article, &article = ""
+   = &article
 
   try await loop(() => {
     if stream.isDone(), *return article
@@ -221,8 +221,7 @@ getArticle = ()<try await String> => *{
 }
 
 getArticle = ()<try await String> => {
-  &article = ""
-  article = &article
+  article, &article = ""
 
   try await loop((done:) => {
     if stream.isDone(), return done()
@@ -233,8 +232,7 @@ getArticle = ()<try await String> => {
 }
 
 getArticle = ()<try await String> => {
-  &article = ""
-  article = &article
+  article, &article = ""
 
   try await while(
     () => !stream.isDone(), 
@@ -319,6 +317,17 @@ perfectStudent<!> = block(end => {
   })
 })
 
+
+perfectStudent<!> = {
+  for school in schools {
+    for class in school.classes {
+      for student in class.students {
+        if student.averageGrade == 4, return student
+      }
+    }
+  }
+}
+
 getArticle = ()<try await String> => {
   return block((end)<try await> => {
     while !stream.isDone() {
@@ -376,3 +385,24 @@ log('Done')
 for i = 0; i < scopes.length; i += 1 {
 
 }
+
+userIds = { 
+  userIds = []
+  for user in users {
+    userIds.add(user.id)
+  }
+  return userIds
+}
+
+userIds = map users (user), return user.id
+
+userIds = users.map(user => user.id)
+
+user<!>
+while(user<!>, maxIterations: 10_000, () => {
+
+})
+
+grid<[[try Any]]> = 10.each(() => 10.each(() => null))
+
+

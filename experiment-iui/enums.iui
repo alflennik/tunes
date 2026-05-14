@@ -33,9 +33,9 @@ v2 = [.a(.b(.c))]
 
 readV2<!> = v2.case(.a)<!>.case(.b)<!>.case(.c)<!>
 
-isOfficialVideo = toBoolean(
+isOfficialVideo = (
   titleContent.case(.musicVideo)<!>.providedContentType.case(.commonTerm)<!> == .officialVideo
-)
+).to(Boolean)
 
 MinType = <[
   titleContent: |

@@ -1,3 +1,3 @@
-if session<!> && (try! session.admin<!>) {
+if session<!> && (try throw session.admin<!>) {
   // Do something important
 }

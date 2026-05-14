@@ -1,0 +1,75 @@
+createEvents = (...configs<Generic>) => {
+  try throw configs.getStaticValue()<!>.setType(<[[String]: (Any...) => Any]>)<!>
+
+  EventName = try throw createEnumeration(configs.keys().each(key => .option(key)))<!>
+
+  // When the event is triggered it must include an implementation which calls every handler
+  requiredHandlersByEventName = []
+
+  on = (...eventNames<[EventName]>, callback<(Generic...) => Generic>) => {
+    handler = (...arguments<...callback.Arguments>)<callback.Return> => {
+      return callback(...arguments)
+    }
+
+    try throw static {
+      eventNames.each(eventName => {
+        if !requiredHandlersByEventName[eventName] {
+          requiredHandlersByEventName[eventName] = []
+        }
+        souceCodeLink = callback.sourceCodeLink
+        requiredHandlersByEventName[eventName].append([handler, souceCodeLink])
+      })
+    }
+
+    return handler
+  }
+
+  createTrigger = (eventNameRaw<EventName>)<Mutable> => {
+    eventName = try throw eventNameRaw.getStaticValue()
+
+    try throw static {
+      requiredHandlersByEventName.forEach(([handler, souceCodeLink]) => {
+        log(configs[eventName])
+        /*
+          ()<try await> => {
+            try videoPlayer.refreshDimensions()
+          }
+
+          .function(.arguments(), .return(.try, .await), .body(
+            .try(.call(.read(.name("videoPlayer"), .name("refreshDimensions"))))
+          ))
+        */
+        if !configs[eventName].Body.typeScan(handler.Type) {
+          throw createStaticErrors(
+            [
+              "Event did not call required handler at {souceCodeLink}", 
+              sourceCodeLink:,
+              stackTrace: .omit,
+            ],
+            [
+              'Event "{eventName}" did not call handler at {configs[eventName].sourceCodeLink}'
+              sourceCodeLink: configs[eventName].sourceCodeLink,
+              stackTrace: .omit,
+            ],
+          )
+        }
+      })
+    }
+
+    callback = configs[eventName]
+    Arguments = callback.Arguments
+    Return = callback.Return
+
+    return (...arguments<...Arguments>)<Return> => {
+      return callback(...arguments)
+    }
+  }
+
+  triggers = createObject(
+    entries: config.keys().each((eventName, index:) => {
+      return [eventName, createTrigger(eventName)]
+    }),
+  )
+
+  return [on, ...triggers]
+}

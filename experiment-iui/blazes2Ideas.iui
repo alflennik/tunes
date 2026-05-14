@@ -259,3 +259,18 @@ playMode<|.paused, .ended, .playing|> = watch(speechSynthesis, activeUtterances,
   if speechSynthesis.paused, return .paused
   return activeUtterances.length == 0 ? .ended : .playing
 })
+
+createVideoPlayer = events.on('load', () => {
+  PlayMode = <|.paused, .ended, .playing|>
+
+  playMode<PlayMode>, &playMode = .ended
+
+  onSpeech = events.on('updatedSpeech', speech => {
+    if speech.status == .paused, &playMode = .paused
+    &playMode = speech.utterances.length == 0 ? .ended : .playing
+  })
+
+  events.require(playMode, 'updatedPlayMode')
+
+  return [playMode, onSpeech]
+})

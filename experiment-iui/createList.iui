@@ -1,20 +1,20 @@
-createList = (Item, contents) => {
+createList = (Item = Any, contents) => {
   // Passes types through to the callback
   // Supports being generically async or not
   // Supports being generically wrapped in try or not
   // Support short-circuiting early
   // Allows different async strategies, concurrent or sequential (sequential is default)
   each = (
-    concurrent: isConcurrent<Boolean> = false,
-    callback<(Item, index?: Number) => createGenericType()>
-  )<createMutableType()> => {
-    try! forceStaticValue(concurrent)
+    concurrent: <Boolean> = false,
+    callback<(Item, index: Number) => GenericArgument>
+  )<MutableReturn> => {
+    isConcurrent = try throw concurrent.getStaticValue()<!>
 
     OutputItem = callback.Return
 
     &OutputType = each.&Return
     
-    [OutputResult, isTry, isAwait] = _{
+    [OutputResult, isTry, isAwait] = {
       if OutputItem.Result || OutputItem.Resolved.Result {
         if OutputItem.Resolved || OutputItem.Result.Resolved {
           return [OutputItem.Result.Resolved || OutputItem.Resolved.Result, true, true]
@@ -70,22 +70,22 @@ createList = (Item, contents) => {
       if isTry {
         if isAwait {
           if isConcurrent {
-            &outputItem = try breaking callback(list[&i], index:)
+            &outputItem = try breakout callback(list[&i], index:)
           } else {
-            &outputItem = try await breaking callback(list[&i], index:)
+            &outputItem = try await breakout callback(list[&i], index:)
           }
         } else {
-          &outputItem = try breaking callback(list[&i], index:)
+          &outputItem = try breakout callback(list[&i], index:)
         }
       } else {
         if isAwait {
           if isConcurrent {
-            &outputItem = breaking callback(list[&i], index:)
+            &outputItem = breakout callback(list[&i], index:)
           } else {
-            &outputItem = await breaking callback(list[&i], index:)
+            &outputItem = await breakout callback(list[&i], index:)
           }
         } else {
-          &outputItem = breaking callback(list[&i], index:)
+          &outputItem = breakout callback(list[&i], index:)
         }
       }
 

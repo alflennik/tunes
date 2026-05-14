@@ -1,77 +1,60 @@
 // Usage
 
 versionOutOfDate = *{
+  &currentVersion = await checkVersion()
+  
   startRepeatingTimer(.minutes(30), (stop:)<await> => {
-    if await currentVersion != checkVersion() {
+    if await &currentVersion != checkVersion() {
       stop()
       *return true
     }
   })
+
   *return false
 }
 
-watch(versionOutOfDate, ()<await> => {
-  await showRefreshModal()
-  showCountdownAlert()
-  createTimeout(.minutes(5), forceRefresh)
+versionOutOfDate.watch(()<await> => {
+  await showRefreshModal(),
+  showCountdownAlert(),
+  createTimeout(.minutes(5), forceRefresh),
 })
 
-// Implementation
+startRepeatingTimer = (
+  durationDefinition<:::time.DurationDefinition>,
+  callback<(stop: <() => null>) => Any>
+) => {
+  duration = :::time.createDuration(durationDefinition).to(.milliseconds)
 
-Stop = <() => null>
-RepeatingTimer = <[stop: Stop]>
-
-openIntervalTimers<[String]: Any> = []
-
-export startRepeatingTimer = (
-  durationDefinition<DurationDefinition>, 
-  callback<Stop>
-)<RepeatingTimer> => {
-  core = importContext(coreContext)
+  script = :::js.createScript()
 
   &intervalId<try Number>
 
-  stop<Stop> = () => {
+  stop = () => {
     if &intervalId<!> {
-      core.runtime.clearInterval(intervalId)
+      :::js.evaluate(script:, *(
+        clearInterval(*{&intervalId})
+      )*)
     }
   }
-  
-  [milliseconds] = createDuration(durationDefinition)
 
-  // Version where *return would end the interval
-  &intervalId = core.runtime.setInterval(() => {
-    openIntervalTimers[&intervalTimer.id] = intervalId
+  triggerCallback = () => {
+    breakout callback(stop:)
 
-    unawait *{
-      &isBreak = true
-      defer(() => {
-        if &isBreak == false, return
-        clear()
-      })
-      breaking await callback()
-      &isBreak = false
+    /*
+    &isBreakout = true
+    defer {
+      if &isBreakout, stop()
     }
-  }, milliseconds)
-
-  // Version where *return does not end the interval
-  startNextTimer = () => {
-    timeoutId = core.runtime.setTimeout(() => {
-      unawait *{
-        defer(() => {
-          &isStopped = toBoolean(openIntervalTimers[&intervalTimer.id]<!>)
-          if &isStopped, return
-
-          // TODO: this is wrong, if the callback takes a long time it will screw up the interval
-          startNextTimer()
-        })
-        breaking await callback()
-      }
-    }, milliseconds)
-
-    openIntervalTimers[&intervalTimer.id] = timeoutId
+    breakout callback(stop:)
+    &isBreakout = false
+    */
   }
-  startNextTimer()
 
-  return [stop:]
+  &intervalId = :::js.return(script:, *(
+    return setInterval(() => {
+      iui.bootstrap.call(*{.sharedMemory(triggerCallback)}.getValue())
+    }, *{duration})
+  )*)
+
+  return [stop]
 }

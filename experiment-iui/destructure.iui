@@ -93,7 +93,7 @@ maybePossiblyList<try [String]> = ['Anne', 'Gary', 'Josephine']
 [firstName<!>] = maybePossiblyList<!>
 
 [firstName] = try maybePossiblyList<!>
-[firstName] = try! maybePossiblyList<!>
+[firstName] = try throw maybePossiblyList<!>
 
 // You can destructure enums with associated values, and the values will be potentially null
 

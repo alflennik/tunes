@@ -1,0 +1,58 @@
+createHypergraph = () => {
+  Node = <[]>
+
+  Edges = <[[Node]: true]>
+
+  edgesByNode<[[Node]: Edges]> = []
+
+  createDisconnectedNode = ()<Node> => []
+
+  nexus<Node> = createDisconnectedNode()
+
+  // Needed or there will be nowhere to start from 
+  getNexus = () => nexus
+
+  edgesByNode[nexus] = []
+
+  createNode = (existingNode<Node>)<null> => {
+    newNode<Node> = createDisconnectedNode()
+    edgesByNode[existingNode][newNode] = true
+    edgesByNode[newNode] = [[existingNode]: true]
+  }
+
+  createEdge = (node1<Node>, node2<Node>)<null> => {
+    if !edgesByNode[node1][node2]<!> {
+      edgesByNode[node1][node2] = true
+      edgesByNode[node2][node1] = true
+    }
+  }
+
+  deleteEdge = (node1<Node>, node2<Node>)<null> => {
+    if edgesByNode[node1][node2]<!> {
+      edgesByNode[node1].delete(node2)
+      edgesByNode[node2].delete(node1)
+    }
+  }
+
+  edgeExists = (node1<Node>, node2<Node>)<Boolean> => {
+    return (edgesByNode[node1][node2]<!>).to(Boolean)
+  }
+
+  getEdges = (node<Node>)<[Node]> => {
+    // Shuffle to prevent consumers from relying on the insertion order
+    return edgesByNode[node].keys().shuffled()
+  }
+
+  isSameNode = (node1<Node>, node2<Node>)<Boolean> => {
+    return node1.getIdentifier() == node2.getIdentifier()
+  }
+
+  return [getNexus, createNode, createEdge, deleteEdge, edgeExists, isSameNode]
+}
+
+hypergraph = createHypergraph()
+Hypergraph = hypergraph.Return
+
+await :::populateHypergraph(hypergraph)
+
+iterateEdges(hypergraph)

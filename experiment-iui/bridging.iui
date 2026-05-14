@@ -170,6 +170,7 @@ user = Json.parse(*({ "id": 123, "username": "CaliKing123" })*)
 user = JSON.parse(*({ "id": 123, "username": "CaliKing123" })*)
 user = #json.parse(*({ "id": 123, "username": "CaliKing123" })*)
 user = ::json.parse(*({ "id": 123, "username": "CaliKing123" })*)
+user = :::json.parse(*({ "id": 123, "username": "CaliKing123" })*)
 
 fetchCreateUser(method: .post, *({ "id": 123, "username": "CaliKing123" })*)
 
@@ -193,6 +194,7 @@ users_.register(user)
 userTools.register(user)
 user>>registerUser()
 registerUser()<<user
+:::registerUser(user)
 
 html.createElement(*(<h1></h1>)*)
 

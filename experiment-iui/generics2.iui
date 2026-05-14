@@ -7,7 +7,7 @@ export createUniqueSet = (Item = Any) => {
     }
     remove: (item<Item>) => {
       index<!> = innerList.findIndex(listItem => listItem == item)<!>
-      if index<!>, innerList.removeAt(index)
+      if index<!>, innerList.remove(at: index)
     }
     empty: list.empty
     count: list.count
@@ -37,3 +37,4 @@ getMoveMethods = (&position<[Number, Number]>) => {
 
   return [moveLeft]
 }
+
