@@ -65,12 +65,11 @@ hasDuplicateIds = () => *{
 }
 
 getArticle = ()<try await String> => {
-  &article = ""
-  article = &article
+  article, &article = ""
 
   while true {
     if stream.isDone(), return article
-    &article += try await stream.loadChunk()
+    &article += try await stream.loadChunk()<!>
   }
 }
 

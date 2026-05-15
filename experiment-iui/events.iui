@@ -25,7 +25,7 @@ createEvents = (...configs<Generic>) => {
   }
 
   createTrigger = (eventNameRaw<EventName>)<Mutable> => {
-    eventName = try throw eventNameRaw.getStaticValue()
+    eventName = try throw eventNameRaw.getStaticValue()<!>
 
     try throw static {
       requiredHandlersByEventName.forEach(([handler, souceCodeLink]) => {

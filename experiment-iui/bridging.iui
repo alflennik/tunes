@@ -88,7 +88,7 @@ counterElement = {
     &count -= 1
   }
   
-  return html.createElement(*(
+  return .:html.createElement(*(
     <div *{.style(*(display: flex;)*)}>
       <button type="button" *{.on("click", handleDecrement)}>Decrement</button>
       <div *{.style(*(border: 1px solid black;)*)}>*{&count}</div>
@@ -97,9 +97,9 @@ counterElement = {
   )*)
 }
 
-container = html.createElement(*(<div>123</div>)*)
+container = .:html.createElement(*(<div>123</div>)*)
 
-document.add(counter)
+.:document.add(counter)
 
 document = {
   document = html.createDocument(standard: true)

@@ -1,19 +1,20 @@
-createApp = ()<try await> => {
-  events = createEvents(
-    load: ()<try await> => {
-      try videoPlayer.refreshDimensions()
+// videoPlayer.iui
+createVideoPlayer = (parentElement:, videoData<!>:, audioService<!>:)<await> => {
+  videoPlayer<try getInferredReturnType()>, &videoPlayer<!> = null
+
+  await createPromise(() => {
+    action .:load register loadVideoPlayer = () => {
+      return videoPlayer<!>
     }
-  )
+  })
+
+  await .:load
+
+  action 
   
-  videoPlayer = createVideoPlayer(parentElement:, events:)
-
-  try await events.load()
-}
-
-createVideoPlayer = (parentElement:, events:) => { 
   activeCaption = parentElement.querySelector("[active-caption]")
   
-  refreshDimensions = events.on(.load, .resize, ()<try> => {
+  refreshDimensions = ()<try> => {
     youtubeContainer = parentElement.querySelector("#youtube-player")
 
     [
@@ -27,7 +28,7 @@ createVideoPlayer = (parentElement:, events:) => {
 
     availableRatio = try availableWidth / availableHeight
 
-    [aspectRatio] = videoDataObservable.getValue()
+    [aspectRatio] = videoData
 
     [width, height] = {
       widthIsDominant = aspectRatio > availableRatio
@@ -38,9 +39,94 @@ createVideoPlayer = (parentElement:, events:) => {
       }
     }
 
-    youtubeContainer.style.width = "{width}px"
-    youtubeContainer.style.height = "{height}px"
+    youtubeContainer.style.width.set("{width}px")
+    youtubeContainer.style.height.set("{height}px")
+  }
+
+  &videoPlayer = [refreshDimensions]
+
+  action .:ready register getVideoPlayer = () => {
+    return videoPlayer<!>
+
+    action .:start register startVideoPlayer = (parentElement:, videoData:, audio:, actions:) => {
+      &videoPlayer = createVideoPlayer(parentElement:, videoData:, audio:)
+
+      action actions.resize register videoPlayer.refreshDimensions
+      watch videoData register videoPlayer.refreshDimensions
+      watch audio.captions register videoPlayer.refreshDimensions
+    }
+  }
+
+}
+
+// app.iui
+createApp = ()<try await> => {
+  action load
+  action resize
+
+  .:ready()
+}
+
+action .:ready = () => {
+  audio = getAudioService()
+  videoPlayer = getVideoPlayer()
+}
+
+startApp = () => {}
+action .:start = () => {
+    actions = []
+
+    [appElement] = await createApp()
+
+    audio = await createAudio()
+
+    videoPlayer = startVideoPlayer(
+      parentElement: appElement,
+      videoData:,
+      audio:,
+      actions:,
+    )
+  }
+
+// 
+
+createApp = () => {
+  action .:load = ()<await> => {
+    await audioService.start()
+    await videoPlayer.attach(parentElement: videoPlayerContainer)
+
+    videoPlayer.resizeDimensions()
+    videoPlayer.play()
+  }
+
+  action .:resize = () => {
+    videoPlayer.resizeDimensions()
+  }
+
+  watch audioService.captions {
+    videoPlayer.resizeDimensions()
+  }
+
+  watch videoData {
+    audioService.clearAudio()
+    await concurrent(
+      refreshVideoMetadata()
+      audioService.reloadCaptions()
+    )
+    videoPlayer.resizeDimensions()
+    videoPlayer.play()
+  }
+
+  videoData, &videoData = defaultVideoData
+
+  audioService = createAudioService(actions:)
+  videoPlayer = createVideoPlayer(videoData:, audioService:, actions:)
+
+  // ...
+
+  .:document.addEventListener('resize', e => {
+    actions.resize()
   })
 
-  return [refreshDimensions]
+  await actions.load()
 }

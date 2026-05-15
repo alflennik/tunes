@@ -21,7 +21,7 @@ versionOutOfDate.watch(()<await> => {
 
 startRepeatingTimer = (
   durationDefinition<.:time.DurationDefinition>,
-  callback<(stop: <() => null>) => Any>
+  callback<(stop: <() => None>) => Any>
 ) => {
   duration = .:time.createDuration(durationDefinition).to(.milliseconds)
 

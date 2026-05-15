@@ -7,7 +7,7 @@ getUniqueSet = (Item = Any) => {
 
   remove = (item<Item>) => {
     index<!> = list.findIndex(listItem => listItem == item)<!>
-    if index<!>, list.removeAt(index)
+    if index<!>, list.remove(at: index)
   }
 
   return [add, remove, empty: list.empty, length: list.length]

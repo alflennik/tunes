@@ -2,7 +2,7 @@ createElement = () => {
   container<DomElement> = // ...
   // ...
 
-  bindList = (items<[Generic]>, createElement<Generic => DomElement>)<try null> => {    
+  bindList = (items<[Generic]>, createElement<Generic => DomElement>)<try None> => {    
     try throw matchTypes(items.Item, <[id: Id]>)<!>
     try throw matchTypes(items.Item, createElement.Parameters[0])<!>
 

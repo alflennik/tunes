@@ -215,7 +215,7 @@ videos<[TunesVideo]> = [
 firstContentType<!> =
   videos[0].titleContent.case(.musicVideo)<!>.providedContentType.case(.commonTerm)<!>
 
-videos = _{
+videos = {
   videoList<[Video]> = []
 
   playlists.each(playlist => { 
@@ -230,7 +230,7 @@ videos = _{
   return videoList
 }
 
-songs = _{
+songs = {
   songList<[Song]> = []
 
   addSongs = songs => songs.each(song => songList.add(song))

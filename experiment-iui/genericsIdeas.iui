@@ -19,7 +19,7 @@ videos<[Video]> =
 
 // 
 
-Character = <[addHealthPoints: (Number) => null> ]>
+Character = <[addHealthPoints: (Number) => None> ]>
 
 Fruit = <[name: "", healthPoints: 0]>
 

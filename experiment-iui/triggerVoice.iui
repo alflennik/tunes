@@ -16,7 +16,7 @@ export triggerVoice = (
 
     isTimeSeek = 
       videoPlayer.time && lastTime<!>
-        ? absoluteValue(videoPlayer.time - lastTime) > 1
+        ? .:math.absoluteValue(videoPlayer.time - lastTime) > 1
         : false
     
     if currentDescription<!> {

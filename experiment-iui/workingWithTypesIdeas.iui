@@ -1,4 +1,4 @@
-submitForm = (userInput<try Any>, errorContainer) => {
+submitForm = (userInput<try>, errorContainer) => {
   if !userInput<!> {
     errorContainer.replace(userInput<!>.error.message)
     return

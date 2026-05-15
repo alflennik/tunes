@@ -14,20 +14,20 @@ createHypergraph = () => {
 
   edgesByNode[nexus] = []
 
-  createNode = (existingNode<Node>)<null> => {
+  createNode = (existingNode<Node>)<None> => {
     newNode<Node> = createDisconnectedNode()
     edgesByNode[existingNode][newNode] = true
     edgesByNode[newNode] = [[existingNode]: true]
   }
 
-  createEdge = (node1<Node>, node2<Node>)<null> => {
+  createEdge = (node1<Node>, node2<Node>)<None> => {
     if !edgesByNode[node1][node2]<!> {
       edgesByNode[node1][node2] = true
       edgesByNode[node2][node1] = true
     }
   }
 
-  deleteEdge = (node1<Node>, node2<Node>)<null> => {
+  deleteEdge = (node1<Node>, node2<Node>)<None> => {
     if edgesByNode[node1][node2]<!> {
       edgesByNode[node1].delete(node2)
       edgesByNode[node2].delete(node1)

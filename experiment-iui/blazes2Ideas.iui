@@ -121,7 +121,7 @@ v8.1 = ()<await [a: Number, b: Number]> => {
 
 v8.2 = ()<await [a: Number, b: Number]> => {
   response = 
-    await try! fetch("http://myapi.com")<!>.parseJson()<!>.setType(<[a: Number, b: Number]>)<!>
+    await try throw fetch("http://myapi.com")<!>.parseJson()<!>.setType(<[a: Number, b: Number]>)<!>
 }
 
 createPromise = (callback<((???) => Null, (createErrorType()) => Null) => Null>) => {
@@ -221,12 +221,12 @@ loadDimensions = ()<try await [width: Number, height: Number]> => {
 }
 
 loadDimensions = ()<await [width: Number, height: Number]> => {
-  dimensions = await videos.each(concurrent: true, video => try! fetchDimensions(video)<!>)
+  dimensions = await videos.each(concurrent: true, video => try throw fetchDimensions(video)<!>)
 }
 
 loadDimensions = ()<[width: Number, height: Number]> => {
   dimensions = blockMainThread(() => {
-    return videos.each(concurrent: true, video => try! fetchDimensions(video)<!>)
+    return videos.each(concurrent: true, video => try throw fetchDimensions(video)<!>)
   })
 }
 
@@ -235,7 +235,7 @@ getUser = ()<try User> => {
 }
 
 getUser = ()<User> => {
-  return try! session<!>.user
+  return try throw session<!>.user
 }
 
 getUser = ()<try User> => {
@@ -274,3 +274,51 @@ createVideoPlayer = events.on('load', () => {
 
   return [playMode, onSpeech]
 })
+
+// ...
+
+// Can be null but not error
+if .:user<!> {
+  log('success', .:user<!>)
+} else {
+  // Nothing needed
+}
+
+// Can be error but not null
+response<!> = await fetch(url)<!>.getJson()<!>
+if response {
+  log('success', response)
+} else {
+  throw reponse // if you forget this, you just swallowed the error
+}
+
+// ---
+
+if .:user<?> {
+  log('success', .:user)
+}
+
+response<!> = await fetch(url)<!>.getJson()<!>
+if response<!> {
+  log('success', response)
+} else {
+  throw reponse<!>
+}
+
+session<!?> = await getSession()<!?>
+
+// ...
+// How about there's a None type, and null becomes basically an error in effect ...??
+
+outputItem<try OutputItem>, &outputItem<!> = null
+
+outputItem<OutputItem>, &outputItem = defaultOutput
+
+log('success', try throw .:user<!>)
+
+response<!> = await fetch(url)<!>.getJson()<!>
+if response<!> {
+  log('success', response)
+} else {
+  throw reponse<!>
+}
