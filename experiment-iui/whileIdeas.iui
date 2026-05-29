@@ -212,7 +212,6 @@ hasDuplicateIds = () => {
 
 getArticle = ()<try await String> => *{
   article, &article = ""
-   = &article
 
   try await loop(() => {
     if stream.isDone(), *return article

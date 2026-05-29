@@ -1,0 +1,45 @@
+getData = ()<await> => {
+  url = 'https://example.com/products.json'
+  response<!> = try catch await fetch(url)
+
+  if !response<!> {
+    logError(response.error.message)
+    return
+  }
+
+  if !response.ok {
+    throw Error.new(`Response status: {response.status}`)
+  }
+
+  result = await response.json()
+  log(result)
+}
+
+fetch = (
+  url,
+  method: methodRaw<|.get, .post, .put, .patch, .delete, .custom(String)|> = .get,
+  headers: <[[String]: String]> = []
+  body: <String> = null,
+)<try await Inferred> => {
+  method = switch(methodRaw, 
+    [.get]: () => 'GET'
+    [.post]: () => 'POST'
+    [.put]: () => 'PUT'
+    [.patch]: () => 'PATCH'
+    [.delete]: () => 'DELETE'
+    [.custom(String)]: string => string
+  )
+  
+  response<!> = await .:js.return(*(
+    return fetch(*{url}, { method: *{method}, headers: *{headers}, body: *{body} })
+  )*)<!>
+
+  if !response<!>, throw response<!>
+
+  ok = try throw .:js.get(*(*{response}.ok)*)<!>.bridged()<!>
+  statusCode = try throw .:js.get(*(*{response}.statusCode)*)<!>.bridged()<!>
+  json = ()<try await Any> => .:js.get(*(*{response}.json())*)<!>.bridged()<!>
+  text = ()<try await String> => .:js.get(*(*{response}.text())*)<!>.bridged()<!>
+  
+  return [ok, statusCode, json, text]
+}
