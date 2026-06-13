@@ -20,7 +20,7 @@ createApp = () => {
 
   palette.toolName.watch(() => {
     history.track(toolName: palette.toolName)
-    interactionService.endCurrentInteraction()
+    interactionService.cancelInteraction()
   })
 
   history.traveled.handler((toolName: <!>, canvasServiceState: <!>, hypergraphState: <!>) => {

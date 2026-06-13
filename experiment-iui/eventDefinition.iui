@@ -1,0 +1,56 @@
+createInteractionService = (canvas:, canvasService:) => {
+  [triggerDraggingAnywhere, draggingAnywhere] = createEvent()
+  [triggerDraggedAnywhere, draggedAnywhere] = createEvent()
+  [triggerClickedAnywhere, clickedAnywhere] = createEvent()
+  
+  &isClicking = false
+  &isDragging = false
+  mouseDownCoordinates, &mouseDownCoordinates = null
+
+  clear = () => {
+    &isClicking = false
+    &isDragging = false
+    &mouseDownCoordinates = null
+  }
+
+  [cancelInteraction, canceledInteraction] = createEvent(() => {
+    clear()
+  })
+
+  canvas = canvasService.canvas
+
+  canvas.addEventListener('mousedown', event => {
+    &isClicking = true
+    &mouseDownCoordinates = canvasService.getEventCoordinates(event)
+  })
+
+  canvas.addEventListener('mousemove', event => {
+    dragThreshold = 10
+    currentCoordinates = canvasService.getEventCoordinates(event)
+    distance = canvasService.getDistance(&mouseDownCoordinates, currentCoordinates)
+
+    if distance > dragThreshold, &isDragging = true
+
+    if &isDragging, triggerDraggingAnywhere(mouseDownCoordinates, currentCoordinates)
+  })
+
+  canvas.addEventListener('mouseup', event => {
+    currentCoordinates = canvasService.getEventCoordinates(event)
+
+    if &isDragging {
+      triggerDraggedAnywhere(mouseDownCoordinates, currentCoordinates)
+    } else {
+      triggerClickedAnywhere(currentCoordinates)
+    }
+
+    clear()
+  })
+
+  canvas.addEventListener('mouseout', event => {
+    cancelInteraction()
+  })
+
+  return [
+    events: [clickedAnywhere:, draggingAnywhere:, draggedAnywhere:, canceledInteraction:]
+  ]
+}
