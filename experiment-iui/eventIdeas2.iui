@@ -1,36 +1,41 @@
 createApp = () => {
-  [hypergraph, history, canvasService, palette, interactionService, visualizationPlane] = {
-    interactionService, &interactionService = stub(createInteractionService.Return)
-    hypergraph, &hypergraph = stub(createHypergraph.Return)
+  [
+    hypergraph:,
+    history:,
+    canvasService:,
+    tools:,
+    interactionService:,
+    visualizationPlane:,
+  ] = crossReference(
+    hypergraph: references => createHypergraph(...references),
+    history: references => createHistory(...references),
+    canvasService: references => createCanvasService(...references),
+    tools: references => createTools(...references),
+    interactionService: references => createInteractionService(...references),
+    visualizationPlane: references => createVisualizationPlane(...references),
+  )
 
-    history = createHistory(Tracking: <[
-      toolName: createPalette.Return.toolName,
-      canvasServiceState: createCanvasService.Return.state,
-      hypergraphState: createHypergraph.Return.state,
-    ]>)
+  history.setTrackingType(<[
+    toolName: tools.toolName.Type
+    canvasServiceState: canvasService.state.Type,
+    hypergraphState: hypergraph.state.Type,
+  ]>)
 
-    canvasService = createCanvasService(history:, hypergraph:)
-    palette = createPalette(canvasService:, interactionService:)
-    &interactionService = createInteractionService(canvasService:, palette:)
-    visualizationPlane = createVisualizationPlane(palette:, interactionService:, canvasService:)
-    &hypergraph = createHypergraph(history:)
-    
-    return [hypergraph, history, canvasService, palette, interactionService, visualizationPlane]
-  }
-
-  palette.toolName.watch(() => {
-    history.track(toolName: palette.toolName)
+  tools.toolName.watch(() => {
+    history.track(toolName: tools.toolName)
     interactionService.cancelInteraction()
   })
 
   history.traveled.handler((toolName: <!>, canvasServiceState: <!>, hypergraphState: <!>) => {
-    if toolName<!>, palette.changeTool(toolName)
+    if toolName<!>, tools.changeTool(toolName)
     if canvasServiceState<!>, canvasService.applyState(canvasServiceState)
     if hypergraphState<!>, hypergraph.applyState(hypergraphState)
   })
 
   {
     syncHypergraphToCanvas = () => {
+      canvasService.clearAll()
+      
       hypergraph.iterateEdges(
         nodeCallback: node => {
           [coordinates:] = canvasService.getNodeData(node)
@@ -57,11 +62,11 @@ createApp = () => {
   }
 
   {
-    lineTool = palette.toolsByName.line
+    lineTool = tools.toolsByName.line
 
     {
       draggingHandler = (startCoordinates:, endCoordinates:) => {
-        canvasService.drawTemporaryLine(startCoordinates, endCoordinates)
+        canvasService.drawLine(startCoordinates, endCoordinates)
       }
       lineTool.eventsByName.draggingFromNode.handler(draggingHandler)
       lineTool.eventsByName.draggingBetweenNodes.handler(draggingHandler)
@@ -82,7 +87,7 @@ createApp = () => {
   }
 
   {
-    handTool = palette.toolsByName.hand
+    handTool = tools.toolsByName.hand
 
     handTool.eventsByName.draggingAnywhere.handler((distances:) = {
       canvasService.pan(distances:)
@@ -93,7 +98,7 @@ createApp = () => {
     event.handler((...arguments) => {
       canvasService.clearTemporaryShapes()
       
-      palette.tool.interactionHandlers[eventName]<!>(...arguments)
+      tools.tool.interactionHandlers[eventName]<!>(...arguments)
       
       switch(eventName,
         [<|
