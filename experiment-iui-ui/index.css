@@ -5,55 +5,63 @@ html {
 }
 
 body {
+  margin: 0;
   background: rgb(25, 29, 35);
+  color: white;
+
+  --border: 1.5px solid rgb(178, 190, 233);
+  --border-gap: 7px;
+  --text-color: #d4d4d4;
 }
+
 .option {
-  border: 1.5px solid #878a8a;
-  border-radius: 14px 4px 4px 14px;
-  width: max-content;
-  padding: 0 4px 0 8px;
-  position: relative;
   display: flex;
   align-items: center;
-  min-height: 25px;
-  margin: 3px 0;
-}
-.option input:first-child {
-  appearance: none;
-  border: none;
-  background: none;
-  color: #e0f2f4;
+  flex-wrap: wrap;
+  gap: var(--border-gap);
+  width: max-content;
+  border-radius: 8px;
+  padding: var(--border-gap);
+  background: #6565655c;
+  box-shadow: 0 0 30px #a3a3a30a;
   font-weight: 500;
-  font-size: 14px;
-  width: 167px;
+  color: var(--text-color);
+  border: 0.5px solid #696666;
+  box-sizing: border-box;
+  max-width: calc(100% - 2 * var(--border-gap));
+
+  &:last-child {
+    margin-bottom: 0;
+  }
 }
-.option svg:first-of-type {
-  width: 9px;
-  height: 9px;
-  margin-right: 4px;
+
+.option:has(+ br) {
+  margin-bottom: var(--border-gap);
 }
-.divider {
-  width: 1.5px;
-  background: #6b6e70;
-  height: 35px;
-  margin: 0 3px;
+.option-name:has(+ br) {
+  margin-bottom: var(--border-gap);
 }
+
+.option-name {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.option-name svg {
+  width: 8px;
+  height: 8px;
+}
+
+.number, .string {
+  border-bottom: 1.5px solid var(--text-color);
+  padding: 0 5px;
+}
+
 .string {
-  padding: 0px 6px;
-  min-height: 35px;
-  border: none;
-  background: none;
   color: #2dff30;
-  font-weight: 500;
-  font-size: 14px;
-  width: 52px;
+  /* border-color: #2dff30; */
 }
-.argument-label {
-  font-size: 14px;
-  color: #151a22;
-  font-style: italic;
-  margin: 3px 4px 3px 1px;
-  background: #9f9f9f;
-  padding: 5px 5px;
-  border-radius: 4px;
+
+.number {
+  color: rgb(255, 124, 80);
 }
