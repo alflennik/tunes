@@ -28,11 +28,17 @@ body {
   color: var(--text-color);
   border: 0.5px solid #696666;
   box-sizing: border-box;
-  max-width: calc(100% - 2 * var(--border-gap));
+  max-width: 100%;
+  box-shadow: inset 0 0 30px #9999990d;
 
   &:last-child {
     margin-bottom: 0;
   }
+}
+
+.option:not(.option .option) {
+  margin: var(--border-gap);
+  max-width: calc(100vw - 2 * var(--border-gap));
 }
 
 .option:has(+ br) {
@@ -42,14 +48,11 @@ body {
   margin-bottom: var(--border-gap);
 }
 
-.option-name {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-}
 .option-name svg {
   width: 8px;
   height: 8px;
+  position: relative;
+  top: -2px;
 }
 
 .number, .string {
