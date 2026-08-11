@@ -4,14 +4,6 @@ const { exec, spawn } = require("child_process")
 
 const nonAssetLocations = [
   ".git",
-  "experiment-application-mode",
-  "experiment-iui",
-  "experiment-iui-1",
-  "experiment-multigraph",
-  "experiment-player",
-  "experiment-playlist-modeling",
-  "experiment-shoelace-style",
-  "experiment-tree",
   "description-editor",
   "descriptions",
   "full-content",
@@ -164,7 +156,7 @@ const siteBuildScript = async ({ environment }) => {
     )
     fileData.forEach(({ name, stats }) => {
       if (stats.isDirectory()) {
-        if (!assetLocations.includes(name) && !nonAssetLocations.includes(name)) {
+        if (!assetLocations.includes(name) && !nonAssetLocations.includes(name) && !name.startsWith('experiment')) {
           throw new Error(
             `Could not determine whether directory ${name} should be deployed. Please update ` +
               `either the assetLocations or nonAssetLocations array with this directory name.`
