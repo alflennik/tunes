@@ -44,6 +44,7 @@ const getFullContent = async () => {
       const itemsResponse = await itemsRequest.json()
 
       videoIds.push(...itemsResponse.items.map(item => item.contentDetails.videoId))
+      console.info(`Processed ${videoIds.length} videos`)
 
       if (itemsResponse.nextPageToken) {
         i += 1
@@ -111,6 +112,8 @@ const getFullContent = async () => {
   await fs.writeFile(path.resolve(__dirname, "fullContent.json"), JSON.stringify(videos, null, 2), {
     encoding: "utf-8",
   })
+
+  console.info('Done')
 }
 
 getFullContent()
