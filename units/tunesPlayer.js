@@ -63,7 +63,7 @@ define("tunesPlayer", {
           playlist?.needsContentAdvisory &&
           !window.confirm(
             "This playlist contains content some viewers might find disturbing, are you sure you " +
-              "want to continue?"
+              "want to continue?",
           )
         ) {
           return
@@ -108,7 +108,7 @@ define("tunesPlayer", {
         await this.voiceSynthesized.getPermissions()
         await this.voicePrerecorded.getPermissions()
         if (!isKeyDown && isVideoPlayerInteraction) this.videoPlayer.play()
-      }
+      },
     )
 
     rootUi = reconcile(
@@ -118,11 +118,26 @@ define("tunesPlayer", {
           .attributes({ class: "content-container" })
           .items(
             element("h1").text("Tunes"),
+            element("p").text("Tunes changes the way you think about music videos."),
+            element("h2").text("Video Channels"),
             element("p").text(
-              "The Tunes project implements audio descriptions for music videos, which are written by some guy named Alex."
+              "Hundreds upon hundreds of music videos from Albania to Zimbabwe, playing across 20 channels.",
+            ),
+            element("a")
+              .attributes({ href: "video-channels" })
+              .items(
+                element("img").attributes({
+                  class: "video-channel-hero",
+                  src: "video-channels.jpg",
+                  alt: "Preview of video channel player playing Jungle music video.",
+                }),
+              ),
+            element("h2").text("Audio Descriptions"),
+            element("p").text(
+              "More than an accessibility requirement, audio descriptions are an art form all their own.",
             ),
             contentBrowser.ui,
-            element("h2").attributes({ id: "player-h2", tabindex: "-1" }).text("Player")
+            element("h3").attributes({ id: "player-h2", tabindex: "-1" }).text("Player"),
           ),
         element("tunes-player").items(
           element("video-player")
@@ -136,11 +151,11 @@ define("tunesPlayer", {
               firstInteractionInterceptor?.({
                 items: element("button").text(`Play ${video.titleSentence}`),
               }),
-              videoPlayer.ui
+              videoPlayer.ui,
             ),
-          audioDescription.ui
-        )
-      )
+          audioDescription.ui,
+        ),
+      ),
     )
 
     doOnce($rootUi, () => {

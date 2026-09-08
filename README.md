@@ -1,6 +1,6 @@
 # Tunes
 
-The Tunes project implements audio descriptions for music videos, which are written by some guy named Alex.
+Tunes changes the way you think about music videos, with hundreds upon hundreds of music videos from Albania to Zimbabwe playing across 20 channels, and an array of audio descriptions for music videos.
 
 ## Website
 
@@ -8,8 +8,8 @@ Visit [tunes.blue](http://tunes.blue) to see the site.
 
 ## Development Instructions
 
-- Run a development server, perhaps through a VSCode extension.
-- Open tunes.html.
+- Run `npx live-server --no-browser` to start the dev server
+- Open `http://localhost:8080` to view the site
 
 ## Deploy Instructions
 

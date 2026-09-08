@@ -19,6 +19,7 @@ const assetLocations = [
   "video-channels",
   "videos",
   "index.html",
+  "video-channels.jpg",
   "tunes.js",
 ]
 
@@ -139,7 +140,7 @@ const siteBuildScript = async ({ environment }) => {
       fileNames.map(async fileName => {
         const filePath = path.resolve(buildFolderPath, fileName)
         await fs.rm(filePath, { recursive: true })
-      })
+      }),
     )
   }
 
@@ -152,14 +153,18 @@ const siteBuildScript = async ({ environment }) => {
         const filePath = path.resolve(__dirname, "../", name)
         const stats = await fs.stat(filePath)
         return { name, stats }
-      })
+      }),
     )
     fileData.forEach(({ name, stats }) => {
       if (stats.isDirectory()) {
-        if (!assetLocations.includes(name) && !nonAssetLocations.includes(name) && !name.startsWith('experiment')) {
+        if (
+          !assetLocations.includes(name) &&
+          !nonAssetLocations.includes(name) &&
+          !name.startsWith("experiment")
+        ) {
           throw new Error(
             `Could not determine whether directory ${name} should be deployed. Please update ` +
-              `either the assetLocations or nonAssetLocations array with this directory name.`
+              `either the assetLocations or nonAssetLocations array with this directory name.`,
           )
         }
       }
@@ -176,7 +181,7 @@ const siteBuildScript = async ({ environment }) => {
         const assetSource = path.resolve(__dirname, "../", assetLocation)
         const assetDestination = path.resolve(buildFolderPath, newName)
         fs.cp(assetSource, assetDestination, { recursive: true })
-      })
+      }),
     )
   }
 

@@ -11,11 +11,11 @@ define("contentBrowser", {
     ui = reconcile(
       $ui,
       element("content-browser").items(
-        element("h2").text("Playlists"),
+        element("h3").text("Playlists"),
         ...playlists.map(playlist =>
           // TODO: use fragment
           element("div").items(
-            element("h3").items(
+            element("h4").items(
               element("a")
                 .attributes({ href: "#" })
                 .listeners({
@@ -44,7 +44,7 @@ define("contentBrowser", {
             )
           )
         ),
-        element("h2").text("Other Songs"),
+        element("h3").text("Other Songs"),
         element("ul").items(
           ...otherVideos.map(video => {
             const isActive = video.id === tunesPlayer.video.id
